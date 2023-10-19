@@ -1,7 +1,6 @@
  
 /*
  * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
- * All rights reserved.
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
