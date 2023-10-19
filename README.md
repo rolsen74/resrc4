@@ -27,135 +27,136 @@ Please be aware of the following:
 - The movec opcode is missing.
 - There are no MMU and FPU opcode handling.
 
-**  Abcd       B      
-**  Add        B W L  
-**  Adda         W L  
-**  Addi       B W L  
-**  Addq       B W L  
-**  And        B W L  
-**  Andi       B W L  
-**  Asl        B W L  
-**  Asr        B W L  
-**  Bcc        B W L  
-**  BChg       B   L  
-**  BClr       B   L  
-**  Bcs        B W L  
-**  Beq        B W L  
-**  Bge        B W L  
-**  BGnd              
-**  Bgt        B W L  
-**  Bhi        B W L  
-**  Bkpt              
-**  Ble        B W L  
-**  Bls        B W L  
-**  Blt        B W L  
-**  Bmi        B W L  
-**  Bne        B W L  
-**  Bpl        B W L  
-**  Bra        B W L  
-**  BSet       B   L  
-**  Bsr        B W L  
-**  BTst       B   L  
-**  Bvc        B W L  
-**  Bvs        B W L  
-**  Callm             
-**  Clr        B W L  
-**  Cmp        B W L  
-**  Cmpa         W L  
-**  Cmpi       B W L  
-**  Cmpm       B W L  
-**  DBcc         W    
-**  DBcs         W    
-**  DBeq         W    
-**  DBf          W    
-**  DBge         W    
-**  DBgt         W    
-**  DBhi         W    
-**  DBle         W    
-**  DBls         W    
-**  DBlt         W    
-**  DBmi         W    
-**  DBne         W    
-**  DBpl         W    
-**  DBt          W    
-**  DBvc         W    
-**  DBvs         W    
-**  Divs         W L  
-**  Divu         W L  
-**  Eor        B W L  
-**  Eori       B W L  
-**  Exg            L  
-**  Ext          W L  
-**  Extb           L  
-**  Illegal           
-**  Jmp               
-**  Jsr               
-**  Lea            L  
-**  Link         W L  
-**  Lsl        B W L  
-**  Lsr        B W L  
-**  Move       B W L  
-**  Movea        W L  
-**  Movem        W L  
-**  Movep        W L  
-**  Moveq          L  
-**  Muls         W L  
-**  Mulu         W L  
-**  Nbcd       B      
-**  Neg        B W L  
-**  Nop               
-**  Not        B W L  
-**  Or         B W L  
-**  Ori        B W L  
-**  Pack              
-**  Pea            L  
-**  Reset             
-**  Rol        B W L  
-**  Ror        B W L  
-**  Roxl       B W L  
-**  Roxr       B W L  
-**  Rtd               
-**  Rte               
-**  Rtr               
-**  Rts               
-**  Sbcd       B      
-**  Scc        B      
-**  Scs        B      
-**  Seq        B      
-**  Sf         B      
-**  Sge        B      
-**  Sgt        B      
-**  Shi        B      
-**  Sle        B      
-**  Sls        B      
-**  Slt        B      
-**  Smi        B      
-**  Sne        B      
-**  Spl        B      
-**  St         B      
-**  Sub        B W L  
-**  Suba         W L  
-**  Subi       B W L  
-**  Subq       B W L  
-**  Svc        B      
-**  Svs        B      
-**  Swap         W    
-**  Trap              
-**  Trapv             
-**  Tst        B W L  
-**  Unlk              
-**  Unpk              
+ - Abcd
+ - Add
+ - Adda
+ - Addi
+ - Addq
+ - And
+ - Andi
+ - Asl
+ - Asr
+ - Bcc
+ - BChg
+ - BClr
+ - Bcs
+ - Beq
+ - Bge
+ - BGnd
+ - Bgt
+ - Bhi
+ - Bkpt
+ - Ble
+ - Bls
+ - Blt
+ - Bmi
+ - Bne
+ - Bpl
+ - Bra
+ - BSet
+ - Bsr
+ - BTst
+ - Bvc
+ - Bvs
+ - Callm
+ - Clr
+ - Cmp
+ - Cmpa
+ - Cmpi
+ - Cmpm
+ - DBcc
+ - DBcs
+ - DBeq
+ - DBf
+ - DBge
+ - DBgt
+ - DBhi
+ - DBle
+ - DBls
+ - DBlt
+ - DBmi
+ - DBne
+ - DBpl
+ - DBt
+ - DBvc
+ - DBvs
+ - Divs
+ - Divu
+ - Eor
+ - Eori
+ - Exg
+ - Ext
+ - Extb
+ - Illegal
+ - Jmp
+ - Jsr
+ - Lea
+ - Link
+ - Lsl
+ - Lsr
+ - Move
+ - Movea
+ - Movem
+ - Movep
+ - Moveq
+ - Muls
+ - Mulu
+ - Nbcd
+ - Neg
+ - Nop
+ - Not
+ - Or
+ - Ori
+ - Pack
+ - Pea
+ - Reset
+ - Rol
+ - Ror
+ - Roxl
+ - Roxr
+ - Rtd
+ - Rte
+ - Rtr
+ - Rts
+ - Sbcd
+ - Scc
+ - Scs
+ - Seq
+ - Sf
+ - Sge
+ - Sgt
+ - Shi
+ - Sle
+ - Sls
+ - Slt
+ - Smi
+ - Sne
+ - Spl
+ - St
+ - Sub
+ - Suba
+ - Subi
+ - Subq
+ - Svc
+ - Svs
+ - Swap
+ - Trap
+ - Trapv
+ - Tst
+ - Unlk
+ - Unpk
 
 # Hunk file support
 
 Again, only what is needed has been implemented, so it's a little limited. The original Civ game did not include Symbol, DRel32, and Relloc32Short, but when I assembled the disassembled source with vasm, those hunks were used.
 
-** HUNK_CODE (3E9)
-** HUNK_DATA (3EA)
-** HUNK_BSS (3EB)
-** HUNK_RELOC32 (3EC)
-** HUNK_SYMBOL (3F0)
-** HUNK_END (3F2)
-** HUNK_HEADER (3F3)
-** HUNK_DREL32 (3F7)
-** HUNK_RELOC32SHORT (3FC)
+**Hunks Supported:**
+- HUNK_CODE (3E9)
+- HUNK_DATA (3EA)
+- HUNK_BSS (3EB)
+- HUNK_RELOC32 (3EC)
+- HUNK_SYMBOL (3F0)
+- HUNK_END (3F2)
+- HUNK_HEADER (3F3)
+- HUNK_DREL32 (3F7)
+- HUNK_RELOC32SHORT (3FC)
