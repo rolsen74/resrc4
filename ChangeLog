@@ -1,0 +1,6 @@
+
+ReSrc4 v2.0 ( 10-Oct-2023 )
+
+- Rewrote the code, so it portable and works on little endian machines.
+
+- First release of source code under GPL v3.
