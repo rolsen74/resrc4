@@ -19,7 +19,7 @@ It attempts to convert library calls into a more readable format. For example:
 
 There is also some JumpTable detection. Please note that this code is a little rough and may need a good rewrite, which is on the to-do list. You will likely need to create a config file and use the Relative16 option.
 
-## Opcodes (Currently Supported)
+## Opcodes
 
 Please be aware of the following:
 
@@ -27,124 +27,126 @@ Please be aware of the following:
 - The movec opcode is missing.
 - There are no MMU and FPU opcode handling.
 
- - Abcd
- - Add
- - Adda
- - Addi
- - Addq
- - And
- - Andi
- - Asl
- - Asr
- - Bcc
- - BChg
- - BClr
- - Bcs
- - Beq
- - Bge
- - BGnd
- - Bgt
- - Bhi
- - Bkpt
- - Ble
- - Bls
- - Blt
- - Bmi
- - Bne
- - Bpl
- - Bra
- - BSet
- - Bsr
- - BTst
- - Bvc
- - Bvs
- - Callm
- - Clr
- - Cmp
- - Cmpa
- - Cmpi
- - Cmpm
- - DBcc
- - DBcs
- - DBeq
- - DBf
- - DBge
- - DBgt
- - DBhi
- - DBle
- - DBls
- - DBlt
- - DBmi
- - DBne
- - DBpl
- - DBt
- - DBvc
- - DBvs
- - Divs
- - Divu
- - Eor
- - Eori
- - Exg
- - Ext
- - Extb
- - Illegal
- - Jmp
- - Jsr
- - Lea
- - Link
- - Lsl
- - Lsr
- - Move
- - Movea
- - Movem
- - Movep
- - Moveq
- - Muls
- - Mulu
- - Nbcd
- - Neg
- - Nop
- - Not
- - Or
- - Ori
- - Pack
- - Pea
- - Reset
- - Rol
- - Ror
- - Roxl
- - Roxr
- - Rtd
- - Rte
- - Rtr
- - Rts
- - Sbcd
- - Scc
- - Scs
- - Seq
- - Sf
- - Sge
- - Sgt
- - Shi
- - Sle
- - Sls
- - Slt
- - Smi
- - Sne
- - Spl
- - St
- - Sub
- - Suba
- - Subi
- - Subq
- - Svc
- - Svs
- - Swap
- - Trap
- - Trapv
- - Tst
- - Unlk
- - Unpk
+ Opcodes (Currently Supported)
+
+- Abcd
+- Add
+- Adda
+- Addi
+- Addq
+- And
+- Andi
+- Asl
+- Asr
+- Bcc
+- BChg
+- BClr
+- Bcs
+- Beq
+- Bge
+- BGnd
+- Bgt
+- Bhi
+- Bkpt
+- Ble
+- Bls
+- Blt
+- Bmi
+- Bne
+- Bpl
+- Bra
+- BSet
+- Bsr
+- BTst
+- Bvc
+- Bvs
+- Callm
+- Clr
+- Cmp
+- Cmpa
+- Cmpi
+- Cmpm
+- DBcc
+- DBcs
+- DBeq
+- DBf
+- DBge
+- DBgt
+- DBhi
+- DBle
+- DBls
+- DBlt
+- DBmi
+- DBne
+- DBpl
+- DBt
+- DBvc
+- DBvs
+- Divs
+- Divu
+- Eor
+- Eori
+- Exg
+- Ext
+- Extb
+- Illegal
+- Jmp
+- Jsr
+- Lea
+- Link
+- Lsl
+- Lsr
+- Move
+- Movea
+- Movem
+- Movep
+- Moveq
+- Muls
+- Mulu
+- Nbcd
+- Neg
+- Nop
+- Not
+- Or
+- Ori
+- Pack
+- Pea
+- Reset
+- Rol
+- Ror
+- Roxl
+- Roxr
+- Rtd
+- Rte
+- Rtr
+- Rts
+- Sbcd
+- Scc
+- Scs
+- Seq
+- Sf
+- Sge
+- Sgt
+- Shi
+- Sle
+- Sls
+- Slt
+- Smi
+- Sne
+- Spl
+- St
+- Sub
+- Suba
+- Subi
+- Subq
+- Svc
+- Svs
+- Swap
+- Trap
+- Trapv
+- Tst
+- Unlk
+- Unpk
 
 # Hunk file support
 

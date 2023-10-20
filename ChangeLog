@@ -1,6 +1,17 @@
 
-ReSrc4 v2.0 ( 10-Oct-2023 )
+ReSrc4 v2.1 ( 18-Oct-2023 )
 
 - Rewrote the code, so it portable and works on little endian machines.
 
 - First release of source code under GPL v3.
+
+
+ReSrc4 v2.2 ( 20-Oct-2023 )
+
+- If a jmp/jsr tries to jump outside Hunk file Memory area, a warning will
+ be printed.. Instead of triggering an error during Trace.
+
+- Removed unistd.h include file and the single access() function.. Now it
+ should be fully standard c library.
+
+- Makefile will default to Linux envirement compile.

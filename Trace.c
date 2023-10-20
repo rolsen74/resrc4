@@ -1,12 +1,8 @@
- 
+
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 by Rene W. Olsen < renewolsen @ gmail . com >
+ * All rights reserved.
  *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 // --
@@ -315,13 +311,12 @@ struct BranceNode *bn;
 struct HunkNode *hn;
 int error;
 
-	error = true;
-
 	hn = Hunk_FindNode( hs, addr );
 
 	if ( hn == NULL )
 	{
-		printf( "%s:%04d: Error finding Hunk for address 0x%08X\n", __FILE__, __LINE__, addr );
+		printf( "Warning: Brancing outside of Hunk memory not supported ($%08x)\n", addr );
+		error = false;
 		goto bailout;
 	}
 
@@ -330,6 +325,7 @@ int error;
 	if ( bn == NULL )
 	{
 		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (int) sizeof( struct BranceNode ));
+		error = true;
 		goto bailout;
 	}
 

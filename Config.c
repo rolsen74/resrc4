@@ -1,12 +1,8 @@
  
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
+ * All rights reserved.
  *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 // --
@@ -1061,9 +1057,11 @@ int len;
 		}
 	}
 
-	// -- Create it?
+	// -- Load
 
-	if ( access( ConfigFile, F_OK ) == -1 )
+	file = fopen( ConfigFile, "rb" );
+
+	if ( file == NULL )
 	{
         printf( "The config file '%s' does not exist.\n", ConfigFile );
         printf( "Do you want to create it? (Yes/[NO]): ");
@@ -1087,16 +1085,6 @@ int len;
 			error = false;
 		}
 		goto bailout;			
-	}
-
-	// -- Load
-
-	file = fopen( ConfigFile, "rb" );
-
-	if ( file == NULL )
-	{
-		printf( "Error opening '%s' config file\n", ConfigFile );
-		goto bailout;
 	}
 
 	fseek( file, 0, SEEK_END );

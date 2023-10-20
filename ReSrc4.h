@@ -1,15 +1,9 @@
- 
-/*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
 
-// --
+/*
+ * Copyright (c) 2014-2023 by Rene W. Olsen < renewolsen @ gmail . com >
+ * All rights reserved.
+ *
+ */
 
 #ifndef RESRC4_MAIN_H
 #define RESRC4_MAIN_H 1
@@ -22,14 +16,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <unistd.h>
 
 // --
 
-#define DATE				"18-Oct-2023"
+#define DATE				"20-Oct-2023"
 #define YEAR				2023
 #define VERSION				2
-#define REVISION			1
+#define REVISION			2
 
 // --
 
@@ -99,7 +92,7 @@ enum LabelPtrType
 
 enum MemoryType
 {
-    MT_Unset = 5,	// Must not be Zero
+    MT_Unset = 5,		// Must not be Zero
     MT_Data = 13,
 	MT_Code = 17,
 };
@@ -152,7 +145,7 @@ struct Header
 struct M68kRegister
 {
 	int32_t					mr_Type;
-	int32_t					mr_Number;			// Temp debug
+//	int32_t					mr_Number;			// Temp debug
 	int32_t					mr_Address;
 	struct HunkLabel *		mr_LabelNode;
 };

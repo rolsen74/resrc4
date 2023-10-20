@@ -1,12 +1,8 @@
- 
+
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 by Rene W. Olsen < renewolsen @ gmail . com >
+ * All rights reserved.
  *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 // --
@@ -251,6 +247,8 @@ struct myArgs myOptions[] =
 
 static void myPrintUsage( void )
 {
+	printf( "\n" );
+	printf( "ReSrc4 v%d.%d (%s)\n", VERSION, REVISION, DATE );
 	printf( "\n" );
 	printf( "Usage: ReSrc4 [options]\n" );
 	printf( "\n" );

@@ -155,7 +155,7 @@ LDFLAGS		+= -mcrt=$(CRT)
 
 # --
 
-else ifeq ($(detected_os),Linux)
+else # ifeq ($(detected_os),Linux)
 
 CrossCompile := 0
 
