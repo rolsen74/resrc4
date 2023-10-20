@@ -385,7 +385,7 @@ int pos;
 	&&	( buf[pos] != 10 )
 	&&	( buf[pos] != ';' ))
 	{
-		printf( "Line %d : LabelName : Error junk at end of line\n", linenr );
+		printf( "Line %d : LabelType : Error junk at end of line\n", linenr );
 		goto bailout;
 	}
 
@@ -405,7 +405,7 @@ int32_t adr;
 int err;
 int pos;
 
-printf( "Label Name\n" );
+// printf( "Label Name\n" );
 
 	err = true;
 	pos = 10;
@@ -421,7 +421,7 @@ printf( "Label Name\n" );
 		goto bailout;
 	}
 
-printf( "adr %08x\n", adr );
+// printf( "adr %08x\n", adr );
 
 	hl = Hunk_AddLabel( hs, adr, LT_Unknown );
 
@@ -437,7 +437,7 @@ printf( "adr %08x\n", adr );
 		goto bailout;
 	}
 
-printf( "str %s\n", hl->hl_Label_Name );
+// printf( "str %s\n", hl->hl_Label_Name );
 
 	while(( buf[pos] == 9 ) || ( buf[pos] == 32 ))
 	{
@@ -456,7 +456,7 @@ printf( "str %s\n", hl->hl_Label_Name );
 
 bailout:
 
-printf( "done\n" );
+// printf( "done\n" );
 
 	return( err );
 }
