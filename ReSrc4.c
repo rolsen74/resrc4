@@ -23,9 +23,39 @@ int						LabTabs			= 1;
 int						OpcodeTabs		= 2;
 int						ArgTabs			= 5;
 
-char *					LabNames		= "L";
-char *					ExtNames		= "Ext_";
-char *					SecNames		= "Sec_";
+char *					LabNames		= "L";		// Label names
+char *					ExtNames		= "Ext_";	// External Label names
+char *					SecNames		= "Sec_";	// Section Label names
+
+// --
+
+char *myStrdup( char *string ) 
+{
+char *str;
+int len;
+
+	str = NULL;
+
+	if ( string == NULL ) 
+	{
+		goto bailout;
+	}
+
+	len = strlen( string );
+
+	str = malloc( len + 1 );
+
+	if ( str == NULL ) 
+	{
+		goto bailout;
+	}
+
+	strcpy( str, string );
+
+bailout:
+
+	return( str );
+}
 
 // --
 
@@ -148,7 +178,7 @@ int error;
 		free( ConfigFile );
 	}
 
-	ConfigFile = strdup( arg );
+	ConfigFile = myStrdup( arg );
 
 	if ( ConfigFile == NULL )
 	{
@@ -176,7 +206,7 @@ int error;
 		free( InputFile );
 	}
 
-	InputFile = strdup( arg );
+	InputFile = myStrdup( arg );
 
 	if ( InputFile == NULL )
 	{
@@ -204,7 +234,7 @@ int error;
 		free( OutputFile );
 	}
 
-	OutputFile = strdup( arg );
+	OutputFile = myStrdup( arg );
 
 	if ( OutputFile == NULL )
 	{
@@ -262,14 +292,6 @@ static void myPrintUsage( void )
 	printf( "      --labtabs        Number of Tabs after labels (Default 1)\n" );
 	printf( "      --opcodetabs     Number of Tabs after opcodes (Default 2)\n" );
 	printf( "      --argtabs        Number of Tabs after arguments (Default 5)\n" );
-
-	#if 0
-	printf( "  -v, --verbose        Enable verbose mode\n" );
-	printf( "  -h, --help           Display this help message\n" );
-	printf( "  -c, --config <file>  Specify the config file\n" );
-	printf( "  -p, --port <port>    Specify the network port to listen on\n");	
-	#endif
-
 	printf( "\n" );
 }
 

@@ -1035,7 +1035,7 @@ int len;
 		if ((( len > 4 ) && ( ! strncasecmp( & InputFile[ len - 4 ], ".exe", 4 )))
 		||  (( len > 4 ) && ( ! strncasecmp( & InputFile[ len - 4 ], ".bin", 4 ))))
 		{
-			ConfigFile = strdup( InputFile );
+			ConfigFile = myStrdup( InputFile );
 
 			if ( ConfigFile == NULL )
 			{

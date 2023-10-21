@@ -358,6 +358,9 @@ void *				myGetTail(				struct Header *h );
 void *				myGetNext(				void *cur );
 void *				myGetPrev(				void *cur );
 
+// -- ReSrc4
+char *				myStrdup(				char *string );
+
 // -- SaveSource
 int					SaveSource(				struct HunkStruct *hs, char *filename );
 int					SaveWriteString(		char *buffer, size_t length );
