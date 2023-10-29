@@ -23,15 +23,15 @@ There is also some JumpTable detection. Please note that this code is a little r
 
 ### Modes
 
-PC  = Program Counter
-d8  = Signed 8bit value
-d16 = Signed 16bit value
-d32 = Signed 32bit value
-An  = Ax Register
-Dn  = Dx Register
-Xn  = Ax/Dx Register.[W/L] with Scale
-xxx = Address
-data= 32bit Data value
+PC  = Program Counter<br>
+d8  = Signed 8bit value<br>
+d16 = Signed 16bit value<br>
+d32 = Signed 32bit value<br>
+An  = Ax Register<br>
+Dn  = Dx Register<br>
+Xn  = Ax/Dx Register.[W/L] with Scale<br>
+xxx = Address<br>
+data= 32bit Data value<br>
 
 ### Currently Supported
 
