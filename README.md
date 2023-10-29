@@ -2,7 +2,7 @@
 
 Portable Amiga 68k Hunk File Disassembler.
 
-This disassembler was tested against the Amiga game Civilization (ECS).
+This disassembler was tested against the Amiga game Civilization (ECS) and Lightwave for FPU support.
 
 The ReSrc4 program does not handle most of the newer 020+ opcode argument modes. It mainly implements only opcodes that were needed for Civ.
 
@@ -17,7 +17,8 @@ It attempts to convert library calls into a more readable format. For example:
 
 ### Jump Table Recognition
 
-There is also some JumpTable detection. Please note that this code is a little rough and may need a good rewrite, which is on the to-do list. You will likely need to create a config file and use the Relative16 option.
+There is also some JumpTable detection but its far from perfect. 
+You will likely need to create a config file and use the Relative16 option.
 
 ## Effective Address Modes
 
@@ -46,7 +47,7 @@ data = 32bit Data value<br>
 - ( d8 , PC , Xn )
 - ( xxx ).w
 - ( xxx ).l
-- `#` <data>
+- `# <data>`
 
 ### Missing
 
@@ -65,7 +66,7 @@ Please be aware of the following:
 - The movec opcode is missing.
 - There are no MMU opcode handling.
 
-** Integer Opcodes (Currently Supported) **
+**Integer Opcodes (Currently Supported)**
 
 - Abcd
 - Add
@@ -191,7 +192,7 @@ Please be aware of the following:
 - Unlk
 - Unpk
 
-** FPU Opcodes (Currently Supported) **
+**FPU Opcodes (Currently Supported)**
 
 - FAbs
 - FACos
