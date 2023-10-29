@@ -23,15 +23,15 @@ There is also some JumpTable detection. Please note that this code is a little r
 
 ### Modes
 
-PC  = Program Counter<br>
-d8  = Signed 8bit value<br>
+PC = Program Counter<br>
+d8 = Signed 8bit value<br>
 d16 = Signed 16bit value<br>
 d32 = Signed 32bit value<br>
-An  = Ax Register<br>
-Dn  = Dx Register<br>
-Xn  = Ax/Dx Register.[W/L] with Scale<br>
+An = Ax Register<br>
+Dn = Dx Register<br>
+Xn = Ax/Dx Register.[W/L] with Scale<br>
 xxx = Address<br>
-data= 32bit Data value<br>
+data = 32bit Data value<br>
 
 ### Currently Supported
 
@@ -46,7 +46,7 @@ data= 32bit Data value<br>
 - ( d8 , PC , Xn )
 - ( xxx ).w
 - ( xxx ).l
-- # <data>
+- `#` <data>
 
 ### Missing
 
@@ -65,7 +65,7 @@ Please be aware of the following:
 - The movec opcode is missing.
 - There are no MMU opcode handling.
 
-Integer Opcodes (Currently Supported)
+** Integer Opcodes (Currently Supported) **
 
 - Abcd
 - Add
@@ -191,7 +191,7 @@ Integer Opcodes (Currently Supported)
 - Unlk
 - Unpk
 
- FPU Opcodes (Currently Supported)
+** FPU Opcodes (Currently Supported) **
 
 - FAbs
 - FACos
