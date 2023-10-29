@@ -1225,7 +1225,7 @@ int cnt;
 
 	if ( buffer == NULL )
 	{
-		printf( "%s:%04d: Error allocating memory (%ld Bytes)\n", __FILE__, __LINE__, size );
+		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (int) size );
 		goto bailout;
 	}
 
@@ -1239,7 +1239,7 @@ int cnt;
 		goto bailout;
 	}
 
-	printf( "Loaded %s (%ld Bytes)\n", filename, size );
+	printf( "Loaded %s (%d Bytes)\n", filename, (int) size );
 
 	// --
 

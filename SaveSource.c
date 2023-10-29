@@ -518,7 +518,7 @@ bailout:
 		{
 			fclose( SaveHandle );
 
-			printf( "Saved %s (%ld bytes)\n", filename, SavedBytes );
+			printf( "Saved %s (%d bytes)\n", filename, (int) SavedBytes );
 		}
 
 		SaveHandle = NULL;
