@@ -1,8 +1,12 @@
 
 /*
- * Copyright (c) 2014-2023 by Rene W. Olsen < renewolsen @ gmail . com >
- * All rights reserved.
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
+ * This software is released under the GNU General Public License, version 3.
+ * For the full text of the license, please visit:
+ * https://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 // --
@@ -351,6 +355,7 @@ bailout:
 
 static int myTraceBrance( struct HunkStruct *hs, struct BranceNode *bn, struct M68kStruct *ms )
 {
+struct HunkLabel *hl;
 struct HunkNode *hn;
 uint32_t size;
 uint32_t pos;
@@ -367,6 +372,18 @@ int error;
 
 	ms->ms_HunkStruct = hs;
 	ms->ms_HunkNode = hn;
+
+	memcpy( & ms->ms_Registers[0], & bn->bn_Registers[0], sizeof( struct M68kRegister ) * 16 );
+
+	if ( type[ pos ] == MT_Unset )
+	{
+		hl = Hunk_FindLabel( ms->ms_HunkStruct, hn->hn_MemoryAdr + pos );
+
+		if ( hl )
+		{
+			memcpy( & hl->hl_Registers[0], & bn->bn_Registers[0], sizeof( struct M68kRegister ) * 16 );
+		}
+	}
 
 	while( true )
 	{
@@ -469,21 +486,17 @@ int error;
 			}
 		}
 
-		if (( ms->ms_ClearRegs == CR_All )
-		||	( ms->ms_LastOpcode == true ))
+		if ( ms->ms_ClearRegMask )
 		{
 			for( int cnt=0 ; cnt<16 ; cnt++ )
 			{
-				ms->ms_Registers[cnt].mr_Type = RT_Unknown;
+				if ( ms->ms_ClearRegMask & ( 1 << cnt ))
+				{
+					ms->ms_Registers[cnt].mr_Type = RT_Unknown;
+				}
 			}
-		}
 
-		if ( ms->ms_ClearRegs == CR_Function )
-		{
-			ms->ms_Registers[REG_D0].mr_Type = RT_Unknown;
-			ms->ms_Registers[REG_D1].mr_Type = RT_Unknown;
-			ms->ms_Registers[REG_A0].mr_Type = RT_Unknown;
-			ms->ms_Registers[REG_A1].mr_Type = RT_Unknown;
+			ms->ms_ClearRegMask = 0;
 		}
 
 		if ( ms->ms_LastOpcode == true )
@@ -513,9 +526,14 @@ int err;
 
 	error = true;
 
+	// --
+
+	hs->hs_PassNr = 1;
+
+	// --
+
 	memset( & ms, 0, sizeof( ms ));
 
-	ms.ms_TraceMode = true;
 	ms.ms_Buf_Argument = argbuf;
 
 	Log_Clear();

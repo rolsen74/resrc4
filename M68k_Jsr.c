@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -30,6 +30,18 @@ struct HunkRef *isRef;
 	ms->ms_CurRegister = & ms->ms_JmpRegister;
 	ms->ms_LibCall = 1;
 
+	if (( ms->ms_ArgEMode == 5 ) && ( ms->ms_ArgEReg == 6 ))
+	{
+		// (d16,An)
+		// Clear D0-D1 and A0-A1
+		ms->ms_ClearRegMask = ( 1 << REG_D0 ) | ( 1 << REG_D1 ) | ( 1 << REG_A0 ) | ( 1 << REG_A1 );
+	}
+	else
+	{
+		// Clear all Regs
+		ms->ms_ClearRegMask = -1;
+	}
+
 	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
 
 	if ( M68k_EffectiveAddress( ms, isRef, LT_Code ))
@@ -38,16 +50,6 @@ struct HunkRef *isRef;
 	}
 
 	// --
-
-	if (( ms->ms_ArgEMode == 5 ) && ( ms->ms_ArgEReg == 6 ))
-	{
-		// (d16,An)
-		ms->ms_ClearRegs = CR_Function;
-	}
-	else
-	{
-		ms->ms_ClearRegs = CR_All;
-	}
 
 	ms->ms_OpcodeSize = ms->ms_ArgSize;
 }

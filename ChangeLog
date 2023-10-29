@@ -15,3 +15,17 @@ ReSrc4 v2.2 ( 20-Oct-2023 )
  should be fully standard c library.
 
 - Makefile will default to Linux envirement compile.
+
+
+ReSrc4 v2.3 ( 29-Oct-2023 )
+
+- Added support for many FPU opcodes and a few more Integer opcodes.
+
+- Added support for many standard library calls.
+
+- Fixed a tracing error where registers was not cleared after jsr/bsr calls.
+
+- I had a test file where 3 labels had the same name but in diffrent
+  objects/section. So now there are a label check for names collision.
+
+- Rewrote the Jump Table detector.

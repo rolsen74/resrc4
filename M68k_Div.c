@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -97,16 +97,27 @@ void Cmd_DIVS_L( struct M68kStruct *ms )
 {
 struct HunkRef *isRef;
 uint32_t pos;
+int EMode;
+int EReg;
+int Size;
+int Dq;
+int Dr;
 
-	ms->ms_Str_Opcode = "Divs.l";
+	EMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	EReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+	Dq		= ( ms->ms_Opcode & 0x00007000 ) >> 12;
+	Size	= ( ms->ms_Opcode & 0x00000400 );
+	Dr		= ( ms->ms_Opcode & 0x00000007 );
+
+	// --
 
 	ms->ms_DecMode	= 1;
 	ms->ms_ArgSize	= 4;
 	ms->ms_ArgType	= OS_Long;
-	ms->ms_ArgEMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
-	ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+	ms->ms_ArgEMode	= EMode;
+	ms->ms_ArgEReg	= EReg;
 
-	ms->ms_CurRegister = & ms->ms_DstRegister;
+	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
 	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
 
@@ -115,39 +126,70 @@ uint32_t pos;
 		isRef->hr_Used = true;
 	}
 
-	if ( ms->ms_Opcode & 0x00000400 )
+	ms->ms_OpcodeSize = ms->ms_ArgSize;
+
+	// --
+
+	if ( Size )
 	{
-		// Divsl.l Dx,Dx:Dq
+		ms->ms_Str_Opcode = "Divs.l";
 
-		ms->ms_ArgEMode	= 0x00; // Dx Reg
-		ms->ms_ArgEReg	= ms->ms_Opcode & 0x00000007;
+		if ( Dr == Dq )
+		{
+			// Not seen
 
-		M68k_EffectiveAddress( ms, NULL, 0 );
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dq;
 
-		ms->ms_CurRegister->mr_Type = RT_Unknown;
-		pos = strlen( ms->ms_Buf_Argument );
+			M68k_EffectiveAddress( ms, NULL, 0 );
+		}
+		else
+		{
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dr;
 
-		ms->ms_ArgEMode	= 0x00; // Dx Reg
-		ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 12;
+			M68k_EffectiveAddress( ms, NULL, 0 );
 
-		M68k_EffectiveAddress( ms, NULL, 0 );
+			pos = strlen( ms->ms_Buf_Argument );
 
-		ms->ms_CurRegister->mr_Type = RT_Unknown;
-		ms->ms_Buf_Argument[ pos ] = ':';
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dq;
+
+			M68k_EffectiveAddress( ms, NULL, 0 );
+
+			ms->ms_Buf_Argument[ pos ] = ':';
+		}
 	}
 	else
 	{
-		// Divsl.l Dx,Dq
+		if ( Dr == Dq )
+		{
+			ms->ms_Str_Opcode = "Divs.l";
 
-		ms->ms_ArgEMode	= 0x00; // Dx Reg
-		ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00007000 ) >> 12;
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dq;
 
-		M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms, NULL, 0 );
+		}
+		else
+		{
+			ms->ms_Str_Opcode = "Divsl.l";
 
-		ms->ms_CurRegister->mr_Type = RT_Unknown;
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dr;
+
+			M68k_EffectiveAddress( ms, NULL, 0 );
+
+			pos = strlen( ms->ms_Buf_Argument );
+
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dq;
+
+			M68k_EffectiveAddress( ms, NULL, 0 );
+
+			ms->ms_Buf_Argument[ pos ] = ':';
+		}
 	}
-
-	ms->ms_OpcodeSize = ms->ms_ArgSize;
 }
 
 // --
@@ -156,16 +198,27 @@ void Cmd_DIVU_L( struct M68kStruct *ms )
 {
 struct HunkRef *isRef;
 uint32_t pos;
+int EMode;
+int EReg;
+int Size;
+int Dq;
+int Dr;
 
-	ms->ms_Str_Opcode = "Divu.l";
+	EMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	EReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+	Dq		= ( ms->ms_Opcode & 0x00007000 ) >> 12;
+	Size	= ( ms->ms_Opcode & 0x00000400 );
+	Dr		= ( ms->ms_Opcode & 0x00000007 );
+
+	// --
 
 	ms->ms_DecMode	= 2;
 	ms->ms_ArgSize	= 4;
 	ms->ms_ArgType	= OS_Long;
-	ms->ms_ArgEMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
-	ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+	ms->ms_ArgEMode	= EMode;
+	ms->ms_ArgEReg	= EReg;
 
-	ms->ms_CurRegister = & ms->ms_DstRegister;
+	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
 	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
 
@@ -174,40 +227,70 @@ uint32_t pos;
 		isRef->hr_Used = true;
 	}
 
-	if ( ms->ms_Opcode & 0x00000400 )
+	ms->ms_OpcodeSize = ms->ms_ArgSize;
+
+	// --
+
+	if ( Size )
 	{
-		// Divs.l Dx,Dr:Dq
+		ms->ms_Str_Opcode = "Divu.l";
 
-		ms->ms_ArgEMode	= 0x00; // Dx Reg
-		ms->ms_ArgEReg	= ms->ms_Opcode & 0x00000007;
+		if ( Dr == Dq )
+		{
+			// Not seen
 
-		M68k_EffectiveAddress( ms, NULL, 0 );
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dq;
 
-		ms->ms_CurRegister->mr_Type = RT_Unknown;
+			M68k_EffectiveAddress( ms, NULL, 0 );
+		}
+		else
+		{
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dr;
 
-		pos = strlen( ms->ms_Buf_Argument );
+			M68k_EffectiveAddress( ms, NULL, 0 );
 
-		ms->ms_ArgEMode	= 0x00; // Dx Reg
-		ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 12;
+			pos = strlen( ms->ms_Buf_Argument );
 
-		M68k_EffectiveAddress( ms, NULL, 0 );
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dq;
 
-		ms->ms_CurRegister->mr_Type = RT_Unknown;
-		ms->ms_Buf_Argument[ pos ] = ':';
+			M68k_EffectiveAddress( ms, NULL, 0 );
+
+			ms->ms_Buf_Argument[ pos ] = ':';
+		}
 	}
 	else
 	{
-		// Divs.l Dx,Dq
+		if ( Dr == Dq )
+		{
+			ms->ms_Str_Opcode = "Divu.l";
 
-		ms->ms_ArgEMode	= 0x00;
-		ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00007000 ) >> 12;
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dq;
 
-		M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms, NULL, 0 );
+		}
+		else
+		{
+			ms->ms_Str_Opcode = "Divul.l";
 
-		ms->ms_CurRegister->mr_Type = RT_Unknown;
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dr;
+
+			M68k_EffectiveAddress( ms, NULL, 0 );
+
+			pos = strlen( ms->ms_Buf_Argument );
+
+			ms->ms_ArgEMode	= 0x00; // Dx Reg
+			ms->ms_ArgEReg	= Dq;
+
+			M68k_EffectiveAddress( ms, NULL, 0 );
+
+			ms->ms_Buf_Argument[ pos ] = ':';
+		}
 	}
-
-	ms->ms_OpcodeSize = ms->ms_ArgSize;
 }
 
 // --

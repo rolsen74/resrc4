@@ -1,18 +1,97 @@
- 
+
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 by Rene W. Olsen < renewolsen @ gmail . com >
+ * All rights reserved.
  *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 // --
 
 #include "ReSrc4.h"
 #include "MD5.h"
+
+// --
+
+static int DupCount = 0;
+
+static void SetLabelName( struct HunkStruct *hs, struct HunkLabel *hl, int32_t pos, int max )
+{
+struct HunkLabel *cur;
+struct HunkNode *hn;
+char name[MAX_LabelName+16];
+uint8_t *buf;
+int cnt;
+int len;
+int c;
+
+	// -- Get Name and add NUL
+
+	buf = hs->hs_FileBuffer;
+
+	for( cnt=0 ; cnt<max ; cnt++ )
+	{
+		c = buf[pos+cnt];
+
+		if ( c == 0 )
+		{
+			break;
+		}
+
+		name[cnt] = c;
+	}
+
+	name[cnt] = 0;
+
+	// -- Make sure the name is Unique
+
+	len = strlen( name ) + 1;
+
+	for( cnt=0 ; cnt<hs->hs_HunkArraySize ; cnt++ )
+	{
+		hn = hs->hs_HunkArray[cnt].hi_HunkNode;
+
+		cur = myGetHead( & hn->hn_Labels );
+
+		while( cur )
+		{
+			if (( cur->hl_Label_Name[0] ) && ( ! memcmp( cur->hl_Label_Name, name, len )))
+			{
+				break;
+			}
+			else
+			{
+				cur = myGetNext( cur );
+			}
+		}
+
+		if ( cur )
+		{
+			break;
+		}
+	}
+
+	// -- Dup?
+
+	if ( cur )
+	{
+		sprintf( & name[len-1], "__%X", ++DupCount );
+	}
+
+	// -- Set Name if possible
+
+	len = strlen( name );
+
+	if ( len < MAX_LabelName )
+	{
+		memcpy( hl->hl_Label_Name, name, len+1 );
+	}
+	else
+	{
+		printf( "Skipping label name: %s\n", name );
+	}
+
+	// --
+}
 
 // --
 
@@ -648,8 +727,6 @@ uint32_t cnt;
 int32_t offset;
 int hunknum;
 int error;
-int i;
-int c;
 
 	// --
 
@@ -959,6 +1036,13 @@ int c;
 				break;
 			}
 
+			case HUNK_DEBUG:
+			{
+				val32 = PEEK_U32(1);
+				ps.pos += val32+2;
+				break;
+			}
+
 			case HUNK_SYMBOL:
 			{
 				if ( current == NULL )
@@ -991,28 +1075,7 @@ int c;
 							goto bailout;
 						}
 
-						i = 0;
-
-						while( true )
-						{
-							if ( val32 * 4 <= (uint32_t) i )
-							{
-								break;
-							}
-
-							c = hs->hs_FileBuffer[ ( ps.pos * 4 ) + i ];
-
-							if ( c == 0 )
-							{
-								break;
-							}
-
-							hl->hl_Label_Name[i] = c;
-
-							i++;
-						}
-
-						hl->hl_Label_Name[i] = 0;
+						SetLabelName( hs, hl, ps.pos*4, val32*4 );
 					}
 
 					ps.pos += val32;	// Skip Name
@@ -1237,43 +1300,22 @@ int i;
 
 {
 struct HunkLabel *hl;
-struct HunkNode *hn;
-struct HunkRef *hr;
-int cnt;
-int ii;
 int lcnt;
-int rcnt;
+int ii;
 
-	for( cnt=0 ; cnt<hs->hs_HunkArraySize ; cnt++ )
+	for( ii=0 ; ii<MAX_LABHASH ; ii++ )
 	{
-		printf( "\n# Hunk %d\n\n", cnt );
+		lcnt = 0;
 
-		hn = hs->hs_HunkArray[cnt].hi_HunkNode;
+		hl = hs->hs_LabelHash[ii];
 
-		for( ii=0 ; ii<MAX_HASH ; ii++ )
+		while( hl )
 		{
-			lcnt = 0;
-
-			hl = hn->hn_Labels2[ii];
-
-			while( hl )
-			{
-				lcnt++;
-				hl = hl->hl_HashPtr;
-			}
-
-			rcnt = 0;
-
-			hr = hn->hn_Refs2[ii];
-
-			while( hr )
-			{
-				rcnt++;
-				hr = hr->hr_HashPtr;
-			}
-
-			printf( "%3d : Labels %d, Refs %d\n", ii, lcnt, rcnt );
+			lcnt++;
+			hl = hl->hl_HashPtr;
 		}
+
+		printf( "%3d : Labels %d\n", ii, lcnt );
 	}
 }
 #endif

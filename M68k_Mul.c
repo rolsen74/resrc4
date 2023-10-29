@@ -1,6 +1,6 @@
  
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -84,6 +84,7 @@ int opmode;
 
 	ms->ms_CurRegister->mr_Type = RT_Unknown;
 	ms->ms_OpcodeSize = ms->ms_ArgSize;
+
 bailout:
 
 	return;

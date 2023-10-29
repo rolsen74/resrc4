@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -12,6 +12,208 @@
 // --
 
 #include "ReSrc4.h"
+
+// --
+
+//#define DOPRINT	1
+
+#if 0
+
+	// AsmPro output
+
+	// 6x = Reg x
+	// 73 = PC
+
+	Adr 00030b96, EA 65, BS 0, IS 0, IIS 0, BD 2 - (a5,d0.w*4,$0086.w)
+
+	Adr 00000000, EA 73, BS 0, IS 1, IIS 0, BD 3 - (pc,d0.w*4,$00000086.l)
+
+	Adr 000bf816, EA 67, BS 0, IS 1, IIS 2, BD 2 - ([$0010.w,a7],$0080.w)
+
+	Adr 000c0740, EA 67, BS 0, IS 1, IIS 1, BD 2 - ([$0024.w,a7])
+
+#endif
+
+
+
+// --
+// -- Mode 60 - Full Extension Word Format
+
+inline static void MODE_60_Full_0( struct M68kStruct *ms, char *outstr )
+{
+uint8_t *mem;
+int SCALE;
+int mode;
+int REG;
+int pos;
+int IIS;
+int AD;
+int WL;
+int BS;
+int IS;
+int BD;
+
+	// Full Extension Word Format
+
+	// [A/D] [REG] [W/L] [Scale] [1]  [BS] [IS] [BD SIZE]  [0] [I/IS]
+	//   1     3     1      2     1    1    1       2       1    3
+	// [  4 bit  ] [     4 bit     ]  [      4 bit      ]  [  4bit  ]
+
+	mem = ms->ms_MemoryBuf;
+	pos = ms->ms_ArgSize;
+
+	AD		= ( mem[ pos + 0 ] & 0x80 );
+	REG		= ( mem[ pos + 0 ] & 0x70 ) >> 4;
+	WL		= ( mem[ pos + 0 ] & 0x08 );
+	SCALE	= ( mem[ pos + 0 ] & 0x06 ) >> 1;
+	BS		= ( mem[ pos + 1 ] & 0x80 );
+	IS		= ( mem[ pos + 1 ] & 0x40 );
+	BD		= ( mem[ pos + 1 ] & 0x30 ) >> 4;
+	IIS		= ( mem[ pos + 1 ] & 0x03 );
+
+	mode	 = BD;
+	mode	|= ( IIS ) << 4;
+	mode	|= ( IS ) ? 0x0100 : 0x0000 ;
+	mode	|= ( BS ) ? 0x1000 : 0x0000 ;
+
+	switch( mode )
+	{
+		case 0x0002: // BS 0, IS 0, IIS 0, BD 2 - ($0086.w,a5,d0.w*4) ??
+		{
+			int16_t val = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+
+			sprintf( outstr, "(%d.w,%s,%s%s%s)", 
+				val,
+				Ax_RegNames[ ms->ms_ArgEReg ],
+				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
+				( WL ) ? ".l" : ".w",
+				scale_Names[ SCALE ]
+			);
+
+			ms->ms_ArgSize += 4;
+			break;
+		}
+
+		case 0x0003: // BS 0, IS 0, IIS 0, BD 3 - ($0086.l,a5,d0.w*4) ??
+		{
+			int32_t val = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] | mem[ pos + 4 ] | mem[ pos + 5 ] );
+
+			sprintf( outstr, "(%d.l,%s,%s%s%s)", 
+				val,
+				Ax_RegNames[ ms->ms_ArgEReg ],
+				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
+				( WL ) ? ".l" : ".w",
+				scale_Names[ SCALE ]
+			);
+
+			ms->ms_ArgSize += 6;
+			break;
+		}
+
+		default:
+		{
+			#ifdef DOPRINT
+			printf( "\n" );
+			printf( "%s:%04d: EA ........ : 60\n", __FILE__, __LINE__ );
+			printf( "%s:%04d: MemoryAdr . : %08x\n", __FILE__, __LINE__,  ms->ms_MemoryAdr );
+			printf( "%s:%04d: AD ........ : %s\n", __FILE__, __LINE__, (AD)?"Ax":"Dx" );
+			printf( "%s:%04d: REG ....... : %d : %s\n", __FILE__, __LINE__, REG,( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ] );
+			printf( "%s:%04d: WL ........ : %s\n", __FILE__, __LINE__, (WL)?".l":".w" );
+			printf( "%s:%04d: SCALE ..... : %d : %s\n", __FILE__, __LINE__, SCALE, scale_Names[SCALE] );
+			printf( "%s:%04d: BS ........ : %s\n", __FILE__, __LINE__, (BS)?"Yes":"No" );
+			printf( "%s:%04d: IS ........ : %s\n", __FILE__, __LINE__, (IS)?"Yes":"No" );
+			printf( "%s:%04d: BD ........ : %d\n", __FILE__, __LINE__, BD );
+			printf( "%s:%04d: IIS ....... : %d\n", __FILE__, __LINE__, IIS );
+			printf( "%s:%04d: Mode ...... : 0x%04x\n", __FILE__, __LINE__, mode );
+			#endif
+			ms->ms_DecodeStatus = MSTAT_Error;
+			break;
+		}
+	}
+}
+
+// --
+// -- Mode 73 - Full Extension Word Format
+
+inline static void MODE_73_Full_0( struct M68kStruct *ms, char *outstr )
+{
+uint8_t *mem;
+//int SCALE;
+int mode;
+//int REG;
+int pos;
+int IIS;
+//int AD;
+//int WL;
+int BS;
+int IS;
+int BD;
+
+	// Full Extension Word Format
+
+	// [A/D] [REG] [W/L] [Scale] [1]  [BS] [IS] [BD SIZE]  [0] [I/IS]
+	//   1     3     1      2     1    1    1       2       1    3
+	// [  4 bit  ] [     4 bit     ]  [      4 bit      ]  [  4bit  ]
+
+	mem = ms->ms_MemoryBuf;
+	pos = ms->ms_ArgSize;
+
+//	AD		= ( mem[ pos + 0 ] & 0x80 );
+//	REG		= ( mem[ pos + 0 ] & 0x70 ) >> 4;
+//	WL		= ( mem[ pos + 0 ] & 0x08 );
+//	SCALE	= ( mem[ pos + 0 ] & 0x06 ) >> 1;
+	BS		= ( mem[ pos + 1 ] & 0x80 );
+	IS		= ( mem[ pos + 1 ] & 0x40 );
+	BD		= ( mem[ pos + 1 ] & 0x30 ) >> 4;
+	IIS		= ( mem[ pos + 1 ] & 0x03 );
+
+	mode	 = BD;
+	mode	|= ( IIS ) << 4;
+	mode	|= ( IS ) ? 0x0100 : 0x0000 ;
+	mode	|= ( BS ) ? 0x1000 : 0x0000 ;
+
+	switch( mode )
+	{
+		#if 0
+		case 0x0103: // BS 0, IS 1, IIS 0, BD 3 - (pc,d0.w*4,$00000086.l) ??
+		{
+			int32_t val = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+
+			sprintf( outstr, "(PC,%s%s%s,%d.l)", 
+				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
+				( WL ) ? ".l" : ".w",
+				scale_Names[ SCALE ],
+				val
+			);
+
+			ms->ms_ArgSize += 6;
+			break;
+		}
+		#endif
+
+		default:
+		{
+			#ifdef DOPRINT
+			printf( "\n" );
+			printf( "%s:%04d: EA ........ : 73\n", __FILE__, __LINE__ );
+			printf( "%s:%04d: MemoryAdr . : %08x\n", __FILE__, __LINE__,  ms->ms_MemoryAdr );
+			printf( "%s:%04d: AD ........ : %s\n", __FILE__, __LINE__, (AD)?"Ax":"Dx" );
+			printf( "%s:%04d: REG ....... : %d : %s\n", __FILE__, __LINE__, REG,( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ] );
+			printf( "%s:%04d: WL ........ : %s\n", __FILE__, __LINE__, (WL)?".l":".w" );
+			printf( "%s:%04d: SCALE ..... : %d : %s\n", __FILE__, __LINE__, SCALE, scale_Names[SCALE] );
+			printf( "%s:%04d: BS ........ : %s\n", __FILE__, __LINE__, (BS)?"Yes":"No" );
+			printf( "%s:%04d: IS ........ : %s\n", __FILE__, __LINE__, (IS)?"Yes":"No" );
+			printf( "%s:%04d: BD ........ : %d\n", __FILE__, __LINE__, BD );
+			printf( "%s:%04d: IIS ....... : %d\n", __FILE__, __LINE__, IIS );
+			printf( "%s:%04d: Mode ...... : 0x%04x\n", __FILE__, __LINE__, mode );
+			#endif
+			ms->ms_DecodeStatus = MSTAT_Error;
+			break;
+		}
+	}
+}
+
+// --
 
 // --
 // -- Mode 00 - Clr Dx
@@ -144,321 +346,12 @@ int WL;
 }
 
 // --
-// -- Mode 60 - Full Extension Word Format
-
-inline static void MODE_60_Full_0( struct M68kStruct *ms, char *outstr )
-{
-uint8_t *mem;
-int ismode;
-int SCALE;
-int REG;
-int pos;
-int AD;
-int WL;
-int BS;
-int IS;
-int BD;
-int IIS;
-
-	// Full Extension Word Format
-
-	// [A/D] [REG] [W/L] [Scale] [1]  [BS] [IS] [BD SIZE]  [0] [I/IS]
-	//   1     3     1      2     1    1    1       2       1    3
-	// [  4 bit  ] [     4 bit     ]  [      4 bit      ]  [  4bit  ]
-
-	mem = ms->ms_MemoryBuf;
-	pos = ms->ms_ArgSize;
-
-	AD		= ( mem[ pos + 0 ] & 0x80 );
-	REG		= ( mem[ pos + 0 ] & 0x70 ) >> 4;
-	WL		= ( mem[ pos + 0 ] & 0x08 );
-	SCALE	= ( mem[ pos + 0 ] & 0x06 ) >> 1;
-	BS		= ( mem[ pos + 1 ] & 0x80 );
-	IS		= ( mem[ pos + 1 ] & 0x40 );
-	BD		= ( mem[ pos + 1 ] & 0x30 ) >> 4;
-	IIS		= ( mem[ pos + 1 ] & 0x03 );
-	ismode	= (( IS >> 3 ) || ( IIS ));
-
-#if 0
-	// AsmPro
-	// $3635,$3320,$ff12		Move.w (A5,D3.W*2,$FF12.W),D3
-	// $4275,$3320,$ff12		clr.w (A5,D3.W*2,$FF12.W)
-	// $4275,$3330,$0000,$ff12	clr.w (A5,D3.W*2,$0000FF12.L)
-
-
-M68k__EffectiveAddress.c:0192: MemoryAdr . : 00028742
-M68k__EffectiveAddress.c:0193: Val 1 ..... : 1 -- Check passed
-M68k__EffectiveAddress.c:0194: Val 2 ..... : 0 -- Check paased
-M68k__EffectiveAddress.c:0195: AD ........ : 0 -- Dx Reg
-M68k__EffectiveAddress.c:0196: REG ....... : 3 -- D3 Reg
-M68k__EffectiveAddress.c:0197: WL ........ : 0 -- Signed Word
-M68k__EffectiveAddress.c:0198: SCALE ..... : 1 -- *2
-M68k__EffectiveAddress.c:0199: BS ........ : 0 -- Add Base Reg
-M68k__EffectiveAddress.c:0200: IS ........ : 0 -- Add Index Operand
-M68k__EffectiveAddress.c:0201: BD ........ : 2 -- Word Displacement
-M68k__EffectiveAddress.c:0202: IIS ....... : 0 -- [0][000] No Memory Indirect Action
-
-#endif
-
-	#if 0
-	printf( "\n" );
-	printf( "%s:%04d: MemoryAdr . : %08x\n", __FILE__, __LINE__,  ms->ms_MemoryAdr );
-	printf( "%s:%04d: Val 1 ..... : %d\n", __FILE__, __LINE__, ( mem[ pos + 0 ] & 0x01 ));
-	printf( "%s:%04d: Val 2 ..... : %d\n", __FILE__, __LINE__, ( mem[ pos + 1 ] & 0x80 ));
-	printf( "%s:%04d: AD ........ : %d\n", __FILE__, __LINE__, AD );
-	printf( "%s:%04d: REG ....... : %d\n", __FILE__, __LINE__, REG );
-	printf( "%s:%04d: WL ........ : %d\n", __FILE__, __LINE__, WL );
-	printf( "%s:%04d: SCALE ..... : %d\n", __FILE__, __LINE__, SCALE );
-	printf( "%s:%04d: BS ........ : %d\n", __FILE__, __LINE__, BS );
-	printf( "%s:%04d: IS ........ : %d\n", __FILE__, __LINE__, IS );
-	printf( "%s:%04d: BD ........ : %d\n", __FILE__, __LINE__, BD );
-	printf( "%s:%04d: IIS ....... : %d\n", __FILE__, __LINE__, IIS );
-	printf( "%s:%04d: ismode .... : %d\n", __FILE__, __LINE__, ismode );
-	#endif
-
-	//
-	// (   d8 , An ,   Xn.SIZE * SCALE )
-	// (   bd , An ,   Xn.SIZE * SCALE )
-	// ( [ bd , An ] , Xn.SIZE * SCALE ,   od )
-	// ( [ bd , An ,   Xn.SIZE * SCALE ] , od )
-	//
-	// NOTES:
-	//
-	// 	Dn = Data Register, D0-D7
-	//
-	// 	An = Address Register, A0-A7
-	//
-	// 	d8, d16 = A twos-complement, or sign-extended displacement; added as part of the effective address calculation; size is 8 or 16 bits
-	//   (d16 and d8 are 16- and 8-bit displacements); when omitted, assemblers use a value of zero.
-	//
-	// 	Xn = Address or data register used as an index register; form is Xn.SIZE*SCALE, where SIZE is .W or .L lindicates index
-	//   register size) and SCALE is 1, 2, 4, or 8 lindex register is multiplied by SCALE); use of SIZE and! or SCALE is optional.
-	//
-	// 	bd = A twos-complement base displacement; when present, size can be 16 or 32 bits.,
-	//
-	//	od = Outer displacement, added as part of effective address calculation after any memory indirection; use is optional with a size
-	//   of 16 or 32 bits ..
-	//
-	// 	PC = Program Counter
-	//
-	// 	<data> = Immediate value of 8, 16, or 32 bits
-	//
-	//	( ) = Effective address
-	//
-	//	[ ] = Use as indirect address to long word address.
-	//
-
-	switch( ismode )
-	{
-		case 0: // [0][000]
-		{
-			if ( BD == 2 ) // Word Displacement
-			{
-				int16_t val = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-				sprintf( outstr, "(%s,%s%s%s,%d.w)", 
-					Ax_RegNames[ ms->ms_ArgEReg ],
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					val
-				);
-
-// printf( "BD 2 : outstr: %s\n", outstr );
-
-				ms->ms_ArgSize += 4;
-			}
-//			else if ( BD == 3 )	// Long Displacement
-//			{
-//				
-//			}
-			else
-			{
-				printf( "%s:%04d: Unsupported IIS mode %02x\n", __FILE__, __LINE__, ismode );
-				ms->ms_DecodeStatus = MSTAT_Error;
-			}
-			break;
-		}
-
-		default:
-		{
-			printf( "%s:%04d: Unsupported IIS mode %02x\n", __FILE__, __LINE__, ismode );
-			ms->ms_DecodeStatus = MSTAT_Error;
-			break;
-		}
-	}
-}
-
-// --
-
-//-- MODE_60_Full( ms, outstr );
-//--        {
-//--	        BOOL    DA  = ( mem[ pos + 0 ] & 0x80 ) ? TRUE : FALSE;
-//--	        uint32  REG = ( mem[ pos + 0 ] & 0x70 ) >> 4;
-//--	        BOOL    WL  = ( mem[ pos + 0 ] & 0x08 ) ? TRUE : FALSE;
-//--	        uint32 SCALE= ( mem[ pos + 0 ] & 0x06 ) >> 1;
-//--
-//--	        {
-//--	            // Full Extension Word Format
-//--
-//--	            // [A/D] [REG] [W/L] [Scale] [1]  [BS] [IS] [BD SIZE]  [0] [I/IS]
-//--	            //   1     3     1      2     1    1    1       2       1    3
-//--	            // [  4 bit  ] [     4 bit     ]  [      4 bit      ]  [  4bit  ]
-//--
-//--//		      BOOL    BS  = ( mem[ pos + 1 ] & 0x80 ) ? TRUE : FALSE;
-//--//		      BOOL    IS  = ( mem[ pos + 1 ] & 0x40 ) ? TRUE : FALSE;
-//--		    uint32  SIZE= ( mem[ pos + 1 ] & 0x30 ) >> 4;
-//--//		      uint32  UNK = ( mem[ pos + 1 ] & 0x08 );
-//--		    uint32  IS = (( mem[ pos + 1 ] & 0x07 ) | (( mem[ pos + 1 ] & 0x40 ) >> 4 ));
-//--
-//--	            switch( SIZE )
-//--	            {
-//--		        case 0: // Reserved
-//--		        default:
-//--		        {
-//--		            ms->ms_Error = TRUE;
-//--		            break;
-//--		        }
-//--
-//--		        case 1: // Null Displacement
-//--		        {
-//--			    switch( IS )
-//--			    {
-//--
-//--
-//--
-//--
-//--			        default:
-//--			        {
-//--				    #ifdef DEBUG
-//--				    printf( "Null Displacement : Uninplemented mode %02lx at %p\n", IS, ms->ms_Memory );
-//--				    #endif
-//--				    ms->ms_Error = TRUE;
-//--				    break;
-//--			        }
-//--			    }
-//--
-//--			    ms->ms_ArgSize += 2;
-//--			    break;
-//--		        }
-//--
-//--		        case 2: // Word Displacement
-//--		        {
-//--			    switch( IS )
-//--			    {
-//--			        case 0x00: // No Memory Indirect Action
-//--			        case 0x04: // No Memory Indirect Action
-//--			        {
-//--				    // b035 1120 4e71 : cmp.b (a5,d1.w,$4e71.w),d0
-//--
-//--				    int16 val = (( mem[pos+2] << 8 ) | ( mem[ pos+3 ] << 0 ));
-//--
-//--				    sprintf( outstr, "(%d,%s,%s%s%s)",
-//--				        val,
-//--				        Ax_RegNames[ ms->ms_ArgEReg ],
-//--				        Dx_RegNames[ REG ],
-//--				        ( WL ) ? ".l" : ".w",
-//--				        scale_Names[ SCALE ]
-//--				    );
-//--
-//--				    ms->ms_ArgSize += 4;
-//--//				      ms->ms_Error = TRUE;
-//--				    break;
-//--			        }
-//--
-//--
-//--			        case 0x01: // Indirect Preindexed with Null Outer Displacement
-//--			        {
-//--				    // 2-10
-//--			        }
-//--
-//--			        case 0x02: // Indirect Preindexed with Word Outer Displacement
-//--			        {
-//--				    // 2-10
-//--			        }
-//--
-//--			        case 0x03: // Indirect Preindexed with Long Outer Displacement
-//--			        {
-//--				    // 2-10
-//--			        }
-//--
-//--
-//--			        case 0x05: // Indirect Postindexed with Null Outer Displacement
-//--			        {
-//--				    // 2-11
-//--			        }
-//--
-//--			        case 0x06: // Indirect Postindexed with Word Outer Displacement
-//--			        {
-//--				    // 2-11
-//--			        }
-//--
-//--			        case 0x07: // Indirect Postindexed with Long Outer Displacement
-//--			        {
-//--				    // 2-11
-//--			        }
-//--
-//--
-//--			        case 0x09: // Memory indirect with Null Outer Displacement
-//--			        {
-//--				    // 2-12
-//--			        }
-//--
-//--			        case 0x0a: // Memory indirect with Word Outer Displacement
-//--			        {
-//--				    // 2-12
-//--			        }
-//--
-//--			        case 0x0b: // Memory indirect with Long Outer Displacement
-//--			        {
-//--				    // 2-12
-//--			        }
-//--
-//--			        default:
-//--			        {
-//--				    #ifdef DEBUG
-//--				    printf( "Word Displacement : Uninplemented mode %02lx at %p\n", IS, ms->ms_Memory );
-//--				    #endif
-//--				    ms->ms_Error = TRUE;
-//--				    break;
-//--			        }
-//--			    }
-//--			    break;
-//--		        }
-//--
-//--		        case 3: // Long Displacement
-//--		        {
-//--			    switch( IS )
-//--			    {
-//--
-//--
-//--
-//--
-//--
-//--			        default:
-//--			        {
-//--				    #ifdef DEBUG
-//--				    printf( "Long Displacement : Uninplemented mode %02lx at %p\n", IS, ms->ms_Memory );
-//--				    #endif
-//--				    ms->ms_Error = TRUE;
-//--				    break;
-//--			        }
-//--			    }
-//--
-//--			    ms->ms_ArgSize += 6;
-//--			    break;
-//--		        }
-//--	            }
-//--            }
-//--	        break;
-//--        }
-
-// --
 // -- Mode 70 - move.l $0004.w
 
 inline static void MODE_70( struct M68kStruct *ms, char *outstr )
 {
 struct HunkLabel *hl;
-uint32_t val;
+int16_t val;
 uint8_t *mem;
 int pos;
 
@@ -477,12 +370,19 @@ int pos;
 		}
 		else
 		{
-			sprintf( outstr, "$%04x.w", val );
+			sprintf( outstr, "($%04x).w", val );
 		}
 	}
 	else
 	{
-		sprintf( outstr, "$%04x.w", val );
+		if (( ms->ms_IsPea ) && ( val < 0 ))
+		{
+			sprintf( outstr, "(%d).w", val );
+		}
+		else
+		{
+			sprintf( outstr, "($%04x).w", val );
+		}
 	}
 
 	if ( ms->ms_CurRegister )
@@ -514,7 +414,7 @@ int RefHandled;
 
 	if ( isRef )
 	{
-		if ( ms->ms_TraceMode )
+		if ( ms->ms_HunkStruct->hs_PassNr == 1 )
 		{
 			hl = Hunk_AddLabel( ms->ms_HunkStruct, val, RefType );
 		}
@@ -524,7 +424,7 @@ int RefHandled;
 
 			if ( hl == NULL )
 			{
-				printf( "%s:%04d: Error finding label\n", __FILE__, __LINE__ );
+				printf( "%s:%04d: Error finding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr );
 				ms->ms_DecodeStatus = MSTAT_Error;
 				goto bailout;
 			}
@@ -546,8 +446,6 @@ int RefHandled;
 				{
 					sprintf( ms->ms_Buf_Argument, "%s+%d", parent->hl_Label_Name, off );
 				}
-
-//				sprintf( outstr, "%s+%d", parent->hl_Label_Name, hl->hl_Label_Offset - parent->hl_Label_Offset );
 			}
 			else
 			{
@@ -557,7 +455,7 @@ int RefHandled;
 		else
 		{
 			// Not an external as it has a Refs 
-			sprintf( outstr, "$%08x.l!!", val );
+			sprintf( outstr, "($%08x).l", val );
 		}
 
 		if (( hl ) && ( ms->ms_CurRegister ))
@@ -580,12 +478,12 @@ int RefHandled;
 			}
 			else
 			{
-				sprintf( outstr, "$%08x.l", val );
+				sprintf( outstr, "($%08x).l", val );
 			}
 		}
 		else
 		{
-			sprintf( outstr, "$%08x.l", val );
+			sprintf( outstr, "($%08x).l", val );
 		}
 
 		if ( ms->ms_CurRegister )
@@ -622,7 +520,7 @@ int pos;
 
 	adr = ms->ms_MemoryAdr + 2 + val;
 
-	if ( ms->ms_TraceMode )
+	if ( ms->ms_HunkStruct->hs_PassNr == 1 )
 	{
 		// We can get away with AddLabel2, as this is a PC function, 
 		// so we can handle Labels out side Hunk Memory area
@@ -635,15 +533,11 @@ int pos;
 
 		if ( hl == NULL )
 		{
-			printf( "%s:%04d: Error finding label\n", __FILE__, __LINE__ );
+			printf( "%s:%04d: Error finding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr );
 			ms->ms_DecodeStatus = MSTAT_Error;
 			goto bailout;
 		}
 	}
-
-//	hl = Hunk_FindLabel( ms->ms_HunkStruct, adr );
-
-//	hl = Hunk_AddLabel2( ms->ms_HunkStruct, ms->ms_HunkNode, adr, RefType );
 
 	if (( hl ) && ( hl->hl_Label_Name[0] ))
 	{
@@ -661,8 +555,6 @@ int pos;
 			{
 				sprintf( ms->ms_Buf_Argument, "(%s+%d,PC)", parent->hl_Label_Name, off );
 			}
-
-//			sprintf( outstr, "(%s+%d,PC)", parent->hl_Label_Name, hl->hl_Label_Offset - parent->hl_Label_Offset );
 		}
 		else
 		{
@@ -736,7 +628,7 @@ int WL;
 
 			if ( off < 0 )
 			{
-				sprintf( outstr, "%s%d(PC,%s%s%s)",
+				sprintf( outstr, "(%s%d,PC,%s%s%s)",
 					parent->hl_Label_Name,
 					off,
 					( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
@@ -746,7 +638,7 @@ int WL;
 			}
 			else
 			{
-				sprintf( outstr, "%s+%d(PC,%s%s%s)",
+				sprintf( outstr, "(%s+%d,PC,%s%s%s)",
 					parent->hl_Label_Name,
 					off,
 					( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
@@ -754,18 +646,10 @@ int WL;
 					scale_Names[SCALE]
 				);
 			}
-
-//			sprintf( outstr, "%s+%d(PC,%s%s%s)",
-//				parent->hl_Label_Name,
-//				hl->hl_Label_Offset - parent->hl_Label_Offset,
-//				( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
-//				( WL ) ? ".l" : ".w",
-//				scale_Names[SCALE]
-//			);
 		}
 		else
 		{
-			sprintf( outstr, "%s(PC,%s%s%s)",
+			sprintf( outstr, "(%s,PC,%s%s%s)",
 				hl->hl_Label_Name,
 				( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
 				( WL ) ? ".l" : ".w",
@@ -775,7 +659,7 @@ int WL;
 	}
 	else
 	{
-		sprintf( outstr, "%d(PC,%s%s%s)",
+		sprintf( outstr, "(%d,PC,%s%s%s)",
 			Offset,
 			( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
 			( WL ) ? ".l" : ".w",
@@ -860,7 +744,7 @@ int pos;
 
 			if ( isRef )
 			{
-				if ( ms->ms_TraceMode )
+				if ( ms->ms_HunkStruct->hs_PassNr == 1 )
 				{
 					hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, RefType );
 				}
@@ -870,19 +754,15 @@ int pos;
 
 					if ( hl == NULL )
 					{
-						printf( "%s:%04d: Error finding label\n", __FILE__, __LINE__ );
+						printf( "%s:%04d: Error finding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr );
 						ms->ms_DecodeStatus = MSTAT_Error;
 						goto bailout;
 					}
 				}
 
-//				hl = Hunk_FindLabel( ms->ms_HunkStruct, adr );
-
-//				hl = Hunk_AddLabel2( ms->ms_HunkStruct, ms->ms_HunkNode, adr, RefType );
-
 				if ( hl == NULL )
 				{
-					printf( "%s:%04d: Error adding label\n", __FILE__, __LINE__ );
+					printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr );
 					ms->ms_DecodeStatus = MSTAT_Error;
 					goto bailout;
 				}
@@ -903,8 +783,6 @@ int pos;
 						{
 							sprintf( ms->ms_Buf_Argument, "#%s+%d", parent->hl_Label_Name, off );
 						}
-
-//						sprintf( outstr, "#%s+%d", parent->hl_Label_Name, hl->hl_Label_Offset - parent->hl_Label_Offset );
 					}
 					else
 					{
@@ -937,7 +815,18 @@ int pos;
 			}
 			else
 			{
-				sprintf( outstr, "#$%08x", adr );
+				/**/ if ( ms->ms_DecMode == 1 ) // Signed
+				{
+					sprintf( outstr, "#%d", adr );
+				}
+				else if ( ms->ms_DecMode == 2 ) // Unsigned
+				{
+					sprintf( outstr, "#%u", adr );
+				}
+				else
+				{
+					sprintf( outstr, "#$%08x", adr );
+				}
 
 				if ( ms->ms_CurRegister )
 				{
@@ -949,6 +838,59 @@ int pos;
 			ms->ms_ArgSize += 4;
 			break;
 		}
+
+		case OS_Single:
+		{
+			// Bits: 1 sign, 8 expo, 23 frac
+
+			sprintf( outstr, "#$" );
+
+			for( int cnt=0 ; cnt<4 ; cnt++ )
+			{
+				int len = strlen( outstr );
+
+				sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+			}
+
+			ms->ms_ArgSize += 4;
+			break;
+		}
+
+		case OS_Double:
+		{
+			// Bits: 1 sign, 11 expo, 52 frac
+
+			sprintf( outstr, "#$" );
+
+			for( int cnt=0 ; cnt<8 ; cnt++ )
+			{
+				int len = strlen( outstr );
+
+				sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+			}
+
+			ms->ms_ArgSize += 8;
+			break;
+		}
+
+		case OS_Extended:
+		{
+			// Bits: 1 sign, 15 expo, 16 ZERO, 64 mantissa
+
+			sprintf( outstr, "#$" );
+
+			for( int cnt=0 ; cnt<12 ; cnt++ )
+			{
+				int len = strlen( outstr );
+
+				sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+			}
+
+			ms->ms_ArgSize += 12;
+			break;
+		}
+
+//	OS_Packed,		// fmove.p
 
 		default:
 		{
@@ -1092,16 +1034,14 @@ int pos;
 				// Full Extension Word Format
 				if ( ms->ms_MemoryBuf[ ms->ms_ArgSize + 1 ] & 0x08 )
 				{
-					printf( "%s:%04d: Unsupported EA mode %02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
-//					sprintf( outstr, "<Mode 1 $%02x: Not implemented>", mode );
 //					MODE_60_Full_1( ms, outstr );
+					printf( "%s:%04d: 60_1 : Unsupported EA mode %02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
 					ms->ms_DecodeStatus = MSTAT_Error;
 				}
 				else
 				{
 					MODE_60_Full_0( ms, outstr );
-//					printf( "%s:%04d: Unsupported EA mode $%02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
-//					sprintf( outstr, "<Mode 2 $%02x: Not implemented>", mode );
+//					printf( "%s:%04d: 60_0 : Unsupported EA mode $%02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
 //					ms->ms_DecodeStatus = MSTAT_Error;
 				}
 			}
@@ -1148,15 +1088,14 @@ int pos;
 				// Full Extension Word Format
 				if ( ms->ms_MemoryBuf[ ms->ms_ArgSize + 1 ] & 0x08 )
 				{
-					printf( "%s:%04d: Unsupported EA mode $%02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
-//					sprintf( outstr, "<Mode 1 $%02x: Not implemented>", mode );
+					printf( "%s:%04d: 73_1 : Unsupported EA mode $%02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
 					ms->ms_DecodeStatus = MSTAT_Error;
 				}
 				else
 				{
-					printf( "%s:%04d: Unsupported EA mode $%02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
-//					sprintf( outstr, "<Mode 2 $%02x: Not implemented>", mode );
-					ms->ms_DecodeStatus = MSTAT_Error;
+					MODE_73_Full_0( ms, outstr );
+//					printf( "%s:%04d: 73_0 : Unsupported EA mode $%02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
+//					ms->ms_DecodeStatus = MSTAT_Error;
 				}
 			}
 			else
@@ -1177,13 +1116,10 @@ int pos;
 		default:
 		{
 			printf( "%s:%04d: Unsupported EA mode $%02x at %08x\n", __FILE__, __LINE__, mode, ms->ms_MemoryAdr );
-//			sprintf( outstr, "<Mode $%02x: Not implemented>", mode );
 			ms->ms_DecodeStatus = MSTAT_Error;
 			break;
 		}
 	}
-
-//--bailout:
 
 	return( RefHandled );
 }

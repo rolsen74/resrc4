@@ -1,6 +1,6 @@
  
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -423,6 +423,18 @@ int cnt;
 
 	hn = ms->ms_HunkNode;
 
+	if (( hl ) && ( hl->hl_Label_Offset == pos ))
+	{
+		memcpy( & ms->ms_Registers[0], & hl->hl_Registers[0], sizeof( struct M68kRegister ) * 16 );
+	}
+	else
+	{
+		for( int cnt=0 ; cnt<16 ; cnt++ )
+		{
+			ms->ms_Registers[cnt].mr_Type = RT_Unknown;
+		}
+	}
+
 	while( true )
 	{
 		if ( type[pos] != MT_Code )
@@ -487,6 +499,19 @@ int cnt;
 
 		pos += ms->ms_OpcodeSize;
 		len += ms->ms_OpcodeSize;
+
+		if ( ms->ms_ClearRegMask )
+		{
+			for( int cnt=0 ; cnt<16 ; cnt++ )
+			{
+				if ( ms->ms_ClearRegMask & ( 1 << cnt ))
+				{
+					ms->ms_Registers[cnt].mr_Type = RT_Unknown;
+				}
+			}
+
+			ms->ms_ClearRegMask = 0;
+		}
 
 		if ( ms->ms_LastOpcode )
 		{
@@ -761,6 +786,12 @@ int len;
 	error = true;
 
 	if (( hs == NULL ) || ( ms == NULL ))
+	{
+		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
+		goto bailout;
+	}
+
+	if ( ms->ms_Str_Opcode == NULL )
 	{
 		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
 		goto bailout;
@@ -1054,7 +1085,7 @@ int mt;
 			}
 			else if ( type[pos] == MT_Data )
 			{
-				/**/ if (( hl ) && ( hl->hl_Label_Type == LT_Code ))
+				/**/ if (( hl ) && ( hl->hl_Label_Offset == pos ) && ( hl->hl_Label_Type == LT_Code ))
 				{
 					if ( Decode_Code( hs, ms, hl, size, type, mem, pos, & len ))
 					{
@@ -1062,7 +1093,7 @@ int mt;
 						goto bailout;
 					}
 				}
-				else if (( hl ) && ( hl->hl_Label_Type == LT_RelativeWord ))
+				else if (( hl ) && ( hl->hl_Label_Offset == pos ) && ( hl->hl_Label_Type == LT_RelativeWord ))
 				{
 					if ( Decode_RelativeWord( ms, hl, pos, & len ))
 					{
@@ -1070,7 +1101,7 @@ int mt;
 						goto bailout;
 					}
 				}
-				else if (( hl ) && ( hl->hl_Label_Type == LT_String ))
+				else if (( hl ) && ( hl->hl_Label_Offset == pos ) && ( hl->hl_Label_Type == LT_String ))
 				{
 					if ( Decode_String( ms, hl, max, & len ))
 					{
@@ -1239,6 +1270,10 @@ int cnt;
 
 	// --
 
+	hs->hs_PassNr = 3;
+
+	// --
+
 	memset( & ms, 0, sizeof( ms ));
 
 	ms.ms_HunkStruct = hs;
@@ -1285,7 +1320,7 @@ int cnt;
 	if ( Refs_Check( hs ))
 	{
 		printf( "%s:%04d: Error there are unhandled pointer Refs\n", __FILE__, __LINE__ );
-		goto bailout;
+//		goto bailout;
 	}
 
 	// --

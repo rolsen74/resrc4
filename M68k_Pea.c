@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -19,12 +19,12 @@ void Cmd_PEA( struct M68kStruct *ms )
 {
 struct HunkRef *isRef;
 
-	ms->ms_Str_Opcode = "Pea";
-	ms->ms_DoExternal = 0;
-
-	ms->ms_ArgType  = OS_Long;
-	ms->ms_ArgEMode = ( ms->ms_Opcode & 0x00380000 ) >> 19;
-	ms->ms_ArgEReg  = ( ms->ms_Opcode & 0x00070000 ) >> 16;
+	ms->ms_Str_Opcode	= "Pea";
+	ms->ms_DoExternal	= 0;
+	ms->ms_IsPea		= 1;
+	ms->ms_ArgType		= OS_Long;
+	ms->ms_ArgEMode		= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	ms->ms_ArgEReg		= ( ms->ms_Opcode & 0x00070000 ) >> 16;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 

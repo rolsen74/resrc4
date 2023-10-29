@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -232,7 +232,7 @@ int pos;
 
 	if ( lvo == NULL )
 	{
-printf( "Unknown Graphics libcall %d at %08x\n", val, ms->ms_MemoryAdr );
+printf( "Unknown Graphics libcall %d at $%08x\n", val, ms->ms_MemoryAdr );
 	}
 
 	return( lvo );

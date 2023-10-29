@@ -1,8 +1,12 @@
 
 /*
  * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
- * All rights reserved.
  *
+ * This software is released under the GNU General Public License, version 3.
+ * For the full text of the license, please visit:
+ * https://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 // --
@@ -39,7 +43,7 @@ int32_t val;
 	/**/ if (( ms->ms_ArgEMode == 7 ) && ( ms->ms_ArgEReg == 0 ))	// Move.w $0004.w
 	{
 		gss->Type = _Exec;
-//printf( "A> %08x : Get Exec.w\n", ms->ms_MemoryAdr );
+//	printf( "C> %08x : Get Exec.w\n", ms->ms_MemoryAdr );
 	}
 	else if (( ms->ms_ArgEMode == 7 ) && ( ms->ms_ArgEReg == 1 ))	// Move.l $00000004
 	{
@@ -48,7 +52,7 @@ int32_t val;
 		if ( val == 4 )
 		{
 			gss->Type = _Exec;
-//printf( "A> %08x : Get Exec.l\n", ms->ms_MemoryAdr );
+//	printf( "C> %08x : Get Exec.l\n", ms->ms_MemoryAdr );
 		}
 		else
 		{
@@ -56,7 +60,7 @@ int32_t val;
 
 			if ( hl )
 			{
-//printf( "A> %08x : Get Label\n", ms->ms_MemoryAdr );
+//	printf( "C> %08x : Get Label\n", ms->ms_MemoryAdr );
 				gss->Type = _Label;
 				gss->Label = hl;
 			}
@@ -64,7 +68,7 @@ int32_t val;
 	}
 	else
 	{
-//printf( "A> %08x : Get Reg %d\n", ms->ms_MemoryAdr, cur->mr_Number );
+//	printf( "C> %08x : Get Reg %d (%d)\n", ms->ms_MemoryAdr, cur->mr_Number, gss->Reg.mr_Type );
 		gss->Type = _Reg;
 		gss->Reg = *cur;
 	}
@@ -99,13 +103,13 @@ int32_t val;
 
 		if ( hl )
 		{
-//printf( "A> %08x : Set Label : ", ms->ms_MemoryAdr );
+//	printf( "C> %08x : Set Label : ", ms->ms_MemoryAdr );
 
 			switch( gss->Type ) // Set xx -> Label
 			{
 				case _Exec:
 				{
-//printf( "from _Exec\n" );
+//	printf( "from _Exec" );
 					if ( hl->hl_Label_Type == LT_Unknown )
 					{
 						hl->hl_Label_Type = LT_Pointer;
@@ -134,7 +138,7 @@ int32_t val;
 
 				case _Label:
 				{
-//printf( "from _Label\n" );
+//	printf( "from _Label" );
 
 					src = gss->Label;
 
@@ -172,17 +176,17 @@ int32_t val;
 
 				case _Reg:
 				{
-//printf( "from _Reg %d : ", gss->Reg.mr_Number );
+//	printf( "from _Reg %d : ", gss->Reg.mr_Number );
 
 					if (( gss->Reg.mr_Type & 0xffff ) == RT_Library )
 					{
-//printf( " 22\n" );
+//	printf( " 22 " );
 						hl->hl_Label_Type = LT_Pointer;
 						hl->hl_Label_SubType = LPT_Library + ( gss->Reg.mr_Type & 0xffff0000 );
 					}
 					else
 					{
-//printf( " 33\n" );
+//	printf( " 33 " );
 						hl->hl_Label_Type = LT_Pointer;
 						hl->hl_Label_SubType = LPT_Error;
 					}
@@ -191,7 +195,7 @@ int32_t val;
 
 				default:
 				{
-printf( "from Unknown\n" );
+//	printf( "from Unknown" );
 					hl->hl_Label_Type = LT_Pointer;
 					hl->hl_Label_SubType = LPT_Error;
 					break;
@@ -201,20 +205,20 @@ printf( "from Unknown\n" );
 	}
 	else
 	{
-//printf( "A> %08x : Set Reg %d : ", ms->ms_MemoryAdr, cur->mr_Number );
+//	printf( "C> %08x : Set Reg %d : ", ms->ms_MemoryAdr, cur->mr_Number );
 
 		switch( gss->Type ) // Set xx -> Reg
 		{
 			case _Reg:
 			{
-//printf( "from _Reg\n" );
+//	printf( "from _Reg (%08x)", gss->Reg.mr_Type );
 				*cur = gss->Reg;
 				break;
 			}
 
 			case _Exec:
 			{
-//printf( "from _Exec\n" );
+//	printf( "from _Exec" );
 				cur->mr_Type = RT_Library + ( LIBT_ExecBase << 16 );
 				cur->mr_Address = 0;
 				cur->mr_LabelNode = NULL;
@@ -225,7 +229,7 @@ printf( "from Unknown\n" );
 			{
 				cur->mr_Type = RT_Unknown;
 
-//printf( "from _Label\n" );
+//	printf( "from _Label" );
 
 				hl = gss->Label;
 
@@ -244,7 +248,7 @@ printf( "from Unknown\n" );
 
 			default:
 			{
-printf( "from Unknown\n" );
+//	printf( "from Unknown" );
 				cur->mr_Type = RT_Unknown;
 				break;
 			}

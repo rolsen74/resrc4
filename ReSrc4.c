@@ -1,8 +1,12 @@
 
 /*
- * Copyright (c) 2014-2023 by Rene W. Olsen < renewolsen @ gmail . com >
- * All rights reserved.
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
+ * This software is released under the GNU General Public License, version 3.
+ * For the full text of the license, please visit:
+ * https://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 // --
@@ -26,36 +30,6 @@ int						ArgTabs			= 5;
 char *					LabNames		= "L";		// Label names
 char *					ExtNames		= "Ext_";	// External Label names
 char *					SecNames		= "Sec_";	// Section Label names
-
-// --
-
-char *myStrdup( char *string ) 
-{
-char *str;
-int len;
-
-	str = NULL;
-
-	if ( string == NULL ) 
-	{
-		goto bailout;
-	}
-
-	len = strlen( string );
-
-	str = malloc( len + 1 );
-
-	if ( str == NULL ) 
-	{
-		goto bailout;
-	}
-
-	strcpy( str, string );
-
-bailout:
-
-	return( str );
-}
 
 // --
 

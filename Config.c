@@ -1,8 +1,12 @@
  
 /*
  * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
- * All rights reserved.
  *
+ * This software is released under the GNU General Public License, version 3.
+ * For the full text of the license, please visit:
+ * https://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 // --
@@ -329,10 +333,10 @@ int pos;
 			goto bailout;
 		}
 
-		/**/ if ( ! strncasecmp( & buf[ pos ], "DiskFontBase", 12 ))
+		/**/ if ( ! strncasecmp( & buf[ pos ], "DiskfontBase", 12 ))
 		{
 			pos += 12;
-			type = LPT_Library + LIBT_DiskFontBase;
+			type = LPT_Library + LIBT_DiskfontBase;
 		}
 		else if ( ! strncasecmp( & buf[ pos ], "DosBase", 7 ))
 		{

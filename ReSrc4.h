@@ -1,8 +1,12 @@
 
 /*
- * Copyright (c) 2014-2023 by Rene W. Olsen < renewolsen @ gmail . com >
- * All rights reserved.
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
+ * This software is released under the GNU General Public License, version 3.
+ * For the full text of the license, please visit:
+ * https://www.gnu.org/licenses/gpl-3.0.html
+ *
+ * You can also find a copy of the license in the LICENSE file included with this software.
  */
 
 #ifndef RESRC4_MAIN_H
@@ -19,15 +23,15 @@
 
 // --
 
-#define DATE				"20-Oct-2023"
+#define DATE				"29-Oct-2023"
 #define YEAR				2023
 #define VERSION				2
-#define REVISION			2
+#define REVISION			3
 
 // --
 
 #define MAX_REFHASH			29			// Prime Nr .. bigger value more memory pr. HunkNode
-#define MAX_LABHASH			59			// Prime Nr .. Global Label Hash
+#define MAX_LABHASH			83			// Prime Nr .. Global Label Hash
 #define MAX_LabelName		32
 
 #define HUNK_CODE			0x000003E9
@@ -35,6 +39,7 @@
 #define HUNK_BSS			0x000003EB
 #define HUNK_RELOC32		0x000003EC
 #define HUNK_SYMBOL			0x000003F0
+#define HUNK_DEBUG			0x000003F1
 #define HUNK_END			0x000003F2
 #define HUNK_HEADER			0x000003F3
 #define HUNK_DREL32			0x000003F7	// Same as HUNK_RELOC32SHORT
@@ -65,13 +70,52 @@
 
 // --
 
-enum LibType // Used by LabelType and RegType
+// Used by LabelType and RegType
+// Libraries, Devices and Resource Bases
+enum LibType 
 {
+	LIBT_AmigaguideBase,
+	LIBT_AslBase,
+	LIBT_BattclockBase,
+	LIBT_BattmemBase,
+	LIBT_BulletBase,
+	LIBT_CardresBase,
+	LIBT_CiaBase,
+	LIBT_ColorwheelBase,
+	LIBT_CommoditiesBase,
+//	LIBT_ConsoleBase,
+	LIBT_DatatypesBase,
+	LIBT_DiskBase,
+	LIBT_DiskfontBase,
 	LIBT_DosBase,
-	LIBT_DiskFontBase,
+	LIBT_DTClassBase,
 	LIBT_ExecBase,
+	LIBT_ExpansionBase,
+	LIBT_GadToolsBase,
 	LIBT_GraphicsBase,
+	LIBT_IconBase,
+	LIBT_IFFParseBase,
+//	LIBT_InputBase,
 	LIBT_IntuitionBase,
+	LIBT_KeymapBase,
+	LIBT_LayersBase,
+	LIBT_LocaleBase,
+	LIBT_LowlevelBase,
+	LIBT_MathffpBase,
+	LIBT_MathieeedoubbasBase,
+	LIBT_MathieeedoubtransBase,
+	LIBT_MathieeesingbasBase,
+	LIBT_MathieeesingtransBase,
+	LIBT_MathtransBase,
+	LIBT_MiscBase,
+	LIBT_NonvolatileBase,
+	LIBT_PotgoBase,
+//	LIBT_RamdriveBase,
+	LIBT_RexxsyslibBase,
+//	LIBT_TimerBase,
+	LIBT_TranslatorBase,
+	LIBT_UtilityBase,
+	LIBT_WorkbenchBase,
 };
 
 enum LabelType
@@ -168,16 +212,14 @@ enum M68KStat
 
 enum OpcodeSize
 {
-	OS_Byte = 6,
-	OS_Word,
-	OS_Long,
-};
-
-enum ClearReg
-{
-	CR_No,				// Keep Regs
-	CR_All,				// Clear D0-A7
-	CR_Function,		// Clear D0-D1/A0-A1
+	OS_Unsized,
+	OS_Byte,		// move.b
+	OS_Word,		// move.w
+	OS_Long,		// move.l
+	OS_Single,		// fmove.s
+	OS_Double,		// fmove.d
+	OS_Extended,	// fmove.x
+	OS_Packed,		// fmove.p
 };
 
 struct M68kStruct
@@ -189,9 +231,9 @@ struct M68kStruct
 	uint8_t *				ms_MemoryType;
 	uint32_t				ms_Opcode;
 	int						ms_OpcodeSize;
-	int						ms_TraceMode;
-	enum ClearReg			ms_ClearRegs;
+	int						ms_ClearRegMask;
 	int						ms_LibCall;				// Well Possible LibCall
+	int						ms_IsPea;
 
 	const char *			ms_Str_Opcode;
 	char *					ms_Buf_Argument;
@@ -211,8 +253,8 @@ struct M68kStruct
 
 	struct M68kRegister *	ms_CurRegister;
 	struct M68kRegister		ms_JmpRegister;
-	struct M68kRegister     ms_SrcRegister;
-	struct M68kRegister     ms_DstRegister;
+	struct M68kRegister		ms_SrcRegister;
+	struct M68kRegister		ms_DstRegister;
 	struct M68kRegister		ms_Registers[16];
 };
 
@@ -241,6 +283,7 @@ struct HunkLabel
 	int						hl_Label_SubType;
 	int32_t					hl_Label_Size;
 	char					hl_Label_Name[ MAX_LabelName ];
+	struct M68kRegister		hl_Registers[16];
 };
 
 struct HunkNode
@@ -271,6 +314,7 @@ struct HunkInfo
 
 struct HunkStruct
 {
+	int						hs_PassNr;				// 1 = Trace, 2 = Label, 3 = Build Src
 	uint8_t *				hs_FileBuffer;
 	int						hs_FileSize;
 	char					hs_FileMD5[34];			// Ascii
@@ -298,6 +342,7 @@ struct SourceNode
 };
 
 // -- Extern
+extern const char *FPx_RegNames[8];
 extern const char *Ax_RegNames[8];
 extern const char *Dx_RegNames[8];
 extern const char *scale_Names[4];
@@ -337,16 +382,100 @@ int					LabelMagic(				struct HunkStruct *hs );
 void				M68k_Decode(			struct M68kStruct *ms );
 int					M68k_EffectiveAddress(	struct M68kStruct *ms, struct HunkRef *isRef, uint32_t RefType );
 char *				M68k_FindLibFunc(		struct M68kStruct *ms, int16_t val );
-char *				M68k_Lib_DiskFont(		struct M68kStruct *ms, int16_t val );
-int					Save_Lib_DiskFont(		void );
+char *				M68k_Lib_Amigaguide(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Amigaguide(	void );
+char *				M68k_Lib_Asl(			struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Asl(			void );
+char *				M68k_Lib_Battclock(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Battclock(		void );
+char *				M68k_Lib_Battmem(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Battmem(		void );
+char *				M68k_Lib_Bullet(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Bullet(		void );
+char *				M68k_Lib_Cardres(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Cardres(		void );
+char *				M68k_Lib_Cia(			struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Cia(			void );
+char *				M68k_Lib_Colorwheel(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Colorwheel(	void );
+char *				M68k_Lib_Commodities(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Commodities(	void );
+//char *				M68k_Lib_Console(		struct M68kStruct *ms, int16_t val );
+//int					Save_Lib_Console(		void );
+char *				M68k_Lib_Datatypes(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Datatypes(		void );
+char *				M68k_Lib_Disk(			struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Disk(			void );
+char *				M68k_Lib_Diskfont(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Diskfont(		void );
 char *				M68k_Lib_Dos(			struct M68kStruct *ms, int16_t val );
 int					Save_Lib_Dos(			void );
+char *				M68k_Lib_DTClass(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_DTClass(		void );
 char *				M68k_Lib_Exec(			struct M68kStruct *ms, int16_t val );
 int					Save_Lib_Exec(			void );
+char *				M68k_Lib_Expansion(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Expansion(		void );
+char *				M68k_Lib_Gadtools(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Gadtools(		void );
 char *				M68k_Lib_Graphics(		struct M68kStruct *ms, int16_t val );
 int					Save_Lib_Graphics(		void );
+char *				M68k_Lib_Icon(			struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Icon(			void );
+char *				M68k_Lib_IFFParse(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_IFFParse(		void );
+//char *			M68k_Lib_Input(			struct M68kStruct *ms, int16_t val );
+//int				Save_Lib_Input(			void );
 char *				M68k_Lib_Intuition(		struct M68kStruct *ms, int16_t val );
 int					Save_Lib_Intuition(		void );
+char *				M68k_Lib_Keymap(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Keymap(		void );
+char *				M68k_Lib_Layers(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Layers(		void );
+char *				M68k_Lib_Locale(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Locale(		void );
+char *				M68k_Lib_Lowlevel(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Lowlevel(		void );
+char *				M68k_Lib_Mathffp(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Mathffp(		void );
+char *				M68k_Lib_Mathieeedoubbas(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Mathieeedoubbas(	void );
+char *				M68k_Lib_Mathieeedoubtrans(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Mathieeedoubtrans(	void );
+char *				M68k_Lib_Mathieeesingbas(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Mathieeesingbas(	void );
+char *				M68k_Lib_Mathieeesingtrans(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Mathieeesingtrans(	void );
+char *				M68k_Lib_Mathtrans(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Mathtrans(		void );
+char *				M68k_Lib_Misc(			struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Misc(			void );
+char *				M68k_Lib_Nonvolatile(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Nonvolatile(	void );
+char *				M68k_Lib_Potgo(			struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Potgo(			void );
+//char *			M68k_Lib_Ramdrive(		struct M68kStruct *ms, int16_t val );
+//int				Save_Lib_Ramdrive(		void );
+char *				M68k_Lib_Rexxsyslib(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Rexxsyslib(	void );
+//char *			M68k_Lib_Timer(			struct M68kStruct *ms, int16_t val );
+//int				Save_Lib_Timer(			void );
+char *				M68k_Lib_Translator(	struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Translator(	void );
+char *				M68k_Lib_Utility(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Utility(		void );
+char *				M68k_Lib_Workbench(		struct M68kStruct *ms, int16_t val );
+int					Save_Lib_Workbench(		void );
+
+// -- Misc
+char *				myStrdup(				char *string );
+void				Mark_NulString(			struct HunkLabel *hl );
+void				Mark_D1_NulString(		struct M68kStruct *ms );
+void				Mark_D1D2_NulString(	struct M68kStruct *ms );
+void				Mark_D2_NulString(		struct M68kStruct *ms );
+void				Mark_D3_NulString(		struct M68kStruct *ms );
+void				Mark_A0_NulString(		struct M68kStruct *ms );
+void				Mark_A1_NulString(		struct M68kStruct *ms );
 
 // -- Nodes
 void				myAddHead(				struct Header *h, void *new );
@@ -357,9 +486,6 @@ void *				myGetHead(				struct Header *h );
 void *				myGetTail(				struct Header *h );
 void *				myGetNext(				void *cur );
 void *				myGetPrev(				void *cur );
-
-// -- ReSrc4
-char *				myStrdup(				char *string );
 
 // -- SaveSource
 int					SaveSource(				struct HunkStruct *hs, char *filename );
@@ -397,8 +523,11 @@ void Cmd_BSET2(		struct M68kStruct *ms );
 void Cmd_BTST(		struct M68kStruct *ms );
 void Cmd_BTST2(		struct M68kStruct *ms );
 void Cmd_CALLM(		struct M68kStruct *ms );
+void Cmd_CHK(		struct M68kStruct *ms );
+void Cmd_CHK2(		struct M68kStruct *ms );
 void Cmd_CLR(		struct M68kStruct *ms );
 void Cmd_CMP(		struct M68kStruct *ms );
+void Cmd_CMP2(		struct M68kStruct *ms );
 void Cmd_CMPA(		struct M68kStruct *ms );
 void Cmd_CMPI(		struct M68kStruct *ms );
 void Cmd_CMPM(		struct M68kStruct *ms );
@@ -462,5 +591,121 @@ void Cmd_TRAPV(		struct M68kStruct *ms );
 void Cmd_TST(		struct M68kStruct *ms );
 void Cmd_UNLK(		struct M68kStruct *ms );
 void Cmd_UNPK(		struct M68kStruct *ms );
+
+
+void Cmd_FABS(		struct M68kStruct *ms );
+void Cmd_FABS2(		struct M68kStruct *ms );
+void Cmd_FACOS(		struct M68kStruct *ms );
+void Cmd_FACOS2(	struct M68kStruct *ms );
+void Cmd_FADD(		struct M68kStruct *ms );
+void Cmd_FADD2(		struct M68kStruct *ms );
+void Cmd_FASIN(		struct M68kStruct *ms );
+void Cmd_FASIN2(	struct M68kStruct *ms );
+void Cmd_FATAN(		struct M68kStruct *ms );
+void Cmd_FATAN2(	struct M68kStruct *ms );
+void Cmd_FATANH(	struct M68kStruct *ms );
+void Cmd_FATANH2(	struct M68kStruct *ms );
+void Cmd_FBcc(		struct M68kStruct *ms );
+void Cmd_FCMP(		struct M68kStruct *ms );
+void Cmd_FCMP2(		struct M68kStruct *ms );
+void Cmd_FCOS(		struct M68kStruct *ms );
+void Cmd_FCOS2(		struct M68kStruct *ms );
+void Cmd_FCOSH(		struct M68kStruct *ms );
+void Cmd_FCOSH2(	struct M68kStruct *ms );
+void Cmd_FDABS(		struct M68kStruct *ms );
+void Cmd_FDABS2(	struct M68kStruct *ms );
+void Cmd_FDADD(		struct M68kStruct *ms );
+void Cmd_FDADD2(	struct M68kStruct *ms );
+void Cmd_FDDIV(		struct M68kStruct *ms );
+void Cmd_FDDIV2(	struct M68kStruct *ms );
+void Cmd_FDIV(		struct M68kStruct *ms );
+void Cmd_FDIV2(		struct M68kStruct *ms );
+void Cmd_FDMOVE(	struct M68kStruct *ms );
+void Cmd_FDMOVE2(	struct M68kStruct *ms );
+void Cmd_FDMUL(		struct M68kStruct *ms );
+void Cmd_FDMUL2(	struct M68kStruct *ms );
+void Cmd_FDNEG(		struct M68kStruct *ms );
+void Cmd_FDNEG2(	struct M68kStruct *ms );
+void Cmd_FDSQRT(	struct M68kStruct *ms );
+void Cmd_FDSQRT2(	struct M68kStruct *ms );
+void Cmd_FDSUB(		struct M68kStruct *ms );
+void Cmd_FDSUB2(	struct M68kStruct *ms );
+void Cmd_FETOX(		struct M68kStruct *ms );
+void Cmd_FETOX2(	struct M68kStruct *ms );
+void Cmd_FETOXM1(	struct M68kStruct *ms );
+void Cmd_FETOXM12(	struct M68kStruct *ms );
+void Cmd_FGETEXP(	struct M68kStruct *ms );
+void Cmd_FGETEXP2(	struct M68kStruct *ms );
+void Cmd_FGETMAN(	struct M68kStruct *ms );
+void Cmd_FGETMAN2(	struct M68kStruct *ms );
+void Cmd_FINT(		struct M68kStruct *ms );
+void Cmd_FINT2(		struct M68kStruct *ms );
+void Cmd_FINTRZ(	struct M68kStruct *ms );
+void Cmd_FINTRZ2(	struct M68kStruct *ms );
+void Cmd_FLOG2(		struct M68kStruct *ms );
+void Cmd_FLOG22(	struct M68kStruct *ms );
+void Cmd_FLOG10(	struct M68kStruct *ms );
+void Cmd_FLOG102(	struct M68kStruct *ms );
+void Cmd_FLOGN(		struct M68kStruct *ms );
+void Cmd_FLOGN2(	struct M68kStruct *ms );
+void Cmd_FLOGNP1(	struct M68kStruct *ms );
+void Cmd_FLOGNP12(	struct M68kStruct *ms );
+void Cmd_FMOD(		struct M68kStruct *ms );
+void Cmd_FMOD2(		struct M68kStruct *ms );
+void Cmd_FMOVE(		struct M68kStruct *ms );
+void Cmd_FMOVE2(	struct M68kStruct *ms );
+void Cmd_FMOVE3(	struct M68kStruct *ms );
+void Cmd_FMOVECR(	struct M68kStruct *ms );
+void Cmd_FMOVEM(	struct M68kStruct *ms );
+void Cmd_FMOVEM2(	struct M68kStruct *ms );
+void Cmd_FMUL(		struct M68kStruct *ms );
+void Cmd_FMUL2(		struct M68kStruct *ms );
+void Cmd_FNEG(		struct M68kStruct *ms );
+void Cmd_FNEG2(		struct M68kStruct *ms );
+void Cmd_FREM(		struct M68kStruct *ms );
+void Cmd_FREM2(		struct M68kStruct *ms );
+void Cmd_FSABS(		struct M68kStruct *ms );
+void Cmd_FSABS2(	struct M68kStruct *ms );
+void Cmd_FSADD(		struct M68kStruct *ms );
+void Cmd_FSADD2(	struct M68kStruct *ms );
+void Cmd_FSCALE(	struct M68kStruct *ms );
+void Cmd_FSCALE2(	struct M68kStruct *ms );
+void Cmd_FScc(		struct M68kStruct *ms );
+void Cmd_FSDIV(		struct M68kStruct *ms );
+void Cmd_FSDIV2(	struct M68kStruct *ms );
+void Cmd_FSGLDIV(	struct M68kStruct *ms );
+void Cmd_FSGLDIV2(	struct M68kStruct *ms );
+void Cmd_FSGLMUL(	struct M68kStruct *ms );
+void Cmd_FSGLMUL2(	struct M68kStruct *ms );
+void Cmd_FSIN(		struct M68kStruct *ms );
+void Cmd_FSIN2(		struct M68kStruct *ms );
+void Cmd_FSINCOS(	struct M68kStruct *ms );
+void Cmd_FSINCOS2(	struct M68kStruct *ms );
+void Cmd_FSINH(		struct M68kStruct *ms );
+void Cmd_FSINH2(	struct M68kStruct *ms );
+void Cmd_FSMOVE(	struct M68kStruct *ms );
+void Cmd_FSMOVE2(	struct M68kStruct *ms );
+void Cmd_FSMUL(		struct M68kStruct *ms );
+void Cmd_FSMUL2(	struct M68kStruct *ms );
+void Cmd_FSNEG(		struct M68kStruct *ms );
+void Cmd_FSNEG2(	struct M68kStruct *ms );
+void Cmd_FSQRT(		struct M68kStruct *ms );
+void Cmd_FSQRT2(	struct M68kStruct *ms );
+void Cmd_FSSQRT(	struct M68kStruct *ms );
+void Cmd_FSSQRT2(	struct M68kStruct *ms );
+void Cmd_FSSUB(		struct M68kStruct *ms );
+void Cmd_FSSUB2(	struct M68kStruct *ms );
+void Cmd_FSUB(		struct M68kStruct *ms );
+void Cmd_FSUB2(		struct M68kStruct *ms );
+void Cmd_FTAN(		struct M68kStruct *ms );
+void Cmd_FTAN2(		struct M68kStruct *ms );
+void Cmd_FTANh(		struct M68kStruct *ms );
+void Cmd_FTANh2(	struct M68kStruct *ms );
+void Cmd_FTENTOX(	struct M68kStruct *ms );
+void Cmd_FTENTOX2(	struct M68kStruct *ms );
+void Cmd_FTST(		struct M68kStruct *ms );
+void Cmd_FTST2(		struct M68kStruct *ms );
+void Cmd_FTWOTOX(	struct M68kStruct *ms );
+void Cmd_FTWOTOX2(	struct M68kStruct *ms );
 
 #endif

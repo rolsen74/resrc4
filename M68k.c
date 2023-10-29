@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -15,10 +15,10 @@
 
 // --
 
+const char *	FPx_RegNames[8] = { "FP0","FP1","FP2","FP3","FP4","FP5","FP6","FP7" };
 const char *	Ax_RegNames[8] = { "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7" };
 const char *	Dx_RegNames[8] = { "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7" };
 const char *	scale_Names[4] = { "",   "*2", "*4", "*8" };
-//--static const char * FPx_RegNames[]    = { "FP0","FP1","FP2","FP3","FP4","FP5","FP6","FP7" };
 
 // --
 
@@ -101,7 +101,7 @@ struct CmdStruct
 **  Link         W L  : trace
 **  Lsl        B W L  : trace
 **  Lsr        B W L  : trace
-**  Move       B W L  :
+**  Move       B W L  : trace
 **  Movea        W L  : trace
 **  Movem        W L  : trace
 **  Movep        W L  : trace
@@ -165,6 +165,8 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ Cmd_ORI,		0xffc00000, 0x00000000 },	// ORI.b	0000 0000 00xx xxxx
 	{ Cmd_ORI,		0xffc00000, 0x00400000 },	// ORI.w	0000 0000 01xx xxxx
 	{ Cmd_ORI,		0xffc00000, 0x00800000 },	// ORI.l	0000 0000 10xx xxxx
+ 	{ Cmd_CMP2,		0xffc00fff, 0x00c00000 },	// Cmp2.b	0000 0000 11xx xxxx xxxx 0000 0000 0000
+ 	{ Cmd_CHK2,		0xffc00fff, 0x00c00800 },	// Chk2.b	0000 0000 11xx xxxx xxxx 1000 0000 0000
 
 //  { Cmd_ANDI_CCR, wwwwwwwwww, wwwwwwwwww },   // ANDI     0000 0010 0011 1100 0000 0000 xxxx xxxx
 //  { Cmd_ANDI_SR,  wwwwwwwwww, wwwwwwwwww },   // ANDI     0000 0010 0111 1100 xxxx xxxx xxxx xxxx
@@ -172,10 +174,14 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ Cmd_ANDI,		0xffc00000, 0x02000000 },	// ANDI.b	0000 0010 00xx xxxx
 	{ Cmd_ANDI,		0xffc00000, 0x02400000 },	// ANDI.w	0000 0010 01xx xxxx
 	{ Cmd_ANDI,		0xffc00000, 0x02800000 },	// ANDI.l	0000 0010 10xx xxxx
+ 	{ Cmd_CMP2,		0xffc00fff, 0x02c00000 },	// Cmp2.w	0000 0010 11xx xxxx xxxx 0000 0000 0000
+ 	{ Cmd_CHK2,		0xffc00fff, 0x02c00800 },	// Chk2.w	0000 0010 11xx xxxx xxxx 1000 0000 0000
 
 	{ Cmd_SUBI,		0xffc00000, 0x04000000 },	// SUBI.b	0000 0100 00xx xxxx
 	{ Cmd_SUBI,		0xffc00000, 0x04400000 },	// SUBI.w	0000 0100 01xx xxxx
 	{ Cmd_SUBI,		0xffc00000, 0x04800000 },	// SUBI.l	0000 0100 10xx xxxx
+ 	{ Cmd_CMP2,		0xffc00fff, 0x04c00000 },	// Cmp2.l	0000 0100 11xx xxxx xxxx 0000 0000 0000
+ 	{ Cmd_CHK2,		0xffc00fff, 0x04c00800 },	// Chk2.l	0000 0100 11xx xxxx xxxx 1000 0000 0000
 
 	{ Cmd_RTM,		0xfff00000, 0x06c00000 },	// RTM		0000 0110 1100 xxxx
 	{ Cmd_CALLM,	0xffc0ff00, 0x06c00000 },	// CALLM	0000 0110 11xx xxxx 0000 0000 xxxx xxxx
@@ -184,8 +190,7 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ Cmd_ADDI,		0xffc00000, 0x06400000 },	// ADDI.w	0000 0110 01xx xxxx
 	{ Cmd_ADDI,		0xffc00000, 0x06800000 },	// ADDI.l	0000 0110 10xx xxxx
 
-//  { Cmd_CMP2,     wwwwwwwwww, wwwwwwwwww },   // CMP2     0000 0xx0 11xx xxxx xxxx 0000 0000 0000
-//  { Cmd_CHK2,     wwwwwwwwww, wwwwwwwwww },   // CHK2     0000 0xx0 11xx xxxx xxxx 1000 0000 0000
+
 
 //  { Cmd_EORI_CCR, wwwwwwwwww, wwwwwwwwww },   // EORI     0000 1010 0011 1100 0000 0000 xxxx xxxx
 //  { Cmd_EORI_SR,  wwwwwwwwww, wwwwwwwwww },   // EORI     0000 1010 0111 1100 xxxx xxxx xxxx xxxx
@@ -247,6 +252,9 @@ static const struct CmdStruct m68kCmds_0100[] =
 //    { Cmd_NEGX,     0xffc00000, 0x40800000 },   // NEGX.l   0100 0000 10xx xxxx
 //  { Cmd_MOVE_SR,  wwwwwwwwww, wwwwwwwwww },   // MOVE     0100 0000 11xx xxxx
 
+	{ Cmd_CHK,		0xf1c00000, 0x41000000 },	// CHK.l	0100 xxx1 00xx xxxx
+	{ Cmd_CHK,		0xf1c00000, 0x41800000 },	// CHK.w	0100 xxx1 10xx xxxx
+
 	{ Cmd_CLR,		0xffc00000, 0x42000000 },	// CLR.b    0100 0010 00xx xxxx
 	{ Cmd_CLR,		0xffc00000, 0x42400000 },	// CLR.w    0100 0010 01xx xxxx
 	{ Cmd_CLR,		0xffc00000, 0x42800000 },	// CLR.l    0100 0010 10xx xxxx
@@ -303,7 +311,7 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ Cmd_JMP,		0xffc00000, 0x4ec00000 },	// JMP      0100 1110 11xx xxxx
 
 	{ Cmd_LEA,		0xf1c00000, 0x41c00000 },	// LEA      0100 xxx1 11xx xxxx
-//	{ Cmd_CHK,      wwwwwwwwww, wwwwwwwwww },   // CHK      0100 xxxx x0xx xxxx
+
 
 	{ NULL,			0x00000000, 0x00000000 },
 };
@@ -549,7 +557,531 @@ static const struct CmdStruct m68kCmds_1110[] =
 
 static const struct CmdStruct m68kCmds_1111[] =
 {
-//    { Cmd_FMovem,   0xf1c0c300, 0xf000c000 },
+
+	// F-Reg to F-Reg
+	{ Cmd_FMOVE,	0xffffe07f, 0xf2000000 },	// FMove	1111 0010 0000 0000 000x xxxx x000 0000
+	{ Cmd_FINT,		0xffffe07f, 0xf2000001 },	// FInt		1111 0010 0000 0000 000x xxxx x000 0001
+	{ Cmd_FSINH,	0xffffe07f, 0xf2000002 },	// FSinh	1111 0010 0000 0000 000x xxxx x000 0010
+	{ Cmd_FINTRZ,	0xffffe07f, 0xf2000003 },	// FIntrz	1111 0010 0000 0000 000x xxxx x000 0011
+	{ Cmd_FSQRT,	0xffffe07f, 0xf2000004 },	// FSqrt	1111 0010 0000 0000 000x xxxx x000 0100
+	// 5
+	{ Cmd_FLOGNP1,	0xffffe07f, 0xf2000006 },	// FLognp1	1111 0010 0000 0000 000x xxxx x000 0110
+	// 7
+	{ Cmd_FETOXM1,	0xffffe07f, 0xf2000008 },	// FEtoxm1	1111 0010 0000 0000 000x xxxx x000 1000
+	{ Cmd_FTANh,	0xffffe07f, 0xf2000009 },	// FTanh	1111 0010 0000 0000 000x xxxx x000 1001
+	{ Cmd_FATAN,	0xffffe07f, 0xf200000a },	// FATan	1111 0010 0000 0000 000x xxxx x000 1010
+	{ Cmd_FASIN,	0xffffe07f, 0xf200000c },	// FASin	1111 0010 0000 0000 000x xxxx x000 1100
+	{ Cmd_FATANH,	0xffffe07f, 0xf200000d },	// FATanh	1111 0010 0000 0000 000x xxxx x000 1101
+	{ Cmd_FSIN,		0xffffe07f, 0xf200000e },	// FSin		1111 0010 0000 0000 000x xxxx x000 1101
+	{ Cmd_FTAN,		0xffffe07f, 0xf200000f },	// FTan		1111 0010 0000 0000 000x xxxx x000 1111
+	{ Cmd_FETOX,	0xffffe07f, 0xf2000010 },	// FEtox	1111 0010 0000 0000 000x xxxx x001 0000
+	{ Cmd_FTWOTOX,	0xffffe07f, 0xf2000011 },	// FTwotox	1111 0010 0000 0000 000x xxxx x001 0001
+	{ Cmd_FTENTOX,	0xffffe07f, 0xf2000012 },	// FTentox	1111 0010 0000 0000 000x xxxx x001 0010
+	{ Cmd_FLOGN,	0xffffe07f, 0xf2000014 },	// FLogn	1111 0010 0000 0000 000x xxxx x001 0100
+	{ Cmd_FLOG10,	0xffffe07f, 0xf2000015 },	// FLog10	1111 0010 0000 0000 000x xxxx x001 0101
+	{ Cmd_FLOG2,	0xffffe07f, 0xf2000016 },	// FLog2	1111 0010 0000 0000 000x xxxx x001 0110
+	// 17
+	{ Cmd_FABS,		0xffffe07f, 0xf2000018 },	// FAbs		1111 0010 0000 0000 000x xxxx x001 1000
+	{ Cmd_FCOSH,	0xffffe07f, 0xf2000019 },	// FCosh	1111 0010 0000 0000 000x xxxx x001 1001
+	{ Cmd_FNEG,		0xffffe07f, 0xf200001a },	// FNeg		1111 0010 0000 0000 000x xxxx x001 1010
+	// 1b
+	{ Cmd_FACOS,	0xffffe07f, 0xf200001c },	// FACos	1111 0010 0000 0000 000x xxxx x001 1100
+	{ Cmd_FCOS,		0xffffe07f, 0xf200001d },	// FCos		1111 0010 0000 0000 000x xxxx x001 1101
+	{ Cmd_FGETEXP,	0xffffe07f, 0xf200001e },	// FGetexp	1111 0010 0000 0000 000x xxxx x001 1110
+	{ Cmd_FGETMAN,	0xffffe07f, 0xf200001f },	// FGetman	1111 0010 0000 0000 000x xxxx x001 1111
+	{ Cmd_FDIV,		0xffffe07f, 0xf2000020 },	// FDiv		1111 0010 0000 0000 000x xxxx x010 0000
+	{ Cmd_FMOD,		0xffffe07f, 0xf2000021 },	// FMod		1111 0010 0000 0000 000x xxxx x010 0001
+	{ Cmd_FADD,		0xffffe07f, 0xf2000022 },	// FAdd		1111 0010 0000 0000 000x xxxx x010 0010
+	{ Cmd_FMUL,		0xffffe07f, 0xf2000023 },	// FMul		1111 0010 0000 0000 000x xxxx x010 0011
+	{ Cmd_FSGLDIV,	0xffffe07f, 0xf2000024 },	// FSgldiv	1111 0010 0000 0000 000x xxxx x010 0100
+	{ Cmd_FREM,		0xffffe07f, 0xf2000025 },	// FRem		1111 0010 0000 0000 000x xxxx x010 0101
+	{ Cmd_FSCALE,	0xffffe07f, 0xf2000026 },	// FScale	1111 0010 0000 0000 000x xxxx x010 0110
+	{ Cmd_FSGLMUL,	0xffffe07f, 0xf2000027 },	// FSglmul	1111 0010 0000 0000 000x xxxx x010 0111
+	{ Cmd_FSUB,		0xffffe07f, 0xf2000028 },	// FSub		1111 0010 0000 0000 000x xxxx x010 1000
+	{ Cmd_FSINCOS,	0xffffe078, 0xf2000030 },	// FSincos	1111 0010 0000 0000 000x xxxx x011 0000
+//	{ Cmd_FSINCOS,	0xffffe07f, 0xf2000031 },	// FSincos	1111 0010 0000 0000 000x xxxx x011 0001
+//	{ Cmd_FSINCOS,	0xffffe07f, 0xf2000032 },	// FSincos	1111 0010 0000 0000 000x xxxx x011 0010
+//	{ Cmd_FSINCOS,	0xffffe07f, 0xf2000033 },	// FSincos	1111 0010 0000 0000 000x xxxx x011 0011
+//	{ Cmd_FSINCOS,	0xffffe07f, 0xf2000034 },	// FSincos	1111 0010 0000 0000 000x xxxx x011 0100
+//	{ Cmd_FSINCOS,	0xffffe07f, 0xf2000035 },	// FSincos	1111 0010 0000 0000 000x xxxx x011 0101
+//	{ Cmd_FSINCOS,	0xffffe07f, 0xf2000036 },	// FSincos	1111 0010 0000 0000 000x xxxx x011 0110
+//	{ Cmd_FSINCOS,	0xffffe07f, 0xf2000037 },	// FSincos	1111 0010 0000 0000 000x xxxx x011 0111
+	{ Cmd_FCMP,		0xffffe07f, 0xf2000038 },	// FCmp		1111 0010 0000 0000 000x xxxx x011 1000
+	// 39
+	{ Cmd_FTST,		0xffffe07f, 0xf200003a },	// FTst		1111 0010 0000 0000 000x xxxx x011 1010
+	// 3b
+	// 3c
+	// 3d
+	// 3e
+	// 3f
+	{ Cmd_FSMOVE,	0xffffe07f, 0xf2000040 },	// FSMove	1111 0010 0000 0000 000x xxxx x100 0000
+	{ Cmd_FSSQRT,	0xffffe07f, 0xf2000041 },	// FSSqrt	1111 0010 0000 0000 000x xxxx x100 0001
+	// 42
+	// 43
+	{ Cmd_FDMOVE,	0xffffe07f, 0xf2000044 },	// FDMove	1111 0010 0000 0000 000x xxxx x100 0100
+	{ Cmd_FDSQRT,	0xffffe07f, 0xf2000045 },	// FDSqrt	1111 0010 0000 0000 000x xxxx x100 0101
+	{ Cmd_FSABS,	0xffffe07f, 0xf2000058 },	// FSAbs	1111 0010 0000 0000 000x xxxx x101 1000
+	{ Cmd_FSNEG,	0xffffe07f, 0xf200005a },	// FSNeg	1111 0010 0000 0000 000x xxxx x101 1010
+	{ Cmd_FDABS,	0xffffe07f, 0xf200005c },	// FDAbs	1111 0010 0000 0000 000x xxxx x101 1100
+	{ Cmd_FDNEG,	0xffffe07f, 0xf200005e },	// FDNeg	1111 0010 0000 0000 000x xxxx x101 1110
+	{ Cmd_FSDIV,	0xffffe07f, 0xf2000060 },	// FSDiv	1111 0010 0000 0000 000x xxxx x110 0000
+	{ Cmd_FSADD,	0xffffe07f, 0xf2000062 },	// FSAdd	1111 0010 0000 0000 000x xxxx x110 0010
+	{ Cmd_FSMUL,	0xffffe07f, 0xf2000063 },	// FSMul	1111 0010 0000 0000 000x xxxx x110 0011
+	{ Cmd_FDDIV,	0xffffe07f, 0xf2000064 },	// FDDiv	1111 0010 0000 0000 000x xxxx x110 0100
+	{ Cmd_FDMUL,	0xffffe07f, 0xf2000067 },	// FDMul	1111 0010 0000 0000 000x xxxx x110 0111
+	{ Cmd_FSSUB,	0xffffe07f, 0xf2000068 },	// FSSub	1111 0010 0000 0000 000x xxxx x110 1000
+	{ Cmd_FDADD,	0xffffe07f, 0xf2000066 },	// FDAdd	1111 0010 0000 0000 000x xxxx x110 0110
+	{ Cmd_FDSUB,	0xffffe07f, 0xf200006c },	// FDSub	1111 0010 0000 0000 000x xxxx x110 1100
+
+
+	// EA to F-Reg
+	{ Cmd_FMOVE2,	0xffc0fc7f, 0xf2004000 },	// FMove	1111 0010 00xx xxxx 0100 00xx x000 0000
+	{ Cmd_FMOVE2,	0xffc0fc7f, 0xf2004400 },	// FMove	1111 0010 00xx xxxx 0100 01xx x000 0000
+	{ Cmd_FMOVE2,	0xffc0fc7f, 0xf2004800 },	// FMove	1111 0010 00xx xxxx 0100 10xx x000 0000
+	{ Cmd_FMOVE2,	0xffc0fc7f, 0xf2004c00 },	// FMove	1111 0010 00xx xxxx 0100 11xx x000 0000
+	{ Cmd_FMOVE2,	0xffc0fc7f, 0xf2005000 },	// FMove	1111 0010 00xx xxxx 0101 00xx x000 0000
+	{ Cmd_FMOVE2,	0xffc0fc7f, 0xf2005400 },	// FMove	1111 0010 00xx xxxx 0101 01xx x000 0000
+	{ Cmd_FMOVE2,	0xffc0fc7f, 0xf2005800 },	// FMove	1111 0010 00xx xxxx 0101 10xx x000 0000
+
+	{ Cmd_FINT2,	0xffc0fc7f, 0xf2004001 },	// FInt		1111 0010 00xx xxxx 0100 xxxx x000 0001
+	{ Cmd_FINT2,	0xffc0fc7f, 0xf2004401 },	// FInt		1111 0010 00xx xxxx 0100 xxxx x000 0001
+	{ Cmd_FINT2,	0xffc0fc7f, 0xf2004801 },	// FInt		1111 0010 00xx xxxx 0100 xxxx x000 0001
+	{ Cmd_FINT2,	0xffc0fc7f, 0xf2004c01 },	// FInt		1111 0010 00xx xxxx 0100 xxxx x000 0001
+	{ Cmd_FINT2,	0xffc0fc7f, 0xf2005001 },	// FInt		1111 0010 00xx xxxx 0101 xxxx x000 0001
+	{ Cmd_FINT2,	0xffc0fc7f, 0xf2005401 },	// FInt		1111 0010 00xx xxxx 0101 xxxx x000 0001
+	{ Cmd_FINT2,	0xffc0fc7f, 0xf2005801 },	// FInt		1111 0010 00xx xxxx 0101 xxxx x000 0001
+
+	{ Cmd_FSINH2,	0xffc0fc7f, 0xf2004002 },	// FSinh	1111 0010 00xx xxxx 0100 xxxx x000 0010
+	{ Cmd_FSINH2,	0xffc0fc7f, 0xf2004402 },	// FSinh	1111 0010 00xx xxxx 0100 xxxx x000 0010
+	{ Cmd_FSINH2,	0xffc0fc7f, 0xf2004802 },	// FSinh	1111 0010 00xx xxxx 0100 xxxx x000 0010
+	{ Cmd_FSINH2,	0xffc0fc7f, 0xf2004c02 },	// FSinh	1111 0010 00xx xxxx 0100 xxxx x000 0010
+	{ Cmd_FSINH2,	0xffc0fc7f, 0xf2005002 },	// FSinh	1111 0010 00xx xxxx 0101 xxxx x000 0010
+	{ Cmd_FSINH2,	0xffc0fc7f, 0xf2005402 },	// FSinh	1111 0010 00xx xxxx 0101 xxxx x000 0010
+	{ Cmd_FSINH2,	0xffc0fc7f, 0xf2005802 },	// FSinh	1111 0010 00xx xxxx 0101 xxxx x000 0010
+
+	{ Cmd_FINTRZ2,	0xffc0fc7f, 0xf2004003 },	// FIntrz	1111 0010 00xx xxxx 0100 xxxx x000 0011
+	{ Cmd_FINTRZ2,	0xffc0fc7f, 0xf2004403 },	// FIntrz	1111 0010 00xx xxxx 0100 xxxx x000 0011
+	{ Cmd_FINTRZ2,	0xffc0fc7f, 0xf2004803 },	// FIntrz	1111 0010 00xx xxxx 0100 xxxx x000 0011
+	{ Cmd_FINTRZ2,	0xffc0fc7f, 0xf2004c03 },	// FIntrz	1111 0010 00xx xxxx 0100 xxxx x000 0011
+	{ Cmd_FINTRZ2,	0xffc0fc7f, 0xf2005003 },	// FIntrz	1111 0010 00xx xxxx 0101 xxxx x000 0011
+	{ Cmd_FINTRZ2,	0xffc0fc7f, 0xf2005403 },	// FIntrz	1111 0010 00xx xxxx 0101 xxxx x000 0011
+	{ Cmd_FINTRZ2,	0xffc0fc7f, 0xf2005803 },	// FIntrz	1111 0010 00xx xxxx 0101 xxxx x000 0011
+
+	{ Cmd_FSQRT2,	0xffc0fc7f, 0xf2004004 },	// FSqrt	1111 0010 00xx xxxx 0100 xxxx x000 0100
+	{ Cmd_FSQRT2,	0xffc0fc7f, 0xf2004404 },	// FSqrt	1111 0010 00xx xxxx 0100 xxxx x000 0100
+	{ Cmd_FSQRT2,	0xffc0fc7f, 0xf2004804 },	// FSqrt	1111 0010 00xx xxxx 0100 xxxx x000 0100
+	{ Cmd_FSQRT2,	0xffc0fc7f, 0xf2004c04 },	// FSqrt	1111 0010 00xx xxxx 0100 xxxx x000 0100
+	{ Cmd_FSQRT2,	0xffc0fc7f, 0xf2005004 },	// FSqrt	1111 0010 00xx xxxx 0101 xxxx x000 0100
+	{ Cmd_FSQRT2,	0xffc0fc7f, 0xf2005404 },	// FSqrt	1111 0010 00xx xxxx 0101 xxxx x000 0100
+	{ Cmd_FSQRT2,	0xffc0fc7f, 0xf2005804 },	// FSqrt	1111 0010 00xx xxxx 0101 xxxx x000 0100
+
+	{ Cmd_FLOGNP12,	0xffc0fc7f, 0xf2004006 },	// FLognp1	1111 0010 00xx xxxx 0100 xxxx x000 0110
+	{ Cmd_FLOGNP12,	0xffc0fc7f, 0xf2004406 },	// FLognp1	1111 0010 00xx xxxx 0100 xxxx x000 0110
+	{ Cmd_FLOGNP12,	0xffc0fc7f, 0xf2004806 },	// FLognp1	1111 0010 00xx xxxx 0100 xxxx x000 0110
+	{ Cmd_FLOGNP12,	0xffc0fc7f, 0xf2004c06 },	// FLognp1	1111 0010 00xx xxxx 0100 xxxx x000 0110
+	{ Cmd_FLOGNP12,	0xffc0fc7f, 0xf2005006 },	// FLognp1	1111 0010 00xx xxxx 0101 xxxx x000 0110
+	{ Cmd_FLOGNP12,	0xffc0fc7f, 0xf2005406 },	// FLognp1	1111 0010 00xx xxxx 0101 xxxx x000 0110
+	{ Cmd_FLOGNP12,	0xffc0fc7f, 0xf2005806 },	// FLognp1	1111 0010 00xx xxxx 0101 xxxx x000 0110
+
+	{ Cmd_FETOXM12,	0xffc0fc7f, 0xf2004008 },	// FEtoxm1	1111 0010 00xx xxxx 0100 xxxx x000 1000
+	{ Cmd_FETOXM12,	0xffc0fc7f, 0xf2004408 },	// FEtoxm1	1111 0010 00xx xxxx 0100 xxxx x000 1000
+	{ Cmd_FETOXM12,	0xffc0fc7f, 0xf2004808 },	// FEtoxm1	1111 0010 00xx xxxx 0100 xxxx x000 1000
+	{ Cmd_FETOXM12,	0xffc0fc7f, 0xf2004c08 },	// FEtoxm1	1111 0010 00xx xxxx 0100 xxxx x000 1000
+	{ Cmd_FETOXM12,	0xffc0fc7f, 0xf2005008 },	// FEtoxm1	1111 0010 00xx xxxx 0101 xxxx x000 1000
+	{ Cmd_FETOXM12,	0xffc0fc7f, 0xf2005408 },	// FEtoxm1	1111 0010 00xx xxxx 0101 xxxx x000 1000
+	{ Cmd_FETOXM12,	0xffc0fc7f, 0xf2005808 },	// FEtoxm1	1111 0010 00xx xxxx 0101 xxxx x000 1000
+
+	{ Cmd_FTANh2,	0xffc0fc7f, 0xf2004009 },	// FTanh	1111 0010 00xx xxxx 0100 xxxx x000 1001
+	{ Cmd_FTANh2,	0xffc0fc7f, 0xf2004409 },	// FTanh	1111 0010 00xx xxxx 0100 xxxx x000 1001
+	{ Cmd_FTANh2,	0xffc0fc7f, 0xf2004809 },	// FTanh	1111 0010 00xx xxxx 0100 xxxx x000 1001
+	{ Cmd_FTANh2,	0xffc0fc7f, 0xf2004c09 },	// FTanh	1111 0010 00xx xxxx 0100 xxxx x000 1001
+	{ Cmd_FTANh2,	0xffc0fc7f, 0xf2005009 },	// FTanh	1111 0010 00xx xxxx 0101 xxxx x000 1001
+	{ Cmd_FTANh2,	0xffc0fc7f, 0xf2005409 },	// FTanh	1111 0010 00xx xxxx 0101 xxxx x000 1001
+	{ Cmd_FTANh2,	0xffc0fc7f, 0xf2005809 },	// FTanh	1111 0010 00xx xxxx 0101 xxxx x000 1001
+
+	{ Cmd_FATAN2,	0xffc0fc7f, 0xf200400a },	// FATan	1111 0010 00xx xxxx 0100 xxxx x000 1010
+	{ Cmd_FATAN2,	0xffc0fc7f, 0xf200440a },	// FATan	1111 0010 00xx xxxx 0100 xxxx x000 1010
+	{ Cmd_FATAN2,	0xffc0fc7f, 0xf200480a },	// FATan	1111 0010 00xx xxxx 0100 xxxx x000 1010
+	{ Cmd_FATAN2,	0xffc0fc7f, 0xf2004c0a },	// FATan	1111 0010 00xx xxxx 0100 xxxx x000 1010
+	{ Cmd_FATAN2,	0xffc0fc7f, 0xf200500a },	// FATan	1111 0010 00xx xxxx 0101 xxxx x000 1010
+	{ Cmd_FATAN2,	0xffc0fc7f, 0xf200540a },	// FATan	1111 0010 00xx xxxx 0101 xxxx x000 1010
+	{ Cmd_FATAN2,	0xffc0fc7f, 0xf200580a },	// FATan	1111 0010 00xx xxxx 0101 xxxx x000 1010
+
+	{ Cmd_FASIN2,	0xffc0fc7f, 0xf200400c },	// FASin	1111 0010 00xx xxxx 010x xxxx x000 1100
+	{ Cmd_FASIN2,	0xffc0fc7f, 0xf200440c },	// FASin	1111 0010 00xx xxxx 010x xxxx x000 1100
+	{ Cmd_FASIN2,	0xffc0fc7f, 0xf200480c },	// FASin	1111 0010 00xx xxxx 010x xxxx x000 1100
+	{ Cmd_FASIN2,	0xffc0fc7f, 0xf2004c0c },	// FASin	1111 0010 00xx xxxx 010x xxxx x000 1100
+	{ Cmd_FASIN2,	0xffc0fc7f, 0xf200500c },	// FASin	1111 0010 00xx xxxx 010x xxxx x000 1100
+	{ Cmd_FASIN2,	0xffc0fc7f, 0xf200540c },	// FASin	1111 0010 00xx xxxx 010x xxxx x000 1100
+	{ Cmd_FASIN2,	0xffc0fc7f, 0xf200580c },	// FASin	1111 0010 00xx xxxx 010x xxxx x000 1100
+
+	{ Cmd_FATANH2,	0xffc0fc7f, 0xf200400d },	// FATanh	1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FATANH2,	0xffc0fc7f, 0xf200440d },	// FATanh	1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FATANH2,	0xffc0fc7f, 0xf200480d },	// FATanh	1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FATANH2,	0xffc0fc7f, 0xf2004c0d },	// FATanh	1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FATANH2,	0xffc0fc7f, 0xf200500d },	// FATanh	1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FATANH2,	0xffc0fc7f, 0xf200540d },	// FATanh	1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FATANH2,	0xffc0fc7f, 0xf200580d },	// FATanh	1111 0010 00xx xxxx 010x xxxx x000 1101
+
+	{ Cmd_FSIN2,	0xffc0fc7f, 0xf200400e },	// FSin		1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FSIN2,	0xffc0fc7f, 0xf200440e },	// FSin		1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FSIN2,	0xffc0fc7f, 0xf200480e },	// FSin		1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FSIN2,	0xffc0fc7f, 0xf2004c0e },	// FSin		1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FSIN2,	0xffc0fc7f, 0xf200500e },	// FSin		1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FSIN2,	0xffc0fc7f, 0xf200540e },	// FSin		1111 0010 00xx xxxx 010x xxxx x000 1101
+	{ Cmd_FSIN2,	0xffc0fc7f, 0xf200580e },	// FSin		1111 0010 00xx xxxx 010x xxxx x000 1101
+
+	{ Cmd_FTAN2,	0xffc0fc7f, 0xf200400f },	// FTan		1111 0010 00xx xxxx 010x xxxx x000 1111
+	{ Cmd_FTAN2,	0xffc0fc7f, 0xf200440f },	// FTan		1111 0010 00xx xxxx 010x xxxx x000 1111
+	{ Cmd_FTAN2,	0xffc0fc7f, 0xf200480f },	// FTan		1111 0010 00xx xxxx 010x xxxx x000 1111
+	{ Cmd_FTAN2,	0xffc0fc7f, 0xf2004c0f },	// FTan		1111 0010 00xx xxxx 010x xxxx x000 1111
+	{ Cmd_FTAN2,	0xffc0fc7f, 0xf200500f },	// FTan		1111 0010 00xx xxxx 010x xxxx x000 1111
+	{ Cmd_FTAN2,	0xffc0fc7f, 0xf200540f },	// FTan		1111 0010 00xx xxxx 010x xxxx x000 1111
+	{ Cmd_FTAN2,	0xffc0fc7f, 0xf200580f },	// FTan		1111 0010 00xx xxxx 010x xxxx x000 1111
+
+	{ Cmd_FETOX2,	0xffc0fc7f, 0xf2004010 },	// FEtox	1111 0010 00xx xxxx 010x xxxx x001 0000
+	{ Cmd_FETOX2,	0xffc0fc7f, 0xf2004410 },	// FEtox	1111 0010 00xx xxxx 010x xxxx x001 0000
+	{ Cmd_FETOX2,	0xffc0fc7f, 0xf2004810 },	// FEtox	1111 0010 00xx xxxx 010x xxxx x001 0000
+	{ Cmd_FETOX2,	0xffc0fc7f, 0xf2004c10 },	// FEtox	1111 0010 00xx xxxx 010x xxxx x001 0000
+	{ Cmd_FETOX2,	0xffc0fc7f, 0xf2005010 },	// FEtox	1111 0010 00xx xxxx 010x xxxx x001 0000
+	{ Cmd_FETOX2,	0xffc0fc7f, 0xf2005410 },	// FEtox	1111 0010 00xx xxxx 010x xxxx x001 0000
+	{ Cmd_FETOX2,	0xffc0fc7f, 0xf2005810 },	// FEtox	1111 0010 00xx xxxx 010x xxxx x001 0000
+
+	{ Cmd_FTWOTOX2,	0xffc0fc7f, 0xf2004011 },	// FTwotox	1111 0010 00xx xxxx 010x xxxx x001 0001
+	{ Cmd_FTWOTOX2,	0xffc0fc7f, 0xf2004411 },	// FTwotox	1111 0010 00xx xxxx 010x xxxx x001 0001
+	{ Cmd_FTWOTOX2,	0xffc0fc7f, 0xf2004811 },	// FTwotox	1111 0010 00xx xxxx 010x xxxx x001 0001
+	{ Cmd_FTWOTOX2,	0xffc0fc7f, 0xf2004c11 },	// FTwotox	1111 0010 00xx xxxx 010x xxxx x001 0001
+	{ Cmd_FTWOTOX2,	0xffc0fc7f, 0xf2005011 },	// FTwotox	1111 0010 00xx xxxx 010x xxxx x001 0001
+	{ Cmd_FTWOTOX2,	0xffc0fc7f, 0xf2005411 },	// FTwotox	1111 0010 00xx xxxx 010x xxxx x001 0001
+	{ Cmd_FTWOTOX2,	0xffc0fc7f, 0xf2005811 },	// FTwotox	1111 0010 00xx xxxx 010x xxxx x001 0001
+
+	{ Cmd_FTENTOX2,	0xffc0fc7f, 0xf2004012 },	// FTentox	1111 0010 00xx xxxx 010x xxxx x001 0010
+	{ Cmd_FTENTOX2,	0xffc0fc7f, 0xf2004412 },	// FTentox	1111 0010 00xx xxxx 010x xxxx x001 0010
+	{ Cmd_FTENTOX2,	0xffc0fc7f, 0xf2004812 },	// FTentox	1111 0010 00xx xxxx 010x xxxx x001 0010
+	{ Cmd_FTENTOX2,	0xffc0fc7f, 0xf2004c12 },	// FTentox	1111 0010 00xx xxxx 010x xxxx x001 0010
+	{ Cmd_FTENTOX2,	0xffc0fc7f, 0xf2005012 },	// FTentox	1111 0010 00xx xxxx 010x xxxx x001 0010
+	{ Cmd_FTENTOX2,	0xffc0fc7f, 0xf2005412 },	// FTentox	1111 0010 00xx xxxx 010x xxxx x001 0010
+	{ Cmd_FTENTOX2,	0xffc0fc7f, 0xf2005812 },	// FTentox	1111 0010 00xx xxxx 010x xxxx x001 0010
+
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2004014 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2004414 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2004814 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2004c14 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2005014 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2005414 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2005814 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2004014 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2004414 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2004814 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2004c14 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2005014 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2005414 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+	{ Cmd_FLOGN2,	0xffc0fc7f, 0xf2005814 },	// FLogn	1111 0010 00xx xxxx 010x xxxx x001 0100
+
+	{ Cmd_FLOG102,	0xffc0fc7f, 0xf2004015 },	// FLog10	1111 0010 00xx xxxx 010x xxxx x001 0101
+	{ Cmd_FLOG102,	0xffc0fc7f, 0xf2004415 },	// FLog10	1111 0010 00xx xxxx 010x xxxx x001 0101
+	{ Cmd_FLOG102,	0xffc0fc7f, 0xf2004815 },	// FLog10	1111 0010 00xx xxxx 010x xxxx x001 0101
+	{ Cmd_FLOG102,	0xffc0fc7f, 0xf2004c15 },	// FLog10	1111 0010 00xx xxxx 010x xxxx x001 0101
+	{ Cmd_FLOG102,	0xffc0fc7f, 0xf2005015 },	// FLog10	1111 0010 00xx xxxx 010x xxxx x001 0101
+	{ Cmd_FLOG102,	0xffc0fc7f, 0xf2005415 },	// FLog10	1111 0010 00xx xxxx 010x xxxx x001 0101
+	{ Cmd_FLOG102,	0xffc0fc7f, 0xf2005815 },	// FLog10	1111 0010 00xx xxxx 010x xxxx x001 0101
+
+	{ Cmd_FLOG22,	0xffc0fc7f, 0xf2004016 },	// FLog2	1111 0010 00xx xxxx 010x xxxx x001 0110
+	{ Cmd_FLOG22,	0xffc0fc7f, 0xf2004416 },	// FLog2	1111 0010 00xx xxxx 010x xxxx x001 0110
+	{ Cmd_FLOG22,	0xffc0fc7f, 0xf2004816 },	// FLog2	1111 0010 00xx xxxx 010x xxxx x001 0110
+	{ Cmd_FLOG22,	0xffc0fc7f, 0xf2004c16 },	// FLog2	1111 0010 00xx xxxx 010x xxxx x001 0110
+	{ Cmd_FLOG22,	0xffc0fc7f, 0xf2005016 },	// FLog2	1111 0010 00xx xxxx 010x xxxx x001 0110
+	{ Cmd_FLOG22,	0xffc0fc7f, 0xf2005416 },	// FLog2	1111 0010 00xx xxxx 010x xxxx x001 0110
+	{ Cmd_FLOG22,	0xffc0fc7f, 0xf2005816 },	// FLog2	1111 0010 00xx xxxx 010x xxxx x001 0110
+
+	{ Cmd_FABS2,	0xffc0fc7f, 0xf2004018 },	// FAbs		1111 0010 00xx xxxx 010x xxxx x001 1000
+	{ Cmd_FABS2,	0xffc0fc7f, 0xf2004418 },	// FAbs		1111 0010 00xx xxxx 010x xxxx x001 1000
+	{ Cmd_FABS2,	0xffc0fc7f, 0xf2004818 },	// FAbs		1111 0010 00xx xxxx 010x xxxx x001 1000
+	{ Cmd_FABS2,	0xffc0fc7f, 0xf2004c18 },	// FAbs		1111 0010 00xx xxxx 010x xxxx x001 1000
+	{ Cmd_FABS2,	0xffc0fc7f, 0xf2005018 },	// FAbs		1111 0010 00xx xxxx 010x xxxx x001 1000
+	{ Cmd_FABS2,	0xffc0fc7f, 0xf2005418 },	// FAbs		1111 0010 00xx xxxx 010x xxxx x001 1000
+	{ Cmd_FABS2,	0xffc0fc7f, 0xf2005818 },	// FAbs		1111 0010 00xx xxxx 010x xxxx x001 1000
+
+	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2004019 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
+	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2004419 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
+	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2004819 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
+	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2004c19 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
+	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2005019 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
+	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2005419 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
+	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2005819 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
+
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200401a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200441a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200481a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2004c1a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200501a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200541a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200581a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+
+	{ Cmd_FACOS2,	0xffc0fc7f, 0xf200401c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
+	{ Cmd_FACOS2,	0xffc0fc7f, 0xf200441c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
+	{ Cmd_FACOS2,	0xffc0fc7f, 0xf200481c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
+	{ Cmd_FACOS2,	0xffc0fc7f, 0xf2004c1c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
+	{ Cmd_FACOS2,	0xffc0fc7f, 0xf200501c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
+	{ Cmd_FACOS2,	0xffc0fc7f, 0xf200541c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
+	{ Cmd_FACOS2,	0xffc0fc7f, 0xf200581c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
+
+	{ Cmd_FCOS2,	0xffc0fc7f, 0xf200401d },	// FCos		1111 0010 00xx xxxx 010x xxxx x001 1101
+	{ Cmd_FCOS2,	0xffc0fc7f, 0xf200441d },	// FCos		1111 0010 00xx xxxx 010x xxxx x001 1101
+	{ Cmd_FCOS2,	0xffc0fc7f, 0xf200481d },	// FCos		1111 0010 00xx xxxx 010x xxxx x001 1101
+	{ Cmd_FCOS2,	0xffc0fc7f, 0xf2004c1d },	// FCos		1111 0010 00xx xxxx 010x xxxx x001 1101
+	{ Cmd_FCOS2,	0xffc0fc7f, 0xf200501d },	// FCos		1111 0010 00xx xxxx 010x xxxx x001 1101
+	{ Cmd_FCOS2,	0xffc0fc7f, 0xf200541d },	// FCos		1111 0010 00xx xxxx 010x xxxx x001 1101
+	{ Cmd_FCOS2,	0xffc0fc7f, 0xf200581d },	// FCos		1111 0010 00xx xxxx 010x xxxx x001 1101
+
+	{ Cmd_FGETEXP2,	0xffc0fc7f, 0xf200401e },	// FGetexp	1111 0010 00xx xxxx 010x xxxx x001 1110
+	{ Cmd_FGETEXP2,	0xffc0fc7f, 0xf200441e },	// FGetexp	1111 0010 00xx xxxx 010x xxxx x001 1110
+	{ Cmd_FGETEXP2,	0xffc0fc7f, 0xf200481e },	// FGetexp	1111 0010 00xx xxxx 010x xxxx x001 1110
+	{ Cmd_FGETEXP2,	0xffc0fc7f, 0xf2004c1e },	// FGetexp	1111 0010 00xx xxxx 010x xxxx x001 1110
+	{ Cmd_FGETEXP2,	0xffc0fc7f, 0xf200501e },	// FGetexp	1111 0010 00xx xxxx 010x xxxx x001 1110
+	{ Cmd_FGETEXP2,	0xffc0fc7f, 0xf200541e },	// FGetexp	1111 0010 00xx xxxx 010x xxxx x001 1110
+	{ Cmd_FGETEXP2,	0xffc0fc7f, 0xf200581e },	// FGetexp	1111 0010 00xx xxxx 010x xxxx x001 1110
+
+	{ Cmd_FGETMAN2,	0xffc0fc7f, 0xf200401f },	// FGetman	1111 0010 00xx xxxx 010x xxxx x001 1111
+	{ Cmd_FGETMAN2,	0xffc0fc7f, 0xf200441f },	// FGetman	1111 0010 00xx xxxx 010x xxxx x001 1111
+	{ Cmd_FGETMAN2,	0xffc0fc7f, 0xf200481f },	// FGetman	1111 0010 00xx xxxx 010x xxxx x001 1111
+	{ Cmd_FGETMAN2,	0xffc0fc7f, 0xf2004c1f },	// FGetman	1111 0010 00xx xxxx 010x xxxx x001 1111
+	{ Cmd_FGETMAN2,	0xffc0fc7f, 0xf200501f },	// FGetman	1111 0010 00xx xxxx 010x xxxx x001 1111
+	{ Cmd_FGETMAN2,	0xffc0fc7f, 0xf200541f },	// FGetman	1111 0010 00xx xxxx 010x xxxx x001 1111
+	{ Cmd_FGETMAN2,	0xffc0fc7f, 0xf200581f },	// FGetman	1111 0010 00xx xxxx 010x xxxx x001 1111
+
+	{ Cmd_FDIV2,	0xffc0fc7f, 0xf2004020 },	// FDiv		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FDIV2,	0xffc0fc7f, 0xf2004420 },	// FDiv		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FDIV2,	0xffc0fc7f, 0xf2004820 },	// FDiv		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FDIV2,	0xffc0fc7f, 0xf2004c20 },	// FDiv		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FDIV2,	0xffc0fc7f, 0xf2005020 },	// FDiv		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FDIV2,	0xffc0fc7f, 0xf2005420 },	// FDiv		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FDIV2,	0xffc0fc7f, 0xf2005820 },	// FDiv		1111 0010 00xx xxxx 010x xxxx x010 0000
+
+	{ Cmd_FMOD2,	0xffc0fc7f, 0xf2004021 },	// FMod		1111 0010 00xx xxxx 010x xxxx x010 0001
+	{ Cmd_FMOD2,	0xffc0fc7f, 0xf2004421 },	// FMod		1111 0010 00xx xxxx 010x xxxx x010 0001
+	{ Cmd_FMOD2,	0xffc0fc7f, 0xf2004821 },	// FMod		1111 0010 00xx xxxx 010x xxxx x010 0001
+	{ Cmd_FMOD2,	0xffc0fc7f, 0xf2004c21 },	// FMod		1111 0010 00xx xxxx 010x xxxx x010 0001
+	{ Cmd_FMOD2,	0xffc0fc7f, 0xf2005021 },	// FMod		1111 0010 00xx xxxx 010x xxxx x010 0001
+	{ Cmd_FMOD2,	0xffc0fc7f, 0xf2005421 },	// FMod		1111 0010 00xx xxxx 010x xxxx x010 0001
+	{ Cmd_FMOD2,	0xffc0fc7f, 0xf2005821 },	// FMod		1111 0010 00xx xxxx 010x xxxx x010 0001
+
+	{ Cmd_FADD2,	0xffc0fc7f, 0xf2004022 },	// FAdd		1111 0010 00xx xxxx 010x xxxx x010 0010
+	{ Cmd_FADD2,	0xffc0fc7f, 0xf2004422 },	// FAdd		1111 0010 00xx xxxx 010x xxxx x010 0010
+	{ Cmd_FADD2,	0xffc0fc7f, 0xf2004822 },	// FAdd		1111 0010 00xx xxxx 010x xxxx x010 0010
+	{ Cmd_FADD2,	0xffc0fc7f, 0xf2004c22 },	// FAdd		1111 0010 00xx xxxx 010x xxxx x010 0010
+	{ Cmd_FADD2,	0xffc0fc7f, 0xf2005022 },	// FAdd		1111 0010 00xx xxxx 010x xxxx x010 0010
+	{ Cmd_FADD2,	0xffc0fc7f, 0xf2005422 },	// FAdd		1111 0010 00xx xxxx 010x xxxx x010 0010
+	{ Cmd_FADD2,	0xffc0fc7f, 0xf2005822 },	// FAdd		1111 0010 00xx xxxx 010x xxxx x010 0010
+
+	{ Cmd_FMUL2,	0xffc0fc7f, 0xf2004023 },	// FMul		1111 0010 00xx xxxx 010x xxxx x010 0011
+	{ Cmd_FMUL2,	0xffc0fc7f, 0xf2004423 },	// FMul		1111 0010 00xx xxxx 010x xxxx x010 0011
+	{ Cmd_FMUL2,	0xffc0fc7f, 0xf2004823 },	// FMul		1111 0010 00xx xxxx 010x xxxx x010 0011
+	{ Cmd_FMUL2,	0xffc0fc7f, 0xf2004c23 },	// FMul		1111 0010 00xx xxxx 010x xxxx x010 0011
+	{ Cmd_FMUL2,	0xffc0fc7f, 0xf2005023 },	// FMul		1111 0010 00xx xxxx 010x xxxx x010 0011
+	{ Cmd_FMUL2,	0xffc0fc7f, 0xf2005423 },	// FMul		1111 0010 00xx xxxx 010x xxxx x010 0011
+	{ Cmd_FMUL2,	0xffc0fc7f, 0xf2005823 },	// FMul		1111 0010 00xx xxxx 010x xxxx x010 0011
+
+	{ Cmd_FSGLDIV2,	0xffc0fc7f, 0xf2004024 },	// FSgldiv	1111 0010 00xx xxxx 010x xxxx x010 0100
+	{ Cmd_FSGLDIV2,	0xffc0fc7f, 0xf2004424 },	// FSgldiv	1111 0010 00xx xxxx 010x xxxx x010 0100
+	{ Cmd_FSGLDIV2,	0xffc0fc7f, 0xf2004824 },	// FSgldiv	1111 0010 00xx xxxx 010x xxxx x010 0100
+	{ Cmd_FSGLDIV2,	0xffc0fc7f, 0xf2004c24 },	// FSgldiv	1111 0010 00xx xxxx 010x xxxx x010 0100
+	{ Cmd_FSGLDIV2,	0xffc0fc7f, 0xf2005024 },	// FSgldiv	1111 0010 00xx xxxx 010x xxxx x010 0100
+	{ Cmd_FSGLDIV2,	0xffc0fc7f, 0xf2005424 },	// FSgldiv	1111 0010 00xx xxxx 010x xxxx x010 0100
+	{ Cmd_FSGLDIV2,	0xffc0fc7f, 0xf2005824 },	// FSgldiv	1111 0010 00xx xxxx 010x xxxx x010 0100
+
+	{ Cmd_FREM2,	0xffc0fc7f, 0xf2004025 },	// FRem		1111 0010 00xx xxxx 010x xxxx x010 0101
+	{ Cmd_FREM2,	0xffc0fc7f, 0xf2004425 },	// FRem		1111 0010 00xx xxxx 010x xxxx x010 0101
+	{ Cmd_FREM2,	0xffc0fc7f, 0xf2004825 },	// FRem		1111 0010 00xx xxxx 010x xxxx x010 0101
+	{ Cmd_FREM2,	0xffc0fc7f, 0xf2004c25 },	// FRem		1111 0010 00xx xxxx 010x xxxx x010 0101
+	{ Cmd_FREM2,	0xffc0fc7f, 0xf2005025 },	// FRem		1111 0010 00xx xxxx 010x xxxx x010 0101
+	{ Cmd_FREM2,	0xffc0fc7f, 0xf2005425 },	// FRem		1111 0010 00xx xxxx 010x xxxx x010 0101
+	{ Cmd_FREM2,	0xffc0fc7f, 0xf2005825 },	// FRem		1111 0010 00xx xxxx 010x xxxx x010 0101
+
+	{ Cmd_FSCALE2,	0xffc0fc7f, 0xf2004026 },	// FScale	1111 0010 00xx xxxx 010x xxxx x010 0110
+	{ Cmd_FSCALE2,	0xffc0fc7f, 0xf2004426 },	// FScale	1111 0010 00xx xxxx 010x xxxx x010 0110
+	{ Cmd_FSCALE2,	0xffc0fc7f, 0xf2004826 },	// FScale	1111 0010 00xx xxxx 010x xxxx x010 0110
+	{ Cmd_FSCALE2,	0xffc0fc7f, 0xf2004c26 },	// FScale	1111 0010 00xx xxxx 010x xxxx x010 0110
+	{ Cmd_FSCALE2,	0xffc0fc7f, 0xf2005026 },	// FScale	1111 0010 00xx xxxx 010x xxxx x010 0110
+	{ Cmd_FSCALE2,	0xffc0fc7f, 0xf2005426 },	// FScale	1111 0010 00xx xxxx 010x xxxx x010 0110
+	{ Cmd_FSCALE2,	0xffc0fc7f, 0xf2005826 },	// FScale	1111 0010 00xx xxxx 010x xxxx x010 0110
+
+	{ Cmd_FSGLMUL2,	0xffc0fc7f, 0xf2004027 },	// FSglmul	1111 0010 00xx xxxx 010x xxxx x010 0111
+	{ Cmd_FSGLMUL2,	0xffc0fc7f, 0xf2004427 },	// FSglmul	1111 0010 00xx xxxx 010x xxxx x010 0111
+	{ Cmd_FSGLMUL2,	0xffc0fc7f, 0xf2004827 },	// FSglmul	1111 0010 00xx xxxx 010x xxxx x010 0111
+	{ Cmd_FSGLMUL2,	0xffc0fc7f, 0xf2004c27 },	// FSglmul	1111 0010 00xx xxxx 010x xxxx x010 0111
+	{ Cmd_FSGLMUL2,	0xffc0fc7f, 0xf2005027 },	// FSglmul	1111 0010 00xx xxxx 010x xxxx x010 0111
+	{ Cmd_FSGLMUL2,	0xffc0fc7f, 0xf2005427 },	// FSglmul	1111 0010 00xx xxxx 010x xxxx x010 0111
+	{ Cmd_FSGLMUL2,	0xffc0fc7f, 0xf2005827 },	// FSglmul	1111 0010 00xx xxxx 010x xxxx x010 0111
+
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2004028 },	// FSub		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2004428 },	// FSub		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2004828 },	// FSub		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2004c28 },	// FSub		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2005028 },	// FSub		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2005428 },	// FSub		1111 0010 00xx xxxx 010x xxxx x010 0000
+	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2005828 },	// FSub		1111 0010 00xx xxxx 010x xxxx x010 0000
+
+	{ Cmd_FSINCOS2,	0xffc0fc78, 0xf2004030 },	// FSincos	1111 0010 00xx xxxx 010x xxxx x011 0000
+	{ Cmd_FSINCOS2,	0xffc0fc78, 0xf2004430 },	// FSincos	1111 0010 00xx xxxx 010x xxxx x011 0000
+	{ Cmd_FSINCOS2,	0xffc0fc78, 0xf2004830 },	// FSincos	1111 0010 00xx xxxx 010x xxxx x011 0000
+	{ Cmd_FSINCOS2,	0xffc0fc78, 0xf2004c30 },	// FSincos	1111 0010 00xx xxxx 010x xxxx x011 0000
+	{ Cmd_FSINCOS2,	0xffc0fc78, 0xf2005030 },	// FSincos	1111 0010 00xx xxxx 010x xxxx x011 0000
+	{ Cmd_FSINCOS2,	0xffc0fc78, 0xf2005430 },	// FSincos	1111 0010 00xx xxxx 010x xxxx x011 0000
+	{ Cmd_FSINCOS2,	0xffc0fc78, 0xf2005830 },	// FSincos	1111 0010 00xx xxxx 010x xxxx x011 0000
+
+	{ Cmd_FCMP2,	0xffc0fc7f, 0xf2004038 },	// FCmp		1111 0010 00xx xxxx 010x xxxx x011 1000
+	{ Cmd_FCMP2,	0xffc0fc7f, 0xf2004438 },	// FCmp		1111 0010 00xx xxxx 010x xxxx x011 1000
+	{ Cmd_FCMP2,	0xffc0fc7f, 0xf2004838 },	// FCmp		1111 0010 00xx xxxx 010x xxxx x011 1000
+	{ Cmd_FCMP2,	0xffc0fc7f, 0xf2004c38 },	// FCmp		1111 0010 00xx xxxx 010x xxxx x011 1000
+	{ Cmd_FCMP2,	0xffc0fc7f, 0xf2005038 },	// FCmp		1111 0010 00xx xxxx 010x xxxx x011 1000
+	{ Cmd_FCMP2,	0xffc0fc7f, 0xf2005438 },	// FCmp		1111 0010 00xx xxxx 010x xxxx x011 1000
+	{ Cmd_FCMP2,	0xffc0fc7f, 0xf2005838 },	// FCmp		1111 0010 00xx xxxx 010x xxxx x011 1000
+
+	{ Cmd_FTST2,	0xffc0fc7f, 0xf200403a },	// FTst		1111 0010 00xx xxxx 010x xxxx x011 1010
+	{ Cmd_FTST2,	0xffc0fc7f, 0xf200443a },	// FTst		1111 0010 00xx xxxx 010x xxxx x011 1010
+	{ Cmd_FTST2,	0xffc0fc7f, 0xf200483a },	// FTst		1111 0010 00xx xxxx 010x xxxx x011 1010
+	{ Cmd_FTST2,	0xffc0fc7f, 0xf2004c3a },	// FTst		1111 0010 00xx xxxx 010x xxxx x011 1010
+	{ Cmd_FTST2,	0xffc0fc7f, 0xf200503a },	// FTst		1111 0010 00xx xxxx 010x xxxx x011 1010
+	{ Cmd_FTST2,	0xffc0fc7f, 0xf200543a },	// FTst		1111 0010 00xx xxxx 010x xxxx x011 1010
+	{ Cmd_FTST2,	0xffc0fc7f, 0xf200583a },	// FTst		1111 0010 00xx xxxx 010x xxxx x011 1010
+
+	{ Cmd_FSMOVE2,	0xffc0fc7f, 0xf2004040 },	// FSMove	1111 0010 00xx xxxx 010x xxxx x100 0000
+	{ Cmd_FSMOVE2,	0xffc0fc7f, 0xf2004440 },	// FSMove	1111 0010 00xx xxxx 010x xxxx x100 0000
+	{ Cmd_FSMOVE2,	0xffc0fc7f, 0xf2004840 },	// FSMove	1111 0010 00xx xxxx 010x xxxx x100 0000
+	{ Cmd_FSMOVE2,	0xffc0fc7f, 0xf2004c40 },	// FSMove	1111 0010 00xx xxxx 010x xxxx x100 0000
+	{ Cmd_FSMOVE2,	0xffc0fc7f, 0xf2005040 },	// FSMove	1111 0010 00xx xxxx 010x xxxx x100 0000
+	{ Cmd_FSMOVE2,	0xffc0fc7f, 0xf2005440 },	// FSMove	1111 0010 00xx xxxx 010x xxxx x100 0000
+	{ Cmd_FSMOVE2,	0xffc0fc7f, 0xf2005840 },	// FSMove	1111 0010 00xx xxxx 010x xxxx x100 0000
+
+	{ Cmd_FSSQRT2,	0xffc0fc7f, 0xf2004041 },	// FSSqrt	1111 0010 00xx xxxx 010x xxxx x100 0001
+	{ Cmd_FSSQRT2,	0xffc0fc7f, 0xf2004441 },	// FSSqrt	1111 0010 00xx xxxx 010x xxxx x100 0001
+	{ Cmd_FSSQRT2,	0xffc0fc7f, 0xf2004841 },	// FSSqrt	1111 0010 00xx xxxx 010x xxxx x100 0001
+	{ Cmd_FSSQRT2,	0xffc0fc7f, 0xf2004c41 },	// FSSqrt	1111 0010 00xx xxxx 010x xxxx x100 0001
+	{ Cmd_FSSQRT2,	0xffc0fc7f, 0xf2005041 },	// FSSqrt	1111 0010 00xx xxxx 010x xxxx x100 0001
+	{ Cmd_FSSQRT2,	0xffc0fc7f, 0xf2005441 },	// FSSqrt	1111 0010 00xx xxxx 010x xxxx x100 0001
+	{ Cmd_FSSQRT2,	0xffc0fc7f, 0xf2005841 },	// FSSqrt	1111 0010 00xx xxxx 010x xxxx x100 0001
+
+	{ Cmd_FDMOVE2,	0xffc0fc7f, 0xf2004044 },	// FDMove	1111 0010 00xx xxxx 010x xxxx x100 0100
+	{ Cmd_FDMOVE2,	0xffc0fc7f, 0xf2004444 },	// FDMove	1111 0010 00xx xxxx 010x xxxx x100 0100
+	{ Cmd_FDMOVE2,	0xffc0fc7f, 0xf2004844 },	// FDMove	1111 0010 00xx xxxx 010x xxxx x100 0100
+	{ Cmd_FDMOVE2,	0xffc0fc7f, 0xf2004c44 },	// FDMove	1111 0010 00xx xxxx 010x xxxx x100 0100
+	{ Cmd_FDMOVE2,	0xffc0fc7f, 0xf2005044 },	// FDMove	1111 0010 00xx xxxx 010x xxxx x100 0100
+	{ Cmd_FDMOVE2,	0xffc0fc7f, 0xf2005444 },	// FDMove	1111 0010 00xx xxxx 010x xxxx x100 0100
+	{ Cmd_FDMOVE2,	0xffc0fc7f, 0xf2005844 },	// FDMove	1111 0010 00xx xxxx 010x xxxx x100 0100
+
+	{ Cmd_FDSQRT2,	0xffc0fc7f, 0xf2004045 },	// FDSqrt	1111 0010 00xx xxxx 010x xxxx x100 0101
+	{ Cmd_FDSQRT2,	0xffc0fc7f, 0xf2004445 },	// FDSqrt	1111 0010 00xx xxxx 010x xxxx x100 0101
+	{ Cmd_FDSQRT2,	0xffc0fc7f, 0xf2004845 },	// FDSqrt	1111 0010 00xx xxxx 010x xxxx x100 0101
+	{ Cmd_FDSQRT2,	0xffc0fc7f, 0xf2004c45 },	// FDSqrt	1111 0010 00xx xxxx 010x xxxx x100 0101
+	{ Cmd_FDSQRT2,	0xffc0fc7f, 0xf2005045 },	// FDSqrt	1111 0010 00xx xxxx 010x xxxx x100 0101
+	{ Cmd_FDSQRT2,	0xffc0fc7f, 0xf2005445 },	// FDSqrt	1111 0010 00xx xxxx 010x xxxx x100 0101
+	{ Cmd_FDSQRT2,	0xffc0fc7f, 0xf2005845 },	// FDSqrt	1111 0010 00xx xxxx 010x xxxx x100 0101
+
+	{ Cmd_FSABS2,	0xffc0fc7f, 0xf2004058 },	// FSAbs	1111 0010 00xx xxxx 010x xxxx x101 1000
+	{ Cmd_FSABS2,	0xffc0fc7f, 0xf2004458 },	// FSAbs	1111 0010 00xx xxxx 010x xxxx x101 1000
+	{ Cmd_FSABS2,	0xffc0fc7f, 0xf2004858 },	// FSAbs	1111 0010 00xx xxxx 010x xxxx x101 1000
+	{ Cmd_FSABS2,	0xffc0fc7f, 0xf2004c58 },	// FSAbs	1111 0010 00xx xxxx 010x xxxx x101 1000
+	{ Cmd_FSABS2,	0xffc0fc7f, 0xf2005058 },	// FSAbs	1111 0010 00xx xxxx 010x xxxx x101 1000
+	{ Cmd_FSABS2,	0xffc0fc7f, 0xf2005458 },	// FSAbs	1111 0010 00xx xxxx 010x xxxx x101 1000
+	{ Cmd_FSABS2,	0xffc0fc7f, 0xf2005858 },	// FSAbs	1111 0010 00xx xxxx 010x xxxx x101 1000
+
+	{ Cmd_FSNEG2,	0xffc0fc7f, 0xf200405a },	// FSNeg	1111 0010 00xx xxxx 010x xxxx x101 1010
+	{ Cmd_FSNEG2,	0xffc0fc7f, 0xf200445a },	// FSNeg	1111 0010 00xx xxxx 010x xxxx x101 1010
+	{ Cmd_FSNEG2,	0xffc0fc7f, 0xf200485a },	// FSNeg	1111 0010 00xx xxxx 010x xxxx x101 1010
+	{ Cmd_FSNEG2,	0xffc0fc7f, 0xf2004c5a },	// FSNeg	1111 0010 00xx xxxx 010x xxxx x101 1010
+	{ Cmd_FSNEG2,	0xffc0fc7f, 0xf200505a },	// FSNeg	1111 0010 00xx xxxx 010x xxxx x101 1010
+	{ Cmd_FSNEG2,	0xffc0fc7f, 0xf200545a },	// FSNeg	1111 0010 00xx xxxx 010x xxxx x101 1010
+	{ Cmd_FSNEG2,	0xffc0fc7f, 0xf200585a },	// FSNeg	1111 0010 00xx xxxx 010x xxxx x101 1010
+
+	{ Cmd_FDABS2,	0xffc0fc7f, 0xf200405c },	// FDAbs	1111 0010 00xx xxxx 010x xxxx x101 1100
+	{ Cmd_FDABS2,	0xffc0fc7f, 0xf200445c },	// FDAbs	1111 0010 00xx xxxx 010x xxxx x101 1100
+	{ Cmd_FDABS2,	0xffc0fc7f, 0xf200485c },	// FDAbs	1111 0010 00xx xxxx 010x xxxx x101 1100
+	{ Cmd_FDABS2,	0xffc0fc7f, 0xf2004c5c },	// FDAbs	1111 0010 00xx xxxx 010x xxxx x101 1100
+	{ Cmd_FDABS2,	0xffc0fc7f, 0xf200505c },	// FDAbs	1111 0010 00xx xxxx 010x xxxx x101 1100
+	{ Cmd_FDABS2,	0xffc0fc7f, 0xf200545c },	// FDAbs	1111 0010 00xx xxxx 010x xxxx x101 1100
+	{ Cmd_FDABS2,	0xffc0fc7f, 0xf200585c },	// FDAbs	1111 0010 00xx xxxx 010x xxxx x101 1100
+
+	{ Cmd_FDNEG2,	0xffc0fc7f, 0xf200405e },	// FDNeg	1111 0010 00xx xxxx 010x xxxx x101 1110
+	{ Cmd_FDNEG2,	0xffc0fc7f, 0xf200445e },	// FDNeg	1111 0010 00xx xxxx 010x xxxx x101 1110
+	{ Cmd_FDNEG2,	0xffc0fc7f, 0xf200485e },	// FDNeg	1111 0010 00xx xxxx 010x xxxx x101 1110
+	{ Cmd_FDNEG2,	0xffc0fc7f, 0xf2004c5e },	// FDNeg	1111 0010 00xx xxxx 010x xxxx x101 1110
+	{ Cmd_FDNEG2,	0xffc0fc7f, 0xf200505e },	// FDNeg	1111 0010 00xx xxxx 010x xxxx x101 1110
+	{ Cmd_FDNEG2,	0xffc0fc7f, 0xf200545e },	// FDNeg	1111 0010 00xx xxxx 010x xxxx x101 1110
+	{ Cmd_FDNEG2,	0xffc0fc7f, 0xf200585e },	// FDNeg	1111 0010 00xx xxxx 010x xxxx x101 1110
+
+	{ Cmd_FSDIV2,	0xffc0fc7f, 0xf2004060 },	// FSDiv	1111 0010 00xx xxxx 010x xxxx x110 0000
+	{ Cmd_FSDIV2,	0xffc0fc7f, 0xf2004460 },	// FSDiv	1111 0010 00xx xxxx 010x xxxx x110 0000
+	{ Cmd_FSDIV2,	0xffc0fc7f, 0xf2004860 },	// FSDiv	1111 0010 00xx xxxx 010x xxxx x110 0000
+	{ Cmd_FSDIV2,	0xffc0fc7f, 0xf2004c60 },	// FSDiv	1111 0010 00xx xxxx 010x xxxx x110 0000
+	{ Cmd_FSDIV2,	0xffc0fc7f, 0xf2005060 },	// FSDiv	1111 0010 00xx xxxx 010x xxxx x110 0000
+	{ Cmd_FSDIV2,	0xffc0fc7f, 0xf2005460 },	// FSDiv	1111 0010 00xx xxxx 010x xxxx x110 0000
+	{ Cmd_FSDIV2,	0xffc0fc7f, 0xf2005860 },	// FSDiv	1111 0010 00xx xxxx 010x xxxx x110 0000
+
+	{ Cmd_FSADD2,	0xffc0fc7f, 0xf2004062 },	// FSAdd	1111 0010 00xx xxxx 010x xxxx x110 0010
+	{ Cmd_FSADD2,	0xffc0fc7f, 0xf2004462 },	// FSAdd	1111 0010 00xx xxxx 010x xxxx x110 0010
+	{ Cmd_FSADD2,	0xffc0fc7f, 0xf2004862 },	// FSAdd	1111 0010 00xx xxxx 010x xxxx x110 0010
+	{ Cmd_FSADD2,	0xffc0fc7f, 0xf2004c62 },	// FSAdd	1111 0010 00xx xxxx 010x xxxx x110 0010
+	{ Cmd_FSADD2,	0xffc0fc7f, 0xf2005062 },	// FSAdd	1111 0010 00xx xxxx 010x xxxx x110 0010
+	{ Cmd_FSADD2,	0xffc0fc7f, 0xf2005462 },	// FSAdd	1111 0010 00xx xxxx 010x xxxx x110 0010
+	{ Cmd_FSADD2,	0xffc0fc7f, 0xf2005862 },	// FSAdd	1111 0010 00xx xxxx 010x xxxx x110 0010
+
+	{ Cmd_FSMUL2,	0xffc0fc7f, 0xf2004063 },	// FSMul	1111 0010 00xx xxxx 010x xxxx x110 0011
+	{ Cmd_FSMUL2,	0xffc0fc7f, 0xf2004463 },	// FSMul	1111 0010 00xx xxxx 010x xxxx x110 0011
+	{ Cmd_FSMUL2,	0xffc0fc7f, 0xf2004863 },	// FSMul	1111 0010 00xx xxxx 010x xxxx x110 0011
+	{ Cmd_FSMUL2,	0xffc0fc7f, 0xf2004c63 },	// FSMul	1111 0010 00xx xxxx 010x xxxx x110 0011
+	{ Cmd_FSMUL2,	0xffc0fc7f, 0xf2005063 },	// FSMul	1111 0010 00xx xxxx 010x xxxx x110 0011
+	{ Cmd_FSMUL2,	0xffc0fc7f, 0xf2005463 },	// FSMul	1111 0010 00xx xxxx 010x xxxx x110 0011
+	{ Cmd_FSMUL2,	0xffc0fc7f, 0xf2005863 },	// FSMul	1111 0010 00xx xxxx 010x xxxx x110 0011
+
+	{ Cmd_FDDIV2,	0xffc0fc7f, 0xf2004064 },	// FDDiv	1111 0010 00xx xxxx 010x xxxx x110 0100
+	{ Cmd_FDDIV2,	0xffc0fc7f, 0xf2004464 },	// FDDiv	1111 0010 00xx xxxx 010x xxxx x110 0100
+	{ Cmd_FDDIV2,	0xffc0fc7f, 0xf2004864 },	// FDDiv	1111 0010 00xx xxxx 010x xxxx x110 0100
+	{ Cmd_FDDIV2,	0xffc0fc7f, 0xf2004c64 },	// FDDiv	1111 0010 00xx xxxx 010x xxxx x110 0100
+	{ Cmd_FDDIV2,	0xffc0fc7f, 0xf2005064 },	// FDDiv	1111 0010 00xx xxxx 010x xxxx x110 0100
+	{ Cmd_FDDIV2,	0xffc0fc7f, 0xf2005464 },	// FDDiv	1111 0010 00xx xxxx 010x xxxx x110 0100
+	{ Cmd_FDDIV2,	0xffc0fc7f, 0xf2005864 },	// FDDiv	1111 0010 00xx xxxx 010x xxxx x110 0100
+
+	{ Cmd_FDMUL2,	0xffc0fc7f, 0xf2004067 },	// FDMul	1111 0010 00xx xxxx 010x xxxx x110 0111
+	{ Cmd_FDMUL2,	0xffc0fc7f, 0xf2004467 },	// FDMul	1111 0010 00xx xxxx 010x xxxx x110 0111
+	{ Cmd_FDMUL2,	0xffc0fc7f, 0xf2004867 },	// FDMul	1111 0010 00xx xxxx 010x xxxx x110 0111
+	{ Cmd_FDMUL2,	0xffc0fc7f, 0xf2004c67 },	// FDMul	1111 0010 00xx xxxx 010x xxxx x110 0111
+	{ Cmd_FDMUL2,	0xffc0fc7f, 0xf2005067 },	// FDMul	1111 0010 00xx xxxx 010x xxxx x110 0111
+	{ Cmd_FDMUL2,	0xffc0fc7f, 0xf2005467 },	// FDMul	1111 0010 00xx xxxx 010x xxxx x110 0111
+	{ Cmd_FDMUL2,	0xffc0fc7f, 0xf2005867 },	// FDMul	1111 0010 00xx xxxx 010x xxxx x110 0111
+
+	{ Cmd_FSSUB2,	0xffc0fc7f, 0xf2004068 },	// FSSub	1111 0010 00xx xxxx 010x xxxx x110 1000
+	{ Cmd_FSSUB2,	0xffc0fc7f, 0xf2004468 },	// FSSub	1111 0010 00xx xxxx 010x xxxx x110 1000
+	{ Cmd_FSSUB2,	0xffc0fc7f, 0xf2004868 },	// FSSub	1111 0010 00xx xxxx 010x xxxx x110 1000
+	{ Cmd_FSSUB2,	0xffc0fc7f, 0xf2004c68 },	// FSSub	1111 0010 00xx xxxx 010x xxxx x110 1000
+	{ Cmd_FSSUB2,	0xffc0fc7f, 0xf2005068 },	// FSSub	1111 0010 00xx xxxx 010x xxxx x110 1000
+	{ Cmd_FSSUB2,	0xffc0fc7f, 0xf2005468 },	// FSSub	1111 0010 00xx xxxx 010x xxxx x110 1000
+	{ Cmd_FSSUB2,	0xffc0fc7f, 0xf2005868 },	// FSSub	1111 0010 00xx xxxx 010x xxxx x110 1000
+
+	{ Cmd_FDADD2,	0xffc0fc7f, 0xf2004066 },	// FDAdd	1111 0010 00xx xxxx 010x xxxx x110 0110
+	{ Cmd_FDADD2,	0xffc0fc7f, 0xf2004466 },	// FDAdd	1111 0010 00xx xxxx 010x xxxx x110 0110
+	{ Cmd_FDADD2,	0xffc0fc7f, 0xf2004866 },	// FDAdd	1111 0010 00xx xxxx 010x xxxx x110 0110
+	{ Cmd_FDADD2,	0xffc0fc7f, 0xf2004c66 },	// FDAdd	1111 0010 00xx xxxx 010x xxxx x110 0110
+	{ Cmd_FDADD2,	0xffc0fc7f, 0xf2005066 },	// FDAdd	1111 0010 00xx xxxx 010x xxxx x110 0110
+	{ Cmd_FDADD2,	0xffc0fc7f, 0xf2005466 },	// FDAdd	1111 0010 00xx xxxx 010x xxxx x110 0110
+	{ Cmd_FDADD2,	0xffc0fc7f, 0xf2005866 },	// FDAdd	1111 0010 00xx xxxx 010x xxxx x110 0110
+
+	{ Cmd_FDSUB2,	0xffc0fc7f, 0xf200406c },	// FDSub	1111 0010 00xx xxxx 010x xxxx x110 1100
+	{ Cmd_FDSUB2,	0xffc0fc7f, 0xf200446c },	// FDSub	1111 0010 00xx xxxx 010x xxxx x110 1100
+	{ Cmd_FDSUB2,	0xffc0fc7f, 0xf200486c },	// FDSub	1111 0010 00xx xxxx 010x xxxx x110 1100
+	{ Cmd_FDSUB2,	0xffc0fc7f, 0xf2004c6c },	// FDSub	1111 0010 00xx xxxx 010x xxxx x110 1100
+	{ Cmd_FDSUB2,	0xffc0fc7f, 0xf200506c },	// FDSub	1111 0010 00xx xxxx 010x xxxx x110 1100
+	{ Cmd_FDSUB2,	0xffc0fc7f, 0xf200546c },	// FDSub	1111 0010 00xx xxxx 010x xxxx x110 1100
+	{ Cmd_FDSUB2,	0xffc0fc7f, 0xf200586c },	// FDSub	1111 0010 00xx xxxx 010x xxxx x110 1100
+
+	{ Cmd_FMOVECR,	0xfffffc00, 0xf2005c00 },	// FMovecr	1111 0010 0000 0000 0101 11xx xxxx xxxx
+	{ Cmd_FMOVE3,	0xffc0e000, 0xf2006000 },	// FMove	1111 0010 00xx xxxx 011x xxxx xxxx xxxx
+	{ Cmd_FMOVEM,	0xffc0c7ff, 0xf200c000 },	// FMovem	1111 0010 00xx xxxx 10xx x000 0000 0000
+	{ Cmd_FMOVEM2,	0xffc0c700, 0xf200c000 },	// FMovem	1111 0010 00xx xxxx 11xx x000 xxxx xxxx
+ 	{ Cmd_FBcc,		0xffe00000, 0xf2800000 },	// FBcc		1111 0010 100x xxxx
+ 	{ Cmd_FBcc,		0xffe00000, 0xf2c00000 },	// FBcc		1111 0010 110x xxxx
+ 	{ Cmd_FScc,		0xffc0ffc0, 0xf2400000 },	// FScc		1111 0010 001x xxxx 0000 0000 00xx xxxx
 
 	{ NULL,			0x00000000, 0x00000000 },
 };
@@ -651,11 +1183,13 @@ uint8_t *mem;
 	ms->ms_JumpTable		= false;
 	ms->ms_LastOpcode		= false;
 	ms->ms_OpcodeSize		= 2;
+	ms->ms_ArgType			= OS_Unsized;
 	ms->ms_ArgSize			= 2;
 	ms->ms_DecMode			= 0;
 	ms->ms_DoExternal		= 1;
-	ms->ms_ClearRegs		= CR_No;
+	ms->ms_ClearRegMask		= 0;
 	ms->ms_LibCall			= 0;
+	ms->ms_IsPea			= 0;
 
 	ms->ms_CurRegister		= NULL;
 	ms->ms_SrcRegister.mr_Type = RT_Unknown;

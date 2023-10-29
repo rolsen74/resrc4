@@ -1,6 +1,6 @@
- 
+
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -13,1165 +13,100 @@
 
 #include "ReSrc4.h"
 
+// -- Overview
+
+#if 0
+
+-- Table #1 - Lightwave 5.0
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000013,D0			; 0c80 0000 0013
+	0x64,0x00,0,0,			// Bcc.w		L005A					; 6400 0598
+	0x30,0x3b,0x02,0x06,	// Move.w		L0058(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L0059(PC,D0.w)			; 4efb 0004
+
+-- Table #2 - Lightwave 5.0
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000013,D0			; 0c80 0000 0013
+	0x64,0x00,0,0,			// Bcc.w		L005A					; 6400 0598
+	0x30,0x3b,0x02,0x06,	// Move.w		L0058(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L0059(PC,D0.w)			; 4efb 0004
+
+-- Table #3 - Lightwave 5.0
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000013,D0			; 0c80 0000 0013
+	0x64,0x00,				// Bcc.b		L005A					; 645e 
+	0x30,0x3b,0x02,0x06,	// Move.w		L0058(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L0059(PC,D0.w)			; 4efb 0004
+
+-- Table #4 - Civilization ECS+AGA
+	0x0c,0x40,0,0,			// Cmpi.w		#$0005,D0				; 0c40 0005
+	0x64,0x00,0,0,			// Bcc.w		L02F6					; 6400 0400
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		L02F4(PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			L02F5(PC,D0.w)			; 4efb 0004
+
+-- Table #5 - Civilization ECS+AGA
+	0x02,0x41,0,0,			// Andi.w		#$000f,D1				; 0241 000f
+	0xd2,0x01,				// Add.b		D1,D1					; d201
+	0x32,0x3b,0x10,0x06,	// Move.w		L253B(PC,D1.w),D1		; 323b 1006
+	0x4e,0xfb,0x10,0x22		// Jmp			L253C(PC,D1.w)			; 4efb 1022
+
+-- Table #6 - Civilization ECS
+	0x0c,0x40,0,0,			// Cmpi.w		#$0005,D0				; 0c40 0005
+	0x64,0,					// Bcc.b		L1163					; 6436
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		L1161(PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			L1162(PC,D0.w)			; 4efb 0004
+
+-- Table #7 - Civilization ECS+AGA
+	0x0c,0x40,0,0,			// Cmpi.w		#$0008,D0				; 0c40 0008
+	0x6c,0x00,0,0,			// Bge.w		L19E0					; 6c00 0092
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		L19DC(PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			L19DD(PC,D0.w)			; 4efb 0004
+
+-- Table #8 - Civilization AGA
+	0x0c,0x40,0,0,			// Cmpi.w		#$0009,D0				; 0c40 0009
+	0x6c,0,					// Bge.b		L19F0					; 6c6e 
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		L19EE(PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			L19EF(PC,D0.w)			; 4efb 0004
+
+-- Table #9 - Civilization AGA
+	0x0c,0x40,0,0,			// Cmpi.w		#$0009,D0				; 0c40 0005
+	0x64,0x00,0,0,			// Bcc.w		L06C6					; 6400 00f8
+	0x30,0x3b,0x02,0x06,	// Move.w		L06C4(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L19EF(PC,D0.w)			; 4efb 0004
+
+-- Table #10 - Civilization AGA
+	0x0c,0x40,0,0,			// Cmpi.w		#$0005,D0				; 0c40 0005
+	0x64,0,					// Bcc.b		L0FC4					; 6434
+	0x30,0x3b,0x02,0x06,	// Move.w		L0FC2(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L19EF(PC,D0.w)			; 4efb 0004
+
+#endif
+
 // --
 
-struct Opcodes
+enum EntryType
 {
-	int			Offset;
-	uint32_t	Mask;
-	uint32_t	Value;
+	ET_Fixed,
+	ET_Pos16,
+	ET_Pos32,
 };
 
-struct JumpTable
+struct JTable
 {
-	int (*Func )( struct HunkStruct *hs, struct M68kStruct *ms );
-	struct Opcodes Opcodes[];
+	int			TabelPos;
+
+	int			RelativePos;
+
+	int			EntryPos;
+	int			EntryType;
+
+	int			DataPos;
+	int			DataSize;
+
+	uint8_t		Data[32];
+	uint8_t		Mask[32];
 };
-
-// --
-
-static int JumpTable_1( struct HunkStruct *hs, struct M68kStruct *ms );
-static int JumpTable_2( struct HunkStruct *hs, struct M68kStruct *ms );
-static int JumpTable_3( struct HunkStruct *hs, struct M68kStruct *ms );
-static int JumpTable_4( struct HunkStruct *hs, struct M68kStruct *ms );
-static int JumpTable_5( struct HunkStruct *hs, struct M68kStruct *ms );
-static int JumpTable_6( struct HunkStruct *hs, struct M68kStruct *ms );
-static int JumpTable_8( struct HunkStruct *hs, struct M68kStruct *ms );
-static int JumpTable_9( struct HunkStruct *hs, struct M68kStruct *ms );
-
-// --
-
-static struct JumpTable Table1 =
-{
-	JumpTable_1,
-{{	-14, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	-10, 0xffff0000, 0x64000000 },	// $64000400	Bcc.w		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $d040		Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0006	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0x00000000 },
-}};
-
-static struct JumpTable Table2 =
-{
-	JumpTable_2,
-{{	-12, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	 -8, 0xffff0000, 0x64000000 },	// $64000400	Bcc.w		L02B0
-{	 -4, 0xffffffff, 0x303b0206 },	// $303b0206	Move.w		(L02AE,PC,D0*2),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-static struct JumpTable Table3 =
-{
-	JumpTable_3,
-{{	-10, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	 -6, 0xff000000, 0x64000000 },	// $64340400	Bcc.b		L02B0
-{	 -4, 0xffffffff, 0x303b0206 },	// $303b0206	Move.w		(L02AE,PC,D0*2),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-static struct JumpTable Table4 =
-{
-	JumpTable_4,
-{{	-12, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	 -8, 0xff000000, 0x6c000000 },	// $64340400	Bge.b		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-static struct JumpTable Table5 =
-{
-	JumpTable_5,
-{{	-14, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	-10, 0xff000000, 0x6c000000 },	// $64340400	Bge.w		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-static struct JumpTable Table6 =
-{
-	JumpTable_6,
-{{	-10, 0xffffffff, 0x0241000f },	// $0241000f	Andi.w		#$000f,D1
-{	 -6, 0xffff0000, 0xd2010000 },	// $64340400	Add.b		D1,D1
-{	 -4, 0xffffffff, 0x323b1006 },	// $323b1006	Move.w		(L02AE,PC,D1),D1
-{	  0, 0xffffffff, 0x4efb1022 },	// $4efb1022	Jmp			(L02AF,PC,D1)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-static struct JumpTable Table7 =
-{
-	JumpTable_4,
-{{	-12, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	 -8, 0xff000000, 0x64000000 },	// $64340400	Bcc.b		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-static struct JumpTable Table8 =
-{
-	JumpTable_8,
-{{	-14, 0xffff0000, 0x0c800000 },	// $0c400005	Cmpi.l		#$00000005,D0
-{	 -8, 0xff000000, 0x6c000000 },	// $64340400	Bge.b		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-static struct JumpTable Table9 =
-{
-	JumpTable_9,
-{{	-14, 0xffff0000, 0x0c800000 },	// $0c400005	Cmpi.l		#$00000005,D0
-{	 -8, 0xff000000, 0x6c000000 },	// $64340400	Bge.b		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0002 },	// $4efb0002	Jmp			(L02AE,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-static struct JumpTable *JumpTables[] =
-{
-	& Table1,
-	& Table2,
-	& Table3,
-	& Table4,
-	& Table5,
-	& Table6,
-	& Table7,
-	& Table8,
-	& Table9,
-	NULL,
-};
-
-// --
-
-int Trace_JumpTable( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-struct JumpTable *jt;
-struct Opcodes *oc;
-uint32_t opcode;
-uint8_t *mem;
-int error;
-int pos;
-
-	error = true;
-
-	pos = 0;
-
-	mem = ms->ms_MemoryBuf;
-
-// printf( "-- %02x%02x %02x%02x\n", mem[0], mem[1], mem[2], mem[3] );
-
-	while( JumpTables[pos] )
-	{
-		jt = JumpTables[pos];
-		oc = jt->Opcodes;
-
-		while( oc->Mask != 0 )
-		{
-			opcode = (( mem[ oc->Offset + 0 ] << 24 )
-			| ( mem[ oc->Offset + 1 ] << 16 )
-			| ( mem[ oc->Offset + 2 ] <<  8 )
-			| ( mem[ oc->Offset + 3 ] <<  0 ));
-
-			if (( opcode & oc->Mask ) == oc->Value )
-			{
-				oc++;
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		if ( oc->Mask == 0 )
-		{
-	//		printf( "Found Jump Table at %08x\n", ms->ms_MemoryAdr );
-
-			if ( jt->Func( hs, ms ))
-			{
-				printf( "%s:%04d: Error JumpTable Function failed\n", __FILE__, __LINE__ );
-				goto bailout;
-			}
-
-			memset( ms->ms_MemoryType, MT_Code, 4 );
-			break;
-		}
-
-		pos++;
-	}
-
-	if ( JumpTables[pos] == NULL )
-	{
-		printf( "Possible new type of Jump Table at %08x\n", ms->ms_MemoryAdr );
-	}
-
-	error = false;
-
-bailout:
-
-	return( error );
-}
-
-// --
-// Jump Table 1
-
-#if 0
-
-static struct JumpTable Table1 =
-{
-	JumpTable_1,
-{{	-14, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	-10, 0xffff0000, 0x64000000 },	// $64000400	Bcc.w		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $d040		Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0006	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0x00000000 },
-}};
-
-#endif
-
-static int JumpTable_1( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-uint32_t rel_adr;
-uint32_t tab_adr;
-int entries;
-int error;
-
-	entries = (( ms->ms_MemoryBuf[ -12 ] << 8 ) | ( ms->ms_MemoryBuf[ -11 ] << 0 ));
-	tab_adr = ms->ms_MemoryAdr + 4;
-	rel_adr = ms->ms_MemoryAdr + 6;
-
-//	printf( "tab #1 : %08x\n", tab_adr );
-
-	error	= JumpTable_Rel16( hs, tab_adr, rel_adr, entries );
-
-
-
-
-	#if 0
-struct HunkLabel *hl;
-uint32_t adr;
-int16_t *Offsets;
-uint8_t *type;
-int16_t off;
-int error;
-int loop;
-int cnt;
-
-	error = true;
-
-	// --
-
-	loop = (( ms->ms_MemoryBuf[ -12 ] << 8 ) | ( ms->ms_MemoryBuf[ -11 ] << 0 ));
-
-	Offsets = (void *) ms->ms_MemoryBuf + 4;
-
-	for( cnt=0 ; cnt<loop ; cnt++ )
-	{
-		off = SWAP16( Offsets[cnt] );
-		adr = ms->ms_MemoryAdr;
-
-// if ( off < 0 )	{ printf( "Table 1 : Nagative %d\n", off ); }
-
-		adr += 6;
-		adr += off;
-
-		hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Code );
-
-		if ( hl == NULL )
-		{
-			printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-
-		if ( Trace_AddBrance( hs, adr ))
-		{
-			printf( "%s:%04d: Error adding brance at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-	}
-
-	// --
-
-	hl = Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 4, LT_RelativeWord );
-
-	if ( hl == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 4 );
-		goto bailout;
-	}
-
-	hl->hl_Label_Type	= LT_RelativeWord;
-	hl->hl_Label_Size	= loop * 2;
-	hl->hl_Label_Ref	= Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 6, LT_RelativeWord );
-
-	if ( hl->hl_Label_Ref == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 6 );
-		goto bailout;
-	}
-
-	// --
-
-	type = hl->hl_HunkNode->hn_MemoryType;
-
-	memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-	error = false;
-
-bailout:
-
-	#endif
-
-	return( error );
-}
-
-// --
-/// Jump Table 2
-
-#if 0
-
-static struct JumpTable Table2 =
-{
-	JumpTable_2,
-{{	-12, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	 -8, 0xffff0000, 0x64000000 },	// $64000400	Bcc.w		L02B0
-{	 -4, 0xffffffff, 0x303b0206 },	// $303b0206	Move.w		(L02AE,PC,D0*2),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-#endif
-
-static int JumpTable_2( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-uint32_t rel_adr;
-uint32_t tab_adr;
-int entries;
-int error;
-
-	entries = (( ms->ms_MemoryBuf[ -10 ] << 8 ) | ( ms->ms_MemoryBuf[ -9 ] << 0 ));
-	tab_adr = ms->ms_MemoryAdr + 4;
-	rel_adr = ms->ms_MemoryAdr + 6;
-
-//	printf( "tab #2 : %08x\n", tab_adr );
-
-	error	= JumpTable_Rel16( hs, tab_adr, rel_adr, entries );
-
-
-	#if 0
-struct HunkLabel *hl;
-uint32_t adr;
-int16_t *Offsets;
-uint8_t *type;
-int16_t off;
-int error;
-int loop;
-int cnt;
-
-	error = true;
-
-	// --
-
-	loop = (( ms->ms_MemoryBuf[ -10 ] << 8 ) | ( ms->ms_MemoryBuf[ -9 ] << 0 ));
-
-	Offsets = (void *) ms->ms_MemoryBuf + 4;
-
-	for( cnt=0 ; cnt<loop ; cnt++ )
-	{
-		off = SWAP16( Offsets[cnt] );
-		adr = ms->ms_MemoryAdr;
-
-		adr += 6;
-		adr += off;
-
-		hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Code );
-
-		if ( hl == NULL )
-		{
-			printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-
-		if ( Trace_AddBrance( hs, adr ))
-		{
-			printf( "%s:%04d: Error adding brance at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-	}
-
-	// --
-
-	hl = Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 4, LT_RelativeWord );
-
-	if ( hl == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 4 );
-		goto bailout;
-	}
-
-	hl->hl_Label_Type	= LT_RelativeWord;
-	hl->hl_Label_Size	= loop * 2;
-	hl->hl_Label_Ref	= Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 6, LT_RelativeWord );
-
-	if ( hl->hl_Label_Ref == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 6 );
-		goto bailout;
-	}
-
-	// --
-
-	type = hl->hl_HunkNode->hn_MemoryType;
-
-	memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-	error = false;
-
-bailout:
-
-	#endif
-
-	return( error );
-}
-
-// --
-// Jump Table 3
-
-#if 0
-
-static struct JumpTable Table3 =
-{
-	JumpTable_3,
-{{	-10, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	 -6, 0xff000000, 0x64000000 },	// $64340400	Bcc.b		L02B0
-{	 -4, 0xffffffff, 0x303b0206 },	// $303b0206	Move.w		(L02AE,PC,D0*2),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-#endif
-
-static int JumpTable_3( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-uint32_t rel_adr;
-uint32_t tab_adr;
-int entries;
-int error;
-
-	entries = (( ms->ms_MemoryBuf[ -8 ] << 8 ) | ( ms->ms_MemoryBuf[ -7 ] << 0 ));
-	tab_adr = ms->ms_MemoryAdr + 4;
-	rel_adr = ms->ms_MemoryAdr + 6;
-
-//	printf( "tab #3 : %08x\n", tab_adr );
-
-	error	= JumpTable_Rel16( hs, tab_adr, rel_adr, entries );
-
-	#if 0
-struct HunkLabel *hl;
-uint32_t adr;
-int16_t *Offsets;
-uint8_t *type;
-int16_t off;
-int error;
-int loop;
-int cnt;
-
-	error = true;
-
-	// --
-
-	loop = (( ms->ms_MemoryBuf[ -8 ] << 8 ) | ( ms->ms_MemoryBuf[ -7 ] << 0 ));
-
-	Offsets = (void *) ms->ms_MemoryBuf + 4;
-
-	for( cnt=0 ; cnt<loop ; cnt++ )
-	{
-		off = SWAP16( Offsets[cnt] );
-		adr = ms->ms_MemoryAdr;
-
-		adr += 6;
-		adr += off;
-
-// if ( off < 0 )	{ printf( "Table 3 : Nagative %d\n", off ); }
-
-
-		hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Code );
-
-		if ( hl == NULL )
-		{
-			printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-
-		if ( Trace_AddBrance( hs, adr ))
-		{
-			printf( "%s:%04d: Error adding brance at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-	}
-
-	// --
-
-	hl = Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 4, LT_RelativeWord );
-
-	if ( hl == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 4 );
-		goto bailout;
-	}
-
-	hl->hl_Label_Type	= LT_RelativeWord;
-	hl->hl_Label_Size	= loop * 2;
-	hl->hl_Label_Ref	= Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 6, LT_RelativeWord );
-
-	if ( hl->hl_Label_Ref == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 6 );
-		goto bailout;
-	}
-
-	// --
-
-	type = hl->hl_HunkNode->hn_MemoryType;
-
-	memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-	error = false;
-
-bailout:
-
-	#endif
-
-	return( error );
-}
-
-// --
-// Jump Table 4
-
-#if 0
-
-static struct JumpTable Table4 =
-{
-	JumpTable_4,
-{{	-12, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	 -8, 0xff000000, 0x6c000000 },	// $64340400	Bge.b		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-#endif
-
-static int JumpTable_4( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-uint32_t rel_adr;
-uint32_t tab_adr;
-int entries;
-int error;
-
-	entries = (( ms->ms_MemoryBuf[ -10 ] << 8 ) | ( ms->ms_MemoryBuf[ -9 ] << 0 ));
-	tab_adr = ms->ms_MemoryAdr + 4;
-	rel_adr = ms->ms_MemoryAdr + 6;
-
-//	printf( "tab #4 : %08x\n", tab_adr );
-
-	error	= JumpTable_Rel16( hs, tab_adr, rel_adr, entries );
-
-	#if 0
-struct HunkLabel *hl;
-uint32_t adr;
-int16_t *Offsets;
-uint8_t *type;
-int16_t off;
-int error;
-int loop;
-int cnt;
-
-	error = true;
-
-	// --
-
-	loop = (( ms->ms_MemoryBuf[ -10 ] << 8 ) | ( ms->ms_MemoryBuf[ -9 ] << 0 ));
-
-	Offsets = (void *) ms->ms_MemoryBuf + 4;
-
-	for( cnt=0 ; cnt<loop ; cnt++ )
-	{
-		off = SWAP16( Offsets[cnt] );
-		adr = ms->ms_MemoryAdr;
-
-		adr += 6;
-		adr += off;
-
-		hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Code );
-
-		if ( hl == NULL )
-		{
-			printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-
-		if ( Trace_AddBrance( hs, adr ))
-		{
-			printf( "%s:%04d: Error adding brance at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-	}
-
-	// --
-
-	hl = Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 4, LT_RelativeWord );
-
-	if ( hl == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 4 );
-		goto bailout;
-	}
-
-	hl->hl_Label_Type	= LT_RelativeWord;
-	hl->hl_Label_Size	= loop * 2;
-	hl->hl_Label_Ref	= Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 6, LT_RelativeWord );
-
-	if ( hl->hl_Label_Ref == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 6 );
-		goto bailout;
-	}
-
-	// --
-
-	type = hl->hl_HunkNode->hn_MemoryType;
-
-	memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-	error = false;
-
-bailout:
-
-	#endif
-
-	return( error );
-}
-
-// --
-// Jump Table 5
-
-#if 0
-
-static struct JumpTable Table5 =
-{
-	JumpTable_5,
-{{	-14, 0xffff0000, 0x0c400000 },	// $0c400005	Cmpi.w		#$0005,D0
-{	-10, 0xff000000, 0x6c000000 },	// $64340400	Bge.w		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-#endif
-
-static int JumpTable_5( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-uint32_t rel_adr;
-uint32_t tab_adr;
-int entries;
-int error;
-
-	entries = (( ms->ms_MemoryBuf[ -12 ] << 8 ) | ( ms->ms_MemoryBuf[ -11 ] << 0 ));
-	tab_adr = ms->ms_MemoryAdr + 4;
-	rel_adr = ms->ms_MemoryAdr + 6;
-
-//	printf( "tab #5 : %08x\n", tab_adr );
-
-	error	= JumpTable_Rel16( hs, tab_adr, rel_adr, entries );
-
-	#if 0
-struct HunkLabel *hl;
-uint32_t adr;
-int16_t *Offsets;
-uint8_t *type;
-int16_t off;
-int error;
-int loop;
-int cnt;
-
-	error = true;
-
-	// --
-
-	loop = (( ms->ms_MemoryBuf[ -12 ] << 8 ) | ( ms->ms_MemoryBuf[ -11 ] << 0 ));
-
-	Offsets = (void *) ms->ms_MemoryBuf + 4;
-
-	for( cnt=0 ; cnt<loop ; cnt++ )
-	{
-		off = SWAP16( Offsets[cnt] );
-		adr = ms->ms_MemoryAdr;
-
-		adr += 6;
-		adr += off;
-
-		hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Code );
-
-		if ( hl == NULL )
-		{
-			printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-
-		if ( Trace_AddBrance( hs, adr ))
-		{
-			printf( "%s:%04d: Error adding brance at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-	}
-
-	// --
-
-	hl = Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 4, LT_RelativeWord );
-
-	if ( hl == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 4 );
-		goto bailout;
-	}
-
-	hl->hl_Label_Type	= LT_RelativeWord;
-	hl->hl_Label_Size	= loop * 2;
-	hl->hl_Label_Ref	= Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 6, LT_RelativeWord );
-
-	if ( hl->hl_Label_Ref == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 6 );
-		goto bailout;
-	}
-
-	// --
-
-	type = hl->hl_HunkNode->hn_MemoryType;
-
-	memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-	error = false;
-
-bailout:
-
-	#endif
-
-	return( error );
-}
-
-// --
-// Jump Table 6
-
-#if 0
-
-static struct JumpTable Table6 =
-{
-	JumpTable_6,
-{{	-10, 0xffffffff, 0x0241000f },	// $0241000f	Andi.w		#$000f,D1
-{	 -6, 0xffff0000, 0xd2010000 },	// $64340400	Add.b		D1,D1
-{	 -4, 0xffffffff, 0x323b1006 },	// $323b1006	Move.w		(L02AE,PC,D1),D1
-{	  0, 0xffffffff, 0x4efb1022 },	// $4efb1022	Jmp			(L02AF,PC,D1)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-#endif
-
-static int JumpTable_6( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-uint32_t rel_adr;
-uint32_t tab_adr;
-int entries;
-int error;
-
-	entries = 16;
-	tab_adr = ms->ms_MemoryAdr + 4;
-	rel_adr = ms->ms_MemoryAdr + 36;
-
-//	printf( "tab #6 : %08x\n", tab_adr );
-
-	error	= JumpTable_Rel16( hs, tab_adr, rel_adr, entries );
-
-	#if 0
-struct HunkLabel *hl;
-uint32_t adr;
-int16_t *Offsets;
-uint8_t *type;
-int16_t off;
-int error;
-int loop;
-int cnt;
-
-	error = true;
-
-	// --
-
-	loop = 16;
-
-	Offsets = (void *) ms->ms_MemoryBuf + 4;
-
-	for( cnt=0 ; cnt<loop ; cnt++ )
-	{
-		off = SWAP16( Offsets[cnt] );
-		adr = ms->ms_MemoryAdr;
-
-		adr += 36;
-		adr += off;
-
-		hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Code );
-
-		if ( hl == NULL )
-		{
-			printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-
-		if ( Trace_AddBrance( hs, adr ))
-		{
-			printf( "%s:%04d: Error adding brance at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-	}
-
-	// --
-
-	hl = Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 4, LT_RelativeWord );
-
-	if ( hl == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 4 );
-		goto bailout;
-	}
-
-	hl->hl_Label_Type	= LT_RelativeWord;
-	hl->hl_Label_Size	= loop * 2;
-	hl->hl_Label_Ref	= Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 36, LT_RelativeWord );
-
-	if ( hl->hl_Label_Ref == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 36 );
-		goto bailout;
-	}
-
-	// --
-
-	type = hl->hl_HunkNode->hn_MemoryType;
-
-	memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-	error = false;
-
-bailout:
-
-	#endif
-
-	return( error );
-}
-
-// --
-// Jump Table 8
-
-#if 0
-
-static struct JumpTable Table8 =
-{
-	JumpTable_8,
-{{	-14, 0xffff0000, 0x0c800000 },	// $0c400005	Cmpi.l		#$00000005,D0
-{	 -8, 0xff000000, 0x6c000000 },	// $64340400	Bge.b		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0004 },	// $4efb0004	Jmp			(L02AF,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-#endif
-
-static int JumpTable_8( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-uint32_t rel_adr;
-uint32_t tab_adr;
-int entries;
-int error;
-
-	entries = (( ms->ms_MemoryBuf[ -12 ] << 24 ) | ( ms->ms_MemoryBuf[ -11 ] << 16 ) | ( ms->ms_MemoryBuf[ -10 ] << 8 ) | ( ms->ms_MemoryBuf[ -9 ] << 0 ));
-	tab_adr = ms->ms_MemoryAdr + 4;
-	rel_adr = ms->ms_MemoryAdr + 6;
-
-	printf( "tab #8 : %08x\n", tab_adr );
-
-	error	= JumpTable_Rel16( hs, tab_adr, rel_adr, entries );
-
-	#if 0
-struct HunkLabel *hl;
-uint32_t adr;
-int16_t *Offsets;
-uint8_t *type;
-int16_t off;
-int error;
-int loop;
-int cnt;
-
-	error = true;
-
-	// --
-
-	loop = (( ms->ms_MemoryBuf[ -12 ] << 24 ) | ( ms->ms_MemoryBuf[ -11 ] << 16 ) | ( ms->ms_MemoryBuf[ -10 ] << 8 ) | ( ms->ms_MemoryBuf[ -9 ] << 0 ));
-
-	Offsets = (void *) ms->ms_MemoryBuf + 4;
-
-	for( cnt=0 ; cnt<loop ; cnt++ )
-	{
-		off = SWAP16( Offsets[cnt] );
-		adr = ms->ms_MemoryAdr;
-
-		adr += 6;
-		adr += off;
-
-		hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Code );
-
-		if ( hl == NULL )
-		{
-			printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-
-		if ( Trace_AddBrance( hs, adr ))
-		{
-			printf( "%s:%04d: Error adding brance at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-	}
-
-	// --
-
-//--     hl = Hunk_AddLabel( ms->ms_HunkStruct, (uint32) Offsets, LT_RelativeWord );
-//--
-//--     if ( hl == NULL )
-//--     {
-//-- 	     goto bailout;
-//--     }
-//--
-//--     hl->hl_Label_Type   = LT_RelativeWord;
-//--     hl->hl_Label_Size   = loop * 2;
-//--     hl->hl_Label_Ref    = Hunk_AddLabel( ms->ms_HunkStruct, ( (uint32) Offsets ) + 2, LT_RelativeWord );
-//--
-//--     if ( hl->hl_Label_Ref == NULL )
-//--     {
-//-- 	     goto bailout;
-//--     }
-//--
-//--     // --
-//--
-//--     type = hl->hl_HunkNode->hn_MemoryType;
-//--
-//--     memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-printf( "aac %08x\n", ms->ms_MemoryAdr );
-
-	// --
-
-	hl = Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 4, LT_RelativeWord );
-
-	if ( hl == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 4 );
-		goto bailout;
-	}
-
-	hl->hl_Label_Type	= LT_RelativeWord;
-	hl->hl_Label_Size	= loop * 2;
-	hl->hl_Label_Ref	= Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 6, LT_RelativeWord );
-
-	if ( hl->hl_Label_Ref == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 6 );
-		goto bailout;
-	}
-
-	// --
-
-	type = hl->hl_HunkNode->hn_MemoryType;
-
-	memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-	error = false;
-
-bailout:
-
-	#endif
-
-	return( error );
-}
-
-// --
-// Jump Table 9
-
-#if 0
-
-static struct JumpTable Table9 =
-{
-	JumpTable_9,
-{{	-14, 0xffff0000, 0x0c800000 },	// $0c400005	Cmpi.l		#$00000005,D0
-{	 -8, 0xff000000, 0x6c000000 },	// $64340400	Bge.b		L02B0
-{	 -6, 0xffff0000, 0xd0400000 },	// $64340400	Add.w		D0,D0
-{	 -4, 0xffffffff, 0x303b0006 },	// $303b0206	Move.w		(L02AE,PC,D0),D0
-{	  0, 0xffffffff, 0x4efb0002 },	// $4efb0002	Jmp			(L02AE,PC,D0)
-{	  0, 0x00000000, 0000000000 }
-}};
-
-#endif
-
-static int JumpTable_9( struct HunkStruct *hs, struct M68kStruct *ms )
-{
-uint32_t rel_adr;
-uint32_t tab_adr;
-int entries;
-int error;
-
-	entries = (( ms->ms_MemoryBuf[ -12 ] << 24 ) | ( ms->ms_MemoryBuf[ -11 ] << 16 ) | ( ms->ms_MemoryBuf[ -10 ] << 8 ) | ( ms->ms_MemoryBuf[ -9 ] << 0 ));
-	tab_adr = ms->ms_MemoryAdr + 4;
-	rel_adr = ms->ms_MemoryAdr + 4;
-
-	printf( "tab #9 : %08x\n", tab_adr );
-
-	error	= JumpTable_Rel16( hs, tab_adr, rel_adr, entries );
-
-	#if 0
-struct HunkLabel *hl;
-uint32_t adr;
-int16_t *Offsets;
-uint8_t *type;
-int16_t off;
-int error;
-int loop;
-int cnt;
-
-	error = true;
-
-	// --
-
-	loop = (( ms->ms_MemoryBuf[ -12 ] << 24 ) | ( ms->ms_MemoryBuf[ -11 ] << 16 ) | ( ms->ms_MemoryBuf[ -10 ] << 8 ) | ( ms->ms_MemoryBuf[ -9 ] << 0 ));
-
-	Offsets = (void *) ms->ms_MemoryBuf + 4;
-
-	for( cnt=0 ; cnt<loop ; cnt++ )
-	{
-		off = SWAP16( Offsets[cnt] );
-		adr = ms->ms_MemoryAdr;
-
-		adr += 4;
-		adr += off;
-
-// if ( off < 0 )	{ printf( "Table9 : Nagative %d\n", off ); }
-
-		hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Code );
-
-		if ( hl == NULL )
-		{
-			printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-
-		if ( Trace_AddBrance( hs, adr ))
-		{
-			printf( "%s:%04d: Error adding brance at %08x\n", __FILE__, __LINE__, adr );
-			goto bailout;
-		}
-	}
-
-	// --
-
-//--     hl = Hunk_AddLabel( ms->ms_HunkStruct, (uint32) Offsets, LT_RelativeWord );
-//--
-//--     if ( hl == NULL )
-//--     {
-//-- 	     goto bailout;
-//--     }
-//--
-//--     hl->hl_Label_Type   = LT_RelativeWord;
-//--     hl->hl_Label_Size   = loop * 2;
-//--     hl->hl_Label_Ref    = hl;   //Hunk_AddLabel( ms->ms_HunkStruct, ( (uint32) Offsets ) + 2, LT_RelativeWord );
-//--
-//--     if ( hl->hl_Label_Ref == NULL )
-//--     {
-//-- 	     goto bailout;
-//--     }
-//--
-//--     // --
-//--
-//--     type = hl->hl_HunkNode->hn_MemoryType;
-//--
-//--     memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-printf( "aad %08x\n", ms->ms_MemoryAdr );
-
-	// --
-
-	hl = Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 4, LT_RelativeWord );
-
-	if ( hl == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 4 );
-		goto bailout;
-	}
-
-	hl->hl_Label_Type	= LT_RelativeWord;
-	hl->hl_Label_Size	= loop * 2;
-	hl->hl_Label_Ref	= Hunk_AddLabel( ms->ms_HunkStruct, ms->ms_MemoryAdr + 6, LT_RelativeWord );
-
-	if ( hl->hl_Label_Ref == NULL )
-	{
-		printf( "%s:%04d: Error adding label at %08x\n", __FILE__, __LINE__, ms->ms_MemoryAdr + 6 );
-		goto bailout;
-	}
-
-	// --
-
-	type = hl->hl_HunkNode->hn_MemoryType;
-
-	memset( & type[ hl->hl_Label_Offset ], MT_Data, loop*2 );
-
-	// --
-
-	error = false;
-
-bailout:
-
-	#endif
-
-	return( error );
-}
 
 // --
 
@@ -1259,3 +194,435 @@ bailout:
 
 	return( error );
 }
+
+// --
+
+static struct JTable Table1 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-12,		// EntryPos
+	ET_Pos32,	// EntryType
+
+	-14,		// Data Pos
+	18,			// Data Size
+{
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000013,D0			; 0c80 0000 0013
+	0x6c,0x00,0,0,			// Bge.w		L005A					; 6c00 36e6
+	0x30,0x3b,0x02,0x06,	// Move.w		L0058(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L0059(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,0x00,0x00,
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table2 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-12,		// EntryPos
+	ET_Pos32,	// EntryType
+
+	-14,		// Data Pos
+	18,			// Data Size
+{
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000013,D0			; 0c80 0000 0013
+	0x64,0x00,0,0,			// Bcc.w		L005A					; 6400 0598
+	0x30,0x3b,0x02,0x06,	// Move.w		L0058(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L0059(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,0x00,0x00,
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table3 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-10,		// EntryPos
+	ET_Pos32,	// EntryType
+
+	-12,		// Data Pos
+	16,			// Data Size
+{
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000013,D0			; 0c80 0000 0013
+	0x64,0x00,				// Bcc.b		L005A					; 645e 
+	0x30,0x3b,0x02,0x06,	// Move.w		L0058(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L0059(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,0x00,0x00,
+	0xff,0x00,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table4 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-12,		// EntryPos
+	ET_Pos16,	// EntryType
+
+	-14,		// Data Pos
+	18,			// Data Size
+{
+	0x0c,0x40,0,0,			// Cmpi.w		#$0005,D0				; 0c40 0005
+	0x64,0x00,0,0,			// Bcc.w		L02F6					; 6400 0400
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		L02F4(PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			L02F5(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table5 =
+{
+	+4,			// Tabel Pos
+
+	+36,		// Relative Pos
+
+	16,			// EntryPos
+	ET_Fixed,	// EntryType
+
+	-10,		// Data Pos
+	14,			// Data Size
+{
+	0x02,0x41,0,0,			// Andi.w		#$000f,D1				; 0241 000f
+	0xd2,0x01,				// Add.b		D1,D1					; d201
+	0x32,0x3b,0x10,0x06,	// Move.w		L253B(PC,D1.w),D1		; 323b 1006
+	0x4e,0xfb,0x10,0x22		// Jmp			L253C(PC,D1.w)			; 4efb 1022
+},
+{
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table6 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-10,		// EntryPos
+	ET_Pos16,	// EntryType
+
+	-12,		// Data Pos
+	16,			// Data Size
+{
+	0x0c,0x40,0,0,			// Cmpi.w		#$0005,D0				; 0c40 0005
+	0x64,0,					// Bcc.b		L1163					; 6436
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		L1161(PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			L1162(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,
+	0xff,0,
+	0xff,0xff,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table7 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-12,		// EntryPos
+	ET_Pos16,	// EntryType
+
+	-14,		// Data Pos
+	18,			// Data Size
+{
+	0x0c,0x40,0,0,			// Cmpi.w		#$0008,D0				; 0c40 0008
+	0x6c,0x00,0,0,			// Bge.w		L19E0					; 6c00 0092
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		L19DC(PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			L19DD(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table8 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-10,		// EntryPos
+	ET_Pos16,	// EntryType
+
+	-12,		// Data Pos
+	16,			// Data Size
+{
+	0x0c,0x40,0,0,			// Cmpi.w		#$0009,D0				; 0c40 0009
+	0x6c,0,					// Bge.b		L19F0					; 6c6e 
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		L19EE(PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			L19EF(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,
+	0xff,0x00,
+	0xff,0xff,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table9 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-10,		// EntryPos
+	ET_Pos16,	// EntryType
+
+	-12,		// Data Pos
+	16,			// Data Size
+{
+	0x0c,0x40,0,0,			// Cmpi.w		#$0009,D0				; 0c40 0005
+	0x64,0x00,0,0,			// Bcc.w		L06C6					; 6400 00f8
+	0x30,0x3b,0x02,0x06,	// Move.w		L06C4(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L19EF(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,0x00,0x00,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table10 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-8,			// EntryPos
+	ET_Pos16,	// EntryType
+
+	-10,		// Data Pos
+	14,			// Data Size
+{
+	0x0c,0x40,0,0,			// Cmpi.w		#$0005,D0				; 0c40 0005
+	0x64,0,					// Bcc.b		L0FC4					; 6434
+	0x30,0x3b,0x02,0x06,	// Move.w		L0FC2(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L19EF(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,
+	0xff,0x00,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable *JumpTables[] =
+{
+	& Table1,
+	& Table2,
+	& Table3,
+	& Table4,
+	& Table5,
+	& Table6,
+	& Table7,
+	& Table8,
+	& Table9,
+	& Table10,
+	NULL,
+};
+
+// --
+
+static int check_JumpTable( struct HunkStruct *hs, struct M68kStruct *ms, struct JTable *jt, int count )
+{
+struct HunkNode *hn;
+uint8_t *mem;
+int32_t adr;
+int32_t off;
+int32_t pos;
+uint8_t chr;
+int entries;
+int retval;
+int cnt;
+
+	// -1 = Error
+	//  0 = Not Found
+	// +1 = Found and Handled
+	retval = 0;
+
+	hn	= ms->ms_HunkNode;
+	mem = hn->hn_MemoryBuf;
+	adr = ms->ms_MemoryAdr;
+	off = adr - hn->hn_MemoryAdr;
+
+	// Check Data
+
+	pos = off + jt->DataPos;
+
+	for( cnt=0 ; cnt < jt->DataSize ; cnt++ )
+	{
+		chr = mem[pos+cnt] & jt->Mask[cnt];
+
+		if ( chr != jt->Data[cnt] )
+		{
+			goto bailout;
+		}
+	}
+
+	// Found Table
+
+	memset( & hn->hn_MemoryType[pos], MT_Code, jt->DataSize );
+
+	printf( "Found Jump Table #%d at %08x\n", count, ms->ms_MemoryAdr );
+
+	switch( jt->EntryType )
+	{
+		case ET_Fixed:
+		{
+			entries = jt->EntryPos;
+			break;
+		}
+
+		case ET_Pos16:
+		{
+			pos = off + jt->EntryPos;
+			entries = (( mem[pos+0] << 8 ) | ( mem[pos+1] << 0 ));
+			break;
+		}
+
+		case ET_Pos32:
+		{
+			pos = off + jt->EntryPos;
+			entries = (( mem[pos+0] << 24 ) | ( mem[pos+1] << 16 ) | ( mem[pos+2] << 8 ) | ( mem[pos+3] << 0 ));
+			break;
+		}
+
+		default:
+		{
+			// Error
+			retval = -1;
+			goto bailout;
+		}
+	}
+
+	if ( JumpTable_Rel16( hs, adr + jt->TabelPos, adr + jt->RelativePos, entries ))
+	{
+		// Error
+		retval = -1;
+	}
+	else
+	{
+		// Found and Handled
+		retval = +1;
+	}
+
+bailout:
+
+	return( retval );
+}
+
+// --
+
+int Trace_JumpTable( struct HunkStruct *hs, struct M68kStruct *ms )
+{
+struct JTable *jt;
+int error;
+int stat;
+int pos;
+
+	pos = 0;
+
+	while( true )
+	{
+		jt = JumpTables[pos];
+
+		if ( jt == NULL )
+		{
+			// Not Found, is not an error
+			printf( "Possible new type of Jump Table at %08x\n", ms->ms_MemoryAdr );
+			error = false;
+			break;
+		}
+
+		stat = check_JumpTable( hs, ms, jt, pos+1 );
+
+		if ( stat < 0 )
+		{
+			// Error
+			error = true;
+			break;
+		}
+
+		if ( stat > 0 )
+		{
+			// Found
+			error = false;
+			break;
+		}
+
+		pos++;
+	}
+
+	return( error );
+}
+
+// --

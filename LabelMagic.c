@@ -1,6 +1,6 @@
  
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -227,9 +227,11 @@ int error;
 		goto bailout;
 	}
 
-	if ( hl->hl_Label_Size != max )
+// printf( "Label: Size %d, Max %d\n", hl->hl_Label_Size, max );
+
+	if ( hl->hl_Label_Size > max )
 	{
-		printf( "%s:%04d: Error size mismatch at %08x\n", __FILE__, __LINE__, ms->ms_StartAddr );
+		printf( "%s:%04d: Error size mismatch at %08x ( %d != %d )\n", __FILE__, __LINE__, ms->ms_StartAddr, hl->hl_Label_Size, max );
 		goto bailout;
 	}
 
@@ -353,6 +355,18 @@ int error;
 
 	hn = ms->ms_HunkNode;
 
+	if (( hl ) && ( hl->hl_Label_Offset == pos ))
+	{
+		memcpy( & ms->ms_Registers[0], & hl->hl_Registers[0], sizeof( struct M68kRegister ) * 16 );
+	}
+	else
+	{
+		for( int cnt=0 ; cnt<16 ; cnt++ )
+		{
+			ms->ms_Registers[cnt].mr_Type = RT_Unknown;
+		}
+	}
+
 	while( true )
 	{
 		if ( type[pos] != MT_Code )
@@ -394,6 +408,19 @@ int error;
 
 		pos += ms->ms_OpcodeSize;
 		len += ms->ms_OpcodeSize;
+
+		if ( ms->ms_ClearRegMask )
+		{
+			for( int cnt=0 ; cnt<16 ; cnt++ )
+			{
+				if ( ms->ms_ClearRegMask & ( 1 << cnt ))
+				{
+					ms->ms_Registers[cnt].mr_Type = RT_Unknown;
+				}
+			}
+
+			ms->ms_ClearRegMask = 0;
+		}
 
 		if ( ms->ms_LastOpcode )
 		{
@@ -671,7 +698,7 @@ int mt;
 		}
 		else if ( type[pos] == MT_Data )
 		{
-			/**/ if (( hl ) && ( hl->hl_Label_Type == LT_Code ))
+			/**/ if (( hl ) && ( hl->hl_Label_Offset == pos ) && ( hl->hl_Label_Type == LT_Code ))
 			{
 				if ( Decode_Code( hs, ms, hl, size, type, mem, pos, & len ))
 				{
@@ -679,7 +706,7 @@ int mt;
 					goto bailout;
 				}
 			}
-			else if (( hl ) && ( hl->hl_Label_Type == LT_RelativeWord ))
+			else if (( hl ) && ( hl->hl_Label_Offset == pos ) && ( hl->hl_Label_Type == LT_RelativeWord ))
 			{
 				if ( Decode_RelativeWord( ms, hl, pos, & len ))
 				{
@@ -687,7 +714,7 @@ int mt;
 					goto bailout;
 				}
 			}
-			else if (( hl ) && ( hl->hl_Label_Type == LT_String ))
+			else if (( hl ) && ( hl->hl_Label_Offset == pos ) && ( hl->hl_Label_Type == LT_String ))
 			{
 				if ( Decode_String( ms, hl, max, & len ))
 				{
@@ -740,6 +767,10 @@ int error;
 int cnt;
 
 	error = true;
+
+	// --
+
+	hs->hs_PassNr = 2;
 
 	// --
 

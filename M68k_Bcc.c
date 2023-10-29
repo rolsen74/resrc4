@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -29,6 +29,11 @@ uint8_t *mem;
 	cond = ( ms->ms_Opcode & 0x0f000000 ) >> 24;
 	size = ( ms->ms_Opcode & 0x00ff0000 ) >> 16;
 
+	if ( cond == 1 ) // BSR
+	{
+		ms->ms_ClearRegMask = -1;
+	}
+
 	switch( size )
 	{
 		case 0:
@@ -56,9 +61,10 @@ uint8_t *mem;
 
 		case 255:
 		{
-			size_t offset;
+			int32_t offset;
 
-			static const char *bcc_RegNames[] = {
+			static const char *bcc_RegNames[] = 
+			{
 				"Bra.l", "Bsr.l", "Bhi.l", "Bls.l",
 				"Bcc.l", "Bcs.l", "Bne.l", "Beq.l",
 				"Bvc.l", "Bvs.l", "Bpl.l", "Bmi.l",
@@ -80,7 +86,8 @@ uint8_t *mem;
 		{
 			int8_t offset;
 
-			static const char *bcc_RegNames[] = {
+			static const char *bcc_RegNames[] = 
+			{
 				"Bra.b", "Bsr.b", "Bhi.b", "Bls.b",
 				"Bcc.b", "Bcs.b", "Bne.b", "Beq.b",
 				"Bvc.b", "Bvs.b", "Bpl.b", "Bmi.b",
@@ -140,12 +147,5 @@ uint8_t *mem;
 	else
 	{
 		sprintf( ms->ms_Buf_Argument, "$%08x", adr );
-	}
-
-    // --
-
-	if ( cond == 1 ) // BSR
-	{
-		ms->ms_ClearRegs = CR_All;
 	}
 }

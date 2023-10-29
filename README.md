@@ -19,15 +19,53 @@ It attempts to convert library calls into a more readable format. For example:
 
 There is also some JumpTable detection. Please note that this code is a little rough and may need a good rewrite, which is on the to-do list. You will likely need to create a config file and use the Relative16 option.
 
+## Effective Address Modes
+
+### Modes
+
+PC  = Program Counter
+d8  = Signed 8bit value
+d16 = Signed 16bit value
+d32 = Signed 32bit value
+An  = Ax Register
+Dn  = Dx Register
+Xn  = Ax/Dx Register.[W/L] with Scale
+xxx = Address
+data= 32bit Data value
+
+### Currently Supported
+
+- Dn
+- An
+- ( An )
+- ( An )+
+- -( An )
+- ( d16 , An )
+- ( d16 , PC )
+- ( d8 , An , Xn )
+- ( d8 , PC , Xn )
+- ( xxx ).w
+- ( xxx ).l
+- # <data>
+
+### Missing
+
+- ( bd , An , Xn )
+- ( bd , PC , Xn )
+- ( [ bd , An ] , Xn , od )
+- ( [ bd , PC ] , Xn , od )
+- ( [ bd , An , Xn ] , od )
+- ( [ bd , PC , Xn ] , od )
+
 ## Opcodes
 
 Please be aware of the following:
 
 - Moving to/from CCR or SR registers has not been implemented.
 - The movec opcode is missing.
-- There are no MMU and FPU opcode handling.
+- There are no MMU opcode handling.
 
- Opcodes (Currently Supported)
+Integer Opcodes (Currently Supported)
 
 - Abcd
 - Add
@@ -61,8 +99,11 @@ Please be aware of the following:
 - Bvc
 - Bvs
 - Callm
+- Chk
+- Chk2
 - Clr
 - Cmp
+- Cmp2
 - Cmpa
 - Cmpi
 - Cmpm
@@ -83,6 +124,7 @@ Please be aware of the following:
 - DBvc
 - DBvs
 - Divs
+- Divsl
 - Divu
 - Eor
 - Eori
@@ -118,6 +160,7 @@ Please be aware of the following:
 - Roxr
 - Rtd
 - Rte
+- Rtm
 - Rtr
 - Rts
 - Sbcd
@@ -148,6 +191,126 @@ Please be aware of the following:
 - Unlk
 - Unpk
 
+ FPU Opcodes (Currently Supported)
+
+- FAbs
+- FACos
+- FAdd
+- FASin
+- FATan
+- FATanh
+- FBeq
+- FBf
+- FBge
+- FBgl
+- FBgle
+- FBgt
+- FBle
+- FBlt
+- FBne
+- FBnge
+- FBngl
+- FBngle
+- FBngt
+- FBoge
+- FBogl
+- FBogt
+- FBole
+- FBolt
+- FBor
+- FBseq
+- FBsne
+- FBst
+- FBt
+- FBueq
+- FBuge
+- FBugt
+- FBule
+- FBult
+- FBun
+- FCmp
+- FCos
+- FCosh
+- FDAbs
+- FDAdd
+- FDDiv
+- FDiv
+- FDMove
+- FDMul
+- FDNeg
+- FDSqrt
+- FDSub
+- FEtox
+- FEtoxm1
+- FGetexp
+- FGetman
+- FInt
+- FIntrz
+- FLog2
+- FLog10
+- FLogn
+- FLognp1
+- FMod
+- FMove
+- FMovecr
+- FMovem (Partially implemented)
+- FMul
+- FNeg
+- FRem
+- FSAbs
+- FSAdd
+- FScale
+- FSDiv
+- FSeq
+- FSf
+- FSge
+- FSgl
+- FSgldiv
+- FSgle
+- FSglmul
+- FSgt
+- FSin
+- FSincos
+- FSinh
+- FSle
+- FSlt
+- FSMove
+- FSMul
+- FSne
+- FSNeg
+- FSnge
+- FSngl
+- FSngle
+- FSngt
+- FSnle
+- FSnlt
+- FSoge
+- FSogl
+- FSogt
+- FSole
+- FSolt
+- FSor
+- FSqrt
+- FSseq
+- FSsne
+- FSSqrt
+- FSst
+- FSSub
+- FSt
+- FSub
+- FSueq
+- FSuge
+- FSugt
+- FSule
+- FSult
+- FSun
+- FTan
+- FTanh
+- FTentox
+- FTst
+- FTwotox
+
+
 # Hunk file support
 
 Again, only what is needed has been implemented, so it's a little limited. The original Civ game did not include Symbol, DRel32, and Relloc32Short, but when I assembled the disassembled source with vasm, those hunks were used.
@@ -158,6 +321,7 @@ Again, only what is needed has been implemented, so it's a little limited. The o
 - HUNK_BSS (3EB)
 - HUNK_RELOC32 (3EC)
 - HUNK_SYMBOL (3F0)
+- HUNK_DEBUG (3F1) [Skipping]
 - HUNK_END (3F2)
 - HUNK_HEADER (3F3)
 - HUNK_DREL32 (3F7)

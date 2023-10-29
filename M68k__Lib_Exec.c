@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -27,10 +27,53 @@ struct lvostruct
 
 // --
 
+struct myLibType
+{
+	enum LibType	Type;
+	char *			Name;
+};
+
+static struct myLibType myLibs[] =
+{
+{ LIBT_AmigaguideBase,		"amigaguide.library" },
+{ LIBT_AslBase,				"asl.library" },
+{ LIBT_BulletBase,			"bullet.library" },
+{ LIBT_ColorwheelBase,		"colorwheel.library" },
+{ LIBT_CommoditiesBase,		"commodities.library" },
+{ LIBT_DatatypesBase,		"datatypes.library" },
+{ LIBT_DiskfontBase,		"diskfont.library" },
+{ LIBT_DosBase,				"dos.library" },
+{ LIBT_DTClassBase,			"dtclass.library" },
+{ LIBT_ExecBase,			"exec.library" },
+{ LIBT_ExpansionBase,		"expansion.library" },
+{ LIBT_GadToolsBase,		"gadtools.library" },
+{ LIBT_GraphicsBase,		"graphics.library" },
+{ LIBT_IconBase,			"icon.library" },
+{ LIBT_IFFParseBase,		"iffparse.library" },
+{ LIBT_IntuitionBase,		"intuition.library" },
+{ LIBT_KeymapBase,			"keymap.library" },
+{ LIBT_LayersBase,			"layers.library" },
+{ LIBT_LocaleBase,			"locale.library" },
+{ LIBT_LowlevelBase,		"lowlevel.library" },
+{ LIBT_MathffpBase,			"mathffp.library" },
+{ LIBT_MathieeedoubbasBase,		"mathieeedoubbas.library" },
+{ LIBT_MathieeedoubtransBase,	"mathieeedoubtrans.library" },
+{ LIBT_MathieeesingbasBase,		"mathieeesingbas.library" },
+{ LIBT_MathieeesingtransBase,	"mathieeesingtrans.library" },
+{ LIBT_MathtransBase,		"mathtrans.library" },
+{ LIBT_NonvolatileBase,		"nonvolatile.library" },
+{ LIBT_RexxsyslibBase,		"rexxsyslib.library" },
+{ LIBT_TranslatorBase,		"translator.library" },
+{ LIBT_UtilityBase,			"utility.library" },
+{ LIBT_WorkbenchBase,		"wb.library" },
+{ 0, NULL }
+};
+
 static void Func_OpenLibrary( struct M68kStruct *ms )
 {
 struct HunkLabel *hl;
 char *buf;
+int pos;
 
 	// A1 = Library name
 	if ( ms->ms_Registers[REG_A1].mr_Type != RT_Label )
@@ -52,32 +95,118 @@ char *buf;
 		goto bailout;
 	}
 
-	/**/ if ( ! strcmp( buf, "dos.library" ))
+	Mark_NulString( hl );
+
+	pos = 0;
+
+	while( myLibs[pos].Name )
 	{
-		ms->ms_Registers[REG_D0].mr_Type = RT_Library + ( LIBT_DosBase << 16 );
+		if ( ! strcmp( buf, myLibs[pos].Name ))
+		{
+			break;
+		}
+		else
+		{
+			pos++;
+		}
 	}
-	else if ( ! strcmp( buf, "exec.library" ))
+
+	if ( myLibs[pos].Name )
 	{
-		ms->ms_Registers[REG_D0].mr_Type = RT_Library + ( LIBT_ExecBase << 16 );
-	}
-	else if ( ! strcmp( buf, "intuition.library" ))
-	{
-		ms->ms_Registers[REG_D0].mr_Type = RT_Library + ( LIBT_IntuitionBase << 16 );
-	}
-	else if ( ! strcmp( buf, "graphics.library" ))
-	{
-		ms->ms_Registers[REG_D0].mr_Type = RT_Library + ( LIBT_GraphicsBase << 16 );
-	}
-	else if ( ! strcmp( buf, "diskfont.library" ))
-	{
-		ms->ms_Registers[REG_D0].mr_Type = RT_Library + ( LIBT_DiskFontBase << 16 );
+		ms->ms_Registers[REG_D0].mr_Type = RT_Library + ( myLibs[pos].Type << 16 );
 	}
 	else
 	{
 		ms->ms_Registers[REG_D0].mr_Type = RT_Unknown;
-		printf( "Unsupported %s library found at %08x\n", buf, ms->ms_MemoryAdr );
+
+		if ( ms->ms_HunkStruct->hs_PassNr == 1 )
+		{
+			printf( "Unsupported %s library found at %08x\n", buf, ms->ms_MemoryAdr );
+		}
 	}
 
+	// Don't clear Reg D0
+	ms->ms_ClearRegMask &= ~( 1 << REG_D0 ); 
+	
+bailout:
+
+	return;
+}
+
+// --
+
+static struct myLibType myRes[] =
+{
+{ LIBT_BattclockBase,	"battclock.resource" },
+{ LIBT_BattmemBase,		"battmem.resource" },
+{ LIBT_CardresBase,		"cardres.resource " },
+{ LIBT_CiaBase,			"ciaa.resource" },
+{ LIBT_CiaBase,			"ciab.resource" },
+{ LIBT_DiskBase,		"disk.resource " },
+{ LIBT_MiscBase,		"misc.resource" },
+{ LIBT_PotgoBase,		"potgo.resource" },
+{ 0, NULL }
+};
+
+static void Func_OpenResource( struct M68kStruct *ms )
+{
+struct HunkLabel *hl;
+char *buf;
+int pos;
+
+	// A1 = Resource name
+	if ( ms->ms_Registers[REG_A1].mr_Type != RT_Label )
+	{
+		goto bailout;
+	}
+
+	hl = ms->ms_Registers[REG_A1].mr_LabelNode;
+
+	if ( hl == NULL )
+	{
+		goto bailout;
+	}
+
+	buf = (void *) hl->hl_Label_Memory;
+
+	if ( buf == NULL )
+	{
+		goto bailout;
+	}
+
+	Mark_NulString( hl );
+
+	pos = 0;
+
+	while( myRes[pos].Name )
+	{
+		if ( ! strcmp( buf, myRes[pos].Name ))
+		{
+			break;
+		}
+		else
+		{
+			pos++;
+		}
+	}
+
+	if ( myRes[pos].Name )
+	{
+		ms->ms_Registers[REG_D0].mr_Type = RT_Library + ( myRes[pos].Type << 16 );
+	}
+	else
+	{
+		ms->ms_Registers[REG_D0].mr_Type = RT_Unknown;
+
+		if ( ms->ms_HunkStruct->hs_PassNr == 1 )
+		{
+			printf( "Unsupported %s library found at %08x\n", buf, ms->ms_MemoryAdr );
+		}
+	}
+
+	// Don't clear Reg D0
+	ms->ms_ClearRegMask &= ~( 1 << REG_D0 ); 
+	
 bailout:
 
 	return;
@@ -92,7 +221,7 @@ static struct lvostruct LVOS[] =
 	{ 0, -78, "_LVOInitStruct", NULL },
 	{ 0, -84, "_LVOMakeLibrary", NULL },
 	{ 0, -90, "_LVOMakeFunctions", NULL },
-	{ 0, -96, "_LVOFindResident", NULL },
+	{ 0, -96, "_LVOFindResident", Mark_A1_NulString },
 	{ 0, -102, "_LVOInitResident", NULL },
 	{ 0, -108, "_LVOAlert", NULL },
 	{ 0, -114, "_LVODebug", NULL },
@@ -122,10 +251,10 @@ static struct lvostruct LVOS[] =
 	{ 0, -258, "_LVORemHead", NULL },
 	{ 0, -264, "_LVORemTail", NULL },
 	{ 0, -270, "_LVOEnqueue", NULL },
-	{ 0, -276, "_LVOFindName", NULL },
+	{ 0, -276, "_LVOFindName", Mark_A1_NulString },
 	{ 0, -282, "_LVOAddTask", NULL },
 	{ 0, -288, "_LVORemTask", NULL },
-	{ 0, -294, "_LVOFindTask", NULL },
+	{ 0, -294, "_LVOFindTask", Mark_A1_NulString },
 	{ 0, -300, "_LVOSetTaskPri", NULL },
 	{ 0, -306, "_LVOSetSignal", NULL },
 	{ 0, -312, "_LVOSetExcept", NULL },
@@ -141,16 +270,16 @@ static struct lvostruct LVOS[] =
 	{ 0, -372, "_LVOGetMsg", NULL },
 	{ 0, -378, "_LVOReplyMsg", NULL },
 	{ 0, -384, "_LVOWaitPort", NULL },
-	{ 0, -390, "_LVOFindPort", NULL },
+	{ 0, -390, "_LVOFindPort", Mark_A1_NulString },
 	{ 0, -396, "_LVOAddLibrary", NULL },
 	{ 0, -402, "_LVORemLibrary", NULL },
-	{ 0, -408, "_LVOOldOpenLibrary", NULL },
+	{ 0, -408, "_LVOOldOpenLibrary", Func_OpenLibrary },
 	{ 0, -414, "_LVOCloseLibrary", NULL },
 	{ 0, -420, "_LVOSetFunction", NULL },
 	{ 0, -426, "_LVOSumLibrary", NULL },
 	{ 0, -432, "_LVOAddDevice", NULL },
 	{ 0, -438, "_LVORemDevice", NULL },
-	{ 0, -444, "_LVOOpenDevice", NULL },
+	{ 0, -444, "_LVOOpenDevice", Mark_A0_NulString },
 	{ 0, -450, "_LVOCloseDevice", NULL },
 	{ 0, -456, "_LVODoIO", NULL },
 	{ 0, -462, "_LVOSendIO", NULL },
@@ -159,8 +288,8 @@ static struct lvostruct LVOS[] =
 	{ 0, -480, "_LVOAbortIO", NULL },
 	{ 0, -486, "_LVOAddResource", NULL },
 	{ 0, -492, "_LVORemResource", NULL },
-	{ 0, -498, "_LVOOpenResource", NULL },
-	{ 0, -522, "_LVORawDoFmt", NULL },
+	{ 0, -498, "_LVOOpenResource", Func_OpenResource },
+	{ 0, -522, "_LVORawDoFmt", Mark_A0_NulString },
 	{ 0, -528, "_LVOGetCC", NULL },
 	{ 0, -534, "_LVOTypeOfMem", NULL },
 	{ 0, -540, "_LVOProcure", NULL },
@@ -172,11 +301,11 @@ static struct lvostruct LVOS[] =
 	{ 0, -576, "_LVOAttemptSemaphore", NULL },
 	{ 0, -582, "_LVOObtainSemaphoreList", NULL },
 	{ 0, -588, "_LVOReleaseSemaphoreList", NULL },
-	{ 0, -594, "_LVOFindSemaphore", NULL },
+	{ 0, -594, "_LVOFindSemaphore", Mark_A1_NulString },
 	{ 0, -600, "_LVOAddSemaphore", NULL },
 	{ 0, -606, "_LVORemSemaphore", NULL },
 	{ 0, -612, "_LVOSumKickData", NULL },
-	{ 0, -618, "_LVOAddMemList", NULL },
+	{ 0, -618, "_LVOAddMemList", Mark_A1_NulString },
 	{ 0, -624, "_LVOCopyMem", NULL },
 	{ 0, -630, "_LVOCopyMemQuick", NULL },
 	{ 0, -636, "_LVOCacheClearU", NULL },
@@ -237,7 +366,7 @@ int pos;
 
 	if ( lvo == NULL )
 	{
-printf( "Unknown Exec libcall %d at %08x\n", val, ms->ms_MemoryAdr );
+printf( "Unknown Exec libcall %d at $%08x\n", val, ms->ms_MemoryAdr );
 	}
 
 	return( lvo );

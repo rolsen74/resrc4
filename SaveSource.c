@@ -1,6 +1,6 @@
  
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen <renewolsen@gmail.com>
+ * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -329,10 +329,64 @@ bailout:
 
 // --
 
+struct mySaveStruct
+{
+	char *		Name;
+	int			(*Func)();
+};
+
+static struct mySaveStruct mySave[] =
+{
+	{ "Amigaguide",			Save_Lib_Amigaguide },
+	{ "ASL",				Save_Lib_Asl },
+	{ "Battclock",			Save_Lib_Battclock },
+	{ "Battmem",			Save_Lib_Battmem },
+	{ "Bullet",				Save_Lib_Bullet },
+	{ "Cardres",			Save_Lib_Cardres },
+	{ "CIA",				Save_Lib_Cia },
+	{ "Colorwheel",			Save_Lib_Colorwheel },
+	{ "Commodities",		Save_Lib_Commodities },
+//	{ "Console",			Save_Lib_Console },
+	{ "Datatypes",			Save_Lib_Datatypes },
+	{ "Disk",				Save_Lib_Disk },
+	{ "Diskfont",			Save_Lib_Diskfont },
+	{ "DOS",				Save_Lib_Dos },
+	{ "DTClass",			Save_Lib_DTClass },
+	{ "Exec",				Save_Lib_Exec },
+	{ "Expansion",			Save_Lib_Expansion },
+	{ "Gadtools",			Save_Lib_Gadtools },
+	{ "Graphics",			Save_Lib_Graphics },
+	{ "Icon",				Save_Lib_Icon },
+	{ "IFFParse",			Save_Lib_IFFParse },
+//	{ "Input",				Save_Lib_Input },
+	{ "Intuition",			Save_Lib_Intuition },
+	{ "Keymap",				Save_Lib_Keymap },
+	{ "Layers",				Save_Lib_Layers },
+	{ "Locale",				Save_Lib_Locale },
+	{ "Lowlevel",			Save_Lib_Lowlevel },
+	{ "Mathffp",			Save_Lib_Mathffp },
+	{ "Mathieeedoubbase",	Save_Lib_Mathieeedoubbas },
+	{ "Mathieeedoubtrans",	Save_Lib_Mathieeedoubtrans },
+	{ "Mathieeesingbas",	Save_Lib_Mathieeesingbas },
+	{ "Mathieeesingtrans",	Save_Lib_Mathieeesingtrans },
+	{ "Mathtrans",			Save_Lib_Mathtrans },
+	{ "Misc",				Save_Lib_Misc },
+	{ "Nonvolatile",		Save_Lib_Nonvolatile },
+	{ "Potgo",				Save_Lib_Potgo },
+//	{ "Ramdrive",			Save_Lib_Ramdrive },
+	{ "Rexxsyslib",			Save_Lib_Rexxsyslib },
+//	{ "Timer",				Save_Lib_Timer },
+	{ "Translator",			Save_Lib_Translator },
+	{ "Utility",			Save_Lib_Utility },
+	{ "Workbench",			Save_Lib_Workbench },
+	{ NULL, NULL }
+};
+
 int SaveSource( struct HunkStruct *hs, char *filename )
 {
 struct SourceNode *sn;
 int error;
+int pos;
 
 // printf( "SaveSource\n" );
 
@@ -401,34 +455,19 @@ int error;
 
 	// --
 
-	if ( Save_Lib_DiskFont() )
-	{
-		printf( "%s:%04d: Error Writting DiskFont lvo's\n", __FILE__, __LINE__ );
-		goto bailout;
-	}
+	pos = 0;
 
-	if ( Save_Lib_Dos() )
+	while( mySave[pos].Name )
 	{
-		printf( "%s:%04d: Error Writting Dos lvo's\n", __FILE__, __LINE__ );
-		goto bailout;
-	}
-
-	if ( Save_Lib_Exec() )
-	{
-		printf( "%s:%04d: Error Writting Exec lvo's\n", __FILE__, __LINE__ );
-		goto bailout;
-	}
-
-	if ( Save_Lib_Graphics() )
-	{
-		printf( "%s:%04d: Error Writting Graphics lvo's\n", __FILE__, __LINE__ );
-		goto bailout;
-	}
-
-	if ( Save_Lib_Intuition() )
-	{
-		printf( "%s:%04d: Error Writting Intuition lvo's\n", __FILE__, __LINE__ );
-		goto bailout;
+		if ( mySave[pos].Func() )
+		{
+			printf( "%s:%04d: Error Writting %s lvo's\n", __FILE__, __LINE__, mySave[pos].Name );
+			goto bailout;
+		}
+		else
+		{
+			pos++;
+		}
 	}
 
 	// --
