@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -24,7 +24,7 @@
 // --
 
 #define DATE				"04-Feb-2024"
-#define YEAR				2023
+#define YEAR				2024
 #define VERSION				2
 #define REVISION			4
 

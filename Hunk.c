@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2023 by Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2024 by Rene W. Olsen < renewolsen @ gmail . com >
  * All rights reserved.
  *
  */
