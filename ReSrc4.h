@@ -23,10 +23,10 @@
 
 // --
 
-#define DATE				"29-Oct-2023"
+#define DATE				"04-Feb-2024"
 #define YEAR				2023
 #define VERSION				2
-#define REVISION			3
+#define REVISION			4
 
 // --
 

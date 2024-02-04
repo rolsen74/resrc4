@@ -43,7 +43,7 @@
 	0x4e,0xfb,0x00,0x04		// Jmp			L02F5(PC,D0.w)			; 4efb 0004
 
 -- Table #5 - Civilization ECS+AGA
-	0x02,0x41,0,0,			// Andi.w		#$000f,D1				; 0241 000f
+	0x02,0x41,0x00,0x0f,	// Andi.w		#$000f,D1				; 0241 000f
 	0xd2,0x01,				// Add.b		D1,D1					; d201
 	0x32,0x3b,0x10,0x06,	// Move.w		L253B(PC,D1.w),D1		; 323b 1006
 	0x4e,0xfb,0x10,0x22		// Jmp			L253C(PC,D1.w)			; 4efb 1022

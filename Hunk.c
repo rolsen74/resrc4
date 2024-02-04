@@ -167,7 +167,7 @@ struct HunkLabel *Hunk_FindLabel( struct HunkStruct *hs, int32_t addr )
 {
 struct HunkLabel *hl;
 
-	int hash = addr % MAX_LABHASH;
+	int hash = ( (uint32_t) addr ) % MAX_LABHASH;
 
 	hl = hs->hs_LabelHash[ hash ];
 
@@ -192,7 +192,7 @@ struct HunkRef *Hunk_FindRef( struct HunkNode *hn, int32_t adr )
 {
 struct HunkRef *hr;
 
-	int hash = adr % MAX_REFHASH;
+	int hash = ( (uint32_t) adr ) % MAX_REFHASH;
 
 	hr = hn->hn_Refs2[ hash ];
 
@@ -258,7 +258,7 @@ struct HunkRef *hr;
 
 	// -- Insert Hash
 
-	int hash = new->hr_Address % MAX_REFHASH;
+	int hash = ( (uint32_t) new->hr_Address ) % MAX_REFHASH;
 
 	new->hr_HashPtr = hn->hn_Refs2[hash];
 
@@ -430,7 +430,7 @@ printf( "AddLabel: External? %08x\n", addr );
 
 	// -- Insert Hash
 
-	int hash = addr % MAX_LABHASH;
+	int hash = ( (uint32_t) addr ) % MAX_LABHASH;
 
 	new->hl_HashPtr = hs->hs_LabelHash[hash];
 
@@ -511,7 +511,7 @@ struct HunkLabel *hl;
 
 	// -- Insert Hash
 
-	int hash = addr % MAX_LABHASH;
+	int hash = ( (uint32_t) addr ) % MAX_LABHASH;
 
 	new->hl_HashPtr = hs->hs_LabelHash[hash];
 
