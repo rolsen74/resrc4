@@ -17,8 +17,6 @@
 
 void Cmd_PEA( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
-
 	ms->ms_Str_Opcode	= "Pea";
 	ms->ms_DoExternal	= 0;
 	ms->ms_IsPea		= 1;
@@ -28,12 +26,7 @@ struct HunkRef *isRef;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	ms->ms_Registers[ REG_A7 ].mr_Type = RT_Unknown;
 	ms->ms_OpcodeSize = ms->ms_ArgSize;

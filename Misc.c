@@ -55,6 +55,12 @@ int chr;
 int len;
 
 	hn	= hl->hl_HunkNode;
+
+	if ( hn->hn_HunkType == HUNK_BSS )
+	{
+		return;
+	}
+
 	off	= hl->hl_Label_Offset;
 	mem = hn->hn_MemoryBuf;
 	type= hn->hn_MemoryType;

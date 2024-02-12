@@ -17,8 +17,6 @@
 
 void Cmd_JMP( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
-
 	ms->ms_Str_Opcode = "Jmp";
 
 	// --
@@ -30,12 +28,7 @@ struct HunkRef *isRef;
 	ms->ms_CurRegister = & ms->ms_JmpRegister;
 	ms->ms_LibCall = 1;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, LT_Code ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
 

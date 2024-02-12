@@ -23,10 +23,10 @@
 
 // --
 
-#define DATE				"04-Feb-2024"
+#define DATE				"12-Feb-2024"
 #define YEAR				2024
 #define VERSION				2
-#define REVISION			4
+#define REVISION			5
 
 // --
 
@@ -120,7 +120,8 @@ enum LibType
 
 enum LabelType
 {
-    LT_Unknown = 0,
+	LT_Unset = 0,		// Starts blank/unset
+	LT_Unknown,			// IF Label gets more than one Type, then we don't know what to use
 	LT_Code,
 	LT_String,
 	LT_RelativeWord,
@@ -281,6 +282,7 @@ struct HunkLabel
 	int32_t					hl_Label_Offset;
 	enum LabelType			hl_Label_Type;
 	int						hl_Label_SubType;
+	int						hl_Label_FixedType;
 	int32_t					hl_Label_Size;
 	char					hl_Label_Name[ MAX_LabelName ];
 	struct M68kRegister		hl_Registers[16];
@@ -341,6 +343,16 @@ struct SourceNode
 	char *					sn_Comment;
 };
 
+// --
+
+struct Misc_Move_GetSetStruct
+{
+	int					SrcType;
+	int					LibType;
+	struct HunkLabel *	Label;
+	struct M68kRegister Reg;
+};
+
 // -- Extern
 extern const char *FPx_RegNames[8];
 extern const char *Ax_RegNames[8];
@@ -374,13 +386,14 @@ struct HunkLabel *	Hunk_AddLabel2(			struct HunkStruct *hs, struct HunkNode *hn,
 struct HunkLabel *	Hunk_AddExtLabel(		struct HunkStruct *hs, int32_t addr, enum LabelType type );
 struct HunkRef *	Hunk_FindRef(			struct HunkNode *hn, int32_t adr );
 struct HunkLabel *	Hunk_FindLabel(			struct HunkStruct *hs, int32_t addr );
+void				BuildLabelString(		struct HunkLabel *hl, char *buf );
 
 // -- Label Magic
 int					LabelMagic(				struct HunkStruct *hs );
 
 // -- M68k
 void				M68k_Decode(			struct M68kStruct *ms );
-int					M68k_EffectiveAddress(	struct M68kStruct *ms, struct HunkRef *isRef, uint32_t RefType );
+void				M68k_EffectiveAddress(	struct M68kStruct *ms );
 char *				M68k_FindLibFunc(		struct M68kStruct *ms, int16_t val );
 char *				M68k_Lib_Amigaguide(	struct M68kStruct *ms, int16_t val );
 int					Save_Lib_Amigaguide(	void );
@@ -466,6 +479,8 @@ char *				M68k_Lib_Utility(		struct M68kStruct *ms, int16_t val );
 int					Save_Lib_Utility(		void );
 char *				M68k_Lib_Workbench(		struct M68kStruct *ms, int16_t val );
 int					Save_Lib_Workbench(		void );
+void				Misc_Move_Get(			struct M68kStruct *ms, struct M68kRegister *cur, uint8_t *mem, struct Misc_Move_GetSetStruct *gss );
+void				Misc_Move_Set(			struct M68kStruct *ms, struct M68kRegister *cur, uint8_t *mem, struct Misc_Move_GetSetStruct *gss );
 
 // -- Misc
 char *				myStrdup(				char *string );
@@ -505,6 +520,7 @@ void Cmd_ADD(		struct M68kStruct *ms );
 void Cmd_ADDA(		struct M68kStruct *ms );
 void Cmd_ADDI(		struct M68kStruct *ms );
 void Cmd_ADDQ(		struct M68kStruct *ms );
+void Cmd_ADDX(		struct M68kStruct *ms );
 void Cmd_AND(		struct M68kStruct *ms );
 void Cmd_ANDI(		struct M68kStruct *ms );
 void Cmd_ASL(		struct M68kStruct *ms );
@@ -585,6 +601,7 @@ void Cmd_SUB(		struct M68kStruct *ms );
 void Cmd_SUBA(		struct M68kStruct *ms );
 void Cmd_SUBI(		struct M68kStruct *ms );
 void Cmd_SUBQ(		struct M68kStruct *ms );
+void Cmd_SUBX(		struct M68kStruct *ms );
 void Cmd_SWAP(		struct M68kStruct *ms );
 void Cmd_TRAP(		struct M68kStruct *ms );
 void Cmd_TRAPV(		struct M68kStruct *ms );
@@ -655,6 +672,7 @@ void Cmd_FMOD2(		struct M68kStruct *ms );
 void Cmd_FMOVE(		struct M68kStruct *ms );
 void Cmd_FMOVE2(	struct M68kStruct *ms );
 void Cmd_FMOVE3(	struct M68kStruct *ms );
+void Cmd_FMOVE4(	struct M68kStruct *ms );
 void Cmd_FMOVECR(	struct M68kStruct *ms );
 void Cmd_FMOVEM(	struct M68kStruct *ms );
 void Cmd_FMOVEM2(	struct M68kStruct *ms );

@@ -26,8 +26,6 @@ int dst;
 	ms->ms_Str_Opcode = "FRem.x";
 	ms->ms_OpcodeSize = 4;
 
-//	printf( "Unsupported 'FRem1' Opcode at %08x\n", ms->ms_MemoryAdr );
-
 	sprintf( ms->ms_Buf_Argument, "%s,%s", FPx_RegNames[src], FPx_RegNames[dst] );
 }
 
@@ -35,7 +33,6 @@ int dst;
 
 void Cmd_FREM2( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int emode;
 int ereg;
 int src;
@@ -114,12 +111,7 @@ int len;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
 

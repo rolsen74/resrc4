@@ -17,7 +17,6 @@
 
 void Cmd_BCLR( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int nr;
 
 	ms->ms_Str_Opcode = "BClr";
@@ -35,12 +34,7 @@ int nr;
 
 	ms->ms_CurRegister = & ms->ms_DstRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
 
@@ -50,7 +44,6 @@ int nr;
 
 void Cmd_BCLR2( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int reg;
 
 	ms->ms_Str_Opcode = "BClr";
@@ -67,12 +60,7 @@ int reg;
 
 	ms->ms_CurRegister = & ms->ms_DstRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
 

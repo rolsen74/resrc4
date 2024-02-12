@@ -17,13 +17,13 @@
 
 void Cmd_DBcc( struct M68kStruct *ms )
 {
-struct HunkLabel *parent;
 struct HunkLabel *hl;
 uint32_t cond;
 uint32_t reg;
 int32_t adr;
 int16_t offset;
 uint8_t *mem;
+char labname[ MAX_LabelName + 8 ];
 
 	static const char *dbcc_RegNames[16] =
 	{
@@ -49,7 +49,7 @@ uint8_t *mem;
 
 	// --
 
-//	hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Unknown );
+//	hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Unset );
 	hl = Hunk_AddLabel2( ms->ms_HunkStruct, ms->ms_HunkNode, adr, LT_Code );
 
 	if ( hl )
@@ -65,25 +65,9 @@ uint8_t *mem;
 
 	if (( hl ) && ( hl->hl_Label_Name[0] ))
 	{
-		parent = hl->hl_Parent;
+		BuildLabelString( hl, labname );
 
-		if ( parent )
-		{
-			int off = hl->hl_Label_Offset - parent->hl_Label_Offset;
-
-			if ( off < 0 )
-			{
-				sprintf( ms->ms_Buf_Argument, "%s,%s%d", Dx_RegNames[reg], parent->hl_Label_Name, off );
-			}
-			else
-			{
-				sprintf( ms->ms_Buf_Argument, "%s,%s+%d", Dx_RegNames[reg], parent->hl_Label_Name, off );
-			}
-		}
-		else
-		{
-			sprintf( ms->ms_Buf_Argument, "%s,%s", Dx_RegNames[reg], hl->hl_Label_Name );
-		}
+		sprintf( ms->ms_Buf_Argument, "%s,%s", Dx_RegNames[reg], labname );
 	}
 	else
 	{

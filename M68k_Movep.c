@@ -17,7 +17,6 @@
 
 void Cmd_MOVEP( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int mode;
 int areg;
 int dreg;
@@ -38,12 +37,7 @@ int dreg;
 	
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -52,12 +46,7 @@ int dreg;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			ms->ms_CurRegister->mr_Type = RT_Unknown;
 			break;
@@ -73,12 +62,7 @@ int dreg;
 	
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -87,12 +71,7 @@ int dreg;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			ms->ms_CurRegister->mr_Type = RT_Unknown;
 			break;
@@ -108,12 +87,7 @@ int dreg;
 	
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -122,12 +96,7 @@ int dreg;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			ms->ms_CurRegister->mr_Type = RT_Unknown;
 			break;
@@ -143,12 +112,7 @@ int dreg;
 	
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -157,12 +121,7 @@ int dreg;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			ms->ms_CurRegister->mr_Type = RT_Unknown;
 			break;

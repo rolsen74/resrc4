@@ -17,7 +17,6 @@
 
 void Cmd_Bcc( struct M68kStruct *ms )
 {
-struct HunkLabel *parent;
 struct HunkLabel *hl;
 uint32_t cond;
 uint32_t size;
@@ -108,7 +107,7 @@ uint8_t *mem;
 
 	// --
 
-//	hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Unknown );
+//	hl = Hunk_AddLabel( ms->ms_HunkStruct, adr, LT_Unset );
 	hl = Hunk_AddLabel2( ms->ms_HunkStruct, ms->ms_HunkNode, adr, LT_Code );
 
 	if ( hl )
@@ -124,25 +123,7 @@ uint8_t *mem;
 
 	if (( hl ) && ( hl->hl_Label_Name[0] ))
 	{
-		parent = hl->hl_Parent;
-
-		if ( parent )
-		{
-			int off = hl->hl_Label_Offset - parent->hl_Label_Offset;
-
-			if ( off < 0 )
-			{
-				sprintf( ms->ms_Buf_Argument, "%s%d", parent->hl_Label_Name, off );
-			}
-			else
-			{
-				sprintf( ms->ms_Buf_Argument, "%s+%d", parent->hl_Label_Name, off );
-			}
-		}
-		else
-		{
-			sprintf( ms->ms_Buf_Argument, "%s", hl->hl_Label_Name );
-		}
+		BuildLabelString( hl, ms->ms_Buf_Argument );
 	}
 	else
 	{

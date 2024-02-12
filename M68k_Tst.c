@@ -15,9 +15,8 @@
 
 // --
 
- void Cmd_TST( struct M68kStruct *ms )
- {
-struct HunkRef *isRef;
+void Cmd_TST( struct M68kStruct *ms )
+{
 uint32_t size;
 
 	size = ( ms->ms_Opcode & 0x00c00000 ) >> 22;
@@ -58,12 +57,7 @@ uint32_t size;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	ms->ms_OpcodeSize = ms->ms_ArgSize;
 

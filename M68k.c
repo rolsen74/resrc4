@@ -31,132 +31,6 @@ struct CmdStruct
 
 // --
 
-/*
-** Opcodes (Currently supported)
-**
-**  Abcd       B      : trace
-**  Add        B W L  : trace
-**  Adda         W L  : trace
-**  Addi       B W L  : trace
-**  Addq       B W L  : trace
-**  And        B W L  : trace
-**  Andi       B W L  : trace
-**  Asl        B W L  : trace
-**  Asr        B W L  : trace
-**  Bcc        B W L  : trace
-**  BChg       B   L  : trace
-**  BClr       B   L  : trace
-**  Bcs        B W L  : trace
-**  Beq        B W L  : trace
-**  Bge        B W L  : trace
-**  BGnd              : trace
-**  Bgt        B W L  : trace
-**  Bhi        B W L  : trace
-**  Bkpt              : trace
-**  Ble        B W L  : trace
-**  Bls        B W L  : trace
-**  Blt        B W L  : trace
-**  Bmi        B W L  : trace
-**  Bne        B W L  : trace
-**  Bpl        B W L  : trace
-**  Bra        B W L  : trace
-**  BSet       B   L  : trace
-**  Bsr        B W L  : trace
-**  BTst       B   L  : trace
-**  Bvc        B W L  : trace
-**  Bvs        B W L  : trace
-**  Callm             : trace
-**  Clr        B W L  : trace
-**  Cmp        B W L  : trace
-**  Cmpa         W L  : trace
-**  Cmpi       B W L  : trace
-**  Cmpm       B W L  : trace
-**  DBcc         W    : trace
-**  DBcs         W    : trace
-**  DBeq         W    : trace
-**  DBf          W    : trace
-**  DBge         W    : trace
-**  DBgt         W    : trace
-**  DBhi         W    : trace
-**  DBle         W    : trace
-**  DBls         W    : trace
-**  DBlt         W    : trace
-**  DBmi         W    : trace
-**  DBne         W    : trace
-**  DBpl         W    : trace
-**  DBt          W    : trace
-**  DBvc         W    : trace
-**  DBvs         W    : trace
-**  Divs         W L  : trace
-**  Divu         W L  : trace
-**  Eor        B W L  : trace
-**  Eori       B W L  : trace
-**  Exg            L  : trace
-**  Ext          W L  : trace
-**  Extb           L  : trace
-**  Illegal           : trace
-**  Jmp               : trace
-**  Jsr               : trace
-**  Lea            L  : trace
-**  Link         W L  : trace
-**  Lsl        B W L  : trace
-**  Lsr        B W L  : trace
-**  Move       B W L  : trace
-**  Movea        W L  : trace
-**  Movem        W L  : trace
-**  Movep        W L  : trace
-**  Moveq          L  : trace
-**  Muls         W L  : trace
-**  Mulu         W L  : trace
-**  Nbcd       B      : trace
-**  Neg        B W L  : trace
-**  Nop               : trace
-**  Not        B W L  : trace
-**  Or         B W L  : trace
-**  Ori        B W L  : trace
-**  Pack              : trace
-**  Pea            L  : trace
-**  Reset             : trace
-**  Rol        B W L  : trace
-**  Ror        B W L  : trace
-**  Roxl       B W L  : trace
-**  Roxr       B W L  : trace
-**  Rtd               : trace
-**  Rte               : trace
-**  Rtr               : trace
-**  Rts               : trace
-**  Sbcd       B      : trace
-**  Scc        B      : trace
-**  Scs        B      : trace
-**  Seq        B      : trace
-**  Sf         B      : trace
-**  Sge        B      : trace
-**  Sgt        B      : trace
-**  Shi        B      : trace
-**  Sle        B      : trace
-**  Sls        B      : trace
-**  Slt        B      : trace
-**  Smi        B      : trace
-**  Sne        B      : trace
-**  Spl        B      : trace
-**  St         B      : trace
-**  Sub        B W L  : trace
-**  Suba         W L  : trace
-**  Subi       B W L  : trace
-**  Subq       B W L  : trace
-**  Svc        B      : trace
-**  Svs        B      : trace
-**  Swap         W    : trace
-**  Trap              : trace
-**  Trapv             : trace
-**  Tst        B W L  : trace
-**  Unlk              : trace
-**  Unpk              : trace
-**
-*/
-
-// --
-
 static const struct CmdStruct m68kCmds_0000[] =
 {
 //  { Cmd_ORI_CCR,  wwwwwwwwww, wwwwwwwwww },   // ORI      0000 0000 0011 1100 0000 0000 xxxx xxxx
@@ -183,19 +57,20 @@ static const struct CmdStruct m68kCmds_0000[] =
  	{ Cmd_CMP2,		0xffc00fff, 0x04c00000 },	// Cmp2.l	0000 0100 11xx xxxx xxxx 0000 0000 0000
  	{ Cmd_CHK2,		0xffc00fff, 0x04c00800 },	// Chk2.l	0000 0100 11xx xxxx xxxx 1000 0000 0000
 
-	{ Cmd_RTM,		0xfff00000, 0x06c00000 },	// RTM		0000 0110 1100 xxxx
-	{ Cmd_CALLM,	0xffc0ff00, 0x06c00000 },	// CALLM	0000 0110 11xx xxxx 0000 0000 xxxx xxxx
-
 	{ Cmd_ADDI,		0xffc00000, 0x06000000 },	// ADDI.b	0000 0110 00xx xxxx
 	{ Cmd_ADDI,		0xffc00000, 0x06400000 },	// ADDI.w	0000 0110 01xx xxxx
 	{ Cmd_ADDI,		0xffc00000, 0x06800000 },	// ADDI.l	0000 0110 10xx xxxx
+	{ Cmd_RTM,		0xfff00000, 0x06c00000 },	// RTM		0000 0110 1100 xxxx
+	{ Cmd_CALLM,	0xffc0ff00, 0x06c00000 },	// CALLM	0000 0110 11xx xxxx 0000 0000 xxxx xxxx
 
-
+	{ Cmd_BTST,		0xffc0ff00, 0x08000000 },	// BTST     0000 1000 00xx xxxx 0000 0000 xxxx xxxx
+	{ Cmd_BCHG,		0xffc0ff00, 0x08400000 },	// BCHG     0000 1000 01xx xxxx 0000 0000 xxxx xxxx
+	{ Cmd_BCLR,		0xffc0ff00, 0x08800000 },	// BCLR     0000 1000 10xx xxxx 0000 0000 xxxx xxxx
+	{ Cmd_BSET,		0xffc0ff00, 0x08c00000 },	// BSET     0000 1000 11xx xxxx 0000 0000 xxxx xxxx
 
 //  { Cmd_EORI_CCR, wwwwwwwwww, wwwwwwwwww },   // EORI     0000 1010 0011 1100 0000 0000 xxxx xxxx
-//  { Cmd_EORI_SR,  wwwwwwwwww, wwwwwwwwww },   // EORI     0000 1010 0111 1100 xxxx xxxx xxxx xxxx
-
 	{ Cmd_EORI,		0xffc00000, 0x0a000000 },	// EORI.b	0000 1010 00xx xxxx
+//  { Cmd_EORI_SR,  wwwwwwwwww, wwwwwwwwww },   // EORI     0000 1010 0111 1100 xxxx xxxx xxxx xxxx
 	{ Cmd_EORI,		0xffc00000, 0x0a400000 },	// EORI.w	0000 1010 01xx xxxx
 	{ Cmd_EORI,		0xffc00000, 0x0a800000 },	// EORI.l	0000 1010 10xx xxxx
 
@@ -203,25 +78,19 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ Cmd_CMPI,		0xffc00000, 0x0c400000 },	// CMPI.w	0000 1100 01xx xxxx
 	{ Cmd_CMPI,		0xffc00000, 0x0c800000 },	// CMPI.l	0000 1100 10xx xxxx
 
-	{ Cmd_BTST,		0xffc0ff00, 0x08000000 },	// BTST     0000 1000 00xx xxxx 0000 0000 xxxx xxxx
-	{ Cmd_BCHG,		0xffc0ff00, 0x08400000 },	// BCHG     0000 1000 01xx xxxx 0000 0000 xxxx xxxx
-	{ Cmd_BCLR,		0xffc0ff00, 0x08800000 },	// BCLR     0000 1000 10xx xxxx 0000 0000 xxxx xxxx
-	{ Cmd_BSET,		0xffc0ff00, 0x08c00000 },	// BSET     0000 1000 11xx xxxx 0000 0000 xxxx xxxx
-
 //  { Cmd_MOVES,    wwwwwwwwww, wwwwwwwwww },   // MOVES    0000 1110 xxxx xxxx xxxx x000 0000 0000
-
 //  { Cmd_CAS2,     wwwwwwwwww, wwwwwwwwww },   // CAS2     0000 1xx0 1111 1100 xxxx 000x xx00 0xxx xxxx 000x xx00 0xxxx
 //  { Cmd_CAS,      wwwwwwwwww, wwwwwwwwww },   // CAS      0000 1xx0 11xx xxxx 0000 000x xx00 0xxx
 
+	{ Cmd_MOVEP,	0xf1f80000, 0x01080000 },	// MOVEP.w	0000 xxx1 0000 1xxx
 	{ Cmd_BTST2,	0xf1c00000, 0x01000000 },	// BTST     0000 xxx1 00xx xxxx
+	{ Cmd_MOVEP,	0xf1f80000, 0x01480000 },	// MOVEP.l	0000 xxx1 0100 1xxx
 	{ Cmd_BCHG2,	0xf1c00000, 0x01400000 },	// BCHG     0000 xxx1 01xx xxxx
+	{ Cmd_MOVEP,	0xf1f80000, 0x01880000 },	// MOVEP.w	0000 xxx1 1000 1xxx
 	{ Cmd_BCLR2,	0xf1c00000, 0x01800000 },	// BCLR     0000 xxx1 10xx xxxx
+	{ Cmd_MOVEP,	0xf1f80000, 0x01c80000 },	// MOVEP.l	0000 xxx1 1100 1xxx
 	{ Cmd_BSET2,	0xf1c00000, 0x01c00000 },	// BSET     0000 xxx1 11xx xxxx
 
-	{ Cmd_MOVEP,	0xf1f80000, 0x01080000 },	// MOVEP.w	0000 xxx1 0000 1xxx
-	{ Cmd_MOVEP,	0xf1f80000, 0x01480000 },	// MOVEP.l	0000 xxx1 0100 1xxx
-	{ Cmd_MOVEP,	0xf1f80000, 0x01880000 },	// MOVEP.w	0000 xxx1 1000 1xxx
-	{ Cmd_MOVEP,	0xf1f80000, 0x01c80000 },	// MOVEP.l	0000 xxx1 1100 1xxx
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
@@ -233,15 +102,27 @@ static const struct CmdStruct m68kCmds_0001[] =
 
 static const struct CmdStruct m68kCmds_0010[] =
 {
+	{ Cmd_MOVE,		0xf1c00000, 0x20000000 },	// MOVE.l	0010 xxx0 00xx xxxx
 	{ Cmd_MOVEA,	0xf1c00000, 0x20400000 },	// MOVEA.l	0010 xxx0 01xx xxxx
-	{ Cmd_MOVE,		0xf0000000, 0x20000000 },	// MOVE.l	0010 xxxx xxxx xxxx - Must be after MOVEA
+	{ Cmd_MOVE,		0xf1c00000, 0x20800000 },	// MOVE.l	0010 xxx0 10xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x20c00000 },	// MOVE.l	0010 xxx0 11xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x21000000 },	// MOVE.l	0010 xxx1 00xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x21400000 },	// MOVE.l	0010 xxx1 01xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x21800000 },	// MOVE.l	0010 xxx1 10xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x21c00000 },	// MOVE.l	0010 xxx1 11xx xxxx
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0011[] =
 {
-	{ Cmd_MOVEA,	0xf1c00000, 0x30400000 },	// MOVEA.w	0011 xxx0 01xx xxxx
-	{ Cmd_MOVE,		0xf0000000, 0x30000000 },	// MOVE.w	0011 xxxx xxxx xxxx - Must be after MOVEA
+	{ Cmd_MOVE,		0xf1c00000, 0x30000000 },	// MOVE.w	0010 xxx0 00xx xxxx
+	{ Cmd_MOVEA,	0xf1c00000, 0x30400000 },	// MOVEA.w	0010 xxx0 01xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x30800000 },	// MOVE.w	0010 xxx0 10xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x30c00000 },	// MOVE.w	0010 xxx0 11xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x31000000 },	// MOVE.w	0010 xxx1 00xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x31400000 },	// MOVE.w	0010 xxx1 01xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x31800000 },	// MOVE.w	0010 xxx1 10xx xxxx
+	{ Cmd_MOVE,		0xf1c00000, 0x31c00000 },	// MOVE.w	0010 xxx1 11xx xxxx
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
@@ -309,10 +190,7 @@ static const struct CmdStruct m68kCmds_0100[] =
 //	{ Cmd_MOVEC,    wwwwwwwwww, wwwwwwwwww },   // MOVEC    0100 1110 0111 101x
 	{ Cmd_JSR,		0xffc00000, 0x4e800000 },	// JSR      0100 1110 10xx xxxx
 	{ Cmd_JMP,		0xffc00000, 0x4ec00000 },	// JMP      0100 1110 11xx xxxx
-
 	{ Cmd_LEA,		0xf1c00000, 0x41c00000 },	// LEA      0100 xxx1 11xx xxxx
-
-
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
@@ -406,33 +284,29 @@ static const struct CmdStruct m68kCmds_1000[] =
 	{ Cmd_OR,		0xf1c00000, 0x80400000 },	// OR       1000 xxx0 01xx xxxx
 	{ Cmd_OR,		0xf1c00000, 0x80800000 },	// OR       1000 xxx0 10xx xxxx
 	{ Cmd_DIV,		0xf1c00000, 0x80c00000 },	// DIVU.w   1000 xxx0 11xx xxxx
-
 	{ Cmd_SBCD,		0xf1f00000, 0x81000000 },	// SBCD		1000 xxx1 0000 xxxx
-	{ Cmd_PACK,		0xf1f00000, 0x81400000 },	// PACK		1000 xxx1 0100 xxxx
-	{ Cmd_UNPK,		0xf1f00000, 0x81800000 },	// UNPK		1000 xxx1 1000 xxxx
-
 	{ Cmd_OR,		0xf1c00000, 0x81000000 },	// OR       1000 xxx1 00xx xxxx
+	{ Cmd_PACK,		0xf1f00000, 0x81400000 },	// PACK		1000 xxx1 0100 xxxx
 	{ Cmd_OR,		0xf1c00000, 0x81400000 },	// OR       1000 xxx1 01xx xxxx
+	{ Cmd_UNPK,		0xf1f00000, 0x81800000 },	// UNPK		1000 xxx1 1000 xxxx
 	{ Cmd_OR,		0xf1c00000, 0x81800000 },	// OR       1000 xxx1 10xx xxxx
 	{ Cmd_DIV,		0xf1c00000, 0x81c00000 },	// DIVS.w   1000 xxx1 11xx xxxx
-
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1001[] =
 {
-//  { Cmd_SUBX,     wwwwwwwwww, wwwwwwwwww },   // SUBX     1001 xxx1 xx00 xxxx
-
 	{ Cmd_SUB,		0xf1c00000, 0x90000000 },	// SUB		1001 xxx0 00xx xxxx
 	{ Cmd_SUB,		0xf1c00000, 0x90400000 },	// SUB		1001 xxx0 01xx xxxx
 	{ Cmd_SUB,		0xf1c00000, 0x90800000 },	// SUB		1001 xxx0 10xx xxxx
 	{ Cmd_SUBA,		0xf1c00000, 0x90c00000 },	// SUBA		1001 xxx0 11xx xxxx
-
+	{ Cmd_SUBX,		0xf1f00000, 0x91000000 },	// SUBX.b	1001 xxx1 0000 xxxx
 	{ Cmd_SUB,		0xf1c00000, 0x91000000 },	// SUB		1001 xxx1 00xx xxxx
+	{ Cmd_SUBX,		0xf1f00000, 0x91400000 },	// SUBX.w	1001 xxx1 0100 xxxx
 	{ Cmd_SUB,		0xf1c00000, 0x91400000 },	// SUB		1001 xxx1 01xx xxxx
+	{ Cmd_SUBX,		0xf1f00000, 0x91800000 },	// SUBX.l	1001 xxx1 1000 xxxx
 	{ Cmd_SUB,		0xf1c00000, 0x91800000 },	// SUB		1001 xxx1 10xx xxxx
 	{ Cmd_SUBA,		0xf1c00000, 0x91c00000 },	// SUBA		1001 xxx1 11xx xxxx
-
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
@@ -447,13 +321,11 @@ static const struct CmdStruct m68kCmds_1011[] =
 	{ Cmd_CMP,		0xf1c00000, 0xb0400000 },	// CMP.w	1011 xxx0 01xx xxxx
 	{ Cmd_CMP,		0xf1c00000, 0xb0800000 },	// CMP.l	1011 xxx0 10xx xxxx
 	{ Cmd_CMPA,		0xf1c00000, 0xb0c00000 },	// CMPA.w	1011 xxx0 11xx xxxx
-
 	{ Cmd_CMPM,		0xf1f80000, 0xb1080000 },	// CMPM.b	1011 xxx1 0000 1xxx
-	{ Cmd_CMPM,		0xf1f80000, 0xb1480000 },	// CMPM.w	1011 xxx1 0100 1xxx
-	{ Cmd_CMPM,		0xf1f80000, 0xb1880000 },	// CMPM.l	1011 xxx1 1000 1xxx
-
 	{ Cmd_EOR,		0xf1c00000, 0xb1000000 },	// EOR.b    1011 xxx1 00xx xxxx
+	{ Cmd_CMPM,		0xf1f80000, 0xb1480000 },	// CMPM.w	1011 xxx1 0100 1xxx
 	{ Cmd_EOR,		0xf1c00000, 0xb1400000 },	// EOR.w    1011 xxx1 01xx xxxx
+	{ Cmd_CMPM,		0xf1f80000, 0xb1880000 },	// CMPM.l	1011 xxx1 1000 1xxx
 	{ Cmd_EOR,		0xf1c00000, 0xb1800000 },	// EOR.l    1011 xxx1 10xx xxxx
 	{ Cmd_CMPA,		0xf1c00000, 0xb1c00000 },	// CMPA.l   1011 xxx1 11xx xxxx
 
@@ -466,18 +338,14 @@ static const struct CmdStruct m68kCmds_1100[] =
 	{ Cmd_AND,		0xf1c00000, 0xc0400000 },	// AND.w	1100 xxx0 01xx xxxx
 	{ Cmd_AND,		0xf1c00000, 0xc0800000 },	// AND.l	1100 xxx0 10xx xxxx
 	{ Cmd_MUL,		0xf1c00000, 0xc0c00000 },	// MULU.w	1100 xxx0 11xx xxxx
-
 	{ Cmd_ABCD,		0xf1f00000, 0xc1000000 },	// ABCD.b	1100 xxx1 0000 xxxx
-
+	{ Cmd_AND,		0xf1c00000, 0xc1000000 },	// AND.b	1100 xxx1 00xx xxxx
 	{ Cmd_EXG,		0xf1f80000, 0xc1400000 },   // EXG.l	1100 xxx1 0100 0xxx
 	{ Cmd_EXG,		0xf1f80000, 0xc1480000 },   // EXG.l	1100 xxx1 0100 1xxx
-	{ Cmd_EXG,		0xf1f80000, 0xc1880000 },   // EXG.l	1100 xxx1 1000 1xxx
-
-	{ Cmd_AND,		0xf1c00000, 0xc1000000 },	// AND.b	1100 xxx1 00xx xxxx
 	{ Cmd_AND,		0xf1c00000, 0xc1400000 },	// AND.w	1100 xxx1 01xx xxxx
+	{ Cmd_EXG,		0xf1f80000, 0xc1880000 },   // EXG.l	1100 xxx1 1000 1xxx
 	{ Cmd_AND,		0xf1c00000, 0xc1800000 },	// AND.l	1100 xxx1 10xx xxxx
 	{ Cmd_MUL,		0xf1c00000, 0xc1c00000 },	// MULS.w	1100 xxx1 11xx xxxx
-
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
@@ -487,30 +355,18 @@ static const struct CmdStruct m68kCmds_1101[] =
 	{ Cmd_ADD,		0xf1c00000, 0xd0400000 },	// ADD.w    1101 xxx0 01xx xxxx
 	{ Cmd_ADD,		0xf1c00000, 0xd0800000 },	// ADD.l    1101 xxx0 10xx xxxx
 	{ Cmd_ADDA,		0xf1c00000, 0xd0c00000 },	// ADDA.w   1101 xxx0 11xx xxxx
-
-//  { Cmd_ADDX,     0xf1f00000, 0xd1000000 },   // ADDX.b   1101 xxx1 0000 xxxx
-//  { Cmd_ADDX,     0xf1f00000, 0xd1400000 },   // ADDX.w   1101 xxx1 0100 xxxx
-//  { Cmd_ADDX,     0xf1f00000, 0xd1800000 },   // ADDX.l   1101 xxx1 1000 xxxx
-
+	{ Cmd_ADDX,		0xf1f00000, 0xd1000000 },	// ADDX.b	1101 xxx1 0000 xxxx
 	{ Cmd_ADD,		0xf1c00000, 0xd1000000 },	// ADD.b    1101 xxx1 00xx xxxx
+	{ Cmd_ADDX,		0xf1f00000, 0xd1400000 },	// ADDX.w	1101 xxx1 0100 xxxx
 	{ Cmd_ADD,		0xf1c00000, 0xd1400000 },	// ADD.w    1101 xxx1 01xx xxxx
+	{ Cmd_ADDX,		0xf1f00000, 0xd1800000 },	// ADDX.l	1101 xxx1 1000 xxxx
 	{ Cmd_ADD,		0xf1c00000, 0xd1800000 },	// ADD.l    1101 xxx1 10xx xxxx
 	{ Cmd_ADDA,		0xf1c00000, 0xd1c00000 },	// ADDA.l   1101 xxx1 11xx xxxx
-
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1110[] =
 {
-	{ Cmd_ASR2,		0xffc00000, 0xe0c00000 },	// ASR		1110 0000 11xx xxxx
-	{ Cmd_ASL2,		0xffc00000, 0xe1c00000 },	// ASL		1110 0001 11xx xxxx
-	{ Cmd_LSR2,		0xffc00000, 0xe2c00000 },	// LSR		1110 0010 11xx xxxx
-	{ Cmd_LSL2,		0xffc00000, 0xe3c00000 },	// LSL		1110 0011 11xx xxxx
-	{ Cmd_ROXR2,	0xffc00000, 0xe4c00000 },	// ROXR		1110 0100 11xx xxxx
-	{ Cmd_ROXL2,	0xffc00000, 0xe5c00000 },	// ROXL		1110 0101 11xx xxxx
-	{ Cmd_ROR2,		0xffc00000, 0xe6c00000 },	// ROR		1110 0110 11xx xxxx
-	{ Cmd_ROL2,		0xffc00000, 0xe7c00000 },	// ROL		1110 0111 11xx xxxx
-
 //  { Cmd_BFTST     wwwwwwwwww, wwwwwwwwww },   // BFTST    1110 1000 11xx xxxx 0000 xxxx xxxxx xxxx
 //  { Cmd_BFEXTU    wwwwwwwwww, wwwwwwwwww },   // BFEXTU   1110 1001 11xx xxxx 0xxx xxxx xxxxx xxxx
 //  { Cmd_BFCHG     wwwwwwwwww, wwwwwwwwww },   // BFCHG    1110 1010 11xx xxxx 0000 xxxx xxxxx xxxx
@@ -521,37 +377,37 @@ static const struct CmdStruct m68kCmds_1110[] =
 //  { Cmd_BFINS     wwwwwwwwww, wwwwwwwwww },   // BFINS    1110 1111 11xx xxxx 0xxx xxxx xxxxx xxxx
 
 	{ Cmd_ASR,		0xf1d80000, 0xe0000000 },	// ASR.b	1110 xxx0 00x0 0xxx
-	{ Cmd_ASR,		0xf1d80000, 0xe0400000 },	// ASR.w	1110 xxx0 01x0 0xxx
-	{ Cmd_ASR,		0xf1d80000, 0xe0800000 },	// ASR.l	1110 xxx0 10x0 0xxx
-
-	{ Cmd_ASL,		0xf1d80000, 0xe1000000 },	// ASL.b	1110 xxx1 00x0 0xxx
-	{ Cmd_ASL,		0xf1d80000, 0xe1400000 },	// ASL.w	1110 xxx1 01x0 0xxx
-	{ Cmd_ASL,		0xf1d80000, 0xe1800000 },	// ASL.l	1110 xxx1 10x0 0xxx
-
 	{ Cmd_LSR,		0xf1d80000, 0xe0080000 },	// LSR.b	1110 xxx0 00x0 1xxx
-	{ Cmd_LSR,		0xf1d80000, 0xe0480000 },	// LSR.w	1110 xxx0 01x0 1xxx
-	{ Cmd_LSR,		0xf1d80000, 0xe0880000 },	// LSR.l	1110 xxx0 10x0 1xxx
-
-	{ Cmd_LSL,		0xf1d80000, 0xe1080000 },	// LSL.b	1110 xxx1 00x0 1xxx
-	{ Cmd_LSL,		0xf1d80000, 0xe1480000 },	// LSL.w	1110 xxx1 01x0 1xxx
-	{ Cmd_LSL,		0xf1d80000, 0xe1880000 },	// LSL.l	1110 xxx1 10x0 1xxx
-
 	{ Cmd_ROXR,		0xf1d80000, 0xe0100000 },	// ROXR.b	1110 xxx0 00x1 0xxx
-	{ Cmd_ROXR,		0xf1d80000, 0xe0500000 },	// ROXR.w	1110 xxx0 01x1 0xxx
-	{ Cmd_ROXR,		0xf1d80000, 0xe0900000 },	// ROXR.l	1110 xxx0 10x1 0xxx
-
-	{ Cmd_ROXL,		0xf1d80000, 0xe1100000 },	// ROXL.b	1110 xxx1 00x1 0xxx
-	{ Cmd_ROXL,		0xf1d80000, 0xe1500000 },	// ROXL.w	1110 xxx1 01x1 0xxx
-	{ Cmd_ROXL,		0xf1d80000, 0xe1900000 },	// ROXL.l	1110 xxx1 10x1 0xxx
-
 	{ Cmd_ROR,		0xf1d80000, 0xe0180000 },	// ROR.b	1110 xxx0 00x1 1xxx
+	{ Cmd_ASR,		0xf1d80000, 0xe0400000 },	// ASR.w	1110 xxx0 01x0 0xxx
+	{ Cmd_LSR,		0xf1d80000, 0xe0480000 },	// LSR.w	1110 xxx0 01x0 1xxx
+	{ Cmd_ROXR,		0xf1d80000, 0xe0500000 },	// ROXR.w	1110 xxx0 01x1 0xxx
 	{ Cmd_ROR,		0xf1d80000, 0xe0580000 },	// ROR.w	1110 xxx0 01x1 1xxx
+	{ Cmd_ASR,		0xf1d80000, 0xe0800000 },	// ASR.l	1110 xxx0 10x0 0xxx
+	{ Cmd_LSR,		0xf1d80000, 0xe0880000 },	// LSR.l	1110 xxx0 10x0 1xxx
+	{ Cmd_ROXR,		0xf1d80000, 0xe0900000 },	// ROXR.l	1110 xxx0 10x1 0xxx
 	{ Cmd_ROR,		0xf1d80000, 0xe0980000 },	// ROR.l	1110 xxx0 10x1 1xxx
-
+	{ Cmd_ASR2,		0xffc00000, 0xe0c00000 },	// ASR		1110 0000 11xx xxxx
+	{ Cmd_LSR2,		0xffc00000, 0xe2c00000 },	// LSR		1110 0010 11xx xxxx
+	{ Cmd_ROXR2,	0xffc00000, 0xe4c00000 },	// ROXR		1110 0100 11xx xxxx
+	{ Cmd_ROR2,		0xffc00000, 0xe6c00000 },	// ROR		1110 0110 11xx xxxx
+	{ Cmd_ASL,		0xf1d80000, 0xe1000000 },	// ASL.b	1110 xxx1 00x0 0xxx
+	{ Cmd_LSL,		0xf1d80000, 0xe1080000 },	// LSL.b	1110 xxx1 00x0 1xxx
+	{ Cmd_ROXL,		0xf1d80000, 0xe1100000 },	// ROXL.b	1110 xxx1 00x1 0xxx
 	{ Cmd_ROL,		0xf1d80000, 0xe1180000 },	// ROL.b	1110 xxx1 00x1 1xxx
+	{ Cmd_ASL,		0xf1d80000, 0xe1400000 },	// ASL.w	1110 xxx1 01x0 0xxx
+	{ Cmd_LSL,		0xf1d80000, 0xe1480000 },	// LSL.w	1110 xxx1 01x0 1xxx
+	{ Cmd_ROXL,		0xf1d80000, 0xe1500000 },	// ROXL.w	1110 xxx1 01x1 0xxx
 	{ Cmd_ROL,		0xf1d80000, 0xe1580000 },	// ROL.w	1110 xxx1 01x1 1xxx
+	{ Cmd_ASL,		0xf1d80000, 0xe1800000 },	// ASL.l	1110 xxx1 10x0 0xxx
+	{ Cmd_LSL,		0xf1d80000, 0xe1880000 },	// LSL.l	1110 xxx1 10x0 1xxx
+	{ Cmd_ROXL,		0xf1d80000, 0xe1900000 },	// ROXL.l	1110 xxx1 10x1 0xxx
 	{ Cmd_ROL,		0xf1d80000, 0xe1980000 },	// ROL.l	1110 xxx1 10x1 1xxx
-
+	{ Cmd_ASL2,		0xffc00000, 0xe1c00000 },	// ASL		1110 0001 11xx xxxx
+	{ Cmd_LSL2,		0xffc00000, 0xe3c00000 },	// LSL		1110 0011 11xx xxxx
+	{ Cmd_ROXL2,	0xffc00000, 0xe5c00000 },	// ROXL		1110 0101 11xx xxxx
+	{ Cmd_ROL2,		0xffc00000, 0xe7c00000 },	// ROL		1110 0111 11xx xxxx
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
@@ -811,13 +667,13 @@ static const struct CmdStruct m68kCmds_1111[] =
 	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2005419 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
 	{ Cmd_FCOSH2,	0xffc0fc7f, 0xf2005819 },	// FCosh	1111 0010 00xx xxxx 010x xxxx x001 1001
 
-	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200401a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
-	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200441a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
-	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200481a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
-	{ Cmd_FSUB2,	0xffc0fc7f, 0xf2004c1a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
-	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200501a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
-	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200541a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
-	{ Cmd_FSUB2,	0xffc0fc7f, 0xf200581a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FNEG2,	0xffc0fc7f, 0xf200401a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FNEG2,	0xffc0fc7f, 0xf200441a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FNEG2,	0xffc0fc7f, 0xf200481a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FNEG2,	0xffc0fc7f, 0xf2004c1a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FNEG2,	0xffc0fc7f, 0xf200501a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FNEG2,	0xffc0fc7f, 0xf200541a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
+	{ Cmd_FNEG2,	0xffc0fc7f, 0xf200581a },	// FNeg		1111 0010 00xx xxxx 010x xxxx x001 1010
 
 	{ Cmd_FACOS2,	0xffc0fc7f, 0xf200401c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
 	{ Cmd_FACOS2,	0xffc0fc7f, 0xf200441c },	// FACos	1111 0010 00xx xxxx 010x xxxx x001 1100
@@ -1077,11 +933,34 @@ static const struct CmdStruct m68kCmds_1111[] =
 
 	{ Cmd_FMOVECR,	0xfffffc00, 0xf2005c00 },	// FMovecr	1111 0010 0000 0000 0101 11xx xxxx xxxx
 	{ Cmd_FMOVE3,	0xffc0e000, 0xf2006000 },	// FMove	1111 0010 00xx xxxx 011x xxxx xxxx xxxx
-	{ Cmd_FMOVEM,	0xffc0c7ff, 0xf200c000 },	// FMovem	1111 0010 00xx xxxx 10xx x000 0000 0000
-	{ Cmd_FMOVEM2,	0xffc0c700, 0xf200c000 },	// FMovem	1111 0010 00xx xxxx 11xx x000 xxxx xxxx
+
+	{ Cmd_FMOVE4,	0xffc0ffff, 0xf2008400 },	// FMove	1111 0010 00xx xxxx 1000 0100 0000 0000 > ---- ---- FPIAR
+	{ Cmd_FMOVE4,	0xffc0ffff, 0xf2008800 },	// FMove	1111 0010 00xx xxxx 1000 1000 0000 0000 > ---- FPSR -----
+	{ Cmd_FMOVEM,	0xffc0ffff, 0xf2008c00 },	// FMovem	1111 0010 00xx xxxx 1000 1100 0000 0000 > ---- FPSR FPIAR
+	{ Cmd_FMOVE4,	0xffc0ffff, 0xf2009000 },	// FMove	1111 0010 00xx xxxx 1001 0000 0000 0000 > FPCR ---- -----
+	{ Cmd_FMOVEM,	0xffc0ffff, 0xf2009400 },	// FMovem	1111 0010 00xx xxxx 1001 0100 0000 0000 > FPCR ---- FPIAR
+	{ Cmd_FMOVEM,	0xffc0ffff, 0xf2009800 },	// FMovem	1111 0010 00xx xxxx 1001 1000 0000 0000 > FPCR FPSR -----
+	{ Cmd_FMOVEM,	0xffc0ffff, 0xf2009c00 },	// FMovem	1111 0010 00xx xxxx 1001 1100 0000 0000 > FPCR FPSR FPIAR
+
+	{ Cmd_FMOVE4,	0xffc0ffff, 0xf200a400 },	// FMove	1111 0010 00xx xxxx 1010 0100 0000 0000 < ---- ---- FPIAR
+	{ Cmd_FMOVE4,	0xffc0ffff, 0xf200a800 },	// FMove	1111 0010 00xx xxxx 1010 1000 0000 0000 < ---- FPSR -----
+	{ Cmd_FMOVEM,	0xffc0ffff, 0xf200ac00 },	// FMovem	1111 0010 00xx xxxx 1010 1100 0000 0000 < ---- FPSR FPIAR
+	{ Cmd_FMOVEM,	0xffc0ffff, 0xf200b400 },	// FMovem	1111 0010 00xx xxxx 1011 0100 0000 0000 < FPCR ---- -----
+	{ Cmd_FMOVE4,	0xffc0ffff, 0xf200b000 },	// FMove	1111 0010 00xx xxxx 1011 0000 0000 0000 < FPCR ---- FPIAR
+	{ Cmd_FMOVEM,	0xffc0ffff, 0xf200b800 },	// FMovem	1111 0010 00xx xxxx 1011 1000 0000 0000 < FPCR FPSR -----
+	{ Cmd_FMOVEM,	0xffc0ffff, 0xf200bc00 },	// FMovem	1111 0010 00xx xxxx 1011 1100 0000 0000 < FPCR FPSR FPIAR
+	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200c000 },	// FMovem	1111 0010 00xx xxxx 1100 0000 xxxx xxxx
+	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200c800 },	// FMovem	1111 0010 00xx xxxx 1100 1000 xxxx xxxx
+	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200d000 },	// FMovem	1111 0010 00xx xxxx 1101 0000 xxxx xxxx
+	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200d800 },	// FMovem	1111 0010 00xx xxxx 1101 1000 xxxx xxxx
+	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200e000 },	// FMovem	1111 0010 00xx xxxx 1110 0000 xxxx xxxx
+	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200e800 },	// FMovem	1111 0010 00xx xxxx 1110 1000 xxxx xxxx
+	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200f000 },	// FMovem	1111 0010 00xx xxxx 1111 0000 xxxx xxxx
+	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200f800 },	// FMovem	1111 0010 00xx xxxx 1111 1000 xxxx xxxx
+
+ 	{ Cmd_FScc,		0xffc0ffc0, 0xf2400000 },	// FScc		1111 0010 001x xxxx 0000 0000 00xx xxxx
  	{ Cmd_FBcc,		0xffe00000, 0xf2800000 },	// FBcc		1111 0010 100x xxxx
  	{ Cmd_FBcc,		0xffe00000, 0xf2c00000 },	// FBcc		1111 0010 110x xxxx
- 	{ Cmd_FScc,		0xffc0ffc0, 0xf2400000 },	// FScc		1111 0010 001x xxxx 0000 0000 00xx xxxx
 
 	{ NULL,			0x00000000, 0x00000000 },
 };
@@ -1212,6 +1091,246 @@ uint8_t *mem;
 	}
 
 	// --
+}
+
+// --
+
+enum
+{
+	_Unknown = 0,
+	_Reg,
+	_Exec,
+	_Label,
+};
+
+void Misc_Move_Get( struct M68kStruct *ms, struct M68kRegister *cur, uint8_t *mem, struct Misc_Move_GetSetStruct *gss )
+{
+struct HunkLabel *hl;
+int32_t val;
+
+	memset( gss, 0, sizeof( struct Misc_Move_GetSetStruct ));
+
+	// --
+
+	/**/ if (( ms->ms_ArgEMode == 7 ) && ( ms->ms_ArgEReg == 0 ))	// Move.l $0004.w
+	{
+		val = (( mem[0] << 8 ) | ( mem[1] << 0 ));
+
+		if ( val == 4 )
+		{
+			gss->SrcType = _Exec;
+		}
+	}
+	else if (( ms->ms_ArgEMode == 7 ) && ( ms->ms_ArgEReg == 1 ))	// Move.l $00000004
+	{
+		val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
+
+		if ( val == 4 )
+		{
+			gss->SrcType = _Exec;
+		}
+		else
+		{
+			hl = Hunk_FindLabel( ms->ms_HunkStruct, val );
+
+			if ( hl )
+			{
+				gss->SrcType = _Label;
+				gss->Label = hl;
+			}
+		}
+	}
+	else if ( ms->ms_ArgEMode == 0 )	// Dn Reg
+	{
+		gss->SrcType = _Reg;
+		gss->Reg = *cur;
+	}
+	else if ( ms->ms_ArgEMode == 1 )	// An Reg
+	{
+		gss->SrcType = _Reg;
+		gss->Reg = *cur;
+	}
+
+	// --
+}
+
+void Misc_Move_Set( struct M68kStruct *ms, struct M68kRegister *cur, uint8_t *mem, struct Misc_Move_GetSetStruct *gss )
+{
+struct HunkLabel *src;
+struct HunkLabel *hl;
+int32_t val;
+
+	// --
+
+	/**/ if (( ms->ms_ArgEMode == 7 ) && ( ms->ms_ArgEReg == 0 ))	// Move.l $0004.w
+	{
+		// We don't move to External Address
+	}
+	else if (( ms->ms_ArgEMode == 7 ) && ( ms->ms_ArgEReg == 1 ))	// Move.l $00000004
+	{
+		val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
+
+		if ( val != 4 )
+		{
+			hl = Hunk_FindLabel( ms->ms_HunkStruct, val );
+		}
+		else
+		{
+			hl = NULL;
+		}
+
+		if (( hl ) && ( ! hl->hl_Label_FixedType ))
+		{
+			// A Label can only be set once
+
+			switch( gss->SrcType ) // Set xx -> Label
+			{
+				case _Exec:
+				{
+					int st = LPT_Library + ( LIBT_ExecBase << 16 );
+
+					if ( hl->hl_Label_Type == LT_Unset )
+					{
+						hl->hl_Label_Type = LT_Pointer;
+						hl->hl_Label_SubType = st;
+					}
+					else if ( hl->hl_Label_Type == LT_Pointer )
+					{
+						if ( hl->hl_Label_SubType != st )
+						{
+							hl->hl_Label_Type = LT_Unknown;
+						}
+					}
+					else
+					{
+						hl->hl_Label_Type = LT_Unknown;
+					}
+					break;
+				}
+
+				case _Reg:
+				{
+					// Reg Type
+					int rt = ( gss->Reg.mr_Type & 0x0000ffff );
+					// Lib SubType
+					int st = ( LPT_Library + ( gss->Reg.mr_Type & 0xffff0000 )); 
+
+					if ( hl->hl_Label_Type == LT_Unset )
+					{
+						if ( rt == RT_Library )
+						{
+							hl->hl_Label_Type = LT_Pointer;
+							hl->hl_Label_SubType = st;
+						}
+						else
+						{
+
+							hl->hl_Label_Type = LT_Unknown;
+						}
+					}
+					else if ( hl->hl_Label_Type == LT_Pointer )
+					{
+						if ( hl->hl_Label_SubType != st )
+						{
+							hl->hl_Label_Type = LT_Unknown;
+						}
+					}
+					else
+					{
+						if ( hl->hl_Label_Type != LT_Unknown )
+						{
+							hl->hl_Label_Type = LT_Unknown;
+						}
+
+					}
+					break;
+				}
+
+				case _Label:
+				{
+					src = gss->Label;
+
+					if ( hl->hl_Label_Type == LT_Unset )
+					{
+						hl->hl_Label_Type = src->hl_Label_Type;
+						hl->hl_Label_SubType = src->hl_Label_SubType;
+					}
+					else if ( hl->hl_Label_Type == LT_Pointer )
+					{
+						if ( hl->hl_Label_SubType != src->hl_Label_SubType )
+						{
+							hl->hl_Label_SubType = LPT_Error;
+						}
+					}
+					else
+					{
+						if ( hl->hl_Label_Type != LT_Unknown )
+						{
+							hl->hl_Label_Type = LT_Unknown;
+
+						}
+					}
+					break;
+				}
+
+				default:
+				{
+					if ( hl->hl_Label_Type != LT_Unknown )
+					{
+						hl->hl_Label_Type = LT_Unknown;
+
+					}
+					break;
+				}
+			}
+		}
+	}
+	else if (( ms->ms_ArgEMode == 0 ) || ( ms->ms_ArgEMode == 1 ))
+	{
+		switch( gss->SrcType ) // Set xx -> Reg
+		{
+			case _Reg:
+			{
+				*cur = gss->Reg;
+				break;
+			}
+
+			case _Exec:
+			{
+				cur->mr_Type = RT_Library + ( LIBT_ExecBase << 16 );
+				cur->mr_Address = 0;
+				cur->mr_LabelNode = NULL;
+				break;
+			}
+
+			case _Label:
+			{
+				cur->mr_Type = RT_Unknown;
+
+				hl = gss->Label;
+
+				if ( hl->hl_Label_Type == LT_Pointer )
+				{
+					cur->mr_Type = RT_Library + ( hl->hl_Label_SubType & 0xffff0000 );
+					cur->mr_Address = 0;
+					cur->mr_LabelNode = NULL;
+				}
+				else
+				{
+					cur->mr_Type = RT_Unknown;
+					cur->mr_Address = 0;
+					cur->mr_LabelNode = NULL;
+				}
+				break;
+			}
+
+			default:
+			{
+				cur->mr_Type = RT_Unknown;
+				break;
+			}
+		}
+	}
 }
 
 // --

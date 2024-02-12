@@ -272,11 +272,81 @@ bailout:
 
 // --
 
+struct TypeStruct
+{
+	int		NameLen;
+	char *	Name;
+	int		Type;
+};
+
+struct TypeStruct myTypes[] =
+{
+{  7, "AslBase",		LPT_Library + ( LIBT_AslBase << 16 ) },
+{  7, "GfxBase",		LPT_Library + ( LIBT_GraphicsBase << 16 ) },
+{  7, "DOSBase",		LPT_Library + ( LIBT_DosBase << 16 ) },
+{  8, "ExecBase",		LPT_Library + ( LIBT_ExecBase << 16 ) },
+{ 10, "LayersBase",		LPT_Library + ( LIBT_LayersBase << 16 ) },
+{ 11, "MathffpBase",	LPT_Library + ( LIBT_MathffpBase << 16 ) },
+{ 11, "UtilityBase",	LPT_Library + ( LIBT_UtilityBase << 16 ) },
+{ 12, "DiskfontBase",	LPT_Library + ( LIBT_DiskfontBase << 16 ) },
+{ 12, "IFFParseBase",	LPT_Library + ( LIBT_IFFParseBase << 16 ) },
+{ 13, "IntuitionBase",	LPT_Library + ( LIBT_IntuitionBase << 16 ) },
+{ 13, "MathtransBase",	LPT_Library + ( LIBT_MathtransBase << 16 ) },
+{  0, NULL, 0 }
+};
+
+static int mySetType( struct HunkLabel *hl, char *buf, int *posptr )
+{
+int err;
+int pos;
+int cnt;
+
+	err = true;
+
+	pos = *posptr;
+
+	cnt = 0;
+
+	while( myTypes[cnt].Name )
+	{
+		if ( ! strncasecmp( & buf[ pos ], myTypes[cnt].Name, myTypes[cnt].NameLen ))
+		{
+			break;
+		}
+		else
+		{
+			cnt++;
+		}
+	}
+
+	if ( myTypes[cnt].Name == NULL )
+	{
+		goto bailout;
+	}
+
+	pos += myTypes[cnt].NameLen;
+
+	hl->hl_Label_Type = LT_Pointer;
+	hl->hl_Label_SubType = myTypes[cnt].Type;
+	hl->hl_Label_FixedType = true;
+
+// printf( "Setting Label : '%s', At %08x to %08x\n", hl->hl_Label_Name, hl->hl_Label_Address, myTypes[cnt].Type );
+
+	*posptr = pos;
+
+	err = false;
+
+bailout:
+
+	return( err );
+}
+
+// --
+
 static int CMD_LABELTYPE( struct HunkStruct *hs, char *buf, int linenr )
 {
 struct HunkLabel *hl;
 int32_t adr;
-int type;
 int err;
 int pos;
 
@@ -294,7 +364,7 @@ int pos;
 		goto bailout;
 	}
 
-	hl = Hunk_AddLabel( hs, adr, LT_Unknown );
+	hl = Hunk_AddLabel( hs, adr, LT_Unset );
 
 	if ( hl == NULL )
 	{
@@ -333,37 +403,6 @@ int pos;
 			goto bailout;
 		}
 
-		/**/ if ( ! strncasecmp( & buf[ pos ], "DiskfontBase", 12 ))
-		{
-			pos += 12;
-			type = LPT_Library + LIBT_DiskfontBase;
-		}
-		else if ( ! strncasecmp( & buf[ pos ], "DosBase", 7 ))
-		{
-			pos += 7;
-			type = LPT_Library + LIBT_DosBase;
-		}
-		else if ( ! strncasecmp( & buf[ pos ], "ExecBase", 8 ))
-		{
-			pos += 8;
-			type = LPT_Library + LIBT_ExecBase;
-		}
-		else if ( ! strncasecmp( & buf[ pos ], "GfxBase", 7 ))
-		{
-			pos += 7;
-			type = LPT_Library + LIBT_GraphicsBase;
-		}
-		else if ( ! strncasecmp( & buf[ pos ], "IntuitionBase", 13 ))
-		{
-			pos += 13;
-			type = LPT_Library + LIBT_IntuitionBase;
-		}
-		else
-		{
-			printf( "Line %d : LabelType : Error Unsupported Command Argument at $%08x\n", linenr, adr );
-			goto bailout;
-		}
-
 		hl = Hunk_AddLabel( hs, adr, LT_Pointer );
 
 		if ( hl == NULL )
@@ -372,7 +411,11 @@ int pos;
 			goto bailout;
 		}
 
-		hl->hl_Label_SubType = type;
+		if ( mySetType( hl, buf, & pos ))
+		{
+			printf( "Line %d : LabelType : Error Unsupported Command Argument at $%08x\n", linenr, adr );
+			goto bailout;
+		}
 	}
 	else
 	{
@@ -427,7 +470,7 @@ int pos;
 
 // printf( "adr %08x\n", adr );
 
-	hl = Hunk_AddLabel( hs, adr, LT_Unknown );
+	hl = Hunk_AddLabel( hs, adr, LT_Unset );
 
 	if ( hl == NULL )
 	{
@@ -447,6 +490,45 @@ int pos;
 	{
 		pos++;
 	}
+
+	// Check for possible Type setting
+
+	if ( buf[pos] == ',' )
+	{
+		int p = pos;
+
+		p++;
+
+		while(( buf[p] == 9 ) || ( buf[p] == 32 ))
+		{
+			p++;
+		}
+
+		if ( ! strncasecmp( "type:", & buf[p], 5 ))
+		{
+			p += 5;
+
+			while(( buf[p] == 9 ) || ( buf[p] == 32 ))
+			{
+				p++;
+			}
+
+			if ( mySetType( hl, buf, & p ))
+			{
+				printf( "Line %d : LabelName : Error sertting label type at $%08x\n", linenr, adr );
+				goto bailout;
+			}
+
+			while(( buf[p] == 9 ) || ( buf[p] == 32 ))
+			{
+				p++;
+			}
+		}
+
+		pos = p;
+	}
+
+	// Check no garbis at end
 
 	if (( buf[pos] )
 	&&	( buf[pos] != 10 )

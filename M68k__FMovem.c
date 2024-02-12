@@ -121,14 +121,10 @@ void Cmd_FMOVEM_1_3( struct M68kStruct *ms, int emode, int ereg, int dr )
 
 void Cmd_FMOVEM_2_0( struct M68kStruct *ms, int emode, int ereg, int dr )
 {
-struct HunkRef *isRef;
-
 	if ( dr )
 	{
 		// FMovem.x FP2-FP3,<EA>
 		// $f227e07c		-- 2.0.1	fmovem.x	FP2-FP6,-(a7)
-
-// printf( "Unsupported 'FMovem 2 0' Opcode %d at %08x\n", dr, ms->ms_MemoryAdr );
 
 		RegMask( ms, false );
 
@@ -138,18 +134,13 @@ struct HunkRef *isRef;
 
 		ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-		isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-		if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-		{
-			isRef->hr_Used = true;
-		}
+		M68k_EffectiveAddress( ms );
 
 		ms->ms_OpcodeSize = ms->ms_ArgSize;
 	}
 	else
 	{
-printf( "Unsupported 'FMovem 2 0' Opcode %d at %08x\n", dr, ms->ms_MemoryAdr );
+		printf( "Unsupported 'FMovem 2 0' Opcode %d at %08x\n", dr, ms->ms_MemoryAdr );
 
 		ms->ms_DecodeStatus = MSTAT_Error;
 	}
@@ -167,13 +158,9 @@ void Cmd_FMOVEM_2_1( struct M68kStruct *ms, int emode, int ereg, int dr )
 
 void Cmd_FMOVEM_2_2( struct M68kStruct *ms, int emode, int ereg, int dr )
 {
-struct HunkRef *isRef;
-
 	if ( dr )
 	{
 		// $f228f0ff,$003c -- 2.2.1	fmovem.x	fp0-fp7,$003c(a7)
-
-// printf( "Unsupported 'FMovem 2 2' Opcode %d at %08x\n", dr, ms->ms_MemoryAdr );
 
 		RegMask( ms, true );
 
@@ -183,19 +170,12 @@ struct HunkRef *isRef;
 
 		ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-		isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-		if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-		{
-			isRef->hr_Used = true;
-		}
+		M68k_EffectiveAddress( ms );
 
 		ms->ms_OpcodeSize = ms->ms_ArgSize;
 	}
 	else
 	{
-// printf( "Unsupported 'FMovem 2 2' Opcode %d at %08x\n", dr, ms->ms_MemoryAdr );
-
 		// FMovem.x <EA>,FP2-FP3
 		// $f21fd030 -- fmovem.x	(a7)+,FP2-FP3
 
@@ -205,12 +185,7 @@ struct HunkRef *isRef;
 
 		ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-		isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-		if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-		{
-			isRef->hr_Used = true;
-		}
+		M68k_EffectiveAddress( ms );
 
 		RegMask( ms, true );
 
@@ -232,52 +207,23 @@ void Cmd_FMOVEM( struct M68kStruct *ms )
 {
 int emode;
 int ereg;
-int mode;
+int list;
 int dr;
 
-	ms->ms_Str_Opcode = "FMovem.x";
-	ms->ms_ArgType = OS_Extended;
+	ms->ms_Str_Opcode = "FMovem.l";
+	ms->ms_ArgType = OS_Long;
 
 	emode= ( ms->ms_Opcode & 0x00380000 ) >> 19;
 	ereg = ( ms->ms_Opcode & 0x00070000 ) >> 16;
-	dr	 = ( ms->ms_Opcode & 0x00002000 ) ? true : false ;
-	mode = ( ms->ms_Opcode & 0x00001800 ) >> 11;
+	dr	 = ( ms->ms_Opcode & 0x00002000 );
+	list = ( ms->ms_Opcode & 0x00001c00 ) >> 10;
 
-	switch( mode )
-	{
-		#if 0
-		case 0:
-		{
-			Cmd_FMOVEM_1_0( ms, emode, ereg, dr );
-			break;
-		}
+	// List hold 3 bits (FPCR, FPSR, FPIAR) wich regs to be moved
+	// atleat two must be selected, well if only 1 is select its a fmove4
 
-		case 1:
-		{
-			Cmd_FMOVEM_1_1( ms, emode, ereg, dr );
-			break;
-		}
+	printf( "Unsupported 'FMovem' Opcode (List %x, emode %d, ereg %d, dr %d) at %08x\n", list, emode, ereg, dr, ms->ms_MemoryAdr );
+	ms->ms_DecodeStatus = MSTAT_Error;
 
-		case 2:
-		{
-			Cmd_FMOVEM_1_2( ms, emode, ereg, dr );
-			break;
-		}
-
-		case 3:
-		{
-			Cmd_FMOVEM_1_3( ms, emode, ereg, dr );
-			break;
-		}
-		#endif
-
-		default:
-		{
-			printf( "Unsupported 'FMovem' Opcode (Mode %d, emode %d, ereg %d, dr %d) at %08x\n", mode, emode, ereg, dr, ms->ms_MemoryAdr );
-			ms->ms_DecodeStatus = MSTAT_Error;
-			break;
-		}
-	}
 }
 
 // --

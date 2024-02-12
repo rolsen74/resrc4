@@ -17,8 +17,6 @@
 
 void Cmd_NBCD( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
-
 	ms->ms_Str_Opcode = "Nbcd.b";
 	ms->ms_ArgType  = OS_Byte;
 	ms->ms_ArgEMode = ( ms->ms_Opcode & 0x00380000 ) >> 19;
@@ -26,12 +24,7 @@ struct HunkRef *isRef;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	ms->ms_CurRegister->mr_Type = RT_Unknown;
 	ms->ms_OpcodeSize = ms->ms_ArgSize;

@@ -12,6 +12,34 @@
 
 // --
 
+void BuildLabelString( struct HunkLabel *hl, char *buf )
+{
+struct HunkLabel *parent;
+int off;
+
+	parent = hl->hl_Parent;
+
+	if ( parent )
+	{
+		off = hl->hl_Label_Offset - parent->hl_Label_Offset;
+
+		if ( off < 0 )
+		{
+			sprintf( buf, "%s%d", parent->hl_Label_Name, off );
+		}
+		else
+		{
+			sprintf( buf, "%s+%d", parent->hl_Label_Name, off );
+		}
+	}
+	else
+	{
+		sprintf( buf, "%s", hl->hl_Label_Name );
+	}
+}
+
+// --
+
 static int DupCount = 0;
 
 static void SetLabelName( struct HunkStruct *hs, struct HunkLabel *hl, int32_t pos, int max )
@@ -119,7 +147,7 @@ struct HunkLabel *hl;
 
 	if (( hl ) && ( hl->hl_Label_Address == addr ))
 	{
-		if ( hl->hl_Label_Type == LT_Unknown )
+		if ( hl->hl_Label_Type == LT_Unset )
 		{
 			 hl->hl_Label_Type = type;
 		}
@@ -392,7 +420,7 @@ printf( "AddLabel: External? %08x\n", addr );
 
 	if (( hl ) && ( hl->hl_Label_Address == addr ))
 	{
-		if ( hl->hl_Label_Type == LT_Unknown )
+		if ( hl->hl_Label_Type == LT_Unset )
 		{
 			 hl->hl_Label_Type = type;
 		}
@@ -473,7 +501,7 @@ struct HunkLabel *hl;
 
 	if (( hl ) && ( hl->hl_Label_Address == addr ))
 	{
-		if ( hl->hl_Label_Type == LT_Unknown )
+		if ( hl->hl_Label_Type == LT_Unset )
 		{
 			 hl->hl_Label_Type = type;
 		}
@@ -934,7 +962,7 @@ int error;
 
 						// This is where the it points to, we need a public label
 
-						hl = Hunk_AddLabel2( hs, TargetNode, val32, LT_Unknown );
+						hl = Hunk_AddLabel2( hs, TargetNode, val32, LT_Unset );
 
 						if ( hl == NULL )
 						{
@@ -1001,7 +1029,7 @@ int error;
 
 						// This is where the it points to, we need a public label
 
-						hl = Hunk_AddLabel2( hs, TargetNode, val32, LT_Unknown );
+						hl = Hunk_AddLabel2( hs, TargetNode, val32, LT_Unset );
 
 						if ( hl == NULL )
 						{
@@ -1067,7 +1095,7 @@ int error;
 						offset = PEEK_U32( val32 );
 						offset += current->hn_MemoryAdr;
 
-						hl = Hunk_AddLabel2( hs, current, offset, LT_Unknown );
+						hl = Hunk_AddLabel2( hs, current, offset, LT_Unset );
 
 						if ( hl == NULL )
 						{

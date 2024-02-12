@@ -17,8 +17,6 @@
 
 void Cmd_JSR( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
-
 	ms->ms_Str_Opcode = "Jsr";
 
 	// --
@@ -42,12 +40,7 @@ struct HunkRef *isRef;
 		ms->ms_ClearRegMask = -1;
 	}
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, LT_Code ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
 

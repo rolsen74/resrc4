@@ -34,7 +34,7 @@ int error;
 
 	// -- We allways add a Start Label for Hunks
 
-	Sec = Hunk_AddLabel2( hs, hn, hn->hn_MemoryAdr, LT_Unknown );
+	Sec = Hunk_AddLabel2( hs, hn, hn->hn_MemoryAdr, LT_Unset );
 
 	if ( Sec == NULL )
 	{
@@ -82,7 +82,7 @@ int error;
 	// Process Label AFTER Hunk Memory
 	if (( hl ) && ( hl->hl_Label_Offset > size ))
 	{
-		Sec = Hunk_AddLabel2( hs, hn, adr+size, LT_Unknown );
+		Sec = Hunk_AddLabel2( hs, hn, adr+size, LT_Unset );
 
 		if ( Sec == NULL )
 		{
@@ -238,7 +238,7 @@ int error;
 	*l = hl->hl_Label_Size;
 
 	#if 0
-	if ( LabAdjust( hs, hl, ms->ms_StartAddr, hl->hl_Label_Size, LT_Unknown ))
+	if ( LabAdjust( hs, hl, ms->ms_StartAddr, hl->hl_Label_Size, LT_Unset ))
 	{
 		printf( "%s:%04d: Error adjusting label at %08x\n", __FILE__, __LINE__, ms->ms_StartAddr );
 		goto bailout;
@@ -311,7 +311,7 @@ int cnt;
 
 		// --
 
-		if ( LabAdjust( ms->ms_HunkStruct, hl, tableadr, 2, LT_Unknown ))
+		if ( LabAdjust( ms->ms_HunkStruct, hl, tableadr, 2, LT_Unset ))
 		{
 			printf( "%s:%04d: Error adjusting label at %08x\n", __FILE__, __LINE__, tableadr );
 			goto bailout;
@@ -490,7 +490,7 @@ int m;
 		{
 			size = 4;
 
-			if ( LabAdjust( hs, hl, ms->ms_MemoryAdr, size, LT_Unknown ))
+			if ( LabAdjust( hs, hl, ms->ms_MemoryAdr, size, LT_Unset ))
 			{
 				printf( "%s:%04d: Error adjusting label at %08x\n", __FILE__, __LINE__, ms->ms_StartAddr );
 				goto bailout;

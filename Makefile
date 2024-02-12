@@ -83,6 +83,7 @@ SRCS		+= M68k_Add.c
 SRCS		+= M68k_Adda.c
 SRCS		+= M68k_Addi.c
 SRCS		+= M68k_Addq.c
+SRCS		+= M68k_Addx.c
 SRCS		+= M68k_And.c
 SRCS		+= M68k_Andi.c
 SRCS		+= M68k_Asl.c
@@ -146,6 +147,7 @@ SRCS		+= M68k_Sub.c
 SRCS		+= M68k_Suba.c
 SRCS		+= M68k_Subi.c
 SRCS		+= M68k_Subq.c
+SRCS		+= M68k_Subx.c
 SRCS		+= M68k_Swap.c
 SRCS		+= M68k_Trap.c
 SRCS		+= M68k_Trapv.c
@@ -391,6 +393,7 @@ M68k_Add.o:					Makefile ReSrc4.h
 M68k_Adda.o:				Makefile ReSrc4.h
 M68k_Addi.o:				Makefile ReSrc4.h
 M68k_Addq.o:				Makefile ReSrc4.h
+M68k_Addx.o:				Makefile ReSrc4.h
 M68k_And.o:					Makefile ReSrc4.h
 M68k_Andi.o:				Makefile ReSrc4.h
 M68k_Asl.o:					Makefile ReSrc4.h
@@ -454,6 +457,7 @@ M68k_Sub.o:					Makefile ReSrc4.h
 M68k_Suba.o:				Makefile ReSrc4.h
 M68k_Subi.o:				Makefile ReSrc4.h
 M68k_Subq.o:				Makefile ReSrc4.h
+M68k_Subx.o:				Makefile ReSrc4.h
 M68k_Swap.o:				Makefile ReSrc4.h
 M68k_Trap.o:				Makefile ReSrc4.h
 M68k_Trapv.o:				Makefile ReSrc4.h

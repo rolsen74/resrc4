@@ -17,7 +17,6 @@
 
 void Cmd_SUBQ( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int data;
 int size;
 
@@ -69,12 +68,7 @@ int size;
 
 	ms->ms_CurRegister = & ms->ms_DstRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	ms->ms_CurRegister->mr_Type = RT_Unknown;
 	ms->ms_OpcodeSize = ms->ms_ArgSize;

@@ -89,8 +89,6 @@ bailout:
 
 void Cmd_ASR2( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
-
 	ms->ms_Str_Opcode = ( ms->ms_Opcode & 0x01000000 ) ? "Asl.w" : "Asr.w" ;
 
 	if ( ms->ms_Opcode & 0x01000000 )
@@ -107,12 +105,7 @@ struct HunkRef *isRef;
 
 	ms->ms_CurRegister = & ms->ms_DstRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	//--
 

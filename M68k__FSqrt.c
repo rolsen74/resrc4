@@ -26,8 +26,6 @@ int dst;
 	ms->ms_Str_Opcode = "FSqrt.x";
 	ms->ms_OpcodeSize = 4;
 
-//	printf( "Unsupported 'FSqrt1' Opcode at %08x\n", ms->ms_MemoryAdr );
-
 	if ( src == dst )
 	{
 		sprintf( ms->ms_Buf_Argument, "%s", FPx_RegNames[src] );
@@ -42,7 +40,6 @@ int dst;
 
 void Cmd_FSQRT2( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int emode;
 int ereg;
 int src;
@@ -53,8 +50,6 @@ int len;
 	ereg = ( ms->ms_Opcode & 0x00070000 ) >> 16;
 	src  = ( ms->ms_Opcode & 0x00001c00 ) >> 10;
 	dst  = ( ms->ms_Opcode & 0x00000380 ) >> 7;
-
-//	printf( "Unsupported 'FSqrt2' Opcode at %08x\n", ms->ms_MemoryAdr );
 
 	switch( src )
 	{
@@ -123,12 +118,7 @@ int len;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
 

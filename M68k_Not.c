@@ -17,76 +17,34 @@
 
 void Cmd_NOT( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
+int emode;
+int ereg;
 int size;
 
-	size = ( ms->ms_Opcode & 0x00c00000 ) >> 22;
+	size	= ( ms->ms_Opcode & 0x00c00000 ) >> 22;
+	emode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	ereg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
 
 	switch( size )
 	{
 		case 0:
 		{
 			ms->ms_Str_Opcode = "Not.b";
-
 			ms->ms_ArgType  = OS_Byte;
-			ms->ms_ArgEMode = ( ms->ms_Opcode & 0x00380000 ) >> 19;
-			ms->ms_ArgEReg  = ( ms->ms_Opcode & 0x00070000 ) >> 16;
-
-			ms->ms_CurRegister = & ms->ms_DstRegister;
-
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
-
-			ms->ms_CurRegister->mr_Type = RT_Unknown;
-			ms->ms_OpcodeSize = ms->ms_ArgSize;
 			break;
 		}
 
 		case 1:
 		{
 			ms->ms_Str_Opcode = "Not.w";
-
 			ms->ms_ArgType  = OS_Word;
-			ms->ms_ArgEMode = ( ms->ms_Opcode & 0x00380000 ) >> 19;
-			ms->ms_ArgEReg  = ( ms->ms_Opcode & 0x00070000 ) >> 16;
-
-			ms->ms_CurRegister = & ms->ms_DstRegister;
-
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
-
-			ms->ms_CurRegister->mr_Type = RT_Unknown;
-			ms->ms_OpcodeSize = ms->ms_ArgSize;
 			break;
 		}
 
 		case 2:
 		{
 			ms->ms_Str_Opcode = "Not.l";
-
 			ms->ms_ArgType  = OS_Long;
-			ms->ms_ArgEMode = ( ms->ms_Opcode & 0x00380000 ) >> 19;
-			ms->ms_ArgEReg  = ( ms->ms_Opcode & 0x00070000 ) >> 16;
-
-			ms->ms_CurRegister = & ms->ms_DstRegister;
-
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
-
-			ms->ms_CurRegister->mr_Type = RT_Unknown;
-			ms->ms_OpcodeSize = ms->ms_ArgSize;
 			break;
 		}
 
@@ -94,9 +52,23 @@ int size;
 		{
 			printf( "Unsupported 'Not' Opcode (Mode: %d)\n", size );
 			ms->ms_DecodeStatus = MSTAT_Error;
-			break;
+			goto bailout;
 		}
 	}
+
+	ms->ms_ArgEMode = emode;
+	ms->ms_ArgEReg  = ereg;
+
+	ms->ms_CurRegister = & ms->ms_DstRegister;
+
+	M68k_EffectiveAddress( ms );
+
+	ms->ms_CurRegister->mr_Type = RT_Unknown;
+	ms->ms_OpcodeSize = ms->ms_ArgSize;
+
+bailout:
+
+	return;
 }
 
 // --

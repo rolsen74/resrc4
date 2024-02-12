@@ -26,8 +26,5 @@ int rom;
 	ms->ms_Str_Opcode = "FMovecr.x";
 	ms->ms_OpcodeSize = 4;
 
-
-//	printf( "Unsupported 'FMovecr.x' Opcode at %08x\n", ms->ms_MemoryAdr );
-
 	sprintf( ms->ms_Buf_Argument, "#$%02x,%s", rom, FPx_RegNames[reg] );
 }

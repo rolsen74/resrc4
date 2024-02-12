@@ -35,3 +35,20 @@ ReSrc4 v2.4 ( 04-Feb-2024 )
 
 - Fixed SegFaults in Hash Lookup functions. Changed them to work as unsigned
   integers, as negative values would result in a crash.
+
+
+ReSrc4 v2.5 ( 12-Feb-2024 )
+
+- Added support for Addx and Subx.
+
+- Added support for 020 Addressing modes. It uses vasm syntax.
+
+- Fixed: A BSS entry could be marks as String data. That would 
+  result in a change from ds.b to dc.b, but not any more.
+
+- Added: support for FMove to handle fpiar/fpsr/fpcr regs.
+
+- Fixed: FNeg had the correct bit mask but called the wrong
+  function. So it became a FSub instead.
+
+- Added: 3 new jump tables and fixed one with a Mask error.

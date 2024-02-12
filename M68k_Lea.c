@@ -18,7 +18,6 @@
 void Cmd_LEA( struct M68kStruct *ms )
 {
 struct M68kRegister *src;
-struct HunkRef *isRef;
 
 	ms->ms_Str_Opcode = "Lea";
 
@@ -30,12 +29,7 @@ struct HunkRef *isRef;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	src = ms->ms_CurRegister;
 
@@ -46,12 +40,7 @@ struct HunkRef *isRef;
 
 	ms->ms_CurRegister = & ms->ms_DstRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	memcpy( ms->ms_CurRegister, src, sizeof( struct M68kRegister ));
 

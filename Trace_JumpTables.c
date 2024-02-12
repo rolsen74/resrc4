@@ -43,7 +43,7 @@
 	0x4e,0xfb,0x00,0x04		// Jmp			L02F5(PC,D0.w)			; 4efb 0004
 
 -- Table #5 - Civilization ECS+AGA
-	0x02,0x41,0x00,0x0f,	// Andi.w		#$000f,D1				; 0241 000f
+	0x02,0x41,0,0,			// Andi.w		#$000f,D1				; 0241 000f
 	0xd2,0x01,				// Add.b		D1,D1					; d201
 	0x32,0x3b,0x10,0x06,	// Move.w		L253B(PC,D1.w),D1		; 323b 1006
 	0x4e,0xfb,0x10,0x22		// Jmp			L253C(PC,D1.w)			; 4efb 1022
@@ -80,6 +80,25 @@
 	0x64,0,					// Bcc.b		L0FC4					; 6434
 	0x30,0x3b,0x02,0x06,	// Move.w		L0FC2(PC,D0.w*2),D0		; 303b 0206
 	0x4e,0xfb,0x00,0x04		// Jmp			L19EF(PC,D0.w)			; 4efb 0004
+
+-- Table #11 - Lightwave 5.0
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000011,D0			; 0c80 0000 0011
+	0x6c,0,					// Bge.b		L33AD					; 6c5c
+	0x30,0x3b,0x02,0x06,	// Move.w		L33AA(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L33AB(PC,D0.w)			; 4efb 0004
+
+-- Table #12 - Lightwave 5.0
+	0x0c,0x81,0,0,0,0,		// Cmpi.l		#$00000034,D1			; 0c81 0000 0034
+	0x6c,0,0,0,				// Bge.w		L33C3					; 6c00 0242
+	0x32,0x3b,0x12,0x06,	// Move.w		L33C1(PC,D1.w*2),D1		; 323b 1206
+	0x4e,0xfb,0x10,0x04		// Jmp			L33C2(PC,D1.w)			; 4efb 1004
+
+-- Table #13 - Lightwave 5.0
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000005,D0			; 0c80 0000 0005
+	0x6c,0,					// Bge.b		L35A1					; 6c00
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		(L359F,PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			(L35A9,PC,D0.w)			; 4efb 1004
 
 #endif
 
@@ -143,7 +162,7 @@ int cnt;
 		goto bailout;
 	}
 
-	rel = Hunk_AddLabel2( hs, hn, relative_adr, LT_Unknown );
+	rel = Hunk_AddLabel2( hs, hn, relative_adr, LT_Unset );
 
 	if ( rel == NULL )
 	{
@@ -475,6 +494,97 @@ static struct JTable Table10 =
 
 // --
 
+static struct JTable Table11 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-10,		// EntryPos
+	ET_Pos32,	// EntryType
+
+	-12,		// Data Pos
+	16,			// Data Size
+{
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000011,D0			; 0c80 0000 0011
+	0x6c,0,					// Bge.b		L33AD					; 6c5c
+	0x30,0x3b,0x02,0x06,	// Move.w		L33AA(PC,D0.w*2),D0		; 303b 0206
+	0x4e,0xfb,0x00,0x04		// Jmp			L33AB(PC,D0.w)			; 4efb 0004
+},
+{
+	0xff,0xff,0x00,0x00,0x00,0x00,
+	0xff,0x00,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table12 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-12,		// EntryPos
+	ET_Pos32,	// EntryType
+
+	-14,		// Data Pos
+	18,			// Data Size
+{
+	0x0c,0x81,0,0,0,0,		// Cmpi.l		#$00000034,D1			; 0c81 0000 0034
+	0x6c,0,0,0,				// Bge.w		L33C3					; 6c00 0242
+	0x32,0x3b,0x12,0x06,	// Move.w		L33C1(PC,D1.w*2),D1		; 323b 1206
+	0x4e,0xfb,0x10,0x04		// Jmp			L33C2(PC,D1.w)			; 4efb 1004
+},
+{
+	0xff,0xff,0x00,0x00,0x00,0x00,
+	0xff,0x00,0x00,0x00,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+// --
+
+static struct JTable Table13 =
+{
+	+4,			// Tabel Pos
+
+	+6,			// Relative Pos
+
+	-12,		// EntryPos
+	ET_Pos32,	// EntryType
+
+	-14,		// Data Pos
+	18,			// Data Size
+{
+	0x0c,0x80,0,0,0,0,		// Cmpi.l		#$00000005,D0			; 0c80 0000 0005
+	0x6c,0,					// Bge.b		L35A1					; 6c00
+	0xd0,0x40,				// Add.w		D0,D0					; d040
+	0x30,0x3b,0x00,0x06,	// Move.w		(L359F,PC,D0.w),D0		; 303b 0006
+	0x4e,0xfb,0x00,0x04		// Jmp			(L35A9,PC,D0.w)			; 4efb 1004
+},
+{
+	0xff,0xff,0x00,0x00,0x00,0x00,
+	0xff,0x00,
+	0xff,0xff,
+	0xff,0xff,0xff,0xff,
+	0xff,0xff,0xff,0xff
+},
+};
+
+	#if 0
+	Cmpi.l		#$00000005,D0				; $000c3492 0c80 0000 0005
+	Bge.b		L35A1						; $000c3498 6c20
+	Add.w		D0,D0						; $000c349a d040
+	Move.w		(L359F,PC,D0.w),D0			; $000c349c 303b 0006
+	Jmp			(L35A0,PC,D0.w)				; $000c34a0 4efb 0004
+	#endif
+
+// --
+
 static struct JTable *JumpTables[] =
 {
 	& Table1,
@@ -487,12 +597,15 @@ static struct JTable *JumpTables[] =
 	& Table8,
 	& Table9,
 	& Table10,
+	& Table11,
+	& Table12,
+	& Table13,
 	NULL,
 };
 
 // --
 
-static int check_JumpTable( struct HunkStruct *hs, struct M68kStruct *ms, struct JTable *jt, int count )
+static int check_JumpTable( struct HunkStruct *hs, struct M68kStruct *ms, struct JTable *jt )
 {
 struct HunkNode *hn;
 uint8_t *mem;
@@ -532,7 +645,7 @@ int cnt;
 
 	memset( & hn->hn_MemoryType[pos], MT_Code, jt->DataSize );
 
-	printf( "Found Jump Table #%d at %08x\n", count, ms->ms_MemoryAdr );
+//	printf( "Found Jump Table #%d at %08x\n", count, ms->ms_MemoryAdr );
 
 	switch( jt->EntryType )
 	{
@@ -603,7 +716,7 @@ int pos;
 			break;
 		}
 
-		stat = check_JumpTable( hs, ms, jt, pos+1 );
+		stat = check_JumpTable( hs, ms, jt );
 
 		if ( stat < 0 )
 		{

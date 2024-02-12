@@ -468,7 +468,7 @@ int cnt;
 
 		M68k_Decode( ms );
 
-		if ( ms->ms_DecodeStatus == MSTAT_Error )
+		if ( ms->ms_DecodeStatus != MSTAT_Opcode )
 		{
 			break;
 		}
@@ -549,7 +549,6 @@ static int Decode_Data(
 	int32_t max,
 	int32_t *len_ptr )
 {
-struct HunkLabel *parent;
 struct HunkLabel *newhl;
 uint32_t offset;
 uint32_t size;
@@ -624,30 +623,12 @@ int m;
 		ms->ms_Buf_Argument[0] = 0;
 
 		newhl = Hunk_FindLabel( ms->ms_HunkStruct, val );
-//		newhl = Hunk_AddLabel( ms->ms_HunkStruct, val, LT_Unknown );
-//		newhl = Hunk_AddLabel2( ms->ms_HunkStruct, ms->ms_HunkNode, val, LT_Unknown );
+//		newhl = Hunk_AddLabel( ms->ms_HunkStruct, val, LT_Unset );
+//		newhl = Hunk_AddLabel2( ms->ms_HunkStruct, ms->ms_HunkNode, val, LT_Unset );
 
 		if ( newhl )
 		{
-			parent = newhl->hl_Parent;
-
-			if ( parent )
-			{
-				int off = newhl->hl_Label_Offset - parent->hl_Label_Offset;
-
-				if ( off < 0 )
-				{
-					sprintf( ms->ms_Buf_Argument, "%s%d", parent->hl_Label_Name, off );
-				}
-				else
-				{
-					sprintf( ms->ms_Buf_Argument, "%s+%d", parent->hl_Label_Name, off );
-				}
-			}
-			else
-			{
-				sprintf( ms->ms_Buf_Argument, "%s", newhl->hl_Label_Name );
-			}
+			BuildLabelString( newhl, ms->ms_Buf_Argument );
 		}
 
 		ms->ms_Buf_Comment = buf;
@@ -1125,11 +1106,23 @@ int mt;
 			}
 		}
 
+		#if 0
+		if ( len == 0 )
+		{
+			if ( Decode_Data( hs, ms, hl, hr, max, & len ))
+			{
+				printf( "%s:%04d: Decoding error\n", __FILE__, __LINE__ );
+				goto bailout;
+			}
+		}
+		#endif
+
 		if ( len == 0 )
 		{
 			printf( "%s:%04d: Decoding length error\n", __FILE__, __LINE__ );
 			goto bailout;
 		}
+
 
 		pos += len;
 	}

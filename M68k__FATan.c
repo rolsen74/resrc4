@@ -26,8 +26,6 @@ int dst;
 	ms->ms_Str_Opcode = "FATan.x";
 	ms->ms_OpcodeSize = 4;
 
-//	printf( "Unsupported 'FATan1' Opcode at %08x\n", ms->ms_MemoryAdr );
-
 	if ( src == dst )
 	{
 		sprintf( ms->ms_Buf_Argument, "%s", FPx_RegNames[src] );
@@ -42,7 +40,6 @@ int dst;
 
 void Cmd_FATAN2( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int emode;
 int ereg;
 int src;
@@ -121,12 +118,7 @@ int len;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
 

@@ -17,7 +17,6 @@
 
 void Cmd_DIV( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 uint32_t opmode;
 
 	opmode = ( ms->ms_Opcode & 0x01c00000 ) >> 22;
@@ -67,19 +66,14 @@ uint32_t opmode;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	ms->ms_ArgEMode = 0x00; // Dx Reg
 	ms->ms_ArgEReg  = ( ms->ms_Opcode & 0x0e000000 ) >> 25;
 
 	ms->ms_CurRegister = & ms->ms_DstRegister;
 
-	M68k_EffectiveAddress( ms, NULL, 0 );
+	M68k_EffectiveAddress( ms );
 
 	ms->ms_CurRegister->mr_Type = RT_Unknown;
 	ms->ms_OpcodeSize = ms->ms_ArgSize;
@@ -95,7 +89,6 @@ bailout:
 
 void Cmd_DIVS_L( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 uint32_t pos;
 int EMode;
 int EReg;
@@ -119,12 +112,7 @@ int Dr;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	ms->ms_OpcodeSize = ms->ms_ArgSize;
 
@@ -141,21 +129,21 @@ int Dr;
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dq;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 		}
 		else
 		{
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dr;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			pos = strlen( ms->ms_Buf_Argument );
 
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dq;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			ms->ms_Buf_Argument[ pos ] = ':';
 		}
@@ -169,7 +157,7 @@ int Dr;
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dq;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 		}
 		else
 		{
@@ -178,14 +166,14 @@ int Dr;
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dr;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			pos = strlen( ms->ms_Buf_Argument );
 
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dq;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			ms->ms_Buf_Argument[ pos ] = ':';
 		}
@@ -196,7 +184,6 @@ int Dr;
 
 void Cmd_DIVU_L( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 uint32_t pos;
 int EMode;
 int EReg;
@@ -220,12 +207,7 @@ int Dr;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	ms->ms_OpcodeSize = ms->ms_ArgSize;
 
@@ -242,21 +224,21 @@ int Dr;
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dq;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 		}
 		else
 		{
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dr;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			pos = strlen( ms->ms_Buf_Argument );
 
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dq;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			ms->ms_Buf_Argument[ pos ] = ':';
 		}
@@ -270,7 +252,7 @@ int Dr;
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dq;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 		}
 		else
 		{
@@ -279,14 +261,14 @@ int Dr;
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dr;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			pos = strlen( ms->ms_Buf_Argument );
 
 			ms->ms_ArgEMode	= 0x00; // Dx Reg
 			ms->ms_ArgEReg	= Dq;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			ms->ms_Buf_Argument[ pos ] = ':';
 		}

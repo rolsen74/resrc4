@@ -17,7 +17,6 @@
 
 void Cmd_ADD( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int opmode;
 
 	opmode = ( ms->ms_Opcode & 0x01c00000 ) >> 22;
@@ -36,12 +35,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -50,7 +44,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -71,12 +65,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -85,7 +74,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -106,19 +95,14 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
 			ms->ms_ArgEMode = 0x00; // Dx Reg
 			ms->ms_ArgEReg  = ( ms->ms_Opcode & 0x0e000000 ) >> 25;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -141,7 +125,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -150,12 +134,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -176,7 +155,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -185,12 +164,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -211,7 +185,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_DstRegister;
 
-			M68k_EffectiveAddress( ms, NULL, 0 );
+			M68k_EffectiveAddress( ms );
 
 			// --
 
@@ -220,12 +194,7 @@ int opmode;
 
 			ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-			if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-			{
-				isRef->hr_Used = true;
-			}
+			M68k_EffectiveAddress( ms );
 
 			// --
 

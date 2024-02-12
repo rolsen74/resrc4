@@ -114,7 +114,7 @@ int i;
 	{
 		if (( hl->hl_Label_Offset >= 0 ) 
 		&&	( hl->hl_Label_Offset < size )
-		&&	( hl->hl_Label_Type == LT_Unknown )
+		&&	( hl->hl_Label_Type == LT_Unset )
 		&&	( buf[  hl->hl_Label_Offset ] != 0 )
 		&&	( type[ hl->hl_Label_Offset ] == MT_Unset ))
 		{
@@ -579,6 +579,7 @@ int err;
 	}
 
 	// --
+
 	error = false;
 
 bailout:

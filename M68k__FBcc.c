@@ -50,10 +50,10 @@
 
 void Cmd_FBcc( struct M68kStruct *ms )
 {
-struct HunkLabel *parent;
 struct HunkLabel *hl;
 int32_t adr;
 uint8_t *mem;
+char labname[ MAX_LabelName + 8 ];
 int size;
 int cond;
 
@@ -136,25 +136,9 @@ int cond;
 
 	if (( hl ) && ( hl->hl_Label_Name[0] ))
 	{
-		parent = hl->hl_Parent;
+		BuildLabelString( hl, labname );
 
-		if ( parent )
-		{
-			int off = hl->hl_Label_Offset - parent->hl_Label_Offset;
-
-			if ( off < 0 )
-			{
-				sprintf( ms->ms_Buf_Argument, "%s%d", parent->hl_Label_Name, off );
-			}
-			else
-			{
-				sprintf( ms->ms_Buf_Argument, "%s+%d", parent->hl_Label_Name, off );
-			}
-		}
-		else
-		{
-			sprintf( ms->ms_Buf_Argument, "%s", hl->hl_Label_Name );
-		}
+		sprintf( ms->ms_Buf_Argument, "%s", labname );
 	}
 	else
 	{

@@ -117,8 +117,6 @@ int reg;
 
 void Cmd_MOVEM( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
-
 	ms->ms_ArgSize 	= 4;
 	ms->ms_ArgEMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
 	ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
@@ -138,12 +136,7 @@ struct HunkRef *isRef;
 
 	if ( ms->ms_Opcode & 0x04000000 )
 	{
-		isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-		if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-		{
-			isRef->hr_Used = true;
-		}
+		M68k_EffectiveAddress( ms );
 
 		RegMask( ms );
 	}
@@ -151,12 +144,7 @@ struct HunkRef *isRef;
 	{
 		RegMask( ms );
 
-		isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-		if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-		{
-			isRef->hr_Used = true;
-		}
+		M68k_EffectiveAddress( ms );
 	}
 
 	ms->ms_OpcodeSize = ms->ms_ArgSize;

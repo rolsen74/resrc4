@@ -48,7 +48,6 @@ bailout:
 
 void Cmd_FMOVE2( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int emode;
 int ereg;
 int mode;
@@ -138,12 +137,7 @@ int len;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
 
@@ -164,7 +158,6 @@ bailout:
 
 void Cmd_FMOVE3( struct M68kStruct *ms )
 {
-struct HunkRef *isRef;
 int emode;
 int ereg;
 int fmt;
@@ -266,14 +259,85 @@ int src;
 
 	ms->ms_CurRegister = & ms->ms_SrcRegister;
 
-	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
-
-	if ( M68k_EffectiveAddress( ms, isRef, 0 ))
-	{
-		isRef->hr_Used = true;
-	}
+	M68k_EffectiveAddress( ms );
 
 	// --
+
+	ms->ms_OpcodeSize = ms->ms_ArgSize;
+
+bailout:
+
+	return;
+}
+
+// --
+
+void Cmd_FMOVE4( struct M68kStruct *ms )
+{
+char *name;
+int emode;
+int ereg;
+int len;
+int reg;
+int dr;
+
+	emode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	ereg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+	dr		= ( ms->ms_Opcode & 0x00002000 );
+	reg 	= ( ms->ms_Opcode & 0x00001c00 ) >> 10;
+
+	switch( reg )
+	{
+		case 0x1:
+		{
+			// Floating-Point Instruction Address Regiser
+			name = "fpiar";
+			break;
+		}
+
+		case 0x2:
+		{
+			// Floating-Point Instruction Status Regiser
+			name = "fpsr";
+			break;
+		}
+
+		case 0x4:
+		{
+			// Floating-Point Instruction Control Regiser
+			name = "fpcr";
+			break;
+		}
+
+		default:
+		{
+			printf( "Unsupported 'FMove4' Reg Type (%d) at %08x\n", reg, ms->ms_MemoryAdr );
+			ms->ms_DecodeStatus = MSTAT_Error;
+			goto bailout;
+		}
+	}
+
+	ms->ms_CurRegister = & ms->ms_SrcRegister;
+	ms->ms_Str_Opcode = "FMove.l";
+	ms->ms_ArgType	= OS_Long;
+	ms->ms_ArgEMode = emode;
+	ms->ms_ArgEReg  = ereg;
+	ms->ms_ArgSize	= 4;
+
+	if ( dr )
+	{
+		sprintf( ms->ms_Buf_Argument, "%s", name );
+
+		M68k_EffectiveAddress( ms );
+	}
+	else
+	{
+		M68k_EffectiveAddress( ms );
+
+		len = strlen( ms->ms_Buf_Argument );
+
+		sprintf( & ms->ms_Buf_Argument[len], ",%s", name );
+	}
 
 	ms->ms_OpcodeSize = ms->ms_ArgSize;
 
