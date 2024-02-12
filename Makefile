@@ -8,7 +8,7 @@
 # Flags used for compiling
 CFLAGS		+= -I.
 CFLAGS		+= -O2
-CFLAGS		+= -gstabs
+#CFLAGS		+= -gstabs
 CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
 
@@ -125,6 +125,7 @@ SRCS		+= M68k_Moveq.c
 SRCS		+= M68k_Mul.c
 SRCS		+= M68k_Nbcd.c
 SRCS		+= M68k_Neg.c
+SRCS		+= M68k_Negx.c
 SRCS		+= M68k_Nop.c
 SRCS		+= M68k_Not.c
 SRCS		+= M68k_Or.c
@@ -435,6 +436,7 @@ M68k_Moveq.o:				Makefile ReSrc4.h
 M68k_Mul.o:					Makefile ReSrc4.h
 M68k_Nbcd.o:				Makefile ReSrc4.h
 M68k_Neg.o:					Makefile ReSrc4.h
+M68k_Negx.o:				Makefile ReSrc4.h
 M68k_Nop.o:					Makefile ReSrc4.h
 M68k_Not.o:					Makefile ReSrc4.h
 M68k_Or.o:					Makefile ReSrc4.h
