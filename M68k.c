@@ -128,9 +128,9 @@ static const struct CmdStruct m68kCmds_0011[] =
 
 static const struct CmdStruct m68kCmds_0100[] =
 {
-//    { Cmd_NEGX,     0xffc00000, 0x40000000 },   // NEGX.b   0100 0000 00xx xxxx
-//    { Cmd_NEGX,     0xffc00000, 0x40400000 },   // NEGX.w   0100 0000 01xx xxxx
-//    { Cmd_NEGX,     0xffc00000, 0x40800000 },   // NEGX.l   0100 0000 10xx xxxx
+	{ Cmd_NEGX,     0xffc00000, 0x40000000 },   // NEGX.b   0100 0000 00xx xxxx
+	{ Cmd_NEGX,     0xffc00000, 0x40400000 },   // NEGX.w   0100 0000 01xx xxxx
+	{ Cmd_NEGX,     0xffc00000, 0x40800000 },   // NEGX.l   0100 0000 10xx xxxx
 //  { Cmd_MOVE_SR,  wwwwwwwwww, wwwwwwwwww },   // MOVE     0100 0000 11xx xxxx
 
 	{ Cmd_CHK,		0xf1c00000, 0x41000000 },	// CHK.l	0100 xxx1 00xx xxxx

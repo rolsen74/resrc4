@@ -575,6 +575,7 @@ void Cmd_MULS_L(	struct M68kStruct *ms );
 void Cmd_MULU_L(	struct M68kStruct *ms );
 void Cmd_NBCD(		struct M68kStruct *ms );
 void Cmd_NEG(		struct M68kStruct *ms );
+void Cmd_NEGX(		struct M68kStruct *ms );
 void Cmd_NOP(		struct M68kStruct *ms );
 void Cmd_NOT(		struct M68kStruct *ms );
 void Cmd_OR(		struct M68kStruct *ms );

@@ -39,7 +39,7 @@ ReSrc4 v2.4 ( 04-Feb-2024 )
 
 ReSrc4 v2.5 ( 12-Feb-2024 )
 
-- Added support for Addx and Subx.
+- Added support for Addx, Subx and Negx.
 
 - Added support for 020 Addressing modes. It uses vasm syntax.
 
