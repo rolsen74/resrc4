@@ -33,8 +33,8 @@ struct CmdStruct
 
 static const struct CmdStruct m68kCmds_0000[] =
 {
-//  { Cmd_ORI_CCR,  wwwwwwwwww, wwwwwwwwww },   // ORI      0000 0000 0011 1100 0000 0000 xxxx xxxx
-//  { Cmd_ORI_SR,   wwwwwwwwww, wwwwwwwwww },   // ORI      0000 0000 0111 1100 xxxx xxxx xxxx xxxx
+	{ Cmd_ORI2,		0xffffff00, 0x003c0000 },   // CCR      0000 0000 0011 1100 0000 0000 xxxx xxxx
+	{ Cmd_ORI3,		0xffff0000, 0x007c0000 },   // SR		0000 0000 0111 1100 xxxx xxxx xxxx xxxx
 
 	{ Cmd_ORI,		0xffc00000, 0x00000000 },	// ORI.b	0000 0000 00xx xxxx
 	{ Cmd_ORI,		0xffc00000, 0x00400000 },	// ORI.w	0000 0000 01xx xxxx
@@ -42,8 +42,8 @@ static const struct CmdStruct m68kCmds_0000[] =
  	{ Cmd_CMP2,		0xffc00fff, 0x00c00000 },	// Cmp2.b	0000 0000 11xx xxxx xxxx 0000 0000 0000
  	{ Cmd_CHK2,		0xffc00fff, 0x00c00800 },	// Chk2.b	0000 0000 11xx xxxx xxxx 1000 0000 0000
 
-//  { Cmd_ANDI_CCR, wwwwwwwwww, wwwwwwwwww },   // ANDI     0000 0010 0011 1100 0000 0000 xxxx xxxx
-//  { Cmd_ANDI_SR,  wwwwwwwwww, wwwwwwwwww },   // ANDI     0000 0010 0111 1100 xxxx xxxx xxxx xxxx
+	{ Cmd_ANDI2,	0xffffff00, 0x023c0000 },   // CCR 	    0000 0010 0011 1100 0000 0000 xxxx xxxx
+	{ Cmd_ANDI3,	0xffff0000, 0x027c0000 },   // SR		0000 0010 0111 1100 xxxx xxxx xxxx xxxx
 
 	{ Cmd_ANDI,		0xffc00000, 0x02000000 },	// ANDI.b	0000 0010 00xx xxxx
 	{ Cmd_ANDI,		0xffc00000, 0x02400000 },	// ANDI.w	0000 0010 01xx xxxx
@@ -68,9 +68,9 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ Cmd_BCLR,		0xffc0ff00, 0x08800000 },	// BCLR     0000 1000 10xx xxxx 0000 0000 xxxx xxxx
 	{ Cmd_BSET,		0xffc0ff00, 0x08c00000 },	// BSET     0000 1000 11xx xxxx 0000 0000 xxxx xxxx
 
-//  { Cmd_EORI_CCR, wwwwwwwwww, wwwwwwwwww },   // EORI     0000 1010 0011 1100 0000 0000 xxxx xxxx
+	{ Cmd_EORI2,	0xffffff00, 0x0a3c0000 },   // CCR		0000 1010 0011 1100 0000 0000 xxxx xxxx
+	{ Cmd_EORI3,	0xffff0000, 0x0a7c0000 },	// SR		0000 1010 0111 1100 xxxx xxxx xxxx xxxx
 	{ Cmd_EORI,		0xffc00000, 0x0a000000 },	// EORI.b	0000 1010 00xx xxxx
-//  { Cmd_EORI_SR,  wwwwwwwwww, wwwwwwwwww },   // EORI     0000 1010 0111 1100 xxxx xxxx xxxx xxxx
 	{ Cmd_EORI,		0xffc00000, 0x0a400000 },	// EORI.w	0000 1010 01xx xxxx
 	{ Cmd_EORI,		0xffc00000, 0x0a800000 },	// EORI.l	0000 1010 10xx xxxx
 
@@ -78,7 +78,10 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ Cmd_CMPI,		0xffc00000, 0x0c400000 },	// CMPI.w	0000 1100 01xx xxxx
 	{ Cmd_CMPI,		0xffc00000, 0x0c800000 },	// CMPI.l	0000 1100 10xx xxxx
 
-//  { Cmd_MOVES,    wwwwwwwwww, wwwwwwwwww },   // MOVES    0000 1110 xxxx xxxx xxxx x000 0000 0000
+	{ Cmd_MOVES,	0xffc007ff, 0x0e000000 },   // MOVES    0000 1110 00xx xxxx xxxx x000 0000 0000
+	{ Cmd_MOVES,	0xffc007ff, 0x0e400000 },   // MOVES    0000 1110 01xx xxxx xxxx x000 0000 0000
+	{ Cmd_MOVES,	0xffc007ff, 0x0e800000 },   // MOVES    0000 1110 10xx xxxx xxxx x000 0000 0000
+
 //  { Cmd_CAS2,     wwwwwwwwww, wwwwwwwwww },   // CAS2     0000 1xx0 1111 1100 xxxx 000x xx00 0xxx xxxx 000x xx00 0xxxx
 //  { Cmd_CAS,      wwwwwwwwww, wwwwwwwwww },   // CAS      0000 1xx0 11xx xxxx 0000 000x xx00 0xxx
 
@@ -131,7 +134,7 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ Cmd_NEGX,     0xffc00000, 0x40000000 },   // NEGX.b   0100 0000 00xx xxxx
 	{ Cmd_NEGX,     0xffc00000, 0x40400000 },   // NEGX.w   0100 0000 01xx xxxx
 	{ Cmd_NEGX,     0xffc00000, 0x40800000 },   // NEGX.l   0100 0000 10xx xxxx
-//  { Cmd_MOVE_SR,  wwwwwwwwww, wwwwwwwwww },   // MOVE     0100 0000 11xx xxxx
+	{ Cmd_MOVE4,	0xffc00000, 0x40c00000 },	// SR		0100 0000 11xx xxxx
 
 	{ Cmd_CHK,		0xf1c00000, 0x41000000 },	// CHK.l	0100 xxx1 00xx xxxx
 	{ Cmd_CHK,		0xf1c00000, 0x41800000 },	// CHK.w	0100 xxx1 10xx xxxx
@@ -139,17 +142,17 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ Cmd_CLR,		0xffc00000, 0x42000000 },	// CLR.b    0100 0010 00xx xxxx
 	{ Cmd_CLR,		0xffc00000, 0x42400000 },	// CLR.w    0100 0010 01xx xxxx
 	{ Cmd_CLR,		0xffc00000, 0x42800000 },	// CLR.l    0100 0010 10xx xxxx
-//  { Cmd_MOVE_CCR, wwwwwwwwww, wwwwwwwwww },   // MOVE     0100 0010 11xx xxxx
+	{ Cmd_MOVE2,	0xffc00000, 0x42c00000 },   // CCR		0100 0010 11xx xxxx
 
 	{ Cmd_NEG,		0xffc00000, 0x44000000 },	// NEG.b	0100 0100 00xx xxxx
 	{ Cmd_NEG,		0xffc00000, 0x44400000 },	// NEG.w	0100 0100 01xx xxxx
 	{ Cmd_NEG,		0xffc00000, 0x44800000 },	// NEG.l	0100 0100 10xx xxxx
-//  { Cmd_MOVE_CCR, 0xffc00000, 0x44c00000 },   // MOVE     0100 0100 11xx xxxx
+	{ Cmd_MOVE3,	0xffc00000, 0x44c00000 },   // CCR		0100 0100 11xx xxxx
 
 	{ Cmd_NOT,		0xffc00000, 0x46000000 },	// NOT.b	0100 0110 00xx xxxx
 	{ Cmd_NOT,		0xffc00000, 0x46400000 },	// NOT.w	0100 0110 01xx xxxx
 	{ Cmd_NOT,		0xffc00000, 0x46800000 },	// NOT.l	0100 0110 10xx xxxx
-//  { Cmd_MOVE_SR,  wwwwwwwwww, wwwwwwwwww },   // MOVE     0100 0110 11xx xxxx
+	{ Cmd_MOVE5,	0xffc00000, 0x46c00000 },	// SR		0100 0110 11xx xxxx
 
 	{ Cmd_LINK_L,	0xfff80000, 0x48080000 },	// LINK.l	0100 1000 0000 1xxx
 	{ Cmd_NBCD,		0xffc00000, 0x48000000 },	// NBCD		0100 1000 00xx xxxx
@@ -167,7 +170,7 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ Cmd_TST,		0xffc00000, 0x4a800000 },	// TST.l    0100 1010 10xx xxxx
 	{ Cmd_BGND,		0xffff0000, 0x4afa0000 },	// BGND		0100 1010 1111 1010
 	{ Cmd_ILLEGAL,	0xffff0000, 0x4afc0000 },	// ILLEGAL	0100 1010 1111 1100
-//  { Cmd_TAS,      wwwwwwwwww, wwwwwwwwww },   // TAS      0100 1010 11xx xxxx
+	{ Cmd_TAS,		0xffc00000, 0x4ac00000 },   // TAS      0100 1010 11xx xxxx
 
 	{ Cmd_MULU_L,	0xffc08bf8, 0x4c000000 },	// MULU_L	0100 1100 00xx xxxx 0xxx 0x00 0000 0xxx
 	{ Cmd_MULS_L,	0xffc08bf8, 0x4c000800 },	// MULS_L	0100 1100 00xx xxxx 0xxx 1x00 0000 0xxx
@@ -179,7 +182,7 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ Cmd_TRAP,		0xfff00000, 0x4e400000 },	// TRAP		0100 1110 0100 xxxx
 	{ Cmd_LINK,		0xfff80000, 0x4e500000 },	// LINK.w	0100 1110 0101 0xxx
 	{ Cmd_UNLK,		0xfff80000, 0x4e580000 },	// UNLK		0100 1110 0101 1xxx
-//  { Cmd_MOVE_USP, wwwwwwwwww, wwwwwwwwww },   // MOVE     0100 1110 0110 xxxx
+	{ Cmd_MOVE6,	0xfff00000, 0x4e600000 },   // USP		0100 1110 0110 xxxx
 	{ Cmd_RESET,	0xffff0000, 0x4e700000 },	// RESET	0100 1110 0111 0000
 	{ Cmd_NOP,		0xffff0000, 0x4e710000 },	// NOP		0100 1110 0111 0001
 	{ Cmd_RTE,		0xffff0000, 0x4e730000 },	// RTE		0100 1110 0111 0011
@@ -204,64 +207,11 @@ static const struct CmdStruct m68kCmds_0101[] =
 	{ Cmd_SUBQ,		0xf1c00000, 0x51400000 },	// SUBQ.w	0101 xxx1 01xx xxxx
 	{ Cmd_SUBQ,		0xf1c00000, 0x51800000 },	// SUBQ.l	0101 xxx1 10xx xxxx
 
-	#if 0
-	{ Cmd_DBcc,		0xfff80000, 0x50c80000 },	// DBT		0101 0000 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x51c80000 },	// DBF		0101 0001 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x52c80000 },	// DBHI		0101 0010 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x53c80000 },	// DBLS		0101 0011 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x54c80000 },	// DBCC		0101 0100 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x55c80000 },	// DBCS		0101 0101 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x56c80000 },	// DBNE		0101 0110 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x57c80000 },	// DBEQ		0101 0111 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x58c80000 },	// DBVC		0101 1000 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x59c80000 },	// DBVS		0101 1001 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x5ac80000 },	// DBPL		0101 1010 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x5bc80000 },	// DBMI		0101 1011 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x5cc80000 },	// DBGE		0101 1100 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x5dc80000 },	// DBLT		0101 1101 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x5ec80000 },	// DBGT		0101 1110 1100 1xxx
-	{ Cmd_DBcc,		0xfff80000, 0x5fc80000 },	// DBLE		0101 1111 1100 1xxx
-	#else
 	{ Cmd_DBcc,		0xf0f80000, 0x50c80000 },	// DBcc		0101 xxxx 1100 1xxx
-	#endif
-
-//  { Cmd_TRAPcc,   0xfff80000, 0x50c80000 },   // TRAPT    0101 0000 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x51c80000 },   // TRAPF    0101 0001 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x52c80000 },   // TRAPHI   0101 0010 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x53c80000 },   // TRAPLS   0101 0011 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x54c80000 },   // TRAPCC   0101 0100 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x55c80000 },   // TRAPCS   0101 0101 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x56c80000 },   // TRAPNE   0101 0110 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x57c80000 },   // TRAPEQ   0101 0111 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x58c80000 },   // TRAPVC   0101 1000 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x59c80000 },   // TRAPVS   0101 1001 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x5ac80000 },   // TRAPPL   0101 1010 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x5bc80000 },   // TRAPMI   0101 1011 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x5cc80000 },   // TRAPGE   0101 1100 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x5dc80000 },   // TRAPLT   0101 1101 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x5ec80000 },   // TRAPGT   0101 1110 1111 1xxx
-//  { Cmd_TRAPcc,   0xfff80000, 0x5fc80000 },   // TRAPLE   0101 1111 1111 1xxx
-
-	#if 0
-	{ Cmd_Scc,		0xffc00000, 0x50c00000 },	// ST		0101 0000 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x51c00000 },	// SF		0101 0001 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x52c00000 },	// SHI		0101 0010 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x53c00000 },	// SLS		0101 0011 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x54c00000 },	// SCC		0101 0100 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x55c00000 },	// SCS		0101 0101 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x56c00000 },	// SNE		0101 0110 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x57c00000 },	// SEQ		0101 0111 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x58c00000 },	// SVC		0101 1000 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x59c00000 },	// SVS		0101 1001 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x5ac00000 },	// SPL		0101 1010 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x5bc00000 },	// SMI		0101 1011 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x5cc00000 },	// SGE		0101 1100 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x5dc00000 },	// SLT		0101 1101 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x5ec00000 },	// SGT		0101 1110 11xx xxxx
-	{ Cmd_Scc,		0xffc00000, 0x5fc00000 },	// SLE		0101 1111 11xx xxxx
-	#else
+	{ Cmd_TRAPcc,   0xf0ff0000, 0x50fa0000 },   // TRAPcc.w 0101 xxxx 1111 1010
+	{ Cmd_TRAPcc,   0xf0ff0000, 0x50fb0000 },   // TRAPcc.l 0101 xxxx 1111 1011
+	{ Cmd_TRAPcc,   0xf0ff0000, 0x50fc0000 },   // TRAPcc   0101 xxxx 1111 1100
 	{ Cmd_Scc,		0xf0c00000, 0x50c00000 },	// Scc		0101 1111 11xx xxxx
-	#endif
 
 	{ NULL,			0x00000000, 0x00000000 },
 };
@@ -961,6 +911,9 @@ static const struct CmdStruct m68kCmds_1111[] =
  	{ Cmd_FScc,		0xffc0ffc0, 0xf2400000 },	// FScc		1111 0010 001x xxxx 0000 0000 00xx xxxx
  	{ Cmd_FBcc,		0xffe00000, 0xf2800000 },	// FBcc		1111 0010 100x xxxx
  	{ Cmd_FBcc,		0xffe00000, 0xf2c00000 },	// FBcc		1111 0010 110x xxxx
+
+ 	{ Cmd_MOVE16,	0xffe00000, 0xf6000000 },	// MOVE16	1111 0110 000x xxxx xxxx xxxx xxxx xxxx
+ 	{ Cmd_MOVE162,	0xfff88fff, 0xf6208000 },	// MOVE16	1111 0110 0010 0xxx 1xxx 0000 0000 0000
 
 	{ NULL,			0x00000000, 0x00000000 },
 };

@@ -23,10 +23,10 @@
 
 // --
 
-#define DATE				"12-Feb-2024"
+#define DATE				"21-Feb-2024"
 #define YEAR				2024
 #define VERSION				2
-#define REVISION			5
+#define REVISION			6
 
 // --
 
@@ -387,6 +387,7 @@ struct HunkLabel *	Hunk_AddExtLabel(		struct HunkStruct *hs, int32_t addr, enum 
 struct HunkRef *	Hunk_FindRef(			struct HunkNode *hn, int32_t adr );
 struct HunkLabel *	Hunk_FindLabel(			struct HunkStruct *hs, int32_t addr );
 void				BuildLabelString(		struct HunkLabel *hl, char *buf );
+int					BuildLabelString2(		struct M68kStruct *ms, char *buf, uint32_t adr, uint32_t val );
 
 // -- Label Magic
 int					LabelMagic(				struct HunkStruct *hs );
@@ -523,6 +524,8 @@ void Cmd_ADDQ(		struct M68kStruct *ms );
 void Cmd_ADDX(		struct M68kStruct *ms );
 void Cmd_AND(		struct M68kStruct *ms );
 void Cmd_ANDI(		struct M68kStruct *ms );
+void Cmd_ANDI2(		struct M68kStruct *ms );
+void Cmd_ANDI3(		struct M68kStruct *ms );
 void Cmd_ASL(		struct M68kStruct *ms );
 void Cmd_ASL2(		struct M68kStruct *ms );
 void Cmd_ASR(		struct M68kStruct *ms );
@@ -553,6 +556,8 @@ void Cmd_DIVS_L(	struct M68kStruct *ms );
 void Cmd_DIVU_L(	struct M68kStruct *ms );
 void Cmd_EOR(		struct M68kStruct *ms );
 void Cmd_EORI(		struct M68kStruct *ms );
+void Cmd_EORI2(		struct M68kStruct *ms );
+void Cmd_EORI3(		struct M68kStruct *ms );
 void Cmd_EXG( 		struct M68kStruct *ms );
 void Cmd_EXT(		struct M68kStruct *ms );
 void Cmd_ILLEGAL(	struct M68kStruct *ms );
@@ -566,10 +571,18 @@ void Cmd_LSL2(		struct M68kStruct *ms );
 void Cmd_LSR(		struct M68kStruct *ms );
 void Cmd_LSR2(		struct M68kStruct *ms );
 void Cmd_MOVE(		struct M68kStruct *ms );
+void Cmd_MOVE16(	struct M68kStruct *ms );
+void Cmd_MOVE162(	struct M68kStruct *ms );
+void Cmd_MOVE2( 	struct M68kStruct *ms );
+void Cmd_MOVE3(		struct M68kStruct *ms );
+void Cmd_MOVE4(		struct M68kStruct *ms );
+void Cmd_MOVE5(		struct M68kStruct *ms );
+void Cmd_MOVE6(		struct M68kStruct *ms );
 void Cmd_MOVEA(		struct M68kStruct *ms );
 void Cmd_MOVEM(		struct M68kStruct *ms );
 void Cmd_MOVEP(		struct M68kStruct *ms );
 void Cmd_MOVEQ(		struct M68kStruct *ms );
+void Cmd_MOVES(		struct M68kStruct *ms );
 void Cmd_MUL(		struct M68kStruct *ms );
 void Cmd_MULS_L(	struct M68kStruct *ms );
 void Cmd_MULU_L(	struct M68kStruct *ms );
@@ -580,6 +593,8 @@ void Cmd_NOP(		struct M68kStruct *ms );
 void Cmd_NOT(		struct M68kStruct *ms );
 void Cmd_OR(		struct M68kStruct *ms );
 void Cmd_ORI(		struct M68kStruct *ms );
+void Cmd_ORI2(		struct M68kStruct *ms );
+void Cmd_ORI3(		struct M68kStruct *ms );
 void Cmd_PACK(		struct M68kStruct *ms );
 void Cmd_PEA(		struct M68kStruct *ms );
 void Cmd_RESET(		struct M68kStruct *ms );
@@ -604,7 +619,9 @@ void Cmd_SUBI(		struct M68kStruct *ms );
 void Cmd_SUBQ(		struct M68kStruct *ms );
 void Cmd_SUBX(		struct M68kStruct *ms );
 void Cmd_SWAP(		struct M68kStruct *ms );
+void Cmd_TAS(		struct M68kStruct *ms );
 void Cmd_TRAP(		struct M68kStruct *ms );
+void Cmd_TRAPcc(	struct M68kStruct *ms );
 void Cmd_TRAPV(		struct M68kStruct *ms );
 void Cmd_TST(		struct M68kStruct *ms );
 void Cmd_UNLK(		struct M68kStruct *ms );

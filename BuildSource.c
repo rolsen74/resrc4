@@ -697,7 +697,7 @@ int m;
 		val = (( ms->ms_MemoryBuf[ 0 ] << 8 ) | ( ms->ms_MemoryBuf[ 1 ] << 0 ));
 
 		ms->ms_Str_Opcode = "dc.w";
-	    snprintf( ms->ms_Buf_Argument, 64, "$%04x", val );
+		snprintf( ms->ms_Buf_Argument, 64, "$%04x", val );
 	}
 	else
 	{

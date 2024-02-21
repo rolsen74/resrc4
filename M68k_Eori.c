@@ -81,3 +81,33 @@ bailout:
 }
 
 // --
+
+void Cmd_EORI2( struct M68kStruct *ms )
+{
+uint8_t val;
+
+	val = ( ms->ms_Opcode & 0x000000ff );
+
+	ms->ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.b" : "Eori.b" ;
+	ms->ms_OpcodeSize = 4;
+	ms->ms_ArgType = OS_Byte;
+
+	sprintf( ms->ms_Buf_Argument, "#$%02x,CCR", val );
+}
+
+// --
+
+void Cmd_EORI3( struct M68kStruct *ms )
+{
+uint16_t val;
+
+	val = ( ms->ms_Opcode & 0x0000ffff );
+
+	ms->ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.w" : "Eori.w" ;
+	ms->ms_OpcodeSize = 4;
+	ms->ms_ArgType = OS_Word;
+
+	sprintf( ms->ms_Buf_Argument, "#$%04x,SR", val );
+}
+
+// --

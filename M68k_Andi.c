@@ -123,3 +123,33 @@ int size;
 }
 
 // --
+
+void Cmd_ANDI2( struct M68kStruct *ms )
+{
+uint8_t val;
+
+	val = ( ms->ms_Opcode & 0x000000ff );
+
+	ms->ms_Str_Opcode = ( ShortOpcodes ) ? "And.b" : "Andi.b" ;
+	ms->ms_OpcodeSize = 4;
+	ms->ms_ArgType = OS_Byte;
+
+	sprintf( ms->ms_Buf_Argument, "#$%02x,CCR", val );
+}
+
+// --
+
+void Cmd_ANDI3( struct M68kStruct *ms )
+{
+uint16_t val;
+
+	val = ( ms->ms_Opcode & 0x0000ffff );
+
+	ms->ms_Str_Opcode = ( ShortOpcodes ) ? "And.w" : "Andi.w" ;
+	ms->ms_OpcodeSize = 4;
+	ms->ms_ArgType = OS_Word;
+
+	sprintf( ms->ms_Buf_Argument, "#$%04x,SR", val );
+}
+
+// --

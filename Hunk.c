@@ -40,6 +40,65 @@ int off;
 
 // --
 
+int BuildLabelString2( struct M68kStruct *ms, char *buf, uint32_t adr, uint32_t val )
+{
+struct HunkLabel *hl;
+struct HunkRef *isRef;
+int err;
+
+	err = true;
+
+	isRef = Hunk_FindRef( ms->ms_HunkNode, adr );
+
+	if ( isRef )
+	{
+		isRef->hr_Used = true;
+
+		if ( ms->ms_HunkStruct->hs_PassNr == 1 )
+		{
+			hl = Hunk_AddLabel( ms->ms_HunkStruct, val, LT_Unset );
+
+			if ( hl == NULL )
+			{
+				printf( "%s:%04d: AddLabel failed at %08x\n", __FILE__, __LINE__, adr );
+			}
+		}
+		else
+		{
+			hl = Hunk_FindLabel( ms->ms_HunkStruct, val );
+
+			if ( hl == NULL )
+			{
+				printf( "%s:%04d: Error finding label at %08x\n", __FILE__, __LINE__, adr );
+				ms->ms_DecodeStatus = MSTAT_Error;
+				goto bailout;
+			}
+		}
+
+		if (( hl ) && ( hl->hl_Label_Name[0] ))
+		{
+			BuildLabelString( hl, buf );
+		}
+		else
+		{
+			// Not an external as it has a Refs 
+			sprintf( buf, "$%08x", val );
+		}
+	}
+	else
+	{
+		sprintf( buf, "$%08x", val );
+	}
+
+	err = false;
+
+bailout:
+
+	return( err );
+}
+
+// --
+
 static int DupCount = 0;
 
 static void SetLabelName( struct HunkStruct *hs, struct HunkLabel *hl, int32_t pos, int max )

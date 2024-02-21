@@ -52,3 +52,22 @@ ReSrc4 v2.5 ( 12-Feb-2024 )
   function. So it became a FSub instead.
 
 - Added: 3 new jump tables and fixed one with a Mask error.
+
+
+ReSrc4 v2.6 ( 21-Feb-2024 )
+
+- Added support of Andi to SR/CCR regs
+
+- Added support of Eori to SR/CCR regs
+
+- Added support of Ori to SR/CCR regs
+
+- Added support of Move to/from SR/CCR/USP regs
+
+- Added support of TAS opcode
+
+- Added support of Trapcc opcodes
+
+- Added support of Moves opcode
+
+- Added support of Move16 opcode

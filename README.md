@@ -57,7 +57,6 @@ data = 32bit Data value<br>
 
 Please be aware of the following:
 
-- Moving to/from CCR or SR registers has not been implemented.
 - The movec opcode is missing.
 - There are no MMU opcode handling.
 
@@ -136,10 +135,12 @@ Please be aware of the following:
 - Lsl
 - Lsr
 - Move
+- Move16
 - Movea
 - Movem
 - Movep
 - Moveq
+- Moves
 - Muls
 - Mulu
 - Nbcd
@@ -183,8 +184,10 @@ Please be aware of the following:
 - Subx
 - Svc
 - Svs
+- Tas
 - Swap
 - Trap
+- Trapcc
 - Trapv
 - Tst
 - Unlk

@@ -134,3 +134,106 @@ bailout:
 
     return;
 }
+
+// --
+
+void Cmd_MOVE2( struct M68kStruct *ms )
+{
+	ms->ms_Str_Opcode = "Move.w";
+	ms->ms_ArgType  = OS_Word;
+	ms->ms_ArgEMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+
+	ms->ms_CurRegister = & ms->ms_SrcRegister;
+
+	sprintf( ms->ms_Buf_Argument, "CCR" );
+
+	M68k_EffectiveAddress( ms );
+
+	ms->ms_OpcodeSize = ms->ms_ArgSize;
+}
+
+// --
+
+void Cmd_MOVE3( struct M68kStruct *ms )
+{
+int pos;
+
+	ms->ms_Str_Opcode = "Move.w";
+	ms->ms_ArgType  = OS_Word;
+	ms->ms_ArgEMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+
+	ms->ms_CurRegister = & ms->ms_SrcRegister;
+
+	M68k_EffectiveAddress( ms );
+
+	pos = strlen( ms->ms_Buf_Argument );
+	sprintf( & ms->ms_Buf_Argument[ pos ], ",CCR" );
+
+	ms->ms_OpcodeSize = ms->ms_ArgSize;
+}
+
+// --
+
+void Cmd_MOVE4( struct M68kStruct *ms )
+{
+	ms->ms_Str_Opcode = "Move.w";
+	ms->ms_ArgType  = OS_Word;
+	ms->ms_ArgEMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+
+	ms->ms_CurRegister = & ms->ms_SrcRegister;
+
+	sprintf( ms->ms_Buf_Argument, "SR" );
+
+	M68k_EffectiveAddress( ms );
+
+	ms->ms_OpcodeSize = ms->ms_ArgSize;
+}
+
+// --
+
+void Cmd_MOVE5( struct M68kStruct *ms )
+{
+int pos;
+
+	ms->ms_Str_Opcode = "Move.w";
+	ms->ms_ArgType  = OS_Word;
+	ms->ms_ArgEMode	= ( ms->ms_Opcode & 0x00380000 ) >> 19;
+	ms->ms_ArgEReg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+
+	ms->ms_CurRegister = & ms->ms_SrcRegister;
+
+	M68k_EffectiveAddress( ms );
+
+	pos = strlen( ms->ms_Buf_Argument );
+	sprintf( & ms->ms_Buf_Argument[ pos ], ",SR" );
+
+	ms->ms_OpcodeSize = ms->ms_ArgSize;
+}
+
+// --
+
+void Cmd_MOVE6( struct M68kStruct *ms )
+{
+int reg;
+int dr;
+
+	dr	= ( ms->ms_Opcode & 0x00080000 );
+	reg	= ( ms->ms_Opcode & 0x00070000 ) >> 16;
+
+	ms->ms_Str_Opcode = "Move.l";
+	ms->ms_ArgType  = OS_Long;
+
+	if ( dr )
+	{
+		sprintf( ms->ms_Buf_Argument, "A%d,USP", reg );
+	}
+	else
+	{
+		sprintf( ms->ms_Buf_Argument, "USP,A%d", reg );
+	}
+}
+
+// --

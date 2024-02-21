@@ -118,10 +118,12 @@ SRCS		+= M68k_Link.c
 SRCS		+= M68k_Lsl.c
 SRCS		+= M68k_Lsr.c
 SRCS		+= M68k_Move.c
+SRCS		+= M68k_Move16.c
 SRCS		+= M68k_Movea.c
 SRCS		+= M68k_Movem.c
 SRCS		+= M68k_Movep.c
 SRCS		+= M68k_Moveq.c
+SRCS		+= M68k_Moves.c
 SRCS		+= M68k_Mul.c
 SRCS		+= M68k_Nbcd.c
 SRCS		+= M68k_Neg.c
@@ -150,7 +152,9 @@ SRCS		+= M68k_Subi.c
 SRCS		+= M68k_Subq.c
 SRCS		+= M68k_Subx.c
 SRCS		+= M68k_Swap.c
+SRCS		+= M68k_Tas.c
 SRCS		+= M68k_Trap.c
+SRCS		+= M68k_Trapcc.c
 SRCS		+= M68k_Trapv.c
 SRCS		+= M68k_Tst.c
 SRCS		+= M68k_Unlk.c
@@ -429,10 +433,12 @@ M68k_Link.o:				Makefile ReSrc4.h
 M68k_Lsl.o:					Makefile ReSrc4.h
 M68k_Lsr.o:					Makefile ReSrc4.h
 M68k_Move.o:				Makefile ReSrc4.h
+M68k_Move16.o:				Makefile ReSrc4.h
 M68k_Movea.o:				Makefile ReSrc4.h
 M68k_Movem.o:				Makefile ReSrc4.h
 M68k_Movep.o:				Makefile ReSrc4.h
 M68k_Moveq.o:				Makefile ReSrc4.h
+M68k_Moves.o:				Makefile ReSrc4.h
 M68k_Mul.o:					Makefile ReSrc4.h
 M68k_Nbcd.o:				Makefile ReSrc4.h
 M68k_Neg.o:					Makefile ReSrc4.h
@@ -461,7 +467,9 @@ M68k_Subi.o:				Makefile ReSrc4.h
 M68k_Subq.o:				Makefile ReSrc4.h
 M68k_Subx.o:				Makefile ReSrc4.h
 M68k_Swap.o:				Makefile ReSrc4.h
+M68k_Tas.o:					Makefile ReSrc4.h
 M68k_Trap.o:				Makefile ReSrc4.h
+M68k_Trapcc.o:				Makefile ReSrc4.h
 M68k_Trapv.o:				Makefile ReSrc4.h
 M68k_Tst.o:					Makefile ReSrc4.h
 M68k_Unlk.o:				Makefile ReSrc4.h
