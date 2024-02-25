@@ -132,6 +132,7 @@ Please be aware of the following:
 - Jsr
 - Lea
 - Link
+- LPStop
 - Lsl
 - Lsr
 - Move
@@ -273,7 +274,9 @@ Please be aware of the following:
 - FMovem (Partially implemented)
 - FMul
 - FNeg
+- FNop
 - FRem
+- FRestore
 - FSAbs
 - FSAdd
 - FScale

@@ -22,7 +22,7 @@ int pos;
 	mem = ms->ms_MemoryBuf;
 	pos = ms->ms_ArgSize;
 
-	val = (( mem[pos] << 8 ) + ( mem[pos+1] << 0 ));
+	val = (( mem[pos] << 8 ) | ( mem[pos+1] << 0 ));
 
 	if (( ms->ms_LibCall ) 
 	&&	( ms->ms_Registers[ REG_Ax + ms->ms_ArgEReg ].mr_Type & 0xffff ) == RT_Library )

@@ -33,7 +33,7 @@ int size;
 		{
 			uint16_t val;
 
-			val = (( mem[2] << 8 ) + ( mem[3] << 0 ));
+			val = (( mem[2] << 8 ) | ( mem[3] << 0 ));
 
 			static const char *trapcc_RegNames[16] =
 			{
@@ -55,7 +55,7 @@ int size;
 		{
 			uint32_t val;
 
-			val = (( mem[2] << 24 ) + ( mem[3] << 16 )) + (( mem[4] << 8 ) + ( mem[5] << 0 ));
+			val = (( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ));
 
 			static const char *trapcc_RegNames[16] =
 			{

@@ -43,7 +43,7 @@ char labname[ MAX_LabelName + 8 ];
 
 	mem = ms->ms_MemoryBuf;
 
-	offset = (( mem[2] << 8 ) + ( mem[3] << 0 ));
+	offset = (( mem[2] << 8 ) | ( mem[3] << 0 ));
 
 	adr = ms->ms_MemoryAdr + 2 + offset;
 

@@ -23,10 +23,10 @@
 
 // --
 
-#define DATE				"21-Feb-2024"
+#define DATE				"25-Feb-2024"
 #define YEAR				2024
 #define VERSION				2
-#define REVISION			6
+#define REVISION			7
 
 // --
 
@@ -566,6 +566,7 @@ void Cmd_JSR(		struct M68kStruct *ms );
 void Cmd_LEA(		struct M68kStruct *ms );
 void Cmd_LINK(		struct M68kStruct *ms );
 void Cmd_LINK_L(	struct M68kStruct *ms );
+void Cmd_LPSTOP(	struct M68kStruct *ms );
 void Cmd_LSL(		struct M68kStruct *ms );
 void Cmd_LSL2(		struct M68kStruct *ms );
 void Cmd_LSR(		struct M68kStruct *ms );
@@ -613,6 +614,7 @@ void Cmd_RTR(		struct M68kStruct *ms );
 void Cmd_RTS(		struct M68kStruct *ms );
 void Cmd_SBCD(		struct M68kStruct *ms );
 void Cmd_Scc(		struct M68kStruct *ms );
+void Cmd_STOP(		struct M68kStruct *ms );
 void Cmd_SUB(		struct M68kStruct *ms );
 void Cmd_SUBA(		struct M68kStruct *ms );
 void Cmd_SUBI(		struct M68kStruct *ms );
@@ -698,12 +700,15 @@ void Cmd_FMUL(		struct M68kStruct *ms );
 void Cmd_FMUL2(		struct M68kStruct *ms );
 void Cmd_FNEG(		struct M68kStruct *ms );
 void Cmd_FNEG2(		struct M68kStruct *ms );
+void Cmd_FNOP(		struct M68kStruct *ms );
 void Cmd_FREM(		struct M68kStruct *ms );
 void Cmd_FREM2(		struct M68kStruct *ms );
+void Cmd_FRESTORE(	struct M68kStruct *ms );
 void Cmd_FSABS(		struct M68kStruct *ms );
 void Cmd_FSABS2(	struct M68kStruct *ms );
 void Cmd_FSADD(		struct M68kStruct *ms );
 void Cmd_FSADD2(	struct M68kStruct *ms );
+void Cmd_FSAVE(		struct M68kStruct *ms );
 void Cmd_FSCALE(	struct M68kStruct *ms );
 void Cmd_FSCALE2(	struct M68kStruct *ms );
 void Cmd_FScc(		struct M68kStruct *ms );

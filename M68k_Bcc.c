@@ -49,7 +49,7 @@ uint8_t *mem;
 
 			ms->ms_Str_Opcode = bcc_RegNames[cond];
 
-			offset = (( mem[2] << 8 ) + ( mem[3] << 0 ));
+			offset = (( mem[2] << 8 ) | ( mem[3] << 0 ));
 
 			adr = ms->ms_MemoryAdr + 2 + offset;
 
@@ -72,7 +72,7 @@ uint8_t *mem;
 
 			ms->ms_Str_Opcode = bcc_RegNames[cond];
 
-			offset = (( mem[2] << 24 ) + ( mem[3] << 16 )) + (( mem[4] << 8 ) + ( mem[5] << 0 ));
+			offset = (( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ));
 
 			adr = ms->ms_MemoryAdr + 2 + offset;
 

@@ -56,18 +56,31 @@ ReSrc4 v2.5 ( 12-Feb-2024 )
 
 ReSrc4 v2.6 ( 21-Feb-2024 )
 
-- Added support of Andi to SR/CCR regs
+- Added support for Andi to SR/CCR regs.
 
-- Added support of Eori to SR/CCR regs
+- Added support for Eori to SR/CCR regs.
 
-- Added support of Ori to SR/CCR regs
+- Added support for Ori to SR/CCR regs.
 
-- Added support of Move to/from SR/CCR/USP regs
+- Added support for Move to/from SR/CCR/USP regs.
 
-- Added support of TAS opcode
+- Added support for TAS opcode.
 
-- Added support of Trapcc opcodes
+- Added support for Trapcc opcodes.
 
-- Added support of Moves opcode
+- Added support for Moves opcode.
 
-- Added support of Move16 opcode
+- Added support for Move16 opcode.
+
+
+ReSrc4 v2.7 ( 25-Feb-2024 )
+
+- Added support for Stop opcode.
+
+- Added support for LPStop opcode.
+
+- Added support for FNop opcode.
+
+- Added support for FSave opcode.
+
+- Added support for FRestore opcode.

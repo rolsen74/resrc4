@@ -53,7 +53,7 @@ int pos;
 		{
 			uint16_t val;
 
-			val = (( mem[pos] << 8 ) + ( mem[pos+1] << 0 ));
+			val = (( mem[pos] << 8 ) | ( mem[pos+1] << 0 ));
 
 			/**/ if ( ms->ms_DecMode == 1 ) // Signed
 			{
@@ -76,7 +76,7 @@ int pos;
 		{
 			uint32_t adr;
 
-			adr = (( mem[pos] << 24 ) + ( mem[pos+1] << 16 ) + ( mem[pos+2] << 8 ) + ( mem[pos+3] << 0 ));
+			adr = (( mem[pos] << 24 ) | ( mem[pos+1] << 16 ) | ( mem[pos+2] << 8 ) | ( mem[pos+3] << 0 ));
 
 			isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
 

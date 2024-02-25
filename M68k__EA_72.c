@@ -25,7 +25,7 @@ int pos;
 	mem = ms->ms_MemoryBuf;
 	pos = ms->ms_ArgSize;
 
-	val = (( mem[pos] << 8 ) + ( mem[pos+1] << 0 ));
+	val = (( mem[pos] << 8 ) | ( mem[pos+1] << 0 ));
 
 	adr = ms->ms_MemoryAdr + 2 + val;
 

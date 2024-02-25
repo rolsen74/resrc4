@@ -115,6 +115,7 @@ SRCS		+= M68k_Jmp.c
 SRCS		+= M68k_Jsr.c
 SRCS		+= M68k_Lea.c
 SRCS		+= M68k_Link.c
+SRCS		+= M68k_LPStop.c
 SRCS		+= M68k_Lsl.c
 SRCS		+= M68k_Lsr.c
 SRCS		+= M68k_Move.c
@@ -146,6 +147,7 @@ SRCS		+= M68k_Rtr.c
 SRCS		+= M68k_Rts.c
 SRCS		+= M68k_Sbcd.c
 SRCS		+= M68k_Scc.c
+SRCS		+= M68k_Stop.c
 SRCS		+= M68k_Sub.c
 SRCS		+= M68k_Suba.c
 SRCS		+= M68k_Subi.c
@@ -195,9 +197,12 @@ SRCS		+= M68k__FMovecr.c
 SRCS		+= M68k__FMovem.c
 SRCS		+= M68k__FMul.c
 SRCS		+= M68k__FNeg.c
+SRCS		+= M68k__FNop.c
 SRCS		+= M68k__FRem.c
+SRCS		+= M68k__FRestore.c
 SRCS		+= M68k__FSAbs.c
 SRCS		+= M68k__FSAdd.c
+SRCS		+= M68k__FSave.c
 SRCS		+= M68k__FScale.c
 SRCS		+= M68k__FScc.c
 SRCS		+= M68k__FSDiv.c
@@ -333,6 +338,9 @@ strip:
 	@$(STRIP) $(TARGET)
 	@$(LS) $(TARGET)
 
+install:
+	cp $(TARGET) /home/vm/bin
+
 ###########################################################################
 
 ReSrc4.o:					Makefile ReSrc4.h
@@ -348,7 +356,10 @@ SaveSource.o:				Makefile ReSrc4.h
 Trace.o:					Makefile ReSrc4.h
 Trace_JumpTables.o:			Makefile ReSrc4.h
 
-M68k__EffectiveAddress.o:	Makefile ReSrc4.h
+M68k__EffectiveAddress.o:	Makefile ReSrc4.h \
+	M68k__EA_00.c M68k__EA_10.c M68k__EA_20.c M68k__EA_30.c M68k__EA_40.c M68k__EA_50.c \
+	M68k__EA_60_Breif.c M68k__EA_60_Full.c M68k__EA_73_Breif.c M68k__EA_73_Full.c \
+	M68k__EA_70.c M68k__EA_71.c M68k__EA_72.c M68k__EA_74.c      
 M68k__Library.o:			Makefile ReSrc4.h
 M68k__Lib_Amigaguide.o:		Makefile ReSrc4.h
 M68k__Lib_Asl.o:			Makefile ReSrc4.h
@@ -430,6 +441,7 @@ M68k_Jmp.o:					Makefile ReSrc4.h
 M68k_Jsr.o:					Makefile ReSrc4.h
 M68k_Lea.o:					Makefile ReSrc4.h
 M68k_Link.o:				Makefile ReSrc4.h
+M68k_LPStop.o:				Makefile ReSrc4.h
 M68k_Lsl.o:					Makefile ReSrc4.h
 M68k_Lsr.o:					Makefile ReSrc4.h
 M68k_Move.o:				Makefile ReSrc4.h
@@ -461,6 +473,7 @@ M68k_Rtr.o:					Makefile ReSrc4.h
 M68k_Rts.o:					Makefile ReSrc4.h
 M68k_Sbcd.o:				Makefile ReSrc4.h
 M68k_Scc.o:					Makefile ReSrc4.h
+M68k_Stop.o:				Makefile ReSrc4.h
 M68k_Sub.o:					Makefile ReSrc4.h
 M68k_Suba.o:				Makefile ReSrc4.h
 M68k_Subi.o:				Makefile ReSrc4.h
@@ -510,9 +523,12 @@ M68k__FMovecr.o:			Makefile ReSrc4.h
 M68k__FMovem.o:				Makefile ReSrc4.h
 M68k__FMul.o:				Makefile ReSrc4.h
 M68k__FNeg.o:				Makefile ReSrc4.h
+M68k__FNop.o:				Makefile ReSrc4.h
 M68k__FRem.o:				Makefile ReSrc4.h
+M68k__FRestore.o:			Makefile ReSrc4.h
 M68k__FSAbs.o:				Makefile ReSrc4.h
 M68k__FSAdd.o:				Makefile ReSrc4.h
+M68k__FSave.o:				Makefile ReSrc4.h
 M68k__FScale.o:				Makefile ReSrc4.h
 M68k__FScc.o:				Makefile ReSrc4.h
 M68k__FSDiv.o:				Makefile ReSrc4.h

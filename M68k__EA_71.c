@@ -23,7 +23,7 @@ int pos;
 
 	mem = ms->ms_MemoryBuf;
 	pos = ms->ms_ArgSize;
-	val = (( mem[pos] << 24 ) + ( mem[pos+1] << 16 ) + ( mem[pos+2] << 8 ) + ( mem[pos+3] << 0 ));
+	val = (( mem[pos] << 24 ) | ( mem[pos+1] << 16 ) | ( mem[pos+2] << 8 ) | ( mem[pos+3] << 0 ));
 
 	isRef = Hunk_FindRef( ms->ms_HunkNode, ms->ms_MemoryAdr + ms->ms_ArgSize );
 

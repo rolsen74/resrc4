@@ -28,7 +28,7 @@ int ay;
 
 	mem		= ms->ms_MemoryBuf;
 
-	val = (( mem[2] << 24 ) + ( mem[3] << 16 )) + (( mem[4] << 8 ) + ( mem[5] << 0 ));
+	val = (( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ));
 
 	if ( BuildLabelString2( ms, labname, ms->ms_MemoryAdr + ms->ms_ArgSize, val ))
 	{

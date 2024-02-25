@@ -185,6 +185,7 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ Cmd_MOVE6,	0xfff00000, 0x4e600000 },   // USP		0100 1110 0110 xxxx
 	{ Cmd_RESET,	0xffff0000, 0x4e700000 },	// RESET	0100 1110 0111 0000
 	{ Cmd_NOP,		0xffff0000, 0x4e710000 },	// NOP		0100 1110 0111 0001
+	{ Cmd_STOP,		0xffff0000, 0x4e720000 },	// STOP		0100 1110 0111 0010
 	{ Cmd_RTE,		0xffff0000, 0x4e730000 },	// RTE		0100 1110 0111 0011
 	{ Cmd_RTD,		0xffff0000, 0x4e740000 },	// RTD		0100 1110 0111 0100
 	{ Cmd_RTS,		0xffff0000, 0x4e750000 },	// RTS      0100 1110 0111 0101
@@ -909,11 +910,17 @@ static const struct CmdStruct m68kCmds_1111[] =
 	{ Cmd_FMOVEM2,	0xffc0ff00, 0xf200f800 },	// FMovem	1111 0010 00xx xxxx 1111 1000 xxxx xxxx
 
  	{ Cmd_FScc,		0xffc0ffc0, 0xf2400000 },	// FScc		1111 0010 001x xxxx 0000 0000 00xx xxxx
- 	{ Cmd_FBcc,		0xffe00000, 0xf2800000 },	// FBcc		1111 0010 100x xxxx
- 	{ Cmd_FBcc,		0xffe00000, 0xf2c00000 },	// FBcc		1111 0010 110x xxxx
+ 	{ Cmd_FNOP,		0xffffffff, 0xf2800000 },	// FNop		1111 0010 1000 0000 0000 0000 0000 0000
+ 	{ Cmd_FBcc,		0xffe00000, 0xf2800000 },	// FBcc		1111 0010 100x xxxx xxxx xxxx xxxx xxxx
+ 	{ Cmd_FBcc,		0xffe00000, 0xf2c00000 },	// FBcc		1111 0010 110x xxxx xxxx xxxx xxxx xxxx
+
+	{ Cmd_FSAVE,	0xffc00000, 0xf3000000 },	// FSave	1111 0011 00xx xxxx xxxx xxxx xxxx xxxx
+	{ Cmd_FRESTORE,	0xffc00000, 0xf3400000 },	// FRestore	1111 0011 01xx xxxx xxxx xxxx xxxx xxxx
 
  	{ Cmd_MOVE16,	0xffe00000, 0xf6000000 },	// MOVE16	1111 0110 000x xxxx xxxx xxxx xxxx xxxx
  	{ Cmd_MOVE162,	0xfff88fff, 0xf6208000 },	// MOVE16	1111 0110 0010 0xxx 1xxx 0000 0000 0000
+
+	{ Cmd_LPSTOP,	0xffffffff, 0xf80001c0 },	// LPStop	1111 1000 0000 0000 0000 0001 1100 0000
 
 	{ NULL,			0x00000000, 0x00000000 },
 };
