@@ -12,6 +12,10 @@
 
 // --
 
+#define DODEBUG(x)
+
+// --
+
 void BuildLabelString( struct HunkLabel *hl, char *buf )
 {
 struct HunkLabel *parent;
@@ -791,6 +795,33 @@ uint16_t val;
 
 // --
 
+static uint32_t myKnownHunk( uint32_t type )
+{
+	switch( type )
+	{
+		case HUNK_CODE:				// 0x000003E9
+		case HUNK_DATA:				// 0x000003EA
+		case HUNK_BSS:				// 0x000003EB
+		case HUNK_RELOC32:			// 0x000003EC
+		case HUNK_SYMBOL:			// 0x000003F0
+		case HUNK_DEBUG:			// 0x000003F1
+		case HUNK_END:				// 0x000003F2
+		case HUNK_HEADER:			// 0x000003F3
+		case HUNK_DREL32:			// 0x000003F7
+		case HUNK_RELOC32SHORT:		// 0x000003FC
+		{
+			return( type );
+		}
+
+		default:
+		{
+			return( 0 );
+		}
+	}
+}
+
+// --
+
 #define READ_U32()		myReadU32( & ps )
 #define PEEK_U32(x)		myPeekU32( & ps, x )
 #define READ_U16()		myReadU16( & ps )
@@ -1110,16 +1141,33 @@ int error;
 
 				if ( current == NULL )
 				{
-					printf( "\nHunk structure sanity check failure\nUnexpected HUNK_END\n" );
-					goto bailout;
+					// I found a very old Amiga Hunk File that
+					// has two HUNK_END in a row. Lets peek ahead
+					// and see if there are something we recognize
+
+					val32 = PEEK_U32(1);
+
+					hunktype = myKnownHunk( val32 );
+
+					if (( ! hunktype ) || ( hunktype == HUNK_HEADER ))
+					{
+						printf( "\nHunk structure sanity check failure\nUnexpected HUNK_END\n" );
+						DODEBUG( printf( "%s:%04d: Error\n", __FILE__, __LINE__ ); )
+						goto bailout;
+					}
+					else
+					{
+						DODEBUG( printf( "Skipping extra HUNK_END marker\n" ); )
+					}
+				}
+				else
+				{
+					cnt += 1;
+					current = NULL;
+					hn = hs->hs_HunkArray[cnt].hi_HunkNode;
 				}
 
-				cnt += 1;
 				ps.pos += 1;
-
-				current = NULL;
-
-				hn = hs->hs_HunkArray[cnt].hi_HunkNode;
 				break;
 			}
 

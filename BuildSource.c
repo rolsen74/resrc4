@@ -562,7 +562,7 @@ int error;
 int loop;
 int cnt;
 int mm;
-int m;
+//int m;
 
 	ms->ms_Buf_Comment = NULL;
 
@@ -604,10 +604,10 @@ int m;
 				max  = mm / 4;
 				max *= 4;
 			}
-			else if (( m == 1 ) || ( m == 2 ) || ( m == 3 ))
-			{
-				max = mm;
-			}
+//			else if (( mm == 1 ) || ( mm == 2 ) || ( mm == 3 ))
+//			{
+//				max = mm;
+//			}
 		}
 	}
 

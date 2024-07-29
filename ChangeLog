@@ -84,3 +84,14 @@ ReSrc4 v2.7 ( 25-Feb-2024 )
 - Added support for FSave opcode.
 
 - Added support for FRestore opcode.
+
+
+ReSrc4 v2.8 ( 29-Jul-2024 )
+
+- Updated Hunk File parser. It can now handle strcutures where you get
+  two or more HUNK_END in a row.
+
+- Added a simply filename check at startup, so Input and Output filename
+  are not the same, to avoid overwriting.. but its only a simply strcmp().
+
+- Changed Makefile so it no longer creates a .map file on compile.

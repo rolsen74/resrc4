@@ -12,7 +12,7 @@ CFLAGS		+= -O2
 CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
 
-# Flags passed to gcc during linking
+# Flags passed to clang during linking
 LDFLAGS		:= 
 
 # Additional linker libraries
@@ -238,7 +238,7 @@ ifeq ($(detected_os),Windows)
 
 AR			:= ar
 RM			:= del
-CC			:= gcc
+CC			:= clang
 STRIP		:= strip
 MKDIR		:= mkdir
 COPY		:= copy
@@ -254,7 +254,7 @@ else ifeq ($(detected_os),AmigaOS)
 LS			:= list
 AR			:= ar
 RM			:= delete
-CC			:= gcc
+CC			:= clang
 STRIP		:= strip
 MKDIR		:= makedir FORCE
 COPY		:= copy CLONE
@@ -278,7 +278,7 @@ ifeq ($(CrossCompile),1)
 LS			:= ls -lort
 AR			:= ppc-amigaos-ar
 RM			:= rm
-CC			:= ppc-amigaos-gcc
+CC			:= ppc-amigaos-clang
 STRIP		:= ppc-amigaos-strip
 MKDIR		:= mkdir -p
 COPY		:= cp
@@ -295,7 +295,7 @@ else
 LS			:= ls -lort
 AR			:= ar
 RM			:= rm
-CC			:= gcc
+CC			:= clang
 STRIP		:= strip
 MKDIR		:= mkdir -p
 COPY		:= cp
@@ -319,7 +319,9 @@ OBJS	:= $(SRCS:.c=.o)
 ###########################################################################
 
 $(TARGET): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJS) $(LIBS) -Wl,--cref,-M,-Map=$@.map
+	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+
+#	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJS) $(LIBS) -Wl,--cref,-M,-Map=$@.map
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) -o$@ $<

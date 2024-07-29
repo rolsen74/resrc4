@@ -361,6 +361,12 @@ int main( int argc, char *argv[] )
 		goto bailout;
 	}
 
+	if ( ! strcmp( InputFile, OutputFile ))
+	{
+		printf( "\nInput and output filename must not be the same\n\n" );
+		goto bailout;
+	}
+
 printf( "11 - Load and Parse Hunk File\n" );
 
 	HunkData = Hunk_LoadFile( InputFile );
