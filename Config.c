@@ -1149,21 +1149,35 @@ int len;
 
 	if ( file == NULL )
 	{
-        printf( "The config file '%s' does not exist.\n", ConfigFile );
-        printf( "Do you want to create it? (Yes/[NO]): ");
-
-		if ( fgets( response, sizeof( response ), stdin ) == NULL )
-		{
-			printf( "Error reading user input\n" );
-			goto bailout;
-		}
-
-		if (( response[0] != 'Y' ) && ( response[0] != 'y' )) 
+		/**/ if ( AutoAnser == ANSER_No )
 		{
 			// Not an error
 			error = false;
 			goto bailout;
 		}
+		else if ( AutoAnser == ANSER_Ask )
+		{
+			printf( "The config file '%s' does not exist.\n", ConfigFile );
+			printf( "Do you want to create it? (Yes/[NO]): ");
+
+			if ( fgets( response, sizeof( response ), stdin ) == NULL )
+			{
+				printf( "Error reading user input\n" );
+				goto bailout;
+			}
+
+			if (( response[0] != 'Y' ) && ( response[0] != 'y' )) 
+			{
+				// Not an error
+				error = false;
+				goto bailout;
+			}
+		}
+		#if 0
+		else // ( AutoAnser == ANSER_Yes )
+		{
+		}
+		#endif
 
 		// Create an Empty Config File
 		if ( ! DoCreateConfigFile( hs ))

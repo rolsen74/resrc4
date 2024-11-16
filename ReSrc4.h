@@ -70,6 +70,13 @@
 
 // --
 
+enum
+{
+	ANSER_Ask,
+	ANSER_Yes,
+	ANSER_No,
+};
+
 // Used by LabelType and RegType
 // Libraries, Devices and Resource Bases
 enum LibType 
@@ -367,6 +374,7 @@ extern char *ExtNames;
 extern char *SecNames;
 extern int ShortOpcodes;
 extern int OpcodeTabs;
+extern int AutoAnser;
 extern int DebugInfo;
 extern int LabTabs;
 extern int ArgTabs;

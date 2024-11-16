@@ -26,6 +26,7 @@ char *					ConfigFile		= NULL;
 int						LabTabs			= 1;
 int						OpcodeTabs		= 2;
 int						ArgTabs			= 5;
+int						AutoAnser		= ANSER_Ask;
 
 char *					LabNames		= "L";		// Label names
 char *					ExtNames		= "Ext_";	// External Label names
@@ -119,6 +120,24 @@ int val;
 bailout:
 
 	return( error );
+}
+
+// --
+
+static int ArgFunc_AutoYes( char *arg )
+{
+	AutoAnser = ANSER_Yes;
+
+	return( false );
+}
+
+// --
+
+static int ArgFunc_AutoNo( char *arg )
+{
+	AutoAnser = ANSER_No;
+
+	return( false );
 }
 
 // --
@@ -239,6 +258,8 @@ struct myArgs myOptions[] =
 { "-i", "--input",		1, ArgFunc_Input },
 { "-o", "--output",		1, ArgFunc_Output },
 { "-c", "--config",		1, ArgFunc_Config },
+{ "-y", "--yes",		0, ArgFunc_AutoYes },
+{ "-n", "--no",			0, ArgFunc_AutoNo },
 { NULL, "--short",		0, ArgFunc_Short },
 { NULL, "--debuginfo",	0, ArgFunc_DebugInfo },
 { NULL, "--labtabs",	1, ArgFunc_LabTabs },
@@ -261,6 +282,8 @@ static void myPrintUsage( void )
 	printf( "  -i, --input          Input File (Amiga Hunk File)\n" );
 	printf( "  -o, --output         Output File (Asm Source File)\n" );
 	printf( "  -c, --config         Config File (ReSrc4 Config File)\n" );
+	printf( "  -y, --yes            Auto select yes\n" );
+	printf( "  -n, --no             Auto select no\n" );
 	printf( "      --short          Output short opcodes ( movea.l -> move.l )\n" );
 	printf( "      --debuginfo      Will Append Address and Memory Codes\n" );
 	printf( "      --labtabs        Number of Tabs after labels (Default 1)\n" );

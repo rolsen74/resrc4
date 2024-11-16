@@ -95,3 +95,11 @@ ReSrc4 v2.8 ( 29-Jul-2024 )
   are not the same, to avoid overwriting.. but its only a simply strcmp().
 
 - Changed Makefile so it no longer creates a .map file on compile.
+
+
+ReSrc4 v2.9 ( 16-Nov-2024 )
+
+- Changed String Labels now start with 'Str_'.
+
+- Added: two new command options, --yes and --no to auto anser if you want
+  too create a new config file.
