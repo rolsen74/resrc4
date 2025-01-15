@@ -1,230 +1,100 @@
 
 ###########################################################################
 
-.PHONY: all clean install
+.PHONY: all clean install strip
 
 ###########################################################################
 
 # Flags used for compiling
 CFLAGS		+= -I.
 CFLAGS		+= -O2
-#CFLAGS		+= -gstabs
 CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
+CFLAGS		+= -MMD
+#CFLAGS		+= -DDEBUG
 
-# Flags passed to clang during linking
+# Flags passed to gcc during linking
 LDFLAGS		:= 
 
 # Additional linker libraries
 LIBS		:=
 
-###########################################################################
-
-SRCS		:= ReSrc4.c
-SRCS		+= BuildSource.c
-SRCS		+= Config.c
-SRCS		+= M68k.c
-SRCS		+= Hunk.c
-SRCS		+= LabelMagic.c
-SRCS		+= MD5.c
-SRCS		+= Misc.c
-SRCS		+= Nodes.c
-SRCS		+= SaveSource.c
-SRCS		+= Trace.c
-SRCS		+= Trace_JumpTables.c
-
-SRCS		+= M68k__EffectiveAddress.c
-SRCS		+= M68k__Library.c
-SRCS		+= M68k__Lib_Amigaguide.c
-SRCS		+= M68k__Lib_Asl.c
-SRCS		+= M68k__Lib_Battclock.c
-SRCS		+= M68k__Lib_Battmem.c
-SRCS		+= M68k__Lib_Bullet.c
-SRCS		+= M68k__Lib_Cardres.c
-SRCS		+= M68k__Lib_Cia.c
-SRCS		+= M68k__Lib_Colorwheel.c
-SRCS		+= M68k__Lib_Commodities.c
-#SRCS		+= M68k__Lib_Console.c
-SRCS		+= M68k__Lib_Datatypes.c
-SRCS		+= M68k__Lib_Disk.c
-SRCS		+= M68k__Lib_Diskfont.c
-SRCS		+= M68k__Lib_Dos.c
-SRCS		+= M68k__Lib_DTClass.c
-SRCS		+= M68k__Lib_Exec.c
-SRCS		+= M68k__Lib_Expansion.c
-SRCS		+= M68k__Lib_Gadtools.c
-SRCS		+= M68k__Lib_Graphics.c
-SRCS		+= M68k__Lib_Icon.c
-SRCS		+= M68k__Lib_IFFParse.c
-#SRCS		+= M68k__Lib_Input.c
-SRCS		+= M68k__Lib_Intuition.c
-SRCS		+= M68k__Lib_Keymap.c
-SRCS		+= M68k__Lib_Layers.c
-SRCS		+= M68k__Lib_Locale.c
-SRCS		+= M68k__Lib_Lowlevel.c
-SRCS		+= M68k__Lib_Mathffp.c
-SRCS		+= M68k__Lib_Mathieeedoubbas.c
-SRCS		+= M68k__Lib_Mathieeedoubtrans.c
-SRCS		+= M68k__Lib_Mathieeesingbas.c
-SRCS		+= M68k__Lib_Mathieeesingtrans.c
-SRCS		+= M68k__Lib_Mathtrans.c
-SRCS		+= M68k__Lib_Misc.c
-SRCS		+= M68k__Lib_Nonvolatile.c
-SRCS		+= M68k__Lib_Potgo.c
-#SRCS		+= M68k__Lib_Ramdrive.c
-SRCS		+= M68k__Lib_Rexxsyslib.c
-#SRCS		+= M68k__Lib_Timer.c
-SRCS		+= M68k__Lib_Translator.c
-SRCS		+= M68k__Lib_Utility.c
-SRCS		+= M68k__Lib_Workbench.c
-
-SRCS		+= M68k_Abcd.c
-SRCS		+= M68k_Add.c
-SRCS		+= M68k_Adda.c
-SRCS		+= M68k_Addi.c
-SRCS		+= M68k_Addq.c
-SRCS		+= M68k_Addx.c
-SRCS		+= M68k_And.c
-SRCS		+= M68k_Andi.c
-SRCS		+= M68k_Asl.c
-SRCS		+= M68k_Asr.c
-SRCS		+= M68k_Bcc.c
-SRCS		+= M68k_BChg.c
-SRCS		+= M68k_BClr.c
-SRCS		+= M68k_Bgnd.c
-SRCS		+= M68k_Bkpt.c
-SRCS		+= M68k_BSet.c
-SRCS		+= M68k_BTst.c
-SRCS		+= M68k_Callm.c
-SRCS		+= M68k_Chk.c
-SRCS		+= M68k_Chk2.c
-SRCS		+= M68k_Clr.c
-SRCS		+= M68k_Cmp.c
-SRCS		+= M68k_Cmp2.c
-SRCS		+= M68k_Cmpa.c
-SRCS		+= M68k_Cmpi.c
-SRCS		+= M68k_Cmpm.c
-SRCS		+= M68k_DBcc.c
-SRCS		+= M68k_Div.c
-SRCS		+= M68k_Eor.c
-SRCS		+= M68k_Eori.c
-SRCS		+= M68k_Exg.c
-SRCS		+= M68k_Ext.c
-SRCS		+= M68k_Illegal.c
-SRCS		+= M68k_Jmp.c
-SRCS		+= M68k_Jsr.c
-SRCS		+= M68k_Lea.c
-SRCS		+= M68k_Link.c
-SRCS		+= M68k_LPStop.c
-SRCS		+= M68k_Lsl.c
-SRCS		+= M68k_Lsr.c
-SRCS		+= M68k_Move.c
-SRCS		+= M68k_Move16.c
-SRCS		+= M68k_Movea.c
-SRCS		+= M68k_Movem.c
-SRCS		+= M68k_Movep.c
-SRCS		+= M68k_Moveq.c
-SRCS		+= M68k_Moves.c
-SRCS		+= M68k_Mul.c
-SRCS		+= M68k_Nbcd.c
-SRCS		+= M68k_Neg.c
-SRCS		+= M68k_Negx.c
-SRCS		+= M68k_Nop.c
-SRCS		+= M68k_Not.c
-SRCS		+= M68k_Or.c
-SRCS		+= M68k_Ori.c
-SRCS		+= M68k_Pack.c
-SRCS		+= M68k_Pea.c
-SRCS		+= M68k_Reset.c
-SRCS		+= M68k_Rol.c
-SRCS		+= M68k_Ror.c
-SRCS		+= M68k_Roxl.c
-SRCS		+= M68k_Roxr.c
-SRCS		+= M68k_Rtd.c
-SRCS		+= M68k_Rte.c
-SRCS		+= M68k_Rtm.c
-SRCS		+= M68k_Rtr.c
-SRCS		+= M68k_Rts.c
-SRCS		+= M68k_Sbcd.c
-SRCS		+= M68k_Scc.c
-SRCS		+= M68k_Stop.c
-SRCS		+= M68k_Sub.c
-SRCS		+= M68k_Suba.c
-SRCS		+= M68k_Subi.c
-SRCS		+= M68k_Subq.c
-SRCS		+= M68k_Subx.c
-SRCS		+= M68k_Swap.c
-SRCS		+= M68k_Tas.c
-SRCS		+= M68k_Trap.c
-SRCS		+= M68k_Trapcc.c
-SRCS		+= M68k_Trapv.c
-SRCS		+= M68k_Tst.c
-SRCS		+= M68k_Unlk.c
-SRCS		+= M68k_Unpk.c
-
-SRCS		+= M68k__FAbs.c
-SRCS		+= M68k__FACos.c
-SRCS		+= M68k__FAdd.c
-SRCS		+= M68k__FASin.c
-SRCS		+= M68k__FATan.c
-SRCS		+= M68k__FATanh.c
-SRCS		+= M68k__FBcc.c
-SRCS		+= M68k__FCmp.c
-SRCS		+= M68k__FCos.c
-SRCS		+= M68k__FCosh.c
-SRCS		+= M68k__FDAbs.c
-SRCS		+= M68k__FDAdd.c
-SRCS		+= M68k__FDDiv.c
-SRCS		+= M68k__FDiv.c
-SRCS		+= M68k__FDMove.c
-SRCS		+= M68k__FDMul.c
-SRCS		+= M68k__FDNeg.c
-SRCS		+= M68k__FDSqrt.c
-SRCS		+= M68k__FDSub.c
-SRCS		+= M68k__FEtox.c
-SRCS		+= M68k__FEtoxm1.c
-SRCS		+= M68k__FGetexp.c
-SRCS		+= M68k__FGetman.c
-SRCS		+= M68k__FInt.c
-SRCS		+= M68k__FIntrz.c
-SRCS		+= M68k__FLog2.c
-SRCS		+= M68k__FLog10.c
-SRCS		+= M68k__FLogn.c
-SRCS		+= M68k__FLognp1.c
-SRCS		+= M68k__FMod.c
-SRCS		+= M68k__FMove.c
-SRCS		+= M68k__FMovecr.c
-SRCS		+= M68k__FMovem.c
-SRCS		+= M68k__FMul.c
-SRCS		+= M68k__FNeg.c
-SRCS		+= M68k__FNop.c
-SRCS		+= M68k__FRem.c
-SRCS		+= M68k__FRestore.c
-SRCS		+= M68k__FSAbs.c
-SRCS		+= M68k__FSAdd.c
-SRCS		+= M68k__FSave.c
-SRCS		+= M68k__FScale.c
-SRCS		+= M68k__FScc.c
-SRCS		+= M68k__FSDiv.c
-SRCS		+= M68k__FSgldiv.c
-SRCS		+= M68k__FSglmul.c
-SRCS		+= M68k__FSin.c
-SRCS		+= M68k__FSincos.c
-SRCS		+= M68k__FSinh.c
-SRCS		+= M68k__FSMove.c
-SRCS		+= M68k__FSMul.c
-SRCS		+= M68k__FSNeg.c
-SRCS		+= M68k__FSqrt.c
-SRCS		+= M68k__FSSqrt.c
-SRCS		+= M68k__FSSub.c
-SRCS		+= M68k__FSub.c
-SRCS		+= M68k__FTan.c
-SRCS		+= M68k__FTanh.c
-SRCS		+= M68k__FTentox.c
-SRCS		+= M68k__FTst.c
-SRCS		+= M68k__FTwotox.c
+# Source Dirs
+SRCDIRS		:= Resourcer
 
 ###########################################################################
+
+# Loaders
+LOADER_HUNK		:= 1
+
+# Systems
+SYSTEM_AMIGAOS3	:= 1
+
+# CPUs
+CPU_M68K		:= 1
+
+###########################################################################
+
+ifeq ($(LOADER_HUNK),1)
+CFLAGS		+= -DSUPPORT_HUNK
+SRCDIRS		+= Loader_Hunk
+endif
+
+ifeq ($(SYSTEM_AMIGAOS3),1)
+CFLAGS		+= -DSUPPORT_AMIGAOS3
+SRCDIRS		+= System_AmigaOS3
+SRCDIRS		+= System_AmigaOS3/Lib_Amigaguide
+SRCDIRS		+= System_AmigaOS3/Lib_Asl
+SRCDIRS		+= System_AmigaOS3/Lib_Bullet
+SRCDIRS		+= System_AmigaOS3/Lib_Colorwheel
+SRCDIRS		+= System_AmigaOS3/Lib_Commodities
+SRCDIRS		+= System_AmigaOS3/Lib_Console
+SRCDIRS		+= System_AmigaOS3/Lib_Datatypes
+SRCDIRS		+= System_AmigaOS3/Lib_Diskfont
+SRCDIRS		+= System_AmigaOS3/Lib_Dos
+SRCDIRS		+= System_AmigaOS3/Lib_DTClass
+SRCDIRS		+= System_AmigaOS3/Lib_Exec
+SRCDIRS		+= System_AmigaOS3/Lib_Expansion
+SRCDIRS		+= System_AmigaOS3/Lib_Gadtools
+SRCDIRS		+= System_AmigaOS3/Lib_Graphics
+SRCDIRS		+= System_AmigaOS3/Lib_Icon
+SRCDIRS		+= System_AmigaOS3/Lib_IFFParse
+SRCDIRS		+= System_AmigaOS3/Lib_Input
+SRCDIRS		+= System_AmigaOS3/Lib_Intuition
+SRCDIRS		+= System_AmigaOS3/Lib_Keymap
+SRCDIRS		+= System_AmigaOS3/Lib_Layers
+SRCDIRS		+= System_AmigaOS3/Lib_Locale
+SRCDIRS		+= System_AmigaOS3/Lib_Lowlevel
+SRCDIRS		+= System_AmigaOS3/Lib_Mathffp
+SRCDIRS		+= System_AmigaOS3/Lib_Mathieeedoubbas
+SRCDIRS		+= System_AmigaOS3/Lib_Mathieeedoubtrans
+SRCDIRS		+= System_AmigaOS3/Lib_Mathieeesingbas
+SRCDIRS		+= System_AmigaOS3/Lib_Mathieeesingtrans
+SRCDIRS		+= System_AmigaOS3/Lib_Mathtrans
+SRCDIRS		+= System_AmigaOS3/Lib_Nonvolatile
+SRCDIRS		+= System_AmigaOS3/Lib_Rexxsyslib
+SRCDIRS		+= System_AmigaOS3/Lib_Translator
+SRCDIRS		+= System_AmigaOS3/Lib_Utility
+SRCDIRS		+= System_AmigaOS3/Lib_Workbench
+SRCDIRS		+= System_AmigaOS3/Res_Battclock
+SRCDIRS		+= System_AmigaOS3/Res_Battmem
+SRCDIRS		+= System_AmigaOS3/Res_Cardres
+SRCDIRS		+= System_AmigaOS3/Res_Cia
+SRCDIRS		+= System_AmigaOS3/Res_Disk
+SRCDIRS		+= System_AmigaOS3/Res_Misc
+SRCDIRS		+= System_AmigaOS3/Res_Potgo
+endif
+
+ifeq ($(CPU_M68K),1)
+CFLAGS		+= -DSUPPORT_M68K
+SRCDIRS		+= CPU_M68k
+SRCDIRS		+= CPU_M68k/_CPU
+SRCDIRS		+= CPU_M68k/_FPU
+SRCDIRS		+= CPU_M68k/_MMU
+endif
+
+###########################################################################
+
 
 ifeq ($(OS),Windows_NT)
 	detected_os := Windows
@@ -238,7 +108,7 @@ ifeq ($(detected_os),Windows)
 
 AR			:= ar
 RM			:= del
-CC			:= clang
+CC			:= gcc
 STRIP		:= strip
 MKDIR		:= mkdir
 COPY		:= copy
@@ -254,7 +124,7 @@ else ifeq ($(detected_os),AmigaOS)
 LS			:= list
 AR			:= ar
 RM			:= delete
-CC			:= clang
+CC			:= gcc
 STRIP		:= strip
 MKDIR		:= makedir FORCE
 COPY		:= copy CLONE
@@ -278,7 +148,7 @@ ifeq ($(CrossCompile),1)
 LS			:= ls -lort
 AR			:= ppc-amigaos-ar
 RM			:= rm
-CC			:= ppc-amigaos-clang
+CC			:= ppc-amigaos-gcc
 STRIP		:= ppc-amigaos-strip
 MKDIR		:= mkdir -p
 COPY		:= cp
@@ -295,7 +165,7 @@ else
 LS			:= ls -lort
 AR			:= ar
 RM			:= rm
-CC			:= clang
+CC			:= gcc
 STRIP		:= strip
 MKDIR		:= mkdir -p
 COPY		:= cp
@@ -314,26 +184,26 @@ all: $(TARGET)
 
 ###########################################################################
 
+SRCS	+= $(wildcard $(addsuffix /*.c, $(SRCDIRS)))
+
 OBJS	:= $(SRCS:.c=.o)
 
+DEPS	:= $(OBJS:.o=.d)
+
 ###########################################################################
+
+-include $(DEPS)
 
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
 
-#	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJS) $(LIBS) -Wl,--cref,-M,-Map=$@.map
-
 %.o: %.c
 	$(CC) -c $(CFLAGS) -o$@ $<
-
-#%.o: %.c
-#	@echo "Compiling $<"
-#	@$(CC) -c $(CFLAGS) -o$@ $<
 
 ###########################################################################
 
 clean:
-	$(RM) $(TARGET) $(TARGET).map $(OBJS)
+	$(RM) $(OBJS) $(DEPS) $(TARGET)
 
 strip:
 	@$(LS) $(TARGET)
@@ -341,215 +211,6 @@ strip:
 	@$(LS) $(TARGET)
 
 install:
-	cp $(TARGET) /home/vm/bin
-
-###########################################################################
-
-ReSrc4.o:					Makefile ReSrc4.h
-BuildSource.o:				Makefile ReSrc4.h
-Config.o:					Makefile ReSrc4.h
-Hunk.o:						Makefile ReSrc4.h
-LabelMagic.o:				Makefile ReSrc4.h
-M68k.o:						Makefile ReSrc4.h
-MD5.o:						Makefile ReSrc4.h
-Misc.o:						Makefile ReSrc4.h
-Nodes.o:					Makefile ReSrc4.h
-SaveSource.o:				Makefile ReSrc4.h
-Trace.o:					Makefile ReSrc4.h
-Trace_JumpTables.o:			Makefile ReSrc4.h
-
-M68k__EffectiveAddress.o:	Makefile ReSrc4.h \
-	M68k__EA_00.c M68k__EA_10.c M68k__EA_20.c M68k__EA_30.c M68k__EA_40.c M68k__EA_50.c \
-	M68k__EA_60_Breif.c M68k__EA_60_Full.c M68k__EA_73_Breif.c M68k__EA_73_Full.c \
-	M68k__EA_70.c M68k__EA_71.c M68k__EA_72.c M68k__EA_74.c      
-M68k__Library.o:			Makefile ReSrc4.h
-M68k__Lib_Amigaguide.o:		Makefile ReSrc4.h
-M68k__Lib_Asl.o:			Makefile ReSrc4.h
-M68k__Lib_Battclock.o:		Makefile ReSrc4.h
-M68k__Lib_Battmem.o:		Makefile ReSrc4.h
-M68k__Lib_Bullet.o:			Makefile ReSrc4.h
-M68k__Lib_Cardres.o:		Makefile ReSrc4.h
-M68k__Lib_Cia.o:			Makefile ReSrc4.h
-M68k__Lib_Colorwheel.o:		Makefile ReSrc4.h
-M68k__Lib_Commodities.o:	Makefile ReSrc4.h
-M68k__Lib_Console.o:		Makefile ReSrc4.h
-M68k__Lib_Datatypes.o:		Makefile ReSrc4.h
-M68k__Lib_Disk.o:			Makefile ReSrc4.h
-M68k__Lib_Diskfont.o:		Makefile ReSrc4.h
-M68k__Lib_Dos.o:			Makefile ReSrc4.h
-M68k__Lib_DTClass.o:		Makefile ReSrc4.h
-M68k__Lib_Exec.o:			Makefile ReSrc4.h
-M68k__Lib_Expansion.o:		Makefile ReSrc4.h
-M68k__Lib_Gadtools.o:		Makefile ReSrc4.h
-M68k__Lib_Graphics.o:		Makefile ReSrc4.h
-M68k__Lib_Icon.o:			Makefile ReSrc4.h
-M68k__Lib_IFFParse.o:		Makefile ReSrc4.h
-M68k__Lib_Input.o:			Makefile ReSrc4.h
-M68k__Lib_Intuition.o:		Makefile ReSrc4.h
-M68k__Lib_Keymap.o:			Makefile ReSrc4.h
-M68k__Lib_Layers.o:			Makefile ReSrc4.h
-M68k__Lib_Locale.o:			Makefile ReSrc4.h
-M68k__Lib_Lowlevel.o:		Makefile ReSrc4.h
-M68k__Lib_Mathffp.o:		Makefile ReSrc4.h
-M68k__Lib_Mathieeedoubbas.o:	Makefile ReSrc4.h
-M68k__Lib_Mathieeedoubtrans.o:	Makefile ReSrc4.h
-M68k__Lib_Mathieeesingbas.o:	Makefile ReSrc4.h
-M68k__Lib_Mathieeesingtrans.o:	Makefile ReSrc4.h
-M68k__Lib_Mathtrans.o:		Makefile ReSrc4.h
-M68k__Lib_Misc.o:			Makefile ReSrc4.h
-M68k__Lib_Nonvolatile.o:	Makefile ReSrc4.h
-M68k__Lib_Potgo.o:			Makefile ReSrc4.h
-M68k__Lib_Ramdrive.o:		Makefile ReSrc4.h
-M68k__Lib_Rexxsyslib.o:		Makefile ReSrc4.h
-M68k__Lib_Timer.o:			Makefile ReSrc4.h
-M68k__Lib_Translator.o:		Makefile ReSrc4.h
-M68k__Lib_Utility.o:		Makefile ReSrc4.h
-M68k__Lib_Workbench.o:		Makefile ReSrc4.h
-
-M68k_Abcd.o:				Makefile ReSrc4.h
-M68k_Add.o:					Makefile ReSrc4.h
-M68k_Adda.o:				Makefile ReSrc4.h
-M68k_Addi.o:				Makefile ReSrc4.h
-M68k_Addq.o:				Makefile ReSrc4.h
-M68k_Addx.o:				Makefile ReSrc4.h
-M68k_And.o:					Makefile ReSrc4.h
-M68k_Andi.o:				Makefile ReSrc4.h
-M68k_Asl.o:					Makefile ReSrc4.h
-M68k_Asr.o:					Makefile ReSrc4.h
-M68k_Bcc.o:					Makefile ReSrc4.h
-M68k_BChg.o:				Makefile ReSrc4.h
-M68k_BClr.o:				Makefile ReSrc4.h
-M68k_Bgnd.o:				Makefile ReSrc4.h
-M68k_Bkpt.o:				Makefile ReSrc4.h
-M68k_BSet.o:				Makefile ReSrc4.h
-M68k_BTst.o:				Makefile ReSrc4.h
-M68k_Callm.o:				Makefile ReSrc4.h
-M68k_Chk.o:					Makefile ReSrc4.h
-M68k_Chk2.o:				Makefile ReSrc4.h
-M68k_Clr.o:					Makefile ReSrc4.h
-M68k_Cmp.o:					Makefile ReSrc4.h
-M68k_Cmp2.o:				Makefile ReSrc4.h
-M68k_Cmpa.o:				Makefile ReSrc4.h
-M68k_Cmpi.o:				Makefile ReSrc4.h
-M68k_Cmpm.o:				Makefile ReSrc4.h
-M68k_DBcc.o:				Makefile ReSrc4.h
-M68k_Div.o:					Makefile ReSrc4.h
-M68k_Eor.o:					Makefile ReSrc4.h
-M68k_Eori.o:				Makefile ReSrc4.h
-M68k_Exg.o:					Makefile ReSrc4.h
-M68k_Ext.o:					Makefile ReSrc4.h
-M68k_Illegal.o:				Makefile ReSrc4.h
-M68k_Jmp.o:					Makefile ReSrc4.h
-M68k_Jsr.o:					Makefile ReSrc4.h
-M68k_Lea.o:					Makefile ReSrc4.h
-M68k_Link.o:				Makefile ReSrc4.h
-M68k_LPStop.o:				Makefile ReSrc4.h
-M68k_Lsl.o:					Makefile ReSrc4.h
-M68k_Lsr.o:					Makefile ReSrc4.h
-M68k_Move.o:				Makefile ReSrc4.h
-M68k_Move16.o:				Makefile ReSrc4.h
-M68k_Movea.o:				Makefile ReSrc4.h
-M68k_Movem.o:				Makefile ReSrc4.h
-M68k_Movep.o:				Makefile ReSrc4.h
-M68k_Moveq.o:				Makefile ReSrc4.h
-M68k_Moves.o:				Makefile ReSrc4.h
-M68k_Mul.o:					Makefile ReSrc4.h
-M68k_Nbcd.o:				Makefile ReSrc4.h
-M68k_Neg.o:					Makefile ReSrc4.h
-M68k_Negx.o:				Makefile ReSrc4.h
-M68k_Nop.o:					Makefile ReSrc4.h
-M68k_Not.o:					Makefile ReSrc4.h
-M68k_Or.o:					Makefile ReSrc4.h
-M68k_Ori.o:					Makefile ReSrc4.h
-M68k_Pack.o:				Makefile ReSrc4.h
-M68k_Pea.o:					Makefile ReSrc4.h
-M68k_Reset.o:				Makefile ReSrc4.h
-M68k_Rol.o:					Makefile ReSrc4.h
-M68k_Ror.o:					Makefile ReSrc4.h
-M68k_Roxl.o:				Makefile ReSrc4.h
-M68k_Roxr.o:				Makefile ReSrc4.h
-M68k_Rtd.o:					Makefile ReSrc4.h
-M68k_Rte.o:					Makefile ReSrc4.h
-M68k_Rtm.o:					Makefile ReSrc4.h
-M68k_Rtr.o:					Makefile ReSrc4.h
-M68k_Rts.o:					Makefile ReSrc4.h
-M68k_Sbcd.o:				Makefile ReSrc4.h
-M68k_Scc.o:					Makefile ReSrc4.h
-M68k_Stop.o:				Makefile ReSrc4.h
-M68k_Sub.o:					Makefile ReSrc4.h
-M68k_Suba.o:				Makefile ReSrc4.h
-M68k_Subi.o:				Makefile ReSrc4.h
-M68k_Subq.o:				Makefile ReSrc4.h
-M68k_Subx.o:				Makefile ReSrc4.h
-M68k_Swap.o:				Makefile ReSrc4.h
-M68k_Tas.o:					Makefile ReSrc4.h
-M68k_Trap.o:				Makefile ReSrc4.h
-M68k_Trapcc.o:				Makefile ReSrc4.h
-M68k_Trapv.o:				Makefile ReSrc4.h
-M68k_Tst.o:					Makefile ReSrc4.h
-M68k_Unlk.o:				Makefile ReSrc4.h
-M68k_Unpk.o:				Makefile ReSrc4.h
-
-M68k__FAbs.o:				Makefile ReSrc4.h
-M68k__FACos.o:				Makefile ReSrc4.h
-M68k__FAdd.o:				Makefile ReSrc4.h
-M68k__FASin.o:				Makefile ReSrc4.h
-M68k__FATan.o:				Makefile ReSrc4.h
-M68k__FATanh.o:				Makefile ReSrc4.h
-M68k__FBcc.o:				Makefile ReSrc4.h
-M68k__FCmp.o:				Makefile ReSrc4.h
-M68k__FCos.o:				Makefile ReSrc4.h
-M68k__FCosh.o:				Makefile ReSrc4.h
-M68k__FDAbs.o:				Makefile ReSrc4.h
-M68k__FDAdd.o:				Makefile ReSrc4.h
-M68k__FDDiv.o:				Makefile ReSrc4.h
-M68k__FDiv.o:				Makefile ReSrc4.h
-M68k__FDMove.o:				Makefile ReSrc4.h
-M68k__FDMul.o:				Makefile ReSrc4.h
-M68k__FDNeg.o:				Makefile ReSrc4.h
-M68k__FDSqrt.o:				Makefile ReSrc4.h
-M68k__FDSub.o:				Makefile ReSrc4.h
-M68k__FEtox.o:				Makefile ReSrc4.h
-M68k__FEtoxm1.o:			Makefile ReSrc4.h
-M68k__FGetexp.o:			Makefile ReSrc4.h
-M68k__FGetman.o:			Makefile ReSrc4.h
-M68k__FInt.o:				Makefile ReSrc4.h
-M68k__FIntrz.o:				Makefile ReSrc4.h
-M68k__FLog2.o:				Makefile ReSrc4.h
-M68k__FLog10.o:				Makefile ReSrc4.h
-M68k__FLogn.o:				Makefile ReSrc4.h
-M68k__FLognp1.o:			Makefile ReSrc4.h
-M68k__FMod.o:				Makefile ReSrc4.h
-M68k__FMove.o:				Makefile ReSrc4.h
-M68k__FMovecr.o:			Makefile ReSrc4.h
-M68k__FMovem.o:				Makefile ReSrc4.h
-M68k__FMul.o:				Makefile ReSrc4.h
-M68k__FNeg.o:				Makefile ReSrc4.h
-M68k__FNop.o:				Makefile ReSrc4.h
-M68k__FRem.o:				Makefile ReSrc4.h
-M68k__FRestore.o:			Makefile ReSrc4.h
-M68k__FSAbs.o:				Makefile ReSrc4.h
-M68k__FSAdd.o:				Makefile ReSrc4.h
-M68k__FSave.o:				Makefile ReSrc4.h
-M68k__FScale.o:				Makefile ReSrc4.h
-M68k__FScc.o:				Makefile ReSrc4.h
-M68k__FSDiv.o:				Makefile ReSrc4.h
-M68k__FSgldiv.o:			Makefile ReSrc4.h
-M68k__FSglmul.o:			Makefile ReSrc4.h
-M68k__FSin.o:				Makefile ReSrc4.h
-M68k__FSincos.o:			Makefile ReSrc4.h
-M68k__FSinh.o:				Makefile ReSrc4.h
-M68k__FSMove.o:				Makefile ReSrc4.h
-M68k__FSMul.o:				Makefile ReSrc4.h
-M68k__FSNeg.o:				Makefile ReSrc4.h
-M68k__FSqrt.o:				Makefile ReSrc4.h
-M68k__FSSqrt.o:				Makefile ReSrc4.h
-M68k__FSSub.o:				Makefile ReSrc4.h
-M68k__FSub.o:				Makefile ReSrc4.h
-M68k__FTan.o:				Makefile ReSrc4.h
-M68k__FTanh.o:				Makefile ReSrc4.h
-M68k__FTentox.o:			Makefile ReSrc4.h
-M68k__FTst.o:				Makefile ReSrc4.h
-M68k__FTwotox.o:			Makefile ReSrc4.h
+	install -m 755 $(TARGET) /home/vm/bin
 
 ###########################################################################

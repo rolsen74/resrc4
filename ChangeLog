@@ -64,7 +64,7 @@ ReSrc4 v2.6 ( 21-Feb-2024 )
 
 - Added support for Move to/from SR/CCR/USP regs.
 
-- Added support for TAS opcode.
+- Added support for Tas opcode.
 
 - Added support for Trapcc opcodes.
 
@@ -103,3 +103,83 @@ ReSrc4 v2.9 ( 16-Nov-2024 )
 
 - Added: two new command options, --yes and --no to auto anser if you want
   too create a new config file.
+
+
+ReSrc4 v2.10 ( 15-Jan-2025 )
+
+- Started to reorganise the dir structure. Split the source into subdirs, 
+  the plan is support diffrent M68k Platforms in the future.
+
+  This turned out to be a huge task, as splitting the hunk/m68k/aos3 code,
+  was very much linked into each other.. this is still ongoing.
+
+- More or less all functions have been refactored to return error codes.
+  This was also a huge task but should be finsihed, only more specific
+  error code have to be defined. Right now most only return Okay or Error.
+
+- Internal passer have been changed to work with a 64bit values instead
+  of 32bit too help support newer cpus. 
+
+- Implemented HUNK_RELRELOC32 (3FD).
+
+- Fixed Bra.l that could jump between sections.
+
+- Added a Verbose switch too print more info on whats going on. 
+  --verbose or -v/-v1 for extra info.. --verbose2 or -v2 even more info.
+
+- The type parameter for Label have been expanded too some support 
+   Amiga structures.
+
+  Currently those have been definded.
+
+  - String        : Global : NUL Terminated String.
+  - Lib_Asl       : AmigaOS3 : Asl Base Pointer.
+  - Lib_Diskfont  : AmigaOS3 : Diskfont Base Pointer.
+  - Lib_Dos       : AmigaOS3 : DOS Base Pointer.
+  - Lib_Exec      : AmigaOS3 : Exec Base Pointer.
+  - Lib_Gfx       : AmigaOS3 : Graphics Base Pointer.
+  - Lib_IFFParse  : AmigaOS3 : IFFParse Base Pointer.
+  - Lib_Intuition : AmigaOS3 : Intuition Base Pointer.
+  - Lib_Layers    : AmigaOS3 : Layers Base Pointer.
+  - Lib_Mathffp   : AmigaOS3 : Mathffp Base Pointer.
+  - Lib_Mathtrans : AmigaOS3 : Mathtrans Base Pointer.
+  - Lib_Utility   : AmigaOS3 : Utility Base Pointer.
+  - Str_BitMap    : AmigaOS3 : BitMap structure.
+  - Str_Gadget    : AmigaOS3 : Gadget structure.
+  - Str_IntuiText : AmigaOS3 : IntuiText structure.
+  - Str_LWGadData : AmigaOS3 : Lightwave Gadget Structure.
+  - Str_NewScreen : AmigaOS3 : NewScreen structure.
+  - Str_RastPort  : AmigaOS3 : RastPort structure.
+  - Str_Rectangle : AmigaOS3 : Rectangle structure.
+  - Str_TextAttr  : AmigaOS3 : TextAttr structure.
+
+  Example:
+
+  ; Create a label at $00135e98, without setting a name.
+  ; a name will be automaticly generated.
+  ; Type is set IntuiText. The type parm is optional.
+  LabelName: $00135e98 "", Type: Str_IntuiText
+
+  L0100:  dc.b  $ff        ; it_FrontPen
+          dc.b  $ff        ; it_BackPen
+          dc.b  $00        ; it_DrawMode
+          dc.b  $00        ; it_KludgeFill00
+          dc.w  $0004      ; it_LeftEdge
+          dc.w  $0004      ; it_TopEdge
+          dc.l  $00000000  ; it_ITextFont
+          dc.l  Str_0200   ; it_IText
+          dc.l  L0101      ; it_NextText
+
+  If it_IText is set, Label is marked as a String
+  and if the it_NextText points to next gadget, it will mark decode
+  that as another IntuiText structure and so on.
+
+- Scanning for M68k Jump tables have been updated.
+
+  I had to clone most of the entries as there are
+  two way to do an integer compare.
+
+  Cmp.l   #$00000013,D0  ; b0bc 0000 0013
+  Cmpi.l  #$00000013,D0  ; 0c80 0000 0013
+
+  Those two opcode does exactly the same.
