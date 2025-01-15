@@ -71,7 +71,7 @@ int error;
 			}
 			else
 			{
-				snprintf( hl->hl_Label_Name, MAX_LabelName - 1, "Str_%s%04X", LabNames, ++LabelCount );
+				snprintf( hl->hl_Label_Name, MAX_LabelName - 1, "%s%04X", LabNames, ++LabelCount );
 				hl->hl_Label_Name[ MAX_LabelName - 1 ] = 0;
 			}
 		}
