@@ -44,7 +44,7 @@ int pos;
 
 		default:
 		{
-			printf( "Unsupported 'Chk' Opcode (Size: %d) at %08lx\n", size, rt->rt_CurMemAdr );
+			printf( "Unsupported 'Chk' Opcode (Size: %d) at $%08" PRIx64 "\n", size, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}

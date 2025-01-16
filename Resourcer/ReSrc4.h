@@ -22,13 +22,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <inttypes.h>
 
 // --
 
-#define DATE				"15-Jan-2025"
+#define DATE				"16-Jan-2025"
 #define YEAR				2025
 #define VERSION				2
-#define REVISION			10
+#define REVISION			11
 
 #define MAX_REF_HASH		29			// Prime Nr .. bigger value more memory pr. HunkNode
 #define MAX_LAB_HASH		83			// Prime Nr .. Global Label Hash

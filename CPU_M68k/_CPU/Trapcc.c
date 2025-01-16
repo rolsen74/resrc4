@@ -88,12 +88,6 @@ int size;
 				goto bailout;
 			}
 
-//			if ( BuildLabelString2( ms, labname, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize, val ))
-//			{
-//				printf( "%s:%04d: Label error\n", __FILE__, __LINE__ );
-//				goto bailout;
-//			}
-
 			snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "#%s", labname );
 			break;
 		}

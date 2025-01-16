@@ -33,8 +33,8 @@ struct CmdStruct
 
 static const struct CmdStruct m68kCmds_0000[] =
 {
-	{ M68kCmd_ORI2,		0xffffff00, 0x003c0000 },   // CCR      0000 0000 0011 1100 0000 0000 xxxx xxxx
-	{ M68kCmd_ORI3,		0xffff0000, 0x007c0000 },   // SR		0000 0000 0111 1100 xxxx xxxx xxxx xxxx
+	{ M68kCmd_ORI2,		0xffffff00, 0x003c0000 },	// CCR		0000 0000 0011 1100 0000 0000 xxxx xxxx
+	{ M68kCmd_ORI3,		0xffff0000, 0x007c0000 },	// SR		0000 0000 0111 1100 xxxx xxxx xxxx xxxx
 
 	{ M68kCmd_ORI,		0xffc00000, 0x00000000 },	// ORI.b	0000 0000 00xx xxxx
 	{ M68kCmd_ORI,		0xffc00000, 0x00400000 },	// ORI.w	0000 0000 01xx xxxx
@@ -42,8 +42,8 @@ static const struct CmdStruct m68kCmds_0000[] =
  	{ M68kCmd_CMP2,		0xffc00fff, 0x00c00000 },	// Cmp2.b	0000 0000 11xx xxxx xxxx 0000 0000 0000
  	{ M68kCmd_CHK2,		0xffc00fff, 0x00c00800 },	// Chk2.b	0000 0000 11xx xxxx xxxx 1000 0000 0000
 
-	{ M68kCmd_ANDI2,	0xffffff00, 0x023c0000 },   // CCR 	    0000 0010 0011 1100 0000 0000 xxxx xxxx
-	{ M68kCmd_ANDI3,	0xffff0000, 0x027c0000 },   // SR		0000 0010 0111 1100 xxxx xxxx xxxx xxxx
+	{ M68kCmd_ANDI2,	0xffffff00, 0x023c0000 },	// CCR		0000 0010 0011 1100 0000 0000 xxxx xxxx
+	{ M68kCmd_ANDI3,	0xffff0000, 0x027c0000 },	// SR		0000 0010 0111 1100 xxxx xxxx xxxx xxxx
 
 	{ M68kCmd_ANDI,		0xffc00000, 0x02000000 },	// ANDI.b	0000 0010 00xx xxxx
 	{ M68kCmd_ANDI,		0xffc00000, 0x02400000 },	// ANDI.w	0000 0010 01xx xxxx
@@ -63,12 +63,12 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ M68kCmd_RTM,		0xfff00000, 0x06c00000 },	// RTM		0000 0110 1100 xxxx
 	{ M68kCmd_CALLM,	0xffc0ff00, 0x06c00000 },	// CALLM	0000 0110 11xx xxxx 0000 0000 xxxx xxxx
 
-	{ M68kCmd_BTST,		0xffc0ff00, 0x08000000 },	// BTST     0000 1000 00xx xxxx 0000 0000 xxxx xxxx
-	{ M68kCmd_BCHG,		0xffc0ff00, 0x08400000 },	// BCHG     0000 1000 01xx xxxx 0000 0000 xxxx xxxx
-	{ M68kCmd_BCLR,		0xffc0ff00, 0x08800000 },	// BCLR     0000 1000 10xx xxxx 0000 0000 xxxx xxxx
-	{ M68kCmd_BSET,		0xffc0ff00, 0x08c00000 },	// BSET     0000 1000 11xx xxxx 0000 0000 xxxx xxxx
+	{ M68kCmd_BTST,		0xffc0ff00, 0x08000000 },	// BTST		0000 1000 00xx xxxx 0000 0000 xxxx xxxx
+	{ M68kCmd_BCHG,		0xffc0ff00, 0x08400000 },	// BCHG		0000 1000 01xx xxxx 0000 0000 xxxx xxxx
+	{ M68kCmd_BCLR,		0xffc0ff00, 0x08800000 },	// BCLR		0000 1000 10xx xxxx 0000 0000 xxxx xxxx
+	{ M68kCmd_BSET,		0xffc0ff00, 0x08c00000 },	// BSET		0000 1000 11xx xxxx 0000 0000 xxxx xxxx
 
-	{ M68kCmd_EORI2,	0xffffff00, 0x0a3c0000 },   // CCR		0000 1010 0011 1100 0000 0000 xxxx xxxx
+	{ M68kCmd_EORI2,	0xffffff00, 0x0a3c0000 },	// CCR		0000 1010 0011 1100 0000 0000 xxxx xxxx
 	{ M68kCmd_EORI3,	0xffff0000, 0x0a7c0000 },	// SR		0000 1010 0111 1100 xxxx xxxx xxxx xxxx
 	{ M68kCmd_EORI,		0xffc00000, 0x0a000000 },	// EORI.b	0000 1010 00xx xxxx
 	{ M68kCmd_EORI,		0xffc00000, 0x0a400000 },	// EORI.w	0000 1010 01xx xxxx
@@ -78,21 +78,21 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ M68kCmd_CMPI,		0xffc00000, 0x0c400000 },	// CMPI.w	0000 1100 01xx xxxx
 	{ M68kCmd_CMPI,		0xffc00000, 0x0c800000 },	// CMPI.l	0000 1100 10xx xxxx
 
-	{ M68kCmd_MOVES,	0xffc007ff, 0x0e000000 },   // MOVES    0000 1110 00xx xxxx xxxx x000 0000 0000
-	{ M68kCmd_MOVES,	0xffc007ff, 0x0e400000 },   // MOVES    0000 1110 01xx xxxx xxxx x000 0000 0000
-	{ M68kCmd_MOVES,	0xffc007ff, 0x0e800000 },   // MOVES    0000 1110 10xx xxxx xxxx x000 0000 0000
+	{ M68kCmd_MOVES,	0xffc007ff, 0x0e000000 },	// MOVES	0000 1110 00xx xxxx xxxx x000 0000 0000
+	{ M68kCmd_MOVES,	0xffc007ff, 0x0e400000 },	// MOVES	0000 1110 01xx xxxx xxxx x000 0000 0000
+	{ M68kCmd_MOVES,	0xffc007ff, 0x0e800000 },	// MOVES	0000 1110 10xx xxxx xxxx x000 0000 0000
 
-//  { M68kCmd_CAS2,     wwwwwwwwww, wwwwwwwwww },   // CAS2     0000 1xx0 1111 1100 xxxx 000x xx00 0xxx xxxx 000x xx00 0xxxx
-//  { M68kCmd_CAS,      wwwwwwwwww, wwwwwwwwww },   // CAS      0000 1xx0 11xx xxxx 0000 000x xx00 0xxx
+//	{ M68kCmd_CAS2,		wwwwwwwwww, wwwwwwwwww },	// CAS2		0000 1xx0 1111 1100 xxxx 000x xx00 0xxx xxxx 000x xx00 0xxxx
+//	{ M68kCmd_CAS,		wwwwwwwwww, wwwwwwwwww },	// CAS     	0000 1xx0 11xx xxxx 0000 000x xx00 0xxx
 
 	{ M68kCmd_MOVEP,	0xf1f80000, 0x01080000 },	// MOVEP.w	0000 xxx1 0000 1xxx
-	{ M68kCmd_BTST2,	0xf1c00000, 0x01000000 },	// BTST     0000 xxx1 00xx xxxx
+	{ M68kCmd_BTST2,	0xf1c00000, 0x01000000 },	// BTST		0000 xxx1 00xx xxxx
 	{ M68kCmd_MOVEP,	0xf1f80000, 0x01480000 },	// MOVEP.l	0000 xxx1 0100 1xxx
-	{ M68kCmd_BCHG2,	0xf1c00000, 0x01400000 },	// BCHG     0000 xxx1 01xx xxxx
+	{ M68kCmd_BCHG2,	0xf1c00000, 0x01400000 },	// BCHG		0000 xxx1 01xx xxxx
 	{ M68kCmd_MOVEP,	0xf1f80000, 0x01880000 },	// MOVEP.w	0000 xxx1 1000 1xxx
-	{ M68kCmd_BCLR2,	0xf1c00000, 0x01800000 },	// BCLR     0000 xxx1 10xx xxxx
+	{ M68kCmd_BCLR2,	0xf1c00000, 0x01800000 },	// BCLR		0000 xxx1 10xx xxxx
 	{ M68kCmd_MOVEP,	0xf1f80000, 0x01c80000 },	// MOVEP.l	0000 xxx1 1100 1xxx
-	{ M68kCmd_BSET2,	0xf1c00000, 0x01c00000 },	// BSET     0000 xxx1 11xx xxxx
+	{ M68kCmd_BSET2,	0xf1c00000, 0x01c00000 },	// BSET		0000 xxx1 11xx xxxx
 
 	{ NULL,			0x00000000, 0x00000000 },
 };
@@ -131,23 +131,23 @@ static const struct CmdStruct m68kCmds_0011[] =
 
 static const struct CmdStruct m68kCmds_0100[] =
 {
-	{ M68kCmd_NEGX,     0xffc00000, 0x40000000 },   // NEGX.b   0100 0000 00xx xxxx
-	{ M68kCmd_NEGX,     0xffc00000, 0x40400000 },   // NEGX.w   0100 0000 01xx xxxx
-	{ M68kCmd_NEGX,     0xffc00000, 0x40800000 },   // NEGX.l   0100 0000 10xx xxxx
+	{ M68kCmd_NEGX,		0xffc00000, 0x40000000 },	// NEGX.b	0100 0000 00xx xxxx
+	{ M68kCmd_NEGX,		0xffc00000, 0x40400000 },	// NEGX.w	0100 0000 01xx xxxx
+	{ M68kCmd_NEGX,		0xffc00000, 0x40800000 },	// NEGX.l	0100 0000 10xx xxxx
 	{ M68kCmd_MOVE4,	0xffc00000, 0x40c00000 },	// SR		0100 0000 11xx xxxx
 
 	{ M68kCmd_CHK,		0xf1c00000, 0x41000000 },	// CHK.l	0100 xxx1 00xx xxxx
 	{ M68kCmd_CHK,		0xf1c00000, 0x41800000 },	// CHK.w	0100 xxx1 10xx xxxx
 
-	{ M68kCmd_CLR,		0xffc00000, 0x42000000 },	// CLR.b    0100 0010 00xx xxxx
-	{ M68kCmd_CLR,		0xffc00000, 0x42400000 },	// CLR.w    0100 0010 01xx xxxx
-	{ M68kCmd_CLR,		0xffc00000, 0x42800000 },	// CLR.l    0100 0010 10xx xxxx
-	{ M68kCmd_MOVE2,	0xffc00000, 0x42c00000 },   // CCR		0100 0010 11xx xxxx
+	{ M68kCmd_CLR,		0xffc00000, 0x42000000 },	// CLR.b	0100 0010 00xx xxxx
+	{ M68kCmd_CLR,		0xffc00000, 0x42400000 },	// CLR.w	0100 0010 01xx xxxx
+	{ M68kCmd_CLR,		0xffc00000, 0x42800000 },	// CLR.l	0100 0010 10xx xxxx
+	{ M68kCmd_MOVE2,	0xffc00000, 0x42c00000 },	// CCR		0100 0010 11xx xxxx
 
 	{ M68kCmd_NEG,		0xffc00000, 0x44000000 },	// NEG.b	0100 0100 00xx xxxx
 	{ M68kCmd_NEG,		0xffc00000, 0x44400000 },	// NEG.w	0100 0100 01xx xxxx
 	{ M68kCmd_NEG,		0xffc00000, 0x44800000 },	// NEG.l	0100 0100 10xx xxxx
-	{ M68kCmd_MOVE3,	0xffc00000, 0x44c00000 },   // CCR		0100 0100 11xx xxxx
+	{ M68kCmd_MOVE3,	0xffc00000, 0x44c00000 },	// CCR		0100 0100 11xx xxxx
 
 	{ M68kCmd_NOT,		0xffc00000, 0x46000000 },	// NOT.b	0100 0110 00xx xxxx
 	{ M68kCmd_NOT,		0xffc00000, 0x46400000 },	// NOT.w	0100 0110 01xx xxxx
@@ -159,18 +159,18 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ M68kCmd_SWAP,		0xfff80000, 0x48400000 },	// SWAP		0100 1000 0100 0xxx
 	{ M68kCmd_BKPT,		0xfff80000, 0x48480000 },	// BKPT		0100 1000 0100 1xxx
 	{ M68kCmd_PEA,		0xffc00000, 0x48400000 },	// PEA		0100 1000 01xx xxxx
-	{ M68kCmd_EXT,		0xfff80000, 0x48800000 },	// EXT      0100 1000 1000 0xxx
-	{ M68kCmd_MOVEM,	0xffc00000, 0x48800000 },	// MOVEM    0100 1000 10xx xxxx
-	{ M68kCmd_EXT,		0xfff80000, 0x48c00000 },	// EXT      0100 1000 1100 0xxx
-	{ M68kCmd_EXT,		0xfff80000, 0x49c00000 },	// EXT      0100 1001 1100 0xxx
-	{ M68kCmd_MOVEM,	0xffc00000, 0x48c00000 },	// MOVEM    0100 1000 11xx xxxx
+	{ M68kCmd_EXT,		0xfff80000, 0x48800000 },	// EXT		0100 1000 1000 0xxx
+	{ M68kCmd_MOVEM,	0xffc00000, 0x48800000 },	// MOVEM	0100 1000 10xx xxxx
+	{ M68kCmd_EXT,		0xfff80000, 0x48c00000 },	// EXT		0100 1000 1100 0xxx
+	{ M68kCmd_EXT,		0xfff80000, 0x49c00000 },	// EXT		0100 1001 1100 0xxx
+	{ M68kCmd_MOVEM,	0xffc00000, 0x48c00000 },	// MOVEM	0100 1000 11xx xxxx
 
-	{ M68kCmd_TST,		0xffc00000, 0x4a000000 },	// TST.b    0100 1010 00xx xxxx
-	{ M68kCmd_TST,		0xffc00000, 0x4a400000 },	// TST.w    0100 1010 01xx xxxx
-	{ M68kCmd_TST,		0xffc00000, 0x4a800000 },	// TST.l    0100 1010 10xx xxxx
+	{ M68kCmd_TST,		0xffc00000, 0x4a000000 },	// TST.b	0100 1010 00xx xxxx
+	{ M68kCmd_TST,		0xffc00000, 0x4a400000 },	// TST.w	0100 1010 01xx xxxx
+	{ M68kCmd_TST,		0xffc00000, 0x4a800000 },	// TST.l	0100 1010 10xx xxxx
 	{ M68kCmd_BGND,		0xffff0000, 0x4afa0000 },	// BGND		0100 1010 1111 1010
 	{ M68kCmd_ILLEGAL,	0xffff0000, 0x4afc0000 },	// ILLEGAL	0100 1010 1111 1100
-	{ M68kCmd_TAS,		0xffc00000, 0x4ac00000 },   // TAS      0100 1010 11xx xxxx
+	{ M68kCmd_TAS,		0xffc00000, 0x4ac00000 },	// TAS		0100 1010 11xx xxxx
 
 	{ M68kCmd_MULU_L,	0xffc08bf8, 0x4c000000 },	// MULU_L	0100 1100 00xx xxxx 0xxx 0x00 0000 0xxx
 	{ M68kCmd_MULS_L,	0xffc08bf8, 0x4c000800 },	// MULS_L	0100 1100 00xx xxxx 0xxx 1x00 0000 0xxx
@@ -182,19 +182,19 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ M68kCmd_TRAP,		0xfff00000, 0x4e400000 },	// TRAP		0100 1110 0100 xxxx
 	{ M68kCmd_LINK,		0xfff80000, 0x4e500000 },	// LINK.w	0100 1110 0101 0xxx
 	{ M68kCmd_UNLK,		0xfff80000, 0x4e580000 },	// UNLK		0100 1110 0101 1xxx
-	{ M68kCmd_MOVE6,	0xfff00000, 0x4e600000 },   // USP		0100 1110 0110 xxxx
+	{ M68kCmd_MOVE6,	0xfff00000, 0x4e600000 },	// USP		0100 1110 0110 xxxx
 	{ M68kCmd_RESET,	0xffff0000, 0x4e700000 },	// RESET	0100 1110 0111 0000
 	{ M68kCmd_NOP,		0xffff0000, 0x4e710000 },	// NOP		0100 1110 0111 0001
 	{ M68kCmd_STOP,		0xffff0000, 0x4e720000 },	// STOP		0100 1110 0111 0010
 	{ M68kCmd_RTE,		0xffff0000, 0x4e730000 },	// RTE		0100 1110 0111 0011
 	{ M68kCmd_RTD,		0xffff0000, 0x4e740000 },	// RTD		0100 1110 0111 0100
-	{ M68kCmd_RTS,		0xffff0000, 0x4e750000 },	// RTS      0100 1110 0111 0101
+	{ M68kCmd_RTS,		0xffff0000, 0x4e750000 },	// RTS		0100 1110 0111 0101
 	{ M68kCmd_TRAPV,	0xffff0000, 0x4e760000 },	// TRAPV	0100 1110 0111 0110
 	{ M68kCmd_RTR,		0xffff0000, 0x4e770000 },	// RTR		0100 1110 0111 0111
-//	{ M68kCmd_MOVEC,    wwwwwwwwww, wwwwwwwwww },   // MOVEC    0100 1110 0111 101x
-	{ M68kCmd_JSR,		0xffc00000, 0x4e800000 },	// JSR      0100 1110 10xx xxxx
-	{ M68kCmd_JMP,		0xffc00000, 0x4ec00000 },	// JMP      0100 1110 11xx xxxx
-	{ M68kCmd_LEA,		0xf1c00000, 0x41c00000 },	// LEA      0100 xxx1 11xx xxxx
+//	{ M68kCmd_MOVEC,	wwwwwwwwww, wwwwwwwwww },	// MOVEC	0100 1110 0111 101x
+	{ M68kCmd_JSR,		0xffc00000, 0x4e800000 },	// JSR		0100 1110 10xx xxxx
+	{ M68kCmd_JMP,		0xffc00000, 0x4ec00000 },	// JMP		0100 1110 11xx xxxx
+	{ M68kCmd_LEA,		0xf1c00000, 0x41c00000 },	// LEA		0100 xxx1 11xx xxxx
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
@@ -209,40 +209,40 @@ static const struct CmdStruct m68kCmds_0101[] =
 	{ M68kCmd_SUBQ,		0xf1c00000, 0x51800000 },	// SUBQ.l	0101 xxx1 10xx xxxx
 
 	{ M68kCmd_DBcc,		0xf0f80000, 0x50c80000 },	// DBcc		0101 xxxx 1100 1xxx
-	{ M68kCmd_TRAPcc,   0xf0ff0000, 0x50fa0000 },   // TRAPcc.w 0101 xxxx 1111 1010
-	{ M68kCmd_TRAPcc,   0xf0ff0000, 0x50fb0000 },   // TRAPcc.l 0101 xxxx 1111 1011
-	{ M68kCmd_TRAPcc,   0xf0ff0000, 0x50fc0000 },   // TRAPcc   0101 xxxx 1111 1100
+	{ M68kCmd_TRAPcc,	0xf0ff0000, 0x50fa0000 },	// TRAPcc.w	0101 xxxx 1111 1010
+	{ M68kCmd_TRAPcc,	0xf0ff0000, 0x50fb0000 },	// TRAPcc.l	0101 xxxx 1111 1011
+	{ M68kCmd_TRAPcc,	0xf0ff0000, 0x50fc0000 },	// TRAPcc	0101 xxxx 1111 1100
 	{ M68kCmd_Scc,		0xf0c00000, 0x50c00000 },	// Scc		0101 1111 11xx xxxx
 
-	{ NULL,				0x00000000, 0x00000000 },
+	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0110[] =
 {
-	{ M68kCmd_Bcc,		0xf0000000, 0x60000000 },	// Bcc      0110 xxxx xxxx xxxx
-	{ NULL,				0x00000000, 0x00000000 },
+	{ M68kCmd_Bcc,		0xf0000000, 0x60000000 },	// Bcc		0110 xxxx xxxx xxxx
+	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0111[] =
 {
-	{ M68kCmd_MOVEQ,	0xf1000000, 0x70000000 },	// MOVEQ    0111 xxx0 xxxx xxxx
-	{ NULL,				0x00000000, 0x00000000 },
+	{ M68kCmd_MOVEQ,	0xf1000000, 0x70000000 },	// MOVEQ	0111 xxx0 xxxx xxxx
+	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1000[] =
 {
-	{ M68kCmd_OR,		0xf1c00000, 0x80000000 },	// OR       1000 xxx0 00xx xxxx
-	{ M68kCmd_OR,		0xf1c00000, 0x80400000 },	// OR       1000 xxx0 01xx xxxx
-	{ M68kCmd_OR,		0xf1c00000, 0x80800000 },	// OR       1000 xxx0 10xx xxxx
-	{ M68kCmd_DIV,		0xf1c00000, 0x80c00000 },	// DIVU.w   1000 xxx0 11xx xxxx
+	{ M68kCmd_OR,		0xf1c00000, 0x80000000 },	// OR		1000 xxx0 00xx xxxx
+	{ M68kCmd_OR,		0xf1c00000, 0x80400000 },	// OR		1000 xxx0 01xx xxxx
+	{ M68kCmd_OR,		0xf1c00000, 0x80800000 },	// OR		1000 xxx0 10xx xxxx
+	{ M68kCmd_DIV,		0xf1c00000, 0x80c00000 },	// DIVU.w	1000 xxx0 11xx xxxx
 	{ M68kCmd_SBCD,		0xf1f00000, 0x81000000 },	// SBCD		1000 xxx1 0000 xxxx
-	{ M68kCmd_OR,		0xf1c00000, 0x81000000 },	// OR       1000 xxx1 00xx xxxx
+	{ M68kCmd_OR,		0xf1c00000, 0x81000000 },	// OR		1000 xxx1 00xx xxxx
 	{ M68kCmd_PACK,		0xf1f00000, 0x81400000 },	// PACK		1000 xxx1 0100 xxxx
-	{ M68kCmd_OR,		0xf1c00000, 0x81400000 },	// OR       1000 xxx1 01xx xxxx
+	{ M68kCmd_OR,		0xf1c00000, 0x81400000 },	// OR		1000 xxx1 01xx xxxx
 	{ M68kCmd_UNPK,		0xf1f00000, 0x81800000 },	// UNPK		1000 xxx1 1000 xxxx
-	{ M68kCmd_OR,		0xf1c00000, 0x81800000 },	// OR       1000 xxx1 10xx xxxx
-	{ M68kCmd_DIV,		0xf1c00000, 0x81c00000 },	// DIVS.w   1000 xxx1 11xx xxxx
-	{ NULL,				0x00000000, 0x00000000 },
+	{ M68kCmd_OR,		0xf1c00000, 0x81800000 },	// OR		1000 xxx1 10xx xxxx
+	{ M68kCmd_DIV,		0xf1c00000, 0x81c00000 },	// DIVS.w	1000 xxx1 11xx xxxx
+	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1001[] =
@@ -258,7 +258,7 @@ static const struct CmdStruct m68kCmds_1001[] =
 	{ M68kCmd_SUBX,		0xf1f00000, 0x91800000 },	// SUBX.l	1001 xxx1 1000 xxxx
 	{ M68kCmd_SUB,		0xf1c00000, 0x91800000 },	// SUB		1001 xxx1 10xx xxxx
 	{ M68kCmd_SUBA,		0xf1c00000, 0x91c00000 },	// SUBA		1001 xxx1 11xx xxxx
-	{ NULL,				0x00000000, 0x00000000 },
+	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1010[] =
@@ -273,12 +273,12 @@ static const struct CmdStruct m68kCmds_1011[] =
 	{ M68kCmd_CMP,		0xf1c00000, 0xb0800000 },	// CMP.l	1011 xxx0 10xx xxxx
 	{ M68kCmd_CMPA,		0xf1c00000, 0xb0c00000 },	// CMPA.w	1011 xxx0 11xx xxxx
 	{ M68kCmd_CMPM,		0xf1f80000, 0xb1080000 },	// CMPM.b	1011 xxx1 0000 1xxx
-	{ M68kCmd_EOR,		0xf1c00000, 0xb1000000 },	// EOR.b    1011 xxx1 00xx xxxx
+	{ M68kCmd_EOR,		0xf1c00000, 0xb1000000 },	// EOR.b	1011 xxx1 00xx xxxx
 	{ M68kCmd_CMPM,		0xf1f80000, 0xb1480000 },	// CMPM.w	1011 xxx1 0100 1xxx
-	{ M68kCmd_EOR,		0xf1c00000, 0xb1400000 },	// EOR.w    1011 xxx1 01xx xxxx
+	{ M68kCmd_EOR,		0xf1c00000, 0xb1400000 },	// EOR.w	1011 xxx1 01xx xxxx
 	{ M68kCmd_CMPM,		0xf1f80000, 0xb1880000 },	// CMPM.l	1011 xxx1 1000 1xxx
-	{ M68kCmd_EOR,		0xf1c00000, 0xb1800000 },	// EOR.l    1011 xxx1 10xx xxxx
-	{ M68kCmd_CMPA,		0xf1c00000, 0xb1c00000 },	// CMPA.l   1011 xxx1 11xx xxxx
+	{ M68kCmd_EOR,		0xf1c00000, 0xb1800000 },	// EOR.l	1011 xxx1 10xx xxxx
+	{ M68kCmd_CMPA,		0xf1c00000, 0xb1c00000 },	// CMPA.l	1011 xxx1 11xx xxxx
 
 	{ NULL,			0x00000000, 0x00000000 },
 };
@@ -291,10 +291,10 @@ static const struct CmdStruct m68kCmds_1100[] =
 	{ M68kCmd_MUL,		0xf1c00000, 0xc0c00000 },	// MULU.w	1100 xxx0 11xx xxxx
 	{ M68kCmd_ABCD,		0xf1f00000, 0xc1000000 },	// ABCD.b	1100 xxx1 0000 xxxx
 	{ M68kCmd_AND,		0xf1c00000, 0xc1000000 },	// AND.b	1100 xxx1 00xx xxxx
-	{ M68kCmd_EXG,		0xf1f80000, 0xc1400000 },   // EXG.l	1100 xxx1 0100 0xxx
-	{ M68kCmd_EXG,		0xf1f80000, 0xc1480000 },   // EXG.l	1100 xxx1 0100 1xxx
+	{ M68kCmd_EXG,		0xf1f80000, 0xc1400000 },	// EXG.l	1100 xxx1 0100 0xxx
+	{ M68kCmd_EXG,		0xf1f80000, 0xc1480000 },	// EXG.l	1100 xxx1 0100 1xxx
 	{ M68kCmd_AND,		0xf1c00000, 0xc1400000 },	// AND.w	1100 xxx1 01xx xxxx
-	{ M68kCmd_EXG,		0xf1f80000, 0xc1880000 },   // EXG.l	1100 xxx1 1000 1xxx
+	{ M68kCmd_EXG,		0xf1f80000, 0xc1880000 },	// EXG.l	1100 xxx1 1000 1xxx
 	{ M68kCmd_AND,		0xf1c00000, 0xc1800000 },	// AND.l	1100 xxx1 10xx xxxx
 	{ M68kCmd_MUL,		0xf1c00000, 0xc1c00000 },	// MULS.w	1100 xxx1 11xx xxxx
 	{ NULL,			0x00000000, 0x00000000 },
@@ -302,30 +302,30 @@ static const struct CmdStruct m68kCmds_1100[] =
 
 static const struct CmdStruct m68kCmds_1101[] =
 {
-	{ M68kCmd_ADD,		0xf1c00000, 0xd0000000 },	// ADD.b    1101 xxx0 00xx xxxx
-	{ M68kCmd_ADD,		0xf1c00000, 0xd0400000 },	// ADD.w    1101 xxx0 01xx xxxx
-	{ M68kCmd_ADD,		0xf1c00000, 0xd0800000 },	// ADD.l    1101 xxx0 10xx xxxx
-	{ M68kCmd_ADDA,		0xf1c00000, 0xd0c00000 },	// ADDA.w   1101 xxx0 11xx xxxx
+	{ M68kCmd_ADD,		0xf1c00000, 0xd0000000 },	// ADD.b	1101 xxx0 00xx xxxx
+	{ M68kCmd_ADD,		0xf1c00000, 0xd0400000 },	// ADD.w	1101 xxx0 01xx xxxx
+	{ M68kCmd_ADD,		0xf1c00000, 0xd0800000 },	// ADD.l	1101 xxx0 10xx xxxx
+	{ M68kCmd_ADDA,		0xf1c00000, 0xd0c00000 },	// ADDA.w	1101 xxx0 11xx xxxx
 	{ M68kCmd_ADDX,		0xf1f00000, 0xd1000000 },	// ADDX.b	1101 xxx1 0000 xxxx
-	{ M68kCmd_ADD,		0xf1c00000, 0xd1000000 },	// ADD.b    1101 xxx1 00xx xxxx
+	{ M68kCmd_ADD,		0xf1c00000, 0xd1000000 },	// ADD.b	1101 xxx1 00xx xxxx
 	{ M68kCmd_ADDX,		0xf1f00000, 0xd1400000 },	// ADDX.w	1101 xxx1 0100 xxxx
-	{ M68kCmd_ADD,		0xf1c00000, 0xd1400000 },	// ADD.w    1101 xxx1 01xx xxxx
+	{ M68kCmd_ADD,		0xf1c00000, 0xd1400000 },	// ADD.w	1101 xxx1 01xx xxxx
 	{ M68kCmd_ADDX,		0xf1f00000, 0xd1800000 },	// ADDX.l	1101 xxx1 1000 xxxx
-	{ M68kCmd_ADD,		0xf1c00000, 0xd1800000 },	// ADD.l    1101 xxx1 10xx xxxx
-	{ M68kCmd_ADDA,		0xf1c00000, 0xd1c00000 },	// ADDA.l   1101 xxx1 11xx xxxx
+	{ M68kCmd_ADD,		0xf1c00000, 0xd1800000 },	// ADD.l	1101 xxx1 10xx xxxx
+	{ M68kCmd_ADDA,		0xf1c00000, 0xd1c00000 },	// ADDA.l	1101 xxx1 11xx xxxx
 	{ NULL,			0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1110[] =
 {
-//  { M68kCmd_BFTST     wwwwwwwwww, wwwwwwwwww },   // BFTST    1110 1000 11xx xxxx 0000 xxxx xxxxx xxxx
-//  { M68kCmd_BFEXTU    wwwwwwwwww, wwwwwwwwww },   // BFEXTU   1110 1001 11xx xxxx 0xxx xxxx xxxxx xxxx
-//  { M68kCmd_BFCHG     wwwwwwwwww, wwwwwwwwww },   // BFCHG    1110 1010 11xx xxxx 0000 xxxx xxxxx xxxx
-//  { M68kCmd_BFEXTS    wwwwwwwwww, wwwwwwwwww },   // BFEXTS   1110 1011 11xx xxxx 0xxx xxxx xxxxx xxxx
-//  { M68kCmd_BFCLR     wwwwwwwwww, wwwwwwwwww },   // BFCLT    1110 1100 11xx xxxx 0000 xxxx xxxxx xxxx
-//  { M68kCmd_BFFFO     wwwwwwwwww, wwwwwwwwww },   // BFFFO    1110 1101 11xx xxxx 0xxx xxxx xxxxx xxxx
-//  { M68kCmd_BFSET     wwwwwwwwww, wwwwwwwwww },   // BFSET    1110 1110 11xx xxxx 0000 xxxx xxxxx xxxx
-//  { M68kCmd_BFINS     wwwwwwwwww, wwwwwwwwww },   // BFINS    1110 1111 11xx xxxx 0xxx xxxx xxxxx xxxx
+//	{ M68kCmd_BFTST		wwwwwwwwww, wwwwwwwwww },	// BFTST	1110 1000 11xx xxxx 0000 xxxx xxxxx xxxx
+//	{ M68kCmd_BFEXTU	wwwwwwwwww, wwwwwwwwww },	// BFEXTU	1110 1001 11xx xxxx 0xxx xxxx xxxxx xxxx
+//	{ M68kCmd_BFCHG		wwwwwwwwww, wwwwwwwwww },	// BFCHG	1110 1010 11xx xxxx 0000 xxxx xxxxx xxxx
+//	{ M68kCmd_BFEXTS	wwwwwwwwww, wwwwwwwwww },	// BFEXTS	1110 1011 11xx xxxx 0xxx xxxx xxxxx xxxx
+//	{ M68kCmd_BFCLR		wwwwwwwwww, wwwwwwwwww },	// BFCLT	1110 1100 11xx xxxx 0000 xxxx xxxxx xxxx
+//	{ M68kCmd_BFFFO		wwwwwwwwww, wwwwwwwwww },	// BFFFO	1110 1101 11xx xxxx 0xxx xxxx xxxxx xxxx
+//	{ M68kCmd_BFSET		wwwwwwwwww, wwwwwwwwww },	// BFSET	1110 1110 11xx xxxx 0000 xxxx xxxxx xxxx
+//	{ M68kCmd_BFINS		wwwwwwwwww, wwwwwwwwww },	// BFINS	1110 1111 11xx xxxx 0xxx xxxx xxxxx xxxx
 
 	{ M68kCmd_ASR,		0xf1d80000, 0xe0000000 },	// ASR.b	1110 xxx0 00x0 0xxx
 	{ M68kCmd_LSR,		0xf1d80000, 0xe0080000 },	// LSR.b	1110 xxx0 00x0 1xxx

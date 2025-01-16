@@ -200,19 +200,19 @@ int len;
 
 		if ( len < 8 )
 		{
-			sprintf( SaveLineBuffer, "%s:\t\t\tEQU\t$%04lX\n", rl->rl_Name, rl->rl_Offset );
+			sprintf( SaveLineBuffer, "%s:\t\t\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
 		}
 		else if ( len < 16 )
 		{
-			sprintf( SaveLineBuffer, "%s:\t\tEQU\t$%04lX\n", rl->rl_Name, rl->rl_Offset );
+			sprintf( SaveLineBuffer, "%s:\t\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
 		}
 		else if ( len < 24 )
 		{
-			sprintf( SaveLineBuffer, "%s:\tEQU\t$%04lX\n", rl->rl_Name, rl->rl_Offset );
+			sprintf( SaveLineBuffer, "%s:\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
 		}
 		else
 		{
-			sprintf( SaveLineBuffer, "%s: EQU\t$%04lX\n", rl->rl_Name, rl->rl_Offset );
+			sprintf( SaveLineBuffer, "%s: EQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
 		}
 
 		fs = RS4SaveWriteString( & ec, SaveLineBuffer, strlen( SaveLineBuffer ));
@@ -361,8 +361,6 @@ int oo;
 
 	if (( *sc->rs_Opcode ) || ( *sc->rs_Argument ) || (( DebugInfo ) && ( sc->rs_Address )))
 	{
-//		len = strlen( labname );
-
 		_GetStringInfo( labname, NULL, & len );
 
 		oo = LabTabs * 8;
@@ -386,8 +384,6 @@ int oo;
 
 	if (( *sc->rs_Argument ) || (( DebugInfo ) && ( sc->rs_Address )))
 	{
-//		len = strlen( sc->rs_Opcode );
-
 		_GetStringInfo( sc->rs_Opcode, NULL, & len );
 
 		oo = OpcodeTabs * 8;
@@ -410,8 +406,6 @@ int oo;
 
 	if (( DebugInfo ) && ( sc->rs_Address ))
 	{
-//		len = strlen( sc->rs_Argument );
-
 		_GetStringInfo( sc->rs_Argument, NULL, & len );
 
 		oo = ArgTabs * 8;
@@ -429,11 +423,11 @@ int oo;
 
 		if ( sc->rs_Comment )
 		{
-			sprintf( adrname, "; $%08lx %s", sc->rs_Address, sc->rs_Comment );
+			sprintf( adrname, "; $%08" PRIx64 " %s", sc->rs_Address, sc->rs_Comment );
 		}
 		else
 		{
-			sprintf( adrname, "; $%08lx", sc->rs_Address );
+			sprintf( adrname, "; $%08" PRIx64 "", sc->rs_Address );
 		}
 
 		strcat( SaveLineBuffer, adrname );
@@ -622,7 +616,7 @@ RS4Source *rs;
 		"; Disassembled with ReSrc4 v%d.%d (%s)\n"
 		"; Written by Rene W. Olsen (c) 2014-%d\n"
 		";\n"
-		"; Filename: %s (%ld bytes)\n"
+		"; Filename: %s (%" PRId64 " bytes)\n"
 		"; MD5 Sum: $%s\n"
 		";\n", 
 		VERSION,
@@ -671,7 +665,7 @@ RS4Source *rs;
 		// ec allready set
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error Writting %s lvo's\n", __FILE__, __LINE__, mySave[pos].Name );
+		printf( "%s:%04d: Error Writting lvo's\n", __FILE__, __LINE__ );
 		#endif
 
 		goto bailout;

@@ -66,7 +66,6 @@ uint32_t opmode;
 			}
 
 			M68k_Set_Cur_to_Unknown( rt );
-//			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 			break;
 		}
@@ -113,7 +112,6 @@ uint32_t opmode;
 			}
 
 			M68k_Set_Cur_to_Unknown( rt );
-//			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 			break;
 		}
@@ -160,7 +158,6 @@ uint32_t opmode;
 			}
 
 			M68k_Set_Cur_to_Unknown( rt );
-//			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 			break;
 		}
@@ -209,7 +206,6 @@ uint32_t opmode;
 			}
 
 			M68k_Set_Cur_to_Unknown( rt );
-//			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 			break;
 		}
@@ -256,7 +252,6 @@ uint32_t opmode;
 			}
 
 			M68k_Set_Cur_to_Unknown( rt );
-//			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 			break;
 		}
@@ -303,7 +298,6 @@ uint32_t opmode;
 			}
 
 			M68k_Set_Cur_to_Unknown( rt );
-//			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 			break;
 		}

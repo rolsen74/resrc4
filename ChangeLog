@@ -183,3 +183,14 @@ ReSrc4 v2.10 ( 15-Jan-2025 )
   Cmpi.l  #$00000013,D0  ; 0c80 0000 0013
 
   Those two opcode does exactly the same.
+
+
+ReSrc4 v2.11 ( 16-Jan-2025 )
+
+- Fixed label names that would not be shown in release mode.
+
+- Fixed printing 64bit values on 32bit systems. Problem was eg. %ld or %lx
+  worked on 64bit system, but on 32bit it was expected %lld and %llx.
+  So now you can see lx / ld is changed to PRIx64 / PRId64 in the source.
+
+- Fixed a lot of white spaces in the M68k Opcode table.

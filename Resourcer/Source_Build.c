@@ -326,7 +326,7 @@ int len;
 		}
 		else
 		{
-			sprintf( buf, "$%08lx", val );
+			sprintf( buf, "$%08" PRIx64 "", val );
 		}
 	}
 
@@ -395,7 +395,7 @@ int len;
 	}
 	else
 	{
-		sprintf( buf, "$%02lx", val );
+		sprintf( buf, "$%02" PRIx64 "", val );
 	}
 
 	len = strlen( buf );
@@ -458,7 +458,7 @@ int len;
 	}
 	else
 	{
-		sprintf( buf, "$%04lx", val );
+		sprintf( buf, "$%04" PRIx64 "", val );
 	}
 
 	len = strlen( buf );
@@ -523,7 +523,7 @@ int len;
 	}
 	else
 	{
-		sprintf( buf, "$%08lx", val );
+		sprintf( buf, "$%08" PRIx64 "", val );
 	}
 
 	len = strlen( buf );
@@ -1277,11 +1277,11 @@ int mm;
 
 		if ( rt->rt_CurMemBuf[ 0 ] == 0 )
 		{
-			sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%ld,0", max );
+			sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%" PRId64 ",0", max );
 		}
 		else
 		{
-			sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%ld,$%02x", max, rt->rt_CurMemBuf[ 0 ] );
+			sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%" PRId64 ",$%02x", max, rt->rt_CurMemBuf[ 0 ] );
 		}
 	}
 	else if ( max > 3 )
@@ -1305,7 +1305,7 @@ int mm;
 
 			len = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
 
-			snprintf( & rt->rt_Container.Hunk.ms_Buf_Argument[len], 64-len, "$%08lx,", val );
+			snprintf( & rt->rt_Container.Hunk.ms_Buf_Argument[len], 64-len, "$%08" PRIx64 ",", val );
 
 			offset += 4;
 		}
@@ -1325,7 +1325,7 @@ int mm;
 		val = (( rt->rt_CurMemBuf[ 0 ] << 8 ) | ( rt->rt_CurMemBuf[ 1 ] << 0 ));
 
 		rt->rt_Container.Hunk.ms_Str_Opcode = "dc.w";
-		snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "$%04lx", val );
+		snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "$%04" PRIx64 "", val );
 	}
 	else
 	{
@@ -1336,7 +1336,7 @@ int mm;
 		val = ( rt->rt_CurMemBuf[ 0 ] );
 
 		rt->rt_Container.Hunk.ms_Str_Opcode = "dc.b";
-		snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "$%02lx", val );
+		snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "$%02" PRIx64 "", val );
 	}
 
 	fs = RS4AddSourceLine( & ec, rt );
@@ -1595,7 +1595,7 @@ int p;
 		ec = RS4ErrStat_Internal;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error invalid length ( %ld != %d )\n", __FILE__, __LINE__, rl->rl_Size, len );
+		printf( "%s:%04d: Error invalid length ( %" PRId64 " != %d )\n", __FILE__, __LINE__, rl->rl_Size, len );
 		#endif
 
 		goto bailout;
@@ -1606,7 +1606,7 @@ int p;
 		ec = RS4ErrStat_Internal;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error invalid length ( %ld != %d )\n", __FILE__, __LINE__, max, len );
+		printf( "%s:%04d: Error invalid length ( %" PRId64 " != %d )\n", __FILE__, __LINE__, max, len );
 		#endif
 
 		goto bailout;
@@ -1662,7 +1662,7 @@ int64_t size;
 
 	rt->rt_Container.Hunk.ms_StartAddr = rt->rt_CurMemAdr;
 	rt->rt_Container.Hunk.ms_Str_Opcode = "ds.b";
-	snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "%ld", size );
+	snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "%" PRId64 "", size );
 
 	fs = RS4AddSourceLine( & ec, rt );
 
@@ -2017,10 +2017,7 @@ int64_t l;
 			{
 				// ec allready set
 
-				#ifdef DEBUG
 				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
 				goto bailout;
 			}
 			#endif
@@ -2036,10 +2033,7 @@ int64_t l;
 			{
 				// ec allready set
 
-				#ifdef DEBUG
 				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
 				goto bailout;
 			}
 			#endif
@@ -2056,10 +2050,7 @@ int64_t l;
 			{
 				// ec allready set
 
-				#ifdef DEBUG
 				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
 				goto bailout;
 			}
 			#endif
@@ -2076,10 +2067,7 @@ int64_t l;
 			{
 				// ec allready set
 
-				#ifdef DEBUG
 				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
 				goto bailout;
 			}
 			#endif
@@ -2333,9 +2321,7 @@ uint8_t mtyp;
 				#ifdef DEBUG
 				if ( len <= 0 )
 				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Length error (%ld)\n", __FILE__, __LINE__, len );
-					#endif
+					printf( "%s:%04d: Length error (%" PRId64 ")\n", __FILE__, __LINE__, len );
 					goto bailout;
 				}
 				#endif
@@ -2350,9 +2336,7 @@ uint8_t mtyp;
 				#ifdef DEBUG
 				if ( len <= 0 )
 				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Length error (%ld)\n", __FILE__, __LINE__, len );
-					#endif
+					printf( "%s:%04d: Length error (%" PRId64 ")\n", __FILE__, __LINE__, len );
 					goto bailout;
 				}
 				#endif
@@ -2368,9 +2352,7 @@ uint8_t mtyp;
 				#ifdef DEBUG
 				if ( len <= 0 )
 				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Length error (%ld)\n", __FILE__, __LINE__, len );
-					#endif
+					printf( "%s:%04d: Length error (%" PRId64 ")\n", __FILE__, __LINE__, len );
 					goto bailout;
 				}
 				#endif
@@ -2394,7 +2376,7 @@ uint8_t mtyp;
 			// ec allready set
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Length error (%ld)\n", __FILE__, __LINE__, len );
+			printf( "%s:%04d: Length error (%" PRId64 ")\n", __FILE__, __LINE__, len );
 			#endif
 
 			goto bailout;

@@ -66,7 +66,8 @@ char labname[ MAX_LabelName + 8 ];
 		rt->rt_CPU.M68k.mt_JmpRegister.mr_Address = adr;
 	}
 
-	if (( rl ) && ( rl->rl_Name[0] ))
+//	if (( rl ) && ( rl->rl_Name[0] ))
+	if ( rl )
 	{
 		fs = RS4BuildLabelString( & ec, rl, labname );
 

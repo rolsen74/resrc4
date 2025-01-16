@@ -23,8 +23,8 @@ enum RS4FuncStat fs;
 RS4Label *rl;
 uint32_t cond;
 uint32_t size;
-uint32_t adr;
 uint8_t *mem;
+int64_t adr;
 
 	mem = rt->rt_CurMemBuf;
 
@@ -127,7 +127,7 @@ uint8_t *mem;
 		rt->rt_CPU.M68k.mt_JmpRegister.mr_Address = adr;
 	}
 
-	if (( rl ) && ( rl->rl_Name[0] ))
+	if ( rl )
 	{
 		fs = RS4BuildLabelString( & ec, rl, rt->rt_Container.Hunk.ms_Buf_Argument );
 
@@ -145,7 +145,7 @@ uint8_t *mem;
 	}
 	else
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "$%08x", adr );
+		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "$%08" PRIx64, adr );
 	}
 
 	// --

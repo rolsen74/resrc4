@@ -191,7 +191,7 @@ enum RS4FuncStat fs;
 //RS4FileHeader *fh;
 RS4Label *parent;
 
-	DDEBUG( printf( "\nRS4LabAdjust : 0 : RL %p, Adr $%08lx-$%08lx\n", rl, adr, adr+size-1 ); )
+	DDEBUG( printf( "\nRS4LabAdjust : 0 : RL %p, Adr $%08" PRIx64 "-$%08" PRIx64 "\n", rl, adr, adr+size-1 ); )
 
 	ec = RS4ErrStat_Okay;
 	fs = RS4FuncStat_Okay;
@@ -224,7 +224,7 @@ RS4Label *parent;
 		// Do we need a NEW Parent Label
 		parent = RS4AddLabel_Sec( & ec, rl->rl_Section, adr, type );
 
-		DDEBUG( printf( "RS4LabAdjust : 4 : Parent %p : Adr $%08lx\n", parent, adr ); )
+		DDEBUG( printf( "RS4LabAdjust : 4 : Parent %p : Adr $%08" PRIx64 "\n", parent, adr ); )
 
 		if ( ! parent )
 		{
@@ -232,7 +232,7 @@ RS4Label *parent;
 			// ec allready set
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error adding label at %08lx\n", __FILE__, __LINE__, adr );
+			printf( "%s:%04d: Error adding label at $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
 			#endif
 
 			goto bailout;
@@ -380,7 +380,7 @@ enum RS4FuncStat fs;
 		fs = RS4FuncStat_Error;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error adjusting label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+		printf( "%s:%04d: Error adjusting label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 		#endif
 
 		goto bailout;
@@ -393,7 +393,7 @@ enum RS4FuncStat fs;
 		fs = RS4FuncStat_Error;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error : Addr %08lx (Size %ld, Max: %ld)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Size, max );
+		printf( "%s:%04d: Error : Addr $%08" PRIx64 " (Size %" PRId64 ", Max: %" PRId64 ")\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Size, max );
 		#endif
 
 		goto bailout;
@@ -453,7 +453,7 @@ enum RS4FuncStat fs;
 		fs = RS4FuncStat_Error;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error : Addr %08lx (Size %ld, Max: %ld)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Size, max );
+		printf( "%s:%04d: Error : Addr $%08" PRIx64 " (Size %" PRId64 ", Max: %" PRId64 ")\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Size, max );
 		#endif
 
 		goto bailout;
@@ -563,7 +563,7 @@ int cnt;
 			fs = RS4FuncStat_Error;
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error adjusting label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+			printf( "%s:%04d: Error adjusting label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 			#endif
 
 			goto bailout;
@@ -679,7 +679,7 @@ int cnt;
 			fs = RS4FuncStat_Error;
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error adjusting label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+			printf( "%s:%04d: Error adjusting label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 			#endif
 
 			goto bailout;
@@ -777,7 +777,7 @@ int m;
 				fs = RS4FuncStat_Error;
 
 				#ifdef DEBUG
-				printf( "%s:%04d: Error adjusting label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				printf( "%s:%04d: Error adjusting label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 				#endif
 
 				goto bailout;
@@ -1083,7 +1083,7 @@ int64_t l;
 			fs = RS4FuncStat_Error;
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error : Addr $%08lx (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
+			printf( "%s:%04d: Error : Addr $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
 			#endif
 
 			goto bailout;
@@ -1274,9 +1274,7 @@ uint8_t mtyp;
 				#ifdef DEBUG
 				if ( len <= 0 )
 				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Length error (%ld)\n", __FILE__, __LINE__, len );
-					#endif
+					printf( "%s:%04d: Length error (%" PRId64 ")\n", __FILE__, __LINE__, len );
 					goto bailout;
 				}
 				#endif
@@ -1291,9 +1289,7 @@ uint8_t mtyp;
 				#ifdef DEBUG
 				if ( len <= 0 )
 				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Length error (%ld)\n", __FILE__, __LINE__, len );
-					#endif
+					printf( "%s:%04d: Length error (%" PRId64 ")\n", __FILE__, __LINE__, len );
 					goto bailout;
 				}
 				#endif
@@ -1309,9 +1305,7 @@ uint8_t mtyp;
 				#ifdef DEBUG
 				if ( len <= 0 )
 				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Length error (%ld)\n", __FILE__, __LINE__, len );
-					#endif
+					printf( "%s:%04d: Length error (%" PRId64 ")\n", __FILE__, __LINE__, len );
 					goto bailout;
 				}
 				#endif
@@ -1335,7 +1329,7 @@ uint8_t mtyp;
 			// ec allready set
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Length error (%ld)\n", __FILE__, __LINE__, len );
+			printf( "%s:%04d: Length error (%" PRId64 ")\n", __FILE__, __LINE__, len );
 			#endif
 
 			goto bailout;
@@ -1464,7 +1458,7 @@ int cnt;
 
 	while( rl )
 	{
-		snprintf( rl->rl_Name, MAX_LabelName - 1, "%s%04lX", ExtNames, rl->rl_Offset );
+		snprintf( rl->rl_Name, MAX_LabelName - 1, "%s%" PRIX64 "", ExtNames, rl->rl_Offset );
 
 		rl = RS4GetNext( rl );
 	}

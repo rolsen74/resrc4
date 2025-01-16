@@ -190,7 +190,7 @@ int len;
 		{
 			// Change rl type, and continue?
 			printf( "String Allready set\n" );
-			printf( "%s:%04d: Error Adr: $%08lx (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
+			printf( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
 			return;
 		}
 		else
@@ -325,9 +325,7 @@ int cnt;
 	#ifdef DEBUG
 	if ( size <= 0 )
 	{
-		#ifdef DEBUG
 		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
 		goto bailout;
 	}
 	#endif
@@ -355,7 +353,7 @@ int cnt;
 
 						if ( ! rl2 )
 						{
-							printf( "Error adding Label at $%08lx\n", rl->rl_Address );
+							printf( "Error adding Label at $%08" PRIx64 "\n", rl->rl_Address );
 						}
 					}
 					break;
@@ -374,7 +372,7 @@ int cnt;
 
 						if ( ! rl2 )
 						{
-							printf( "Error adding Label at $%08lx\n", rl->rl_Address );
+							printf( "Error adding Label at $%08" PRIx64 "\n", rl->rl_Address );
 						}
 						else
 						{
@@ -397,7 +395,7 @@ int cnt;
 
 						if ( ! rl2 )
 						{
-							printf( "Error adding Label at $%08lx\n", rl->rl_Address );
+							printf( "Error adding Label at $%08" PRIx64 "\n", rl->rl_Address );
 						}
 						else
 						{
@@ -464,7 +462,7 @@ int reg;
 
 	#if 0
 
-	printf( "Clear Regs [$%08lx] : ", rt->rt_CurMemAdr );
+	printf( "Clear Regs [$%08" PRIx64 "] : ", rt->rt_CurMemAdr );
 
 	for( cnt=0 ; cnt<16 ; cnt++ )
 	{

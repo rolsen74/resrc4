@@ -54,7 +54,7 @@ enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-int32_t adr;
+int64_t adr;
 uint8_t *mem;
 char labname[ MAX_LabelName + 8 ];
 int size;
@@ -66,7 +66,7 @@ int cond;
 
 	if ( cond > 0x1f )
 	{
-		printf( "Unsupported 'FBcc' Opcode at %08lx\n", rt->rt_CurMemAdr );
+		printf( "Unsupported 'FBcc' Opcode at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 		ds = RS4DecodeStat_Error;
 		goto bailout;
 	}
@@ -95,6 +95,8 @@ int cond;
 
 		rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 		rt->rt_CPU.M68k.mt_OpcodeSize = 4;
+
+		rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Code );
 	}
 	else
 	{
@@ -120,11 +122,11 @@ int cond;
 
 		rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 		rt->rt_CPU.M68k.mt_OpcodeSize = 6;
+
+		rl = RS4AddLabel_File( & ec, rt->rt_File, adr, RS4LabelType_Code );
 	}
 
 	// --
-
-	rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Code );
 
 	if ( rl )
 	{
@@ -137,7 +139,8 @@ int cond;
 		rt->rt_CPU.M68k.mt_JmpRegister.mr_Address = adr;
 	}
 
-	if (( rl ) && ( rl->rl_Name[0] ))
+//	if (( rl ) && ( rl->rl_Name[0] ))
+	if ( rl )
 	{
 		fs = RS4BuildLabelString( & ec, rl, labname );
 
@@ -157,7 +160,7 @@ int cond;
 	}
 	else
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "$%08x", adr );
+		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "$%08" PRIx64, adr );
 	}
 
 	// --
