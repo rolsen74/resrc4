@@ -2,4 +2,4 @@
 *.o
 *.map
 ReSrc4
-runsync.sh
+runrsync.sh
