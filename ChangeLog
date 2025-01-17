@@ -196,6 +196,12 @@ ReSrc4 v2.11 ( 16-Jan-2025 )
 - Fixed a lot of white spaces in the M68k Opcode table.
 
 
-ReSrc4 v2.12 ( 16-Jan-2025 )
+ReSrc4 v2.12 ( 17-Jan-2025 )
 
 - Bumped copyright year to 2025
+
+- Fixed a label bug.. that only show up when I disabled DEBUG :(
+  If you had a label outside of the memory area, it would not be generated
+  correctly.. ie. Sec_0001-12 would be converted to ($12345678).l and
+  you would loose a Reloc when assembled again.
+
