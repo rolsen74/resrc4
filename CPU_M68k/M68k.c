@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -1069,7 +1069,7 @@ uint8_t *mem;
 		printf( "rt->rt_Pass (nr) ... : %d\n", rt->rt_Pass );
 		printf( "rt->rt_File ........ : %p\n", rt->rt_File );
 		printf( "rt->rt_Section ..... : %p\n", rt->rt_Section );
-		printf( "rt->rt_CurMemAdr ... : %08lx\n", rt->rt_CurMemAdr );
+		printf( "rt->rt_CurMemAdr ... : $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 		printf( "rt->rt_CurMemBuf ... : %p\n", rt->rt_CurMemBuf );
 		printf( "rt->rt_CurMemType .. : %p\n", rt->rt_CurMemType );
 		printf( "ms_Buf_Argument .... : %p\n", rt->rt_Container.Hunk.ms_Buf_Argument );
@@ -1144,7 +1144,7 @@ uint8_t *mem;
 
 		lebuf[ii] = 0;
 
-		printf( "Decode: [%08lx] %s [", rt->rt_CurMemAdr, lebuf );
+		printf( "Decode: [%08" PRIx64 "] %s [", rt->rt_CurMemAdr, lebuf );
 
 		for( int ii=0 ; ii < rt->rt_CPU.M68k.mt_OpcodeSize ; ii += 2 )
 		{
@@ -1169,7 +1169,7 @@ uint8_t *mem;
 	{
 	int cnt;
 
-	printf( "Decoded : Adr %08lx : %08x\n", rt->rt_CurMemAdr, rt->rt_CPU.M68k.mt_Opcode );
+	printf( "Decoded : Adr $%08" PRIx64 " : %08x\n", rt->rt_CurMemAdr, rt->rt_CPU.M68k.mt_Opcode );
 
 		printf( "Reg Names   : " );
 		for( cnt=0 ; cnt<16 ; cnt++ )

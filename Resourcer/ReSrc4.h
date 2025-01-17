@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -26,10 +26,10 @@
 
 // --
 
-#define DATE				"16-Jan-2025"
+#define DATE				"17-Jan-2025"
 #define YEAR				2025
 #define VERSION				2
-#define REVISION			11
+#define REVISION			12
 
 #define MAX_REF_HASH		29			// Prime Nr .. bigger value more memory pr. HunkNode
 #define MAX_LAB_HASH		83			// Prime Nr .. Global Label Hash

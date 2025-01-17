@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -112,7 +112,7 @@ int cnt;
 	if ( cnt == fh->rfh_SecArraySize )
 	{
 		ec = RS4ErrStat_OutOfBounds;
-		printf( "AddLabel: External? Addr $%08lx ??\n", addr );
+		printf( "AddLabel: External? Addr $%08" PRIx64 " ??\n", addr );
 		goto bailout;
 	}
 
@@ -181,7 +181,7 @@ int hash;
 			}
 			else if ( rl->rl_Type1 != type )
 			{
-				printf( "%s:%04d: rl->rl_Address $%08lx (Type: %d)\n", __FILE__, __LINE__, rl->rl_Address, type );
+				printf( "%s:%04d: rl->rl_Address $%08" PRIx64 " (Type: %d)\n", __FILE__, __LINE__, rl->rl_Address, type );
 				rl->rl_Type1 = RS4LabelType_Unknown;
 				// we have multible types
 			}
@@ -216,8 +216,22 @@ int hash;
 
 	if ( Verbose > 1 )
 	{
-		printf( "New Label : Hunk #%d : Address $%08lx\n", sec->rfs_SecNr, addr );
+		printf( "New Label : Hunk #%d : Address $%08" PRIx64 "\n", sec->rfs_SecNr, addr );
 	}
+
+	#if 0
+	if ( new->rl_Address < sec->rfs_MemoryAdr )
+	{
+		printf( "New label before Section start : LabAdr $%08" PRIx64 ", SecAdr $%08" PRIx64 "\n", 
+		new->rl_Address, sec->rfs_MemoryAdr );
+	}
+
+	if ( sec->rfs_MemorySize < new->rl_Offset )
+	{
+		printf( "New label after Section end : LabAdr $%08" PRIx64 ", SecAdr $%08" PRIx64 "\n", 
+		new->rl_Address, sec->rfs_MemoryAdr+sec->rfs_MemorySize );
+	}
+	#endif
 
 	// Insert node at correct place in the sorted list
 	// Add into File Section
@@ -290,7 +304,7 @@ int hash;
 	{
 		if ( ! rl )
 		{
-			printf( "Label NOT Found : Address $%08lx\n", addr );
+			printf( "Label NOT Found : Address $%08" PRIx64 "\n", addr );
 		}
 	}
 

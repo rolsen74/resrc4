@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -317,6 +317,11 @@ int err;
 		#endif
 
 		goto bailout;
+	}
+
+	if ( Verbose )
+	{
+		printf( "Loaded '%s' (%" PRId64 " bytes)\n", filename, file->rfh_FileSize );
 	}
 
 	type = RS4IdentifyFile( & ec, file );

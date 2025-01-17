@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -24,7 +24,14 @@ enum RS4ErrorCode ec;
 
 	// --
 
-	sprintf( outstr, "(%s)", Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+	if ( rt->rt_Pass != RS4TracePass_Trace )
+	{
+		sprintf( outstr, "(%s)", Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+	}
+	else
+	{
+		outstr[0] = 0;
+	}
 
 //	if ( rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg ].mr_Type == RRT_Label )
 //	{

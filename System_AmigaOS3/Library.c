@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -121,7 +121,7 @@ int reg;
 		ec = RS4ErrStat_Okay;
 
 		#ifdef DEBUG
-		printf( "Unknown : LibType %d : Offset %d : libcall at $%08lx\n", lib, offset, rt->rt_CurMemAdr );
+		printf( "Unknown : LibType %d : Offset %d : libcall at $%08" PRIx64 "\n", lib, offset, rt->rt_CurMemAdr );
 		#endif
 
 		goto bailout;
@@ -152,7 +152,7 @@ int reg;
 		ec = RS4ErrStat_Okay;
 
 		#ifdef DEBUG
-		printf( "Unknown : LibType %d : libcall %d : Address $%08lx\n", lib, offset, rt->rt_CurMemAdr );
+		printf( "Unknown : LibType %d : libcall %d : Address $%08" PRIx64 "\n", lib, offset, rt->rt_CurMemAdr );
 		#endif
 
 		goto bailout;

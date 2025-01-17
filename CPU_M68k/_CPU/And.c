@@ -1,6 +1,6 @@
  
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -14,6 +14,7 @@
 #include "Resourcer/ReSrc4.h"
 
 // --
+
 
 enum RS4DecodeStat M68kCmd_AND( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {

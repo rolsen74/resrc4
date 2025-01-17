@@ -1,6 +1,6 @@
  
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -1458,7 +1458,18 @@ int cnt;
 
 	while( rl )
 	{
-		snprintf( rl->rl_Name, MAX_LabelName - 1, "%s%" PRIX64 "", ExtNames, rl->rl_Offset );
+		/**/ if ( rl->rl_Offset < 0x00010000 )
+		{
+			snprintf( rl->rl_Name, MAX_LabelName - 1, "%s%04" PRIX64 "", ExtNames, rl->rl_Offset );
+		}
+		else if ( rl->rl_Offset < 0x01000000 )
+		{
+			snprintf( rl->rl_Name, MAX_LabelName - 1, "%s%06" PRIX64 "", ExtNames, rl->rl_Offset );
+		}
+		else
+		{
+			snprintf( rl->rl_Name, MAX_LabelName - 1, "%s%08" PRIX64 "", ExtNames, rl->rl_Offset );
+		}
 
 		rl = RS4GetNext( rl );
 	}

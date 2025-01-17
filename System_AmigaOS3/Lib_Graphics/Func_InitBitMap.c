@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -25,7 +25,7 @@ RS4Label *rl;
 	ec = RS4ErrStat_Okay;
 	ds = RS4DecodeStat_Okay;
 
-//printf( "InitBitMap : $%08lx\n", rt->rt_CurMemAdr );
+//printf( "InitBitMap : $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 
 	#if 0
     InitBitMap( bm, depth, width, height )

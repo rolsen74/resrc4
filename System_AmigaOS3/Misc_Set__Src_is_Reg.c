@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -64,7 +64,7 @@ uint32_t val;
 
 				case RRT_Label:
 				{
-					DDEBUG( printf( "write : 33 : Adr $%08lx, %x -> \n", rt->rt_CurMemAdr, src_reg->mr_Number ); )
+					DDEBUG( printf( "write : 33 : Adr $%08" PRIx64 ", %x -> \n", rt->rt_CurMemAdr, src_reg->mr_Number ); )
 
 					// Label -> Label
 

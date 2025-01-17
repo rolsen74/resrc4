@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -174,7 +174,7 @@ enum RS4ErrorCode ec;
 	}
 	else
 	{
-		printf( "Unsupported 'FMovem 2 0' Opcode %d at %08lx\n", dr, rt->rt_CurMemAdr );
+		printf( "Unsupported 'FMovem 2 0' Opcode %d at $%08" PRIx64 "\n", dr, rt->rt_CurMemAdr );
 		ds = RS4DecodeStat_Error;
 		goto bailout;
 	}
@@ -332,7 +332,7 @@ int dr;
 	// List hold 3 bits (FPCR, FPSR, FPIAR) wich regs to be moved
 	// atleat two must be selected, well if only 1 is select its a fmove4
 
-	printf( "Unsupported 'FMovem' Opcode (List %x, emode %d, ereg %d, dr %d) at %08lx\n", list, emode, ereg, dr, rt->rt_CurMemAdr );
+	printf( "Unsupported 'FMovem' Opcode (List %x, emode %d, ereg %d, dr %d) at $%08" PRIx64 "\n", list, emode, ereg, dr, rt->rt_CurMemAdr );
 	ds = RS4DecodeStat_Error;
 	ec = RS4ErrStat_Internal;
 
@@ -402,7 +402,7 @@ int dr;
 
 		default:
 		{
-			printf( "Unsupported 'FMovem2' Opcode (Mode %d, emode %d, ereg %d, dr %d) at %08lx\n", mode, emode, ereg, dr, rt->rt_CurMemAdr );
+			printf( "Unsupported 'FMovem2' Opcode (Mode %d, emode %d, ereg %d, dr %d) at $%08" PRIx64 "\n", mode, emode, ereg, dr, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}

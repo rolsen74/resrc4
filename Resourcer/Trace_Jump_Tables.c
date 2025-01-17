@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -246,7 +246,7 @@ int cnt;
 	if ( ! rl )
 	{
 		#ifdef DEBUG
-		printf( "%s:%04d: Error adding label at address $%08lx\n", __FILE__, __LINE__, tabel_adr );
+		printf( "%s:%04d: Error adding label at address $%08" PRIx64 "\n", __FILE__, __LINE__, tabel_adr );
 		#endif
 		goto bailout;
 	}
@@ -258,7 +258,7 @@ int cnt;
 	if ( ! rel )
 	{
 		#ifdef DEBUG
-		printf( "%s:%04d: Error adding label at address $%08lx\n", __FILE__, __LINE__, relative_adr );
+		printf( "%s:%04d: Error adding label at address $%08" PRIx64 "\n", __FILE__, __LINE__, relative_adr );
 		#endif
 		goto bailout;
 	}
@@ -290,7 +290,7 @@ int cnt;
 		if ( ! rl )
 		{
 			#ifdef DEBUG
-			printf( "%s:%04d: Error adding label at %08lx\n", __FILE__, __LINE__, adr );
+			printf( "%s:%04d: Error adding label at $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
 			#endif
 			goto bailout;
 		}
@@ -300,7 +300,7 @@ int cnt;
 		if ( ! rb )
 		{
 			#ifdef DEBUG
-			printf( "%s:%04d: Error adding brance at %08lx\n", __FILE__, __LINE__, adr );
+			printf( "%s:%04d: Error adding brance at $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
 			#endif
 			goto bailout;
 		}
@@ -1080,10 +1080,10 @@ int cnt;
 #if 0
 {
 	printf( "jt : %p\n", jt );
-	printf( "Sec: $%08lx #%d\n", sec->rfs_MemoryAdr, sec->rfs_SecNr );
-	printf( "Adr: $%08lx\n", adr );
-	printf( "Off: $%08lx\n", off );
-	printf( "Pos: $%08lx\n", pos );
+	printf( "Sec: $%08" PRIx64 " #%d\n", sec->rfs_MemoryAdr, sec->rfs_SecNr );
+	printf( "Adr: $%08" PRIx64 "\n", adr );
+	printf( "Off: $%08" PRIx64 "\n", off );
+	printf( "Pos: $%08" PRIx64 "\n", pos );
 }
 #endif
 
@@ -1107,7 +1107,7 @@ int cnt;
 
 	if ( Verbose )
 	{
-		printf( "Found Jump Table #%d at $%08lx\n", count, rt->rt_CurMemAdr );
+		printf( "Found Jump Table #%d at $%08" PRIx64 "\n", count, rt->rt_CurMemAdr );
 	}
 
 	switch( jt->EntryType )
@@ -1185,7 +1185,7 @@ int pos;
 		if ( ! jt )
 		{
 			// Not Found, is not an error
-			printf( "Possible new type of Jump Table at $%08lx\n", rt->rt_CurMemAdr );
+			printf( "Possible new type of Jump Table at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 			break;
 		}
 

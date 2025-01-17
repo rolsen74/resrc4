@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -175,7 +175,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -236,7 +236,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -309,7 +309,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -370,7 +370,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -447,7 +447,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -511,7 +511,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -590,7 +590,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -654,7 +654,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -729,7 +729,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -790,7 +790,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -867,7 +867,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -931,7 +931,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1010,7 +1010,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1074,7 +1074,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1137,7 +1137,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1200,7 +1200,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1255,7 +1255,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1311,7 +1311,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1381,7 +1381,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1451,7 +1451,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
@@ -1509,7 +1509,7 @@ int BD;
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}

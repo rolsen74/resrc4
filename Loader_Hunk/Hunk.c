@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 by Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  * All rights reserved.
  *
  */
@@ -140,7 +140,7 @@ RS4Ref *isRef;
 			ec = RS4ErrStat_Internal;
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, adr );
+			printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
 			#endif
 
 			goto bailout;
@@ -164,12 +164,12 @@ RS4Ref *isRef;
 		else
 		{
 			// Not an external as it has a Refs 
-			sprintf( buf, "$%08lx", val );
+			sprintf( buf, "$%08" PRIx64 "", val );
 		}
 	}
 	else
 	{
-		sprintf( buf, "$%08lx", val );
+		sprintf( buf, "$%08" PRIx64 "", val );
 	}
 
 	// --
@@ -779,13 +779,13 @@ int cnt;
 
 						if ( Verbose > 1 )
 						{
-							printf( " Reloc Offset .1... : $%08lx #%d\n", offset, relcnt++ );
+							printf( " Reloc Offset .1... : $%08" PRIx64 " #%d\n", offset, relcnt++ );
 						}
 
 						if ( current->rfs_MemorySize < offset )
 						{
 							ec = RS4ErrStat_FileStructure;
-							printf( "\nHunk reloc offset is illegal\n\nOffset %ld is out of range\nHunk %d is only %ld bytes big", offset, hunknum, fh->rfh_SecArray[ hunknum ].rsi_MemorySize );
+							printf( "\nHunk reloc offset is illegal\n\nOffset %" PRId64 " is out of range\nHunk %d is only %" PRId64 " bytes big", offset, hunknum, fh->rfh_SecArray[ hunknum ].rsi_MemorySize );
 							goto bailout;
 						}
 
@@ -1033,13 +1033,13 @@ int cnt;
 
 						if ( Verbose > 1 )
 						{
-							printf( " Reloc Offset .2... : $%08lx #%d\n", offset, relcnt++ );
+							printf( " Reloc Offset .2... : $%08" PRIx64 " #%d\n", offset, relcnt++ );
 						}
 
 						if ( current->rfs_MemorySize < offset )
 						{
 							ec = RS4ErrStat_FileStructure;
-							printf( "\nHunk reloc offset is illegal\n\nOffset %ld is out of range\nHunk %d is only %ld bytes big", offset, hunknum, fh->rfh_SecArray[ hunknum ].rsi_MemorySize );
+							printf( "\nHunk reloc offset is illegal\n\nOffset %" PRId64 " is out of range\nHunk %d is only %" PRId64 " bytes big", offset, hunknum, fh->rfh_SecArray[ hunknum ].rsi_MemorySize );
 							goto bailout;
 						}
 
@@ -1146,13 +1146,13 @@ int cnt;
 
 						if ( Verbose > 1 )
 						{
-							printf( " Reloc Offset .3... : $%08lx #%d\n", offset, relcnt++ );
+							printf( " Reloc Offset .3... : $%08" PRIx64 " #%d\n", offset, relcnt++ );
 						}
 
 						if ( current->rfs_MemorySize < offset )
 						{
 							ec = RS4ErrStat_FileStructure;
-							printf( "\nHunk reloc offset is illegal\n\nOffset %ld is out of range\nHunk %d is only %ld bytes big", offset, hunknum, fh->rfh_SecArray[ hunknum ].rsi_MemorySize );
+							printf( "\nHunk reloc offset is illegal\n\nOffset %" PRId64 " is out of range\nHunk %d is only %" PRId64 " bytes big", offset, hunknum, fh->rfh_SecArray[ hunknum ].rsi_MemorySize );
 							goto bailout;
 						}
 

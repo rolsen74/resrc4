@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -31,7 +31,7 @@ int dst;
 
 	if ( mode != 0 )
 	{
-		printf( "Unsupported 'FMove1' Opcode (Mode $%03x) at %08lx\n", mode, rt->rt_CurMemAdr );
+		printf( "Unsupported 'FMove1' Opcode (Mode $%03x) at $%08" PRIx64 "\n", mode, rt->rt_CurMemAdr );
 		ds = RS4DecodeStat_Error;
 		goto bailout;
 	}
@@ -79,7 +79,7 @@ int len;
 
 	if ( mode != 0 )
 	{
-		printf( "Unsupported 'FMove2' Opcode (Mode $%03x) at %08lx\n", mode, rt->rt_CurMemAdr );
+		printf( "Unsupported 'FMove2' Opcode (Mode $%03x) at $%08" PRIx64 "\n", mode, rt->rt_CurMemAdr );
 		ds = RS4DecodeStat_Error;
 		goto bailout;
 	}
@@ -137,7 +137,7 @@ int len;
 
 		default:
 		{
-			printf( "Unsupported 'FMove2' Opcode (Size %d) at %08lx\n", src, rt->rt_CurMemAdr );
+			printf( "Unsupported 'FMove2' Opcode (Size %d) at $%08" PRIx64 "\n", src, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
@@ -202,7 +202,7 @@ int src;
 //int len;
 //int k;
 
-// printf( "M68kCmd_FMOVE 3 : at %08lx\n", rt->rt_CurMemAdr );
+// printf( "M68kCmd_FMOVE 3 : at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 
 	emode= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	ereg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
@@ -274,7 +274,7 @@ int src;
 
 		default:
 		{
-			printf( "Unsupported 'FMove3' Opcode (Size %d) at %08lx\n", fmt, rt->rt_CurMemAdr );
+			printf( "Unsupported 'FMove3' Opcode (Size %d) at $%08" PRIx64 "\n", fmt, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
@@ -378,7 +378,7 @@ int dr;
 
 		default:
 		{
-			printf( "Unsupported 'FMove4' Reg Type (%d) at %08lx\n", reg, rt->rt_CurMemAdr );
+			printf( "Unsupported 'FMove4' Reg Type (%d) at $%08" PRIx64 "\n", reg, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}

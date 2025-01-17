@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -17,8 +17,8 @@ inline static enum RS4DecodeStat MODE_70( enum RS4ErrorCode *errcode, RS4Trace *
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 RS4Label *rl;
-int16_t val;
 uint8_t *mem;
+int16_t val;
 int pos;
 
 	// --
@@ -37,24 +37,40 @@ int pos;
 	{
 		rl = RS4AddExtLabel( NULL, rt->rt_File, val );
 
-		if (( rl ) && ( rl->rl_Name[0] ))
+		// rwo: why no check??
+
+		if ( rt->rt_Pass != RS4TracePass_Trace )
 		{
-			sprintf( outstr, "%s.w", rl->rl_Name );
+			if (( rl ) && ( rl->rl_Name[0] ))
+			{
+				sprintf( outstr, "%s.w", rl->rl_Name );
+			}
+			else
+			{
+				sprintf( outstr, "($%04x).w", val );
+			}
 		}
 		else
 		{
-			sprintf( outstr, "($%04x).w", val );
+			outstr[0] = 0;
 		}
 	}
 	else
 	{
-		if (( rt->rt_CPU.M68k.mt_IsPea ) && ( val < 0 ))
+		if ( rt->rt_Pass != RS4TracePass_Trace )
 		{
-			sprintf( outstr, "(%d).w", val );
+			if (( rt->rt_CPU.M68k.mt_IsPea ) && ( val < 0 ))
+			{
+				sprintf( outstr, "(%d).w", val );
+			}
+			else
+			{
+				sprintf( outstr, "($%04x).w", val );
+			}
 		}
 		else
 		{
-			sprintf( outstr, "($%04x).w", val );
+			outstr[0] = 0;
 		}
 	}
 
@@ -73,7 +89,7 @@ int pos;
 
 	// --
 
-//bailout:
+// bailout:
 
 	if ( errcode )
 	{

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -413,11 +413,11 @@ int64_t adr;
 
 			printf( "\n" );
 			printf( "Opcode ....... : $%04x:%04x:%04x\n", vv1, vv2, vv3 );
-			printf( "Address ...... : $%08lx\n", rt->rt_CurMemAdr );
+			printf( "Address ...... : $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 			printf( "Sec Nr ....... : %d\n",	sec->rfs_SecNr );
 			printf( "Sec Type ..... : $%04x\n", sec->rfs_SecType );
-			printf( "Sec Offset ... : $%08lx (%ld)\n", pos, pos );
-			printf( "File Offset .. : $%08lx (%ld)\n", sec->rfs_FileOffset+pos, sec->rfs_FileOffset+pos );
+			printf( "Sec Offset ... : $%08" PRIx64 " (%" PRId64 ")\n", pos, pos );
+			printf( "File Offset .. : $%08" PRIx64 " (%" PRId64 ")\n", sec->rfs_FileOffset+pos, sec->rfs_FileOffset+pos );
 			printf( "\n" );
 			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
 			#endif
@@ -428,11 +428,11 @@ int64_t adr;
 		{
 			printf( "\n" );
 			printf( "Unknown Opcode : $%08x\n",	rt->rt_CPU.M68k.mt_Opcode );
-			printf( "Address ...... : $%08lx\n", rt->rt_CurMemAdr );
+			printf( "Address ...... : $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 			printf( "Sec Nr ....... : %d\n",	sec->rfs_SecNr );
 			printf( "Sec Type ..... : $%04x\n", sec->rfs_SecType );
-			printf( "Sec Offset ... : $%08lx (%ld)\n", pos, pos );
-			printf( "File Offset .. : $%08lx (%ld)\n", sec->rfs_FileOffset+pos, sec->rfs_FileOffset+pos );
+			printf( "Sec Offset ... : $%08" PRIx64 " (%" PRId64 ")\n", pos, pos );
+			printf( "File Offset .. : $%08" PRIx64 " (%" PRId64 ")\n", sec->rfs_FileOffset+pos, sec->rfs_FileOffset+pos );
 			printf( "\n" );
 //			Log_Dump();
 			break;
@@ -480,7 +480,7 @@ int64_t adr;
 						fs = RS4FuncStat_Error;
 
 						#ifdef DEBUG
-						printf( "%s:%04d: Error adding brance adr $%08lx\n", __FILE__, __LINE__, jmpadr );
+						printf( "%s:%04d: Error adding brance adr $%08" PRIx64 "\n", __FILE__, __LINE__, jmpadr );
 						#endif
 
 						goto bailout;
@@ -494,7 +494,7 @@ int64_t adr;
 						fs = RS4FuncStat_Error;
 
 						#ifdef DEBUG
-						printf( "%s:%04d: Error adding brance adr $%08lx\n", __FILE__, __LINE__, jmpadr );
+						printf( "%s:%04d: Error adding brance adr $%08" PRIx64 "\n", __FILE__, __LINE__, jmpadr );
 						#endif
 
 						goto bailout;
@@ -517,7 +517,7 @@ int64_t adr;
 						fs = RS4FuncStat_Error;
 
 						#ifdef DEBUG
-						printf( "%s:%04d: Error adding brance adr $%08lx\n", __FILE__, __LINE__, jmpadr );
+						printf( "%s:%04d: Error adding brance adr $%08" PRIx64 "\n", __FILE__, __LINE__, jmpadr );
 						#endif
 
 						goto bailout;
@@ -531,7 +531,7 @@ int64_t adr;
 						fs = RS4FuncStat_Error;
 
 						#ifdef DEBUG
-						printf( "%s:%04d: Error adding brance adr $%08lx\n", __FILE__, __LINE__, jmpadr );
+						printf( "%s:%04d: Error adding brance adr $%08" PRIx64 "\n", __FILE__, __LINE__, jmpadr );
 						#endif
 
 						goto bailout;
@@ -648,7 +648,7 @@ char argbuf[256];
 		// ec allready set
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error adding brance adr $%08lx\n", __FILE__, __LINE__, fh->rfh_StartAdr );
+		printf( "%s:%04d: Error adding brance adr $%08" PRIx64 "\n", __FILE__, __LINE__, fh->rfh_StartAdr );
 		#endif
 
 		goto bailout;

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -11,6 +11,7 @@
 
 // --
 // -- Mode 71 - move.l $00000004
+extern int leatst;
 
 inline static enum RS4DecodeStat MODE_71( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
 {
@@ -49,13 +50,13 @@ int pos;
 			ds = RS4DecodeStat_Error;
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error finding label at %08lx ($%08x)\n", __FILE__, __LINE__, rt->rt_CurMemAdr, val );
+			printf( "%s:%04d: Error finding label at $%08" PRIx64 " ($%08x)\n", __FILE__, __LINE__, rt->rt_CurMemAdr, val );
 			#endif
 
 			goto bailout;
 		}
 
-		if ( rl->rl_Name[0] )
+		if ( rt->rt_Pass != RS4TracePass_Trace )
 		{
 			fs = RS4BuildLabelString( & ec, rl, outstr );
 
@@ -73,11 +74,10 @@ int pos;
 		}
 		else
 		{
-			// Not an external as it has a Refs 
-			sprintf( outstr, "($%08x).l", val );
+			outstr[0] = 0;
 		}
 
-		if (( rl ) && ( rt->rt_CPU.M68k.mt_CurRegister ))
+		if ( rt->rt_CPU.M68k.mt_CurRegister )
 		{
 			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Label;
 			rt->rt_CPU.M68k.mt_CurRegister->mr_Label = rl;
@@ -89,18 +89,34 @@ int pos;
 		{
 			rl = RS4AddExtLabel( NULL, rt->rt_File, val );
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			// rwo: why no check?
+
+			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				sprintf( outstr, "%s", rl->rl_Name );
+				if (( rl ) && ( rl->rl_Name[0] ))
+				{
+					sprintf( outstr, "%s", rl->rl_Name );
+				}
+				else
+				{
+					sprintf( outstr, "($%08x).l", val );
+				}
 			}
 			else
 			{
-				sprintf( outstr, "($%08x).l", val );
+				outstr[0] = 0;
 			}
 		}
 		else
 		{
-			sprintf( outstr, "($%08x).l", val );
+			if ( rt->rt_Pass != RS4TracePass_Trace )
+			{
+				sprintf( outstr, "($%08x).l", val );
+			}
+			else
+			{
+				outstr[0] = 0;
+			}
 		}
 
 		if ( rt->rt_CPU.M68k.mt_CurRegister )

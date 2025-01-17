@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -38,21 +38,28 @@ int pos;
 	{
 		case M68KSIZE_Byte:
 		{
-			uint8_t val;
-
-			val = mem[pos+1] & 0x00ff;
-
-			/**/ if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Signed )	// Signed
+			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				sprintf( outstr, "#%d", val );
-			}
-			else if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Unsigned )	// Unsigned
-			{
-				sprintf( outstr, "#%u", val );
+				uint8_t val;
+
+				val = mem[pos+1] & 0x00ff;
+
+				/**/ if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Signed )	// Signed
+				{
+					sprintf( outstr, "#%d", val );
+				}
+				else if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Unsigned )	// Unsigned
+				{
+					sprintf( outstr, "#%u", val );
+				}
+				else
+				{
+					sprintf( outstr, "#$%02x", val );
+				}
 			}
 			else
 			{
-				sprintf( outstr, "#$%02x", val );
+				outstr[0] = 0;
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 2;
@@ -61,21 +68,28 @@ int pos;
 
 		case M68KSIZE_Word:
 		{
-			uint16_t val;
-
-			val = (( mem[pos] << 8 ) | ( mem[pos+1] << 0 ));
-
-			/**/ if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Signed )	// Signed
+			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				sprintf( outstr, "#%d", val );
-			}
-			else if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Unsigned )	// Unsigned
-			{
-				sprintf( outstr, "#%u", val );
+				uint16_t val;
+
+				val = (( mem[pos] << 8 ) | ( mem[pos+1] << 0 ));
+
+				/**/ if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Signed )	// Signed
+				{
+					sprintf( outstr, "#%d", val );
+				}
+				else if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Unsigned )	// Unsigned
+				{
+					sprintf( outstr, "#%u", val );
+				}
+				else
+				{
+					sprintf( outstr, "#$%04x", val );
+				}
 			}
 			else
 			{
-				sprintf( outstr, "#$%04x", val );
+				outstr[0] = 0;
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 2;
@@ -103,31 +117,62 @@ int pos;
 					ds = RS4DecodeStat_Error;
 
 					#ifdef DEBUG
-					printf( "%s:%04d: Error finding label at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					#endif
 
 					goto bailout;
 				}
 
-				if ( rl->rl_Name[0] )
+				if ( rt->rt_Pass != RS4TracePass_Trace )
 				{
-					fs = RS4BuildLabelString( & ec, rl, labname );
-
-					if ( fs != RS4FuncStat_Okay )
+					if ( rl->rl_Name[0] )
 					{
-						// ec allready set
-						ds = RS4DecodeStat_Error;
+						fs = RS4BuildLabelString( & ec, rl, labname );
 
-						#ifdef DEBUG
-						printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-						#endif
+						if ( fs != RS4FuncStat_Okay )
+						{
+							// ec allready set
+							ds = RS4DecodeStat_Error;
 
-						goto bailout;
+							#ifdef DEBUG
+							printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
+							#endif
+
+							goto bailout;
+						}
+
+						sprintf( outstr, "#%s", labname );
 					}
-
-					sprintf( outstr, "#%s", labname );
+					else
+					{
+						/**/ if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Signed )	// Signed
+						{
+							sprintf( outstr, "#%d", adr );
+						}
+						else if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Unsigned )	// Unsigned
+						{
+							sprintf( outstr, "#%u", adr );
+						}
+						else
+						{
+							sprintf( outstr, "#$%08x", adr );
+						}
+					}
 				}
 				else
+				{
+					outstr[0] = 0;
+				}
+
+				if (( rl ) && ( rt->rt_CPU.M68k.mt_CurRegister ))
+				{
+					rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Label;
+					rt->rt_CPU.M68k.mt_CurRegister->mr_Label = rl;
+				}
+			}
+			else
+			{
+				if ( rt->rt_Pass != RS4TracePass_Trace )
 				{
 					/**/ if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Signed )	// Signed
 					{
@@ -142,26 +187,9 @@ int pos;
 						sprintf( outstr, "#$%08x", adr );
 					}
 				}
-
-				if (( rl ) && ( rt->rt_CPU.M68k.mt_CurRegister ))
-				{
-					rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Label;
-					rt->rt_CPU.M68k.mt_CurRegister->mr_Label = rl;
-				}
-			}
-			else
-			{
-				/**/ if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Signed )	// Signed
-				{
-					sprintf( outstr, "#%d", adr );
-				}
-				else if ( rt->rt_CPU.M68k.mt_DecMode == M68kDecMode_Unsigned )	// Unsigned
-				{
-					sprintf( outstr, "#%u", adr );
-				}
 				else
 				{
-					sprintf( outstr, "#$%08x", adr );
+					outstr[0] = 0;
 				}
 
 				if ( rt->rt_CPU.M68k.mt_CurRegister )
@@ -179,13 +207,20 @@ int pos;
 		{
 			// Bits: 1 sign, 8 expo, 23 frac
 
-			sprintf( outstr, "#$" );
-
-			for( int cnt=0 ; cnt<4 ; cnt++ )
+			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				int len = strlen( outstr );
+				sprintf( outstr, "#$" );
 
-				sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+				for( int cnt=0 ; cnt<4 ; cnt++ )
+				{
+					int len = strlen( outstr );
+
+					sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+				}
+			}
+			else
+			{
+				outstr[0] = 0;
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 4;
@@ -196,13 +231,20 @@ int pos;
 		{
 			// Bits: 1 sign, 11 expo, 52 frac
 
-			sprintf( outstr, "#$" );
-
-			for( int cnt=0 ; cnt<8 ; cnt++ )
+			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				int len = strlen( outstr );
+				sprintf( outstr, "#$" );
 
-				sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+				for( int cnt=0 ; cnt<8 ; cnt++ )
+				{
+					int len = strlen( outstr );
+
+					sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+				}
+			}
+			else
+			{
+				outstr[0] = 0;
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 8;
@@ -213,13 +255,20 @@ int pos;
 		{
 			// Bits: 1 sign, 15 expo, 16 ZERO, 64 mantissa
 
-			sprintf( outstr, "#$" );
-
-			for( int cnt=0 ; cnt<12 ; cnt++ )
+			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				int len = strlen( outstr );
+				sprintf( outstr, "#$" );
 
-				sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+				for( int cnt=0 ; cnt<12 ; cnt++ )
+				{
+					int len = strlen( outstr );
+
+					sprintf( & outstr[len], "%02x", mem[pos+cnt] );
+				}
+			}
+			else
+			{
+				outstr[0] = 0;
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 12;
@@ -230,7 +279,7 @@ int pos;
 
 		default:
 		{
-			printf( "%s:%04d: Unsupported EA mode at %08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+			printf( "%s:%04d: Unsupported EA mode at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 
 			ec = RS4ErrStat_Internal;
 			ds = RS4DecodeStat_Error;

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -77,6 +77,8 @@ int hash;
 	rr	= NULL;
 	new	= NULL;
 
+if ( offset < 0x0000daf8 && offset > 0x0000daf0 )	{ printf( "add ref : Offset $%08" PRIx64 "\n", offset ); }
+
 	// --
 
 	#ifdef DEBUG
@@ -109,8 +111,22 @@ int hash;
 
 	if ( Verbose > 1 )
 	{
-		printf( "New Ref   : Hunk #%d : Address $%08lx\n", sec->rfs_SecNr, new->rr_Address );
+		printf( "New Ref   : Hunk #%d : Address $%08" PRIx64 "\n", sec->rfs_SecNr, new->rr_Address );
 	}
+
+//	#ifdef DEBUG
+
+	if ( 0 > offset )
+	{
+		printf( "## Warning ## : New Ref 1 : Offset : %" PRId64 "\n", offset );
+	}
+
+	if ( sec->rfs_MemorySize < offset )
+	{
+		printf( "## Warning ## : New Ref 2 : Offset : %" PRId64 "\n", offset );
+	}
+
+//	#endif
 
 	// --
 
@@ -215,7 +231,7 @@ RS4Ref *rr;
 
 	if ( adr1 > adr2 )
 	{
-		printf( "%s:%04d: Error Invalid Addresses $%08lx-$%08lx\n", __FILE__, __LINE__, adr1, adr2 );
+		printf( "%s:%04d: Error Invalid Addresses $%08" PRIx64 "-$%08" PRIx64 "\n", __FILE__, __LINE__, adr1, adr2 );
 		return( NULL );
 	}
 

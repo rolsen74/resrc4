@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -15,6 +15,8 @@
 
 // --
 
+int leatst = 0;
+
 enum RS4DecodeStat M68kCmd_LEA( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
@@ -22,6 +24,8 @@ enum RS4ErrorCode ec;
 struct M68kRegister *src;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Lea";
+
+	leatst = 1;
 
 	// --
 
@@ -83,6 +87,8 @@ bailout:
 	{
 		*errcode = ec;
 	}
+
+	leatst = 0;
 
 	return( ds );
 }

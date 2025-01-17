@@ -194,3 +194,8 @@ ReSrc4 v2.11 ( 16-Jan-2025 )
   So now you can see lx / ld is changed to PRIx64 / PRId64 in the source.
 
 - Fixed a lot of white spaces in the M68k Opcode table.
+
+
+ReSrc4 v2.12 ( 16-Jan-2025 )
+
+- Bumped copyright year to 2025

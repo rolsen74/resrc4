@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -57,26 +57,33 @@ int pos;
 		}
 	}
 
-	if (( rl ) && ( rl->rl_Name[0] ))
+	if ( rt->rt_Pass != RS4TracePass_Trace )
 	{
-		fs = RS4BuildLabelString( & ec, rl, labname );
-
-		if ( fs != RS4FuncStat_Okay )
+		if (( rl ) && ( rl->rl_Name[0] ))
 		{
-			// ec allready set
+			fs = RS4BuildLabelString( & ec, rl, labname );
 
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
+			if ( fs != RS4FuncStat_Okay )
+			{
+				// ec allready set
 
-			goto bailout;
+				#ifdef DEBUG
+				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+				#endif
+
+				goto bailout;
+			}
+
+			sprintf( outstr, "(%s,PC)", labname );
 		}
-
-		sprintf( outstr, "(%s,PC)", labname );
+		else
+		{
+			sprintf( outstr, "($%08x,PC)", adr );
+		}
 	}
 	else
 	{
-		sprintf( outstr, "($%08x,PC)", adr );
+		outstr[0] = 0;
 	}
 
 	if (( rl ) && ( rt->rt_CPU.M68k.mt_CurRegister ))

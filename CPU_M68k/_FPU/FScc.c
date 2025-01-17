@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -62,7 +62,7 @@ int cond;
 
 	if ( cond > 0x1f )
 	{
-		printf( "Unsupported 'FScc' Opcode at %08lx\n", rt->rt_CurMemAdr );
+		printf( "Unsupported 'FScc' Opcode at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 		ds = RS4DecodeStat_Error;
 		goto bailout;
 	}
@@ -85,7 +85,7 @@ int cond;
 	rt->rt_CPU.M68k.mt_ArgEReg  = ereg;
 	rt->rt_CPU.M68k.mt_ArgSize	= 4;
 
-// printf( "FScc -> %s at %08lx\n",rt->rt_Container.Hunk.ms_Str_Opcode, rt->rt_CurMemAdr );
+// printf( "FScc -> %s at $%08" PRIx64 "\n",rt->rt_Container.Hunk.ms_Str_Opcode, rt->rt_CurMemAdr );
 
 	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 

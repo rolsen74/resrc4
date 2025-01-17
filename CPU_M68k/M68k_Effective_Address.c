@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -69,7 +69,7 @@ int pos;
 		case 0x06:
 		case 0x07:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x00 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x00 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			ds = MODE_00( & ec, rt, outstr );
 			break;
@@ -84,7 +84,7 @@ int pos;
 		case 0x16:
 		case 0x17:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x10 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x10 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			ds = MODE_10( & ec, rt, outstr );
 			break;
@@ -99,7 +99,7 @@ int pos;
 		case 0x26:
 		case 0x27:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x20 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x20 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			ds = MODE_20( & ec, rt, outstr );
 			break;
@@ -114,7 +114,7 @@ int pos;
 		case 0x36:
 		case 0x37:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x30 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x30 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			ds = MODE_30( & ec, rt, outstr );
 			break;
@@ -129,7 +129,7 @@ int pos;
 		case 0x46:
 		case 0x47:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x40 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x40 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			ds = MODE_40( & ec, rt, outstr );
 			break;
@@ -144,7 +144,7 @@ int pos;
 		case 0x56:
 		case 0x57:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x50 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x50 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			ds = MODE_50( & ec, rt, outstr );
 			break;
@@ -161,12 +161,12 @@ int pos;
 		{
 			if ( rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize ] & 0x01 )
 			{
-				DDEBUG( { printf( "%s:%04d: EA Mode 0x60 Full - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+				DDEBUG( { printf( "%s:%04d: EA Mode 0x60 Full - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 				// Full Extension Word Format
 				if ( rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize + 1 ] & 0x08 )
 				{
-					printf( "%s:%04d: 60_1 : Unsupported EA mode %02x at %08lx\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
+					printf( "%s:%04d: 60_1 : Unsupported EA mode %02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_UnknownCmd;
 				}
 				else
@@ -176,7 +176,7 @@ int pos;
 			}
 			else
 			{
-				DDEBUG( { printf( "%s:%04d: EA Mode 0x60 Breif - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+				DDEBUG( { printf( "%s:%04d: EA Mode 0x60 Breif - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 				// Brief Extension Word Format
 				ds = MODE_60_Brief( & ec, rt, outstr );
@@ -186,7 +186,7 @@ int pos;
 
 		case 0x70: // 111 000
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x70 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x70 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			// move.l $0004.w
 			// ( xxx ).W
@@ -196,7 +196,7 @@ int pos;
 
 		case 0x71: // 111 001
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x71 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x71 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			// move.l $00000004
 			// ( xxx ).L
@@ -206,7 +206,7 @@ int pos;
 
 		case 0x72: // 111 010
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x72 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x72 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			// Clr (xxxx.w,pc)
 			// ( d16, PC )
@@ -222,12 +222,12 @@ int pos;
 			// ( [ bd , PC , Xn.SIZE * SCALE ] , od )
 			if ( rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize ] & 0x01 )
 			{
-				DDEBUG( { printf( "%s:%04d: EA Mode 0x73 Full - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+				DDEBUG( { printf( "%s:%04d: EA Mode 0x73 Full - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 				// Full Extension Word Format
 				if ( rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize + 1 ] & 0x08 )
 				{
-					printf( "%s:%04d: 73_1 : Unsupported EA mode $%02x at %08lx\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
+					printf( "%s:%04d: 73_1 : Unsupported EA mode $%02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_UnknownCmd;
 				}
 				else
@@ -237,7 +237,7 @@ int pos;
 			}
 			else
 			{
-				DDEBUG( { printf( "%s:%04d: EA Mode 0x73 Breif - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+				DDEBUG( { printf( "%s:%04d: EA Mode 0x73 Breif - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 				// Brief Extension Word Format
 				ds = MODE_73_Brief( & ec, rt, outstr );
@@ -247,7 +247,7 @@ int pos;
 
 		case 0x74: // 111
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x74 - Adr: $%08lx\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG( { printf( "%s:%04d: EA Mode 0x74 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
 
 			// # <xxx>
 			ds = MODE_74( & ec, rt, outstr );
@@ -256,7 +256,7 @@ int pos;
 
 		default:
 		{
-			printf( "%s:%04d: Unsupported EA mode $%02x at %08lx\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
+			printf( "%s:%04d: Unsupported EA mode $%02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_UnknownCmd;
 			break;
 		}

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -121,7 +121,7 @@ RS4FileSection *sec;
 			ec = RS4ErrStat_OutOfMemory;
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error allocating memory (%ld Bytes)\n", __FILE__, __LINE__, memsize );
+			printf( "%s:%04d: Error allocating memory (%" PRId64 " Bytes)\n", __FILE__, __LINE__, memsize );
 			#endif
 
 			goto bailout;
@@ -134,7 +134,7 @@ RS4FileSection *sec;
 			ec = RS4ErrStat_OutOfMemory;
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error allocating memory (%ld Bytes)\n", __FILE__, __LINE__, memsize );
+			printf( "%s:%04d: Error allocating memory (%" PRId64 " Bytes)\n", __FILE__, __LINE__, memsize );
 			#endif
 
 			goto bailout;

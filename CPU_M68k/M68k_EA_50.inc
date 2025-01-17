@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -57,14 +57,21 @@ int pos;
 		lvostr = NULL;
 	}
 
-	if ( lvostr )
+	if ( rt->rt_Pass != RS4TracePass_Trace )
 	{
-		sprintf( outstr, "(%s,%s)", lvostr, Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+		if ( lvostr )
+		{
+			sprintf( outstr, "(%s,%s)", lvostr, Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+		}
+		else
+		{
+			// Most proberly a Library call, so we use Decimal
+			sprintf( outstr, "(%d,%s)", val, Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+		}
 	}
 	else
 	{
-		// Most proberly a Library call, so we use Decimal
-		sprintf( outstr, "(%d,%s)", val, Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+		outstr[0] = 0;
 	}
 
 	rt->rt_CPU.M68k.mt_ArgSize += 2;

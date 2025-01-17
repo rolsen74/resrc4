@@ -1,6 +1,6 @@
  
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -208,7 +208,7 @@ int cnt;
 
 		default:
 		{
-			printf( "Setting Label : '%s', At %08lx to %08x\n", rl->rl_Name, rl->rl_Address, myTypes[cnt].Type );
+			printf( "Setting Label : '%s', At $%08" PRIx64 " to %08x\n", rl->rl_Name, rl->rl_Address, myTypes[cnt].Type );
 			break;
 		}
 	}
@@ -625,7 +625,7 @@ int pos;
 	{
 		// ec allready set
 		fs = RS4FuncStat_Error;
-		printf( "Line %d : LabelName : Error adding label at $%08lx\n", linenr, adr );
+		printf( "Line %d : LabelName : Error adding label at $%08" PRIx64 "\n", linenr, adr );
 		goto bailout;
 	}
 
@@ -670,7 +670,7 @@ int pos;
 			if ( fs != RS4FuncStat_Okay )
 			{
 				// ec allready set
-				printf( "Line %d : LabelName : Error setting label type at $%08lx\n", linenr, adr );
+				printf( "Line %d : LabelName : Error setting label type at $%08" PRIx64 "\n", linenr, adr );
 				goto bailout;
 			}
 
@@ -751,7 +751,7 @@ int pos;
 	{
 		// ec allready set
 		fs = RS4FuncStat_Error;
-		printf( "Line %d : LabelType : Error adding label at $%08lx\n", linenr, adr );
+		printf( "Line %d : LabelType : Error adding label at $%08" PRIx64 "\n", linenr, adr );
 		goto bailout;
 	}
 
@@ -765,7 +765,7 @@ int pos;
 	||	( buf[pos] == 13 )
 	||	( buf[pos] == ';' ))
 	{
-		printf( "Line %d : LabelType : Error Missing Command at $%08lx\n", linenr, adr );
+		printf( "Line %d : LabelType : Error Missing Command at $%08" PRIx64 "\n", linenr, adr );
 		goto bailout;
 	}
 
@@ -782,7 +782,7 @@ int pos;
 		||	( buf[pos] == 10 )
 		||	( buf[pos] == ';' ))
 		{
-			printf( "Line %d : LabelType : Error Missing Command Argument at $%08lx\n", linenr, adr );
+			printf( "Line %d : LabelType : Error Missing Command Argument at $%08" PRIx64 "\n", linenr, adr );
 			goto bailout;
 		}
 
@@ -792,7 +792,7 @@ int pos;
 		{
 			// ec allready set
 			fs = RS4FuncStat_Error;
-			printf( "Line %d : LabelType : Error adding label at $%08lx\n", linenr, adr );
+			printf( "Line %d : LabelType : Error adding label at $%08" PRIx64 "\n", linenr, adr );
 			goto bailout;
 		}
 
@@ -801,13 +801,13 @@ int pos;
 		if ( fs != RS4FuncStat_Okay )
 		{
 			// ec allready set
-			printf( "Line %d : LabelType : Error Unsupported Command Argument at $%08lx\n", linenr, adr );
+			printf( "Line %d : LabelType : Error Unsupported Command Argument at $%08" PRIx64 "\n", linenr, adr );
 			goto bailout;
 		}
 	}
 	else
 	{
-		printf( "Line %d : LabelType : Error Unsupported Command at $%08lx\n", linenr, adr );
+		printf( "Line %d : LabelType : Error Unsupported Command at $%08" PRIx64 "\n", linenr, adr );
 		goto bailout;
 	}
 
@@ -969,7 +969,7 @@ int pos;
 		// ec allready set
 
 		#ifdef DEBUG
-		printf( "Line %d : Code : Error adding code brance (Adr: $%08lx)\n", linenr, adr );
+		printf( "Line %d : Code : Error adding code brance (Adr: $%08" PRIx64 ")\n", linenr, adr );
 		#endif
 
 		goto bailout;
@@ -1623,9 +1623,12 @@ enum RS4FuncStat fs;
 RS4FileHeader *cfgfile;
 char response[10];
 int create;
+int loaded;
 
 	fs = RS4FuncStat_Error;
 	ec = RS4ErrStat_Error;
+
+	loaded = FALSE;
 
 	cfgfile = NULL;
 
@@ -1704,6 +1707,10 @@ int create;
 		// -- Now load Config file
 		cfgfile = RS4LoadFile( & ec, ConfigFile );
 	}
+	else
+	{
+		loaded = TRUE;
+	}
 
 	if ( ! cfgfile )
 	{
@@ -1714,6 +1721,11 @@ int create;
 		#endif
 
 		goto bailout;
+	}
+
+	if (( loaded ) && ( Verbose ))
+	{
+		printf( "Loaded '%s' (%" PRId64 " bytes)\n", ConfigFile, cfgfile->rfh_FileSize );
 	}
 
 	// -- Parse Config File

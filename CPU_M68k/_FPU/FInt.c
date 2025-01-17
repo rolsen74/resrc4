@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -126,7 +126,7 @@ int len;
 
 		default:
 		{
-			printf( "Unsupported 'FInt2' Opcode (Size %d) at %08lx\n", src, rt->rt_CurMemAdr );
+			printf( "Unsupported 'FInt2' Opcode (Size %d) at $%08" PRIx64 "\n", src, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}

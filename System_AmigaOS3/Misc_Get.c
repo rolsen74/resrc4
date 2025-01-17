@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -94,7 +94,7 @@ uint32_t val;
 		#ifdef DEBUG
 		if (( cur->mr_Type1 == RRT_Label ) && ( ! cur->mr_Label ))
 		{
-			printf( "Reg Label is NULL $%08lx\n", rt->rt_CurMemAdr );
+			printf( "Reg Label is NULL $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 			printf( "Opcode: %s\n", rt->rt_Container.Hunk.ms_Str_Opcode );
 		}
 		#endif
@@ -108,7 +108,7 @@ uint32_t val;
 		#ifdef DEBUG
 		if (( cur->mr_Type1 == RRT_Label ) && ( ! cur->mr_Label ))
 		{
-			printf( "Reg Label is NULL $%08lx\n", rt->rt_CurMemAdr );
+			printf( "Reg Label is NULL $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 			printf( "Opcode: %s\n", rt->rt_Container.Hunk.ms_Str_Opcode );
 		}
 		#endif

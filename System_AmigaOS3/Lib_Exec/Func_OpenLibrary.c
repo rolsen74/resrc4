@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2024 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -145,7 +145,7 @@ int pos;
 
 		if ( rt->rt_Pass == RS4TracePass_Trace )
 		{
-			printf( "Unsupported %s library found at $%08lx\n", buf, rt->rt_CurMemAdr );
+			printf( "Unsupported %s library found at $%08" PRIx64 "\n", buf, rt->rt_CurMemAdr );
 		}
 	}
 
