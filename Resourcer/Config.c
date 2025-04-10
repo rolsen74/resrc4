@@ -1723,7 +1723,7 @@ int loaded;
 		goto bailout;
 	}
 
-	if (( loaded ) && ( Verbose ))
+	if (( loaded ) && ( DoVerbose > 0 ))
 	{
 		printf( "Loaded '%s' (%" PRId64 " bytes)\n", ConfigFile, cfgfile->rfh_FileSize );
 	}

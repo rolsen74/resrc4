@@ -1105,7 +1105,7 @@ int cnt;
 
 	memset( & type[pos], RS4MT_Code, jt->DataSize );
 
-	if ( Verbose )
+	if ( DoVerbose > 1 )
 	{
 		printf( "Found Jump Table #%d at $%08" PRIx64 "\n", count, rt->rt_CurMemAdr );
 	}
@@ -1185,7 +1185,10 @@ int pos;
 		if ( ! jt )
 		{
 			// Not Found, is not an error
-			printf( "Possible new type of Jump Table at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
+			if ( DoVerbose > 1 )
+			{
+				printf( "Possible new type of Jump Table at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
+			}
 			break;
 		}
 

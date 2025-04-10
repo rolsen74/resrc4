@@ -109,7 +109,7 @@ if ( offset < 0x0000daf8 && offset > 0x0000daf0 )	{ printf( "add ref : Offset $%
 	new->rr_Address = offset + sec->rfs_MemoryAdr;
 	new->rr_Offset	= offset;
 
-	if ( Verbose > 1 )
+	if ( DoVerbose > 3 )
 	{
 		printf( "New Ref   : Hunk #%d : Address $%08" PRIx64 "\n", sec->rfs_SecNr, new->rr_Address );
 	}

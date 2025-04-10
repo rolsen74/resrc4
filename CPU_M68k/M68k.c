@@ -1119,7 +1119,7 @@ uint8_t *mem;
 		ds = RS4DecodeStat_UnknownCmd;
 	}
 
-	if ( Verbose > 1 )
+	if ( DoVerbose > 3 )
 	{
 		char lebuf[16];
 		int ii;

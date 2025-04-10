@@ -205,3 +205,14 @@ ReSrc4 v2.12 ( 17-Jan-2025 )
   correctly.. ie. Sec_0001-12 would be converted to ($12345678).l and
   you would loose a Reloc when assembled again.
 
+
+ReSrc4 v2.13 ( 10-Apr-2025 )
+
+- Changed code for parsing of Options.
+
+- Changed the output level.. you can control it with options 
+  -v0 = Off (only errors)
+  -v1 = Minimum (default)
+  -v2 = extra info (hunk)
+  -v3 = even more
+  -v4 = alot

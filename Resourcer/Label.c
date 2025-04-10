@@ -214,7 +214,7 @@ int hash;
 	new->rl_Offset		= addr - sec->rfs_MemoryAdr;
 	new->rl_Memory		= & sec->rfs_MemoryBuf[ new->rl_Offset ];
 
-	if ( Verbose > 1 )
+	if ( DoVerbose > 3 )
 	{
 		printf( "New Label : Hunk #%d : Address $%08" PRIx64 "\n", sec->rfs_SecNr, addr );
 	}
@@ -300,7 +300,7 @@ int hash;
 		}
 	}
 
-	if ( Verbose > 1 )
+	if ( DoVerbose > 2 )
 	{
 		if ( ! rl )
 		{

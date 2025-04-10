@@ -26,10 +26,10 @@
 
 // --
 
-#define DATE				"17-Jan-2025"
+#define DATE				"10-Apr-2025"
 #define YEAR				2025
 #define VERSION				2
-#define REVISION			12
+#define REVISION			13
 
 #define MAX_REF_HASH		29			// Prime Nr .. bigger value more memory pr. HunkNode
 #define MAX_LAB_HASH		83			// Prime Nr .. Global Label Hash
@@ -634,7 +634,7 @@ extern int ShortOpcodes;
 extern int OpcodeTabs;
 extern int AutoAnser;
 extern int DebugInfo;
-extern int Verbose;
+extern int DoVerbose;
 extern int LabTabs;
 extern int ArgTabs;
 

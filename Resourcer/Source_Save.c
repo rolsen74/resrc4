@@ -770,7 +770,10 @@ bailout:
 		{
 			fclose( SaveHandle );
 
-			printf( "Saved %s (%d bytes)\n", filename, (int) SavedBytes );
+			if ( DoVerbose > 0 )
+			{
+				printf( "Saved %s (%d bytes)\n", filename, (int) SavedBytes );
+			}
 		}
 
 		SaveHandle = NULL;

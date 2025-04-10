@@ -23,7 +23,7 @@ char *					InputFile		= NULL;
 char *					OutputFile		= NULL;
 char *					ConfigFile		= NULL;
 
-int						Verbose			= FALSE;
+int						DoVerbose		= 1;
 int						LabTabs			= 1;
 int						OpcodeTabs		= 2;
 int						ArgTabs			= 5;
@@ -66,7 +66,10 @@ enum RS4FuncStat fs;
 		goto bailout;
 	}
 
-printf( "11 - Load and Parse Hunk File\n" );
+	if ( DoVerbose > 1 )
+	{
+		printf( "11 - Load and Parse Hunk File\n" );
+	}
 
 	RS4FileData = RS4LoadExe( & ec, InputFile );
 
@@ -75,7 +78,10 @@ printf( "11 - Load and Parse Hunk File\n" );
 		goto bailout;
 	}
 
-printf( "22 - Load and Parse Config\n" );
+	if ( DoVerbose > 1 )
+	{
+		printf( "22 - Load and Parse Config\n" );
+	}
 
 	fs = RS4ParseConfig_File( & ec, RS4FileData );
 
@@ -84,7 +90,10 @@ printf( "22 - Load and Parse Config\n" );
 		goto bailout;
 	}
 
-printf( "33 - Trace Memory\n" );
+	if ( DoVerbose > 1 )
+	{
+		printf( "33 - Trace Memory\n" );
+	}
 
 	fs = RS4Trace_File( & ec, RS4FileData );
 
@@ -93,7 +102,10 @@ printf( "33 - Trace Memory\n" );
 		goto bailout;
 	}
 
-printf( "44 - Label Adjust\n" );
+	if ( DoVerbose > 1 )
+	{
+		printf( "44 - Label Adjust\n" );
+	}
 
 	fs = RS4LabelMagic_File( & ec, RS4FileData );
 
@@ -102,7 +114,10 @@ printf( "44 - Label Adjust\n" );
 		goto bailout;
 	}
 
-printf( "55 - Build Source\n" );
+	if ( DoVerbose > 1 )
+	{
+		printf( "55 - Build Source\n" );
+	}
 
 	fs = RS4BuildSource_File( & ec, RS4FileData );
 
@@ -111,7 +126,10 @@ printf( "55 - Build Source\n" );
 		goto bailout;
 	}
 
-printf( "66 - Save Source\n" );
+	if ( DoVerbose > 1 )
+	{
+		printf( "66 - Save Source\n" );
+	}
 
 	fs = RS4SaveSource_File( & ec, RS4FileData, OutputFile );
 
@@ -120,7 +138,10 @@ printf( "66 - Save Source\n" );
 		goto bailout;
 	}
 
-printf( "77 - Done Yay\n" );
+	if ( DoVerbose > 1 )
+	{
+		printf( "77 - Done Yay\n" );
+	}
 
 bailout:
 

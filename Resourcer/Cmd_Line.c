@@ -142,20 +142,33 @@ enum RS4FuncStat fs;
 	return( fs );
 }
 
-// --
+/* -- */
 
-static enum RS4FuncStat ArgFunc_Verbose( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_Verbose0( char *arg UNUSED )
 {
 enum RS4FuncStat fs;
 
 	fs = RS4FuncStat_Okay;
 
-	Verbose = 1;
+	DoVerbose = 0;	// Off
 
 	return( fs );
 }
 
-// --
+/* -- */
+
+static enum RS4FuncStat ArgFunc_Verbose1( char *arg UNUSED )
+{
+enum RS4FuncStat fs;
+
+	fs = RS4FuncStat_Okay;
+
+	DoVerbose = 1;	// Normal
+
+	return( fs );
+}
+
+/* -- */
 
 static enum RS4FuncStat ArgFunc_Verbose2( char *arg UNUSED )
 {
@@ -163,12 +176,38 @@ enum RS4FuncStat fs;
 
 	fs = RS4FuncStat_Okay;
 
-	Verbose = 2;
+	DoVerbose = 2;	// Extra
 
 	return( fs );
 }
 
-// --
+/* -- */
+
+static enum RS4FuncStat ArgFunc_Verbose3( char *arg UNUSED )
+{
+enum RS4FuncStat fs;
+
+	fs = RS4FuncStat_Okay;
+
+	DoVerbose = 3;	// even more
+
+	return( fs );
+}
+
+/* -- */
+
+static enum RS4FuncStat ArgFunc_Verbose4( char *arg UNUSED )
+{
+enum RS4FuncStat fs;
+
+	fs = RS4FuncStat_Okay;
+
+	DoVerbose = 4;	// alot
+
+	return( fs );
+}
+
+/* -- */
 
 static enum RS4FuncStat ArgFunc_Short( char *arg UNUSED )
 {
@@ -202,6 +241,11 @@ enum RS4FuncStat fs;
 		goto bailout;
 	}
 
+	if ( DoVerbose > 2 )
+	{
+		printf( "Config File : %s\n", ConfigFile );
+	}
+
 	fs = RS4FuncStat_Okay;
 
 bailout:
@@ -228,6 +272,11 @@ enum RS4FuncStat fs;
 	{
 		printf( "%s:%04d: Error copying string\n", __FILE__, __LINE__ );
 		goto bailout;
+	}
+
+	if ( DoVerbose > 2 )
+	{
+		printf( "Input File : %s\n", InputFile );
 	}
 
 	fs = RS4FuncStat_Okay;
@@ -258,6 +307,11 @@ enum RS4FuncStat fs;
 		goto bailout;
 	}
 
+	if ( DoVerbose > 2 )
+	{
+		printf( "Output File : %s\n", OutputFile );
+	}
+
 	fs = RS4FuncStat_Okay;
 
 bailout:
@@ -265,33 +319,44 @@ bailout:
 	return( fs );
 }
 
-// --
+/* -- */
+
+#define ARGTYPES	3
 
 struct myArgs
 {
-	char *	Name1;
-	char *	Name2;
-	int		Options;
-	enum RS4FuncStat (*Function)( char *arg );
+	const char *		Name1;
+	const char *		Name2;
+	int					Type;		// 0 = verbose, 1 = config, 2 = Normal
+	int					Options;
+	enum RS4FuncStat	(*Function)( char *arg );
 };
 
 // -- Early Options before Config file
 struct myArgs myOptions[] =
 {
-{ "-i", "--input",		1, ArgFunc_Input },
-{ "-o", "--output",		1, ArgFunc_Output },
-{ "-c", "--config",		1, ArgFunc_Config },
-{ "-y", "--yes",		0, ArgFunc_AutoYes },
-{ "-n", "--no",			0, ArgFunc_AutoNo },
-{ NULL, "--short",		0, ArgFunc_Short },
-{ NULL, "--debuginfo",	0, ArgFunc_DebugInfo },
-{ "-v", "--verbose",	0, ArgFunc_Verbose },
-{ "-v1",NULL,			0, ArgFunc_Verbose },
-{ "-v2","--verbose2",	0, ArgFunc_Verbose2 },
-{ NULL, "--labtabs",	1, ArgFunc_LabTabs },
-{ NULL, "--opcodetabs",	1, ArgFunc_OpcodeTabs },
-{ NULL, "--argtabs",	1, ArgFunc_ArgTabs },
-{ NULL,	NULL, 0, NULL }
+// Normal Options
+{ "-i", "--input",			2, 1, ArgFunc_Input },
+{ "-o", "--output",			2, 1, ArgFunc_Output },
+{ "-y", "--yes",			2, 0, ArgFunc_AutoYes },
+{ "-n", "--no",				2, 0, ArgFunc_AutoNo },
+{ NULL, "--short",			2, 0, ArgFunc_Short },
+{ NULL, "--debuginfo",		2, 0, ArgFunc_DebugInfo },
+{ NULL, "--labtabs",		2, 1, ArgFunc_LabTabs },
+{ NULL, "--opcodetabs",		2, 1, ArgFunc_OpcodeTabs },
+{ NULL, "--argtabs",		2, 1, ArgFunc_ArgTabs },
+
+// Config Options
+{ "-c", "--config",			1, 1, ArgFunc_Config },
+
+// Verbose Options
+{ "-v", "--verbose",		0, 0, ArgFunc_Verbose2 },
+{ "-v0", NULL,				0, 0, ArgFunc_Verbose0 },
+{ "-v1", NULL,				0, 0, ArgFunc_Verbose1 },
+{ "-v2", NULL,				0, 0, ArgFunc_Verbose2 },
+{ "-v3", NULL,				0, 0, ArgFunc_Verbose3 },
+{ "-v4", NULL,				0, 0, ArgFunc_Verbose4 },
+{ NULL,	NULL,				0, 0, NULL }
 };
 
 // --
@@ -316,66 +381,96 @@ void RS4PrintUsage( void )
 	printf( "      --opcodetabs     Number of Tabs after opcodes (Default 2)\n" );
 	printf( "      --argtabs        Number of Tabs after arguments (Default 5)\n" );
 	printf( "  -v  --verbose        Print extra information\n" );
-	printf( " -v2  --verbose2       Print even more information\n" );
 	printf( "\n" );
 }
 
-// --
+/* -- */
 
-enum RS4FuncStat RS4ParseArgs( enum RS4ErrorCode *errcode, int argc, char *argv[] )
+static int _ParseList( struct myArgs *args, int argc, char *argv[], int type )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat cmdstat;
-enum RS4FuncStat fs;
+struct myArgs *arg;
+int error;
+int stat;
+int skip;
 int pos;
 int cnt;
 
-	fs = RS4FuncStat_Error;
-	ec = RS4ErrStat_Error;
+	error = true;
 
 	for( cnt=1 ; cnt<argc ; cnt++ )
 	{
 		pos = 0;
 
-		while( TRUE )
+		skip = FALSE;
+
+		while( true )
 		{
+			arg = & args[pos];
+
 			// End of List?
-			if (( myOptions[pos].Name1 == NULL )
-			&&	( myOptions[pos].Name2 == NULL ))
+			if (( ! arg->Name1 ) && ( ! arg->Name2 ))
 			{
 				break;
 			}
 
 			// Found Argument?
-			if ((( myOptions[pos].Name1 ) && ( strcmp( myOptions[pos].Name1, argv[cnt] ) == 0 ))
-			||  (( myOptions[pos].Name2 ) && ( strcmp( myOptions[pos].Name2, argv[cnt] ) == 0 )))
+			if ((( arg->Name1 ) && ( ! strcmp( arg->Name1, argv[cnt] )))
+			||  (( arg->Name2 ) && ( ! strcmp( arg->Name2, argv[cnt] ))))
 			{
-				if ( cnt+myOptions[pos].Options >= argc )
-				{
-					printf( "\nMissing argument for %s\n", argv[cnt] );
-					RS4PrintUsage();
-					goto bailout;
-				}					
+				skip = TRUE;
 
-				cmdstat = myOptions[pos].Function( argv[cnt+1] );
-
-				if ( cmdstat != RS4FuncStat_Okay )
+				if ( arg->Type == type )
 				{
-					goto bailout;
+					if ( cnt+arg->Options >= argc )
+					{
+						printf( "\nMissing argument for %s\n", argv[cnt] );
+						RS4PrintUsage();
+						goto bailout;
+					}					
+
+					stat = arg->Function( argv[cnt+1] );
+
+					if ( stat )
+					{
+						goto bailout;
+					}
 				}
 
-				cnt += myOptions[pos].Options;
+				cnt += arg->Options;
 				break;
 			}
 
 			pos++;
 		}
 
-		if (( myOptions[pos].Name1 == NULL )
-		&&	( myOptions[pos].Name2 == NULL ))
+		if ( ! skip )
 		{
 			printf( "\nUnknown argument : %s\n", argv[cnt] );
 			RS4PrintUsage();
+			goto bailout;
+		}
+	}
+
+	error = false;
+
+bailout:
+
+	return( error );
+}
+
+enum RS4FuncStat RS4ParseArgs( enum RS4ErrorCode *errcode, int argc, char *argv[] )
+{
+enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
+int cnt;
+
+	ec = RS4ErrStat_Error;
+	fs = RS4FuncStat_Error;
+
+	for( cnt=0 ; cnt < ARGTYPES ; cnt++ )
+	{
+		if ( _ParseList( myOptions, argc, argv, cnt ))
+		{
 			goto bailout;
 		}
 	}
@@ -397,7 +492,7 @@ int cnt;
 	if (( InputFile == OutputFile ) || ( ! strcmp( InputFile, OutputFile )))
 	{
 		ec = RS4ErrStat_SameInOutFile;
-		printf( "\nInput and output filename must not be the same\n\n" );
+		printf( "Input and output filename must not be the same\n" );
 		goto bailout;
 	}
 

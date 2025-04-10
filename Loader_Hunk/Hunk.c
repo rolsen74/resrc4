@@ -630,7 +630,7 @@ int cnt;
 			case HUNK_CODE:
 			case HUNK_DATA:
 			{
-				if ( Verbose )
+				if ( DoVerbose > 1 )
 				{
 					printf( "\nHunk Number ....... : #%d\n", cnt );
 
@@ -643,7 +643,7 @@ int cnt;
 						printf( "Hunk ID ........... : [$%04X] HUNK_DATA\n", hunktype );
 					}
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( "File Offset ....... : $%08x\n", hps.pos*4 );
 					}
@@ -661,7 +661,7 @@ int cnt;
 				val32 = PEEK_U32(1);
 				size = val32;
 
-				if ( Verbose > 1 )
+				if ( DoVerbose > 2 )
 				{
 					printf( "Hunk Size ......... : $%08x (%d)\n", size*4, size*4 );
 				}
@@ -692,12 +692,12 @@ int cnt;
 
 			case HUNK_BSS:
 			{
-				if ( Verbose )
+				if ( DoVerbose > 1 )
 				{
 					printf( "\nHunk Number ....... : #%d\n", cnt );
 					printf( "Hunk ID ........... : [$%04X] HUNK_BSS\n", hunktype );
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( "File Offset ....... : $%08x\n", hps.pos*4 );
 					}
@@ -722,11 +722,11 @@ int cnt;
 
 			case HUNK_RELOC32:
 			{
-				if ( Verbose )
+				if ( DoVerbose > 1 )
 				{
 					printf( "Hunk ID ........... : [$%04X] HUNK_RELOC32\n", hunktype );
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( "File Offset ....... : $%08x\n", hps.pos*4 );
 					}
@@ -745,7 +745,7 @@ int cnt;
 				{
 					numreloc = READ_U32();
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( " Relocs ........... : #%d\n", numreloc );
 					}
@@ -757,7 +757,7 @@ int cnt;
 
 					hunknum = READ_U32();
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( " Reloc Target ..... : #%d\n", hunknum );
 					}
@@ -777,7 +777,7 @@ int cnt;
 					{
 						offset = READ_U32(); // & 0x7fffffff;
 
-						if ( Verbose > 1 )
+						if ( DoVerbose > 2 )
 						{
 							printf( " Reloc Offset .1... : $%08" PRIx64 " #%d\n", offset, relcnt++ );
 						}
@@ -833,11 +833,11 @@ int cnt;
 
 			case HUNK_END:
 			{
-				if ( Verbose )
+				if ( DoVerbose > 1 )
 				{
 					printf( "Hunk ID ........... : [$%04X] HUNK_END\n", hunktype );
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( "File Offset ....... : $%08x\n", hps.pos*4 );
 					}
@@ -873,11 +873,11 @@ int cnt;
 
 			case HUNK_DEBUG:
 			{
-				if ( Verbose )
+				if ( DoVerbose > 1 )
 				{
 					printf( "Hunk ID ........... : [$%04X] HUNK_DEBUG\n", hunktype );
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( "File Offset ....... : $%08x\n", hps.pos*4 );
 					}
@@ -886,7 +886,7 @@ int cnt;
 				val32 = PEEK_U32(1);
 				hps.pos += val32+2;
 
-				if ( Verbose > 1 )
+				if ( DoVerbose > 2 )
 				{
 					printf( "Hunk Size ......... : %d\n", val32*4 );
 				}
@@ -895,11 +895,11 @@ int cnt;
 
 			case HUNK_SYMBOL:
 			{
-				if ( Verbose )
+				if ( DoVerbose > 1 )
 				{
 					printf( "Hunk ID ........... : [$%04X] HUNK_SYMBOL\n", hunktype );
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( "File Offset ....... : $%08x\n", hps.pos*4 );
 					}
@@ -967,7 +967,7 @@ int cnt;
 			case HUNK_DREL32:
 			case HUNK_RELOC32SHORT:
 			{
-				if ( Verbose )
+				if ( DoVerbose > 1 )
 				{
 					if ( hunktype == HUNK_DREL32 )
 					{
@@ -978,7 +978,7 @@ int cnt;
 						printf( "Hunk ID ........... : [$%04X] HUNK_RELOC32SHORT\n", hunktype );
 					}
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( "File Offset ....... : $%08x\n", hps.pos*4 );
 					}
@@ -998,7 +998,7 @@ int cnt;
 				{
 					numreloc = READ_U16();
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( " Relocs ........... : #%d\n", numreloc );
 					}
@@ -1010,7 +1010,7 @@ int cnt;
 
 					hunknum = READ_U16();
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( " Reloc Target ..... : #%d\n", hunknum );
 					}
@@ -1031,7 +1031,7 @@ int cnt;
 						val16 = READ_U16();
 						offset = val16; // & 0x7fff;
 
-						if ( Verbose > 1 )
+						if ( DoVerbose > 2 )
 						{
 							printf( " Reloc Offset .2... : $%08" PRIx64 " #%d\n", offset, relcnt++ );
 						}
@@ -1087,11 +1087,11 @@ int cnt;
 
 			case HUNK_RELRELOC32:
 			{
-				if ( Verbose )
+				if ( DoVerbose > 1 )
 				{
 					printf( "Hunk ID ........... : [$%04X] HUNK_RELRELOC32\n", hunktype );
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( "File Offset ....... : $%08x\n", hps.pos*4 );
 					}
@@ -1111,7 +1111,7 @@ int cnt;
 				{
 					numreloc = READ_U16();
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( " Relocs ........... : #%d\n", numreloc );
 					}
@@ -1123,7 +1123,7 @@ int cnt;
 
 					hunknum = READ_U16();
 
-					if ( Verbose > 1 )
+					if ( DoVerbose > 2 )
 					{
 						printf( " Reloc Target ..... : #%d\n", hunknum );
 					}
@@ -1144,7 +1144,7 @@ int cnt;
 						val16 = READ_U16();
 						offset = val16; // & 0x7fff;
 
-						if ( Verbose > 1 )
+						if ( DoVerbose > 2 )
 						{
 							printf( " Reloc Offset .3... : $%08" PRIx64 " #%d\n", offset, relcnt++ );
 						}
@@ -1204,7 +1204,7 @@ int cnt;
 			{
 				ec = RS4ErrStat_FileStructure;
 
-				if ( Verbose )
+				if ( DoVerbose > 0 )
 				{
 					char txt[] = { "'....'" };
 					int v1 = (( hunktype & 0xff000000 ) >> 24 );
@@ -1227,7 +1227,7 @@ int cnt;
 		}
 	}
 
-	if ( Verbose )
+	if ( DoVerbose > 1 )
 	{
 		printf( "\n" );
 	}

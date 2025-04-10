@@ -319,7 +319,7 @@ int err;
 		goto bailout;
 	}
 
-	if ( Verbose )
+	if ( DoVerbose > 0 )
 	{
 		printf( "Loaded '%s' (%" PRId64 " bytes)\n", filename, file->rfh_FileSize );
 	}
