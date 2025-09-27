@@ -12,17 +12,17 @@
 // --
 // -- Mode 74
 
-inline static enum RS4DecodeStat MODE_74( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
+inline static enum RS4DecodeStat MODE_74( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
 RS4Ref *isRef;
-uint8_t *mem;
-char labname[ MAX_LabelName + 8 ];
-//int type;
-int pos;
+MEM mem;
+CHR labname[ MAX_LabelName + 8 ];
+//S32 type;
+S32 pos;
 
 	// --
 
@@ -40,7 +40,7 @@ int pos;
 		{
 			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				uint8_t val;
+				U8 val;
 
 				val = mem[pos+1] & 0x00ff;
 
@@ -70,7 +70,7 @@ int pos;
 		{
 			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				uint16_t val;
+				U16 val;
 
 				val = (( mem[pos] << 8 ) | ( mem[pos+1] << 0 ));
 
@@ -98,7 +98,7 @@ int pos;
 
 		case M68KSIZE_Long:
 		{
-			uint32_t adr;
+			U32 adr;
 
 			adr = (( mem[pos] << 24 ) | ( mem[pos+1] << 16 ) | ( mem[pos+2] << 8 ) | ( mem[pos+3] << 0 ));
 
@@ -211,9 +211,9 @@ int pos;
 			{
 				sprintf( outstr, "#$" );
 
-				for( int cnt=0 ; cnt<4 ; cnt++ )
+				for( S32 cnt=0 ; cnt<4 ; cnt++ )
 				{
-					int len = strlen( outstr );
+					U32 len = strlen( outstr );
 
 					sprintf( & outstr[len], "%02x", mem[pos+cnt] );
 				}
@@ -235,9 +235,9 @@ int pos;
 			{
 				sprintf( outstr, "#$" );
 
-				for( int cnt=0 ; cnt<8 ; cnt++ )
+				for( S32 cnt=0 ; cnt<8 ; cnt++ )
 				{
-					int len = strlen( outstr );
+					U32 len = strlen( outstr );
 
 					sprintf( & outstr[len], "%02x", mem[pos+cnt] );
 				}
@@ -259,9 +259,9 @@ int pos;
 			{
 				sprintf( outstr, "#$" );
 
-				for( int cnt=0 ; cnt<12 ; cnt++ )
+				for( S32 cnt=0 ; cnt<12 ; cnt++ )
 				{
-					int len = strlen( outstr );
+					U32 len = strlen( outstr );
 
 					sprintf( & outstr[len], "%02x", mem[pos+cnt] );
 				}

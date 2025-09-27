@@ -33,7 +33,7 @@
 
 // --
 
-static int LabelCount = 0;
+static S32 LabelCount = 0;
 
 static enum RS4FuncStat RS4AdjustLabels( 
 	enum RS4ErrorCode *errcode, 
@@ -44,8 +44,9 @@ enum RS4FuncStat fs;
 RS4Label *SecLabel;
 RS4Label *EndLabel;
 RS4Label *CurLabel;
-int64_t size;
-int64_t adr;
+STR lab2;
+S64 size;
+S64 adr;
 
 	// --
 
@@ -113,7 +114,32 @@ int64_t adr;
 				}
 				else
 				{
-					snprintf( CurLabel->rl_Name, MAX_LabelName - 1, "%s%04X", LabNames, ++LabelCount );
+					/**/ if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer8 )
+					{
+						lab2 = "i08_L";
+					}
+					else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer16 )
+					{
+						lab2 = "i16_L";
+					}
+					else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer32 )
+					{
+						lab2 = "i32_L";
+					}
+					else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Float32 )
+					{
+						lab2 = "f32_L";
+					}
+					else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Float64 )
+					{
+						lab2 = "f64_L";
+					}
+					else
+					{
+						lab2 = LabNames;
+					}
+
+					snprintf( CurLabel->rl_Name, MAX_LabelName - 1, "%s%04X", lab2, ++LabelCount );
 					CurLabel->rl_Name[ MAX_LabelName - 1 ] = 0;
 				}
 			}
@@ -182,8 +208,8 @@ static enum RS4FuncStat RS4LabAdjust(
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt UNUSED, 
 	RS4Label *rl, 
-	int64_t adr, 
-	int64_t size, 
+	S64 adr, 
+	S64 size, 
 	enum RS4LabelType type )
 {
 enum RS4ErrorCode ec;
@@ -275,7 +301,7 @@ static enum RS4FuncStat RS4CreateLabelNames( enum RS4ErrorCode *errcode, RS4File
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-int cnt;
+S32 cnt;
 
 	// --
 
@@ -350,7 +376,7 @@ static enum RS4FuncStat RS4Decode_Struct(
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt UNUSED,
 	RS4Label *rl, 
-	int64_t *l )
+	S64 *l )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -426,8 +452,8 @@ static enum RS4FuncStat RS4Decode_String(
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt UNUSED,
 	RS4Label *rl, 
-	int64_t max, 
-	int64_t *l )
+	S64 max, 
+	S64 *l )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -485,20 +511,20 @@ static enum RS4FuncStat RS4Decode_RelativeWord(
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt, 
 	RS4Label *rl, 
-	int64_t pos, 
-	int64_t *l )
+	S64 pos, 
+	S64 *l )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *brance;
 RS4Label *rel;
-int64_t adr;
-int64_t tableadr;
-int16_t *tablemem;
-int16_t off;
-int size;
-int len;
-int cnt;
+S64 adr;
+S64 tableadr;
+S16 *tablemem;
+S16 off;
+S32 size;
+S32 len;
+S32 cnt;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
@@ -517,7 +543,7 @@ int cnt;
 		goto bailout;
 	}
 
-	tablemem = (void *) rl->rl_Memory;
+	tablemem = (PTR ) rl->rl_Memory;
 	tableadr = rl->rl_Address;
 
 	size = rl->rl_Size/2;
@@ -596,17 +622,17 @@ static enum RS4FuncStat RS4Decode_Code(
 	enum RS4ErrorCode *errcode,
 	RS4Trace *rt,
 	RS4Label *rl,
-	int64_t size,
-	int64_t pos,
-	uint8_t *type,
-	int64_t *len_ptr )
+	S64 size,
+	S64 pos,
+	MEM type,
+	S64 *len_ptr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-int32_t len;
-int cnt;
+S32 len;
+S32 cnt;
 
 	DDEBUG( printf( "RS4Decode_Code\n" ); )
 
@@ -720,16 +746,16 @@ static enum RS4FuncStat RS4Decode_Data(
 	RS4Trace *rt,
 	RS4Label *rl,
 	RS4Ref **rr_ptr,
-	int64_t max,
-	int64_t *len_ptr )
+	S64 max,
+	S64 *len_ptr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Ref *rr;
-int64_t size;
-int loop;
-int mm;
-int m;
+S64 size;
+S32 loop;
+S32 mm;
+S32 m;
 
 	// --
 
@@ -747,7 +773,7 @@ int m;
 		{
 			m = rr->rr_Address - rt->rt_CurMemAdr;
 
-			mm = RS4MIN( max, m );
+			mm = MIN( max, m );
 
 			if ( mm >= 4 )
 			{
@@ -842,10 +868,10 @@ static enum RS4FuncStat Handle_Exit(
 UNUSED	RS4Trace *rt,		// Trace info
 UNUSED	RS4Label **rlptr,	// Current Label
 UNUSED	RS4Ref **rrptr,		// Current Ref
-UNUSED	uint8_t *type,		// MemType
-UNUSED	int64_t size,		// MemSize
-UNUSED	int64_t max,		// max bytes ( too .. next label, next ref, sec end, type change )
-UNUSED	int64_t pos )		// mem/type pos
+UNUSED	MEM type,		// MemType
+UNUSED	S64 size,		// MemSize
+UNUSED	S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
+UNUSED	S64 pos )		// mem/type pos
 {
 	*errcode = RS4ErrStat_Okay;
 
@@ -855,22 +881,22 @@ UNUSED	int64_t pos )		// mem/type pos
 // --
 // len == 0 is Error
 
-static int64_t Handle_Unset( 
+static S64 Handle_Unset( 
 		enum RS4ErrorCode *errcode,	 
 		RS4Trace *rt,		// Trace info	
 		RS4Label **rlptr,	// Current Label
 		RS4Ref **rrptr,		// Current Ref
-UNUSED	uint8_t *type,		// MemType
-UNUSED	int64_t size,		// MemSize
-		int64_t max,		// max bytes ( too .. next label, next ref, sec end, type change )
-		int64_t pos )		// mem/type pos
+UNUSED	MEM type,		// MemType
+UNUSED	S64 size,		// MemSize
+		S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
+		S64 pos )		// mem/type pos
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
 RS4Label *rl;
-int64_t len;
-int64_t l;
+S64 len;
+S64 l;
 
 	l	= 0;
 	ec	= RS4ErrStat_Error;
@@ -922,21 +948,21 @@ bailout:
 
 // --
 
-static int64_t Handle_Code( 
+static S64 Handle_Code( 
 		enum RS4ErrorCode *errcode, 
 UNUSED	RS4Trace *rt,		// Trace info
 UNUSED	RS4Label **rlptr,	// Current Label
 UNUSED	RS4Ref **rrptr,		// Current Ref
-UNUSED	uint8_t *type,		// MemType
-UNUSED	int64_t size,		// MemSize
-UNUSED	int64_t max,		// max bytes ( too .. next label, next ref, sec end, type change )
-UNUSED	int64_t pos )		// mem/type pos
+UNUSED	MEM type,		// MemType
+UNUSED	S64 size,		// MemSize
+UNUSED	S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
+UNUSED	S64 pos )		// mem/type pos
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-int64_t len;
-int64_t l;
+S64 len;
+S64 l;
 
 	DDEBUG( printf( "Handle_Code\n" ); )
 
@@ -981,22 +1007,22 @@ bailout:
 
 // --
 
-static int64_t Handle_Data( 
+static S64 Handle_Data( 
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt,		// Trace info
 	RS4Label **rlptr,	// Current Label
 	RS4Ref **rrptr,		// Current Ref
-//	uint8_t *type,		// MemType
-//	int64_t size,		// MemSize
-	int64_t max,		// max bytes ( too .. next label, next ref, sec end, type change )
-	int64_t pos )		// mem/type pos
+//	MEM type,		// MemType
+//	S64 size,		// MemSize
+	S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
+	S64 pos )		// mem/type pos
 {
 enum RS4LabelType t;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-int64_t len;
-int64_t l;
+S64 len;
+S64 l;
 
 	l	= 0;
 	ec	= RS4ErrStat_Error;
@@ -1120,15 +1146,15 @@ RS4Label *nextrl;
 RS4Label *rl;
 RS4Ref *nextrr;
 RS4Ref *rr;
-uint8_t *type;
-uint8_t *mem;
-int64_t size;
-int64_t pos;
-int64_t len;
-int64_t max;
-int64_t cnt;
-int64_t mlen;
-uint8_t mtyp;
+MEM type;
+MEM mem;
+S64 size;
+S64 pos;
+S64 len;
+S64 max;
+S64 cnt;
+S64 mlen;
+U8 mtyp;
 
 	// --
 
@@ -1200,7 +1226,7 @@ uint8_t mtyp;
 		{
 			if ( rl->rl_Offset > pos )
 			{
-				max = RS4MIN( max, rl->rl_Offset - pos );
+				max = MIN( max, rl->rl_Offset - pos );
 			}
 			else
 			{
@@ -1208,7 +1234,7 @@ uint8_t mtyp;
 
 				if ( nextrl )
 				{
-					max = RS4MIN( max, nextrl->rl_Offset - pos );
+					max = MIN( max, nextrl->rl_Offset - pos );
 				}
 			}
 		}
@@ -1219,7 +1245,7 @@ uint8_t mtyp;
 		{
 			if ( rr->rr_Offset > pos )
 			{
-				max = RS4MIN( max, rr->rr_Offset - pos );
+				max = MIN( max, rr->rr_Offset - pos );
 			}
 			else
 			{
@@ -1227,7 +1253,7 @@ uint8_t mtyp;
 
 				if ( nextrr )
 				{
-					max = RS4MIN( max, nextrr->rr_Offset - pos );
+					max = MIN( max, nextrr->rr_Offset - pos );
 				}
 			}
 		}
@@ -1377,8 +1403,8 @@ enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
 RS4Trace rt;
-char argbuf[256];
-int cnt;
+CHR argbuf[256];
+S32 cnt;
 
 	// --
 

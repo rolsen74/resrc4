@@ -47,8 +47,8 @@ enum HunkMemType
 
 struct HunkFileHeader
 {
-	int						hfh_HunkFirst;
-	int						hfh_HunkLast;
+	S32						hfh_HunkFirst;
+	S32						hfh_HunkLast;
 };
 
 // --
@@ -62,32 +62,32 @@ struct HunkFileSection
 
 struct HunkTrace
 {
-//	RS4FileHeader *		ms_HunkStruct;
+//	RS4FileHeader *			ms_HunkStruct;
 //	RS4FileSection *		ms_HunkNode;
-//	int32_t					ms_MemoryAdr;
-//	uint8_t *				ms_MemoryBuf;
-//	uint8_t *				ms_MemoryType;
-//	uint32_t				ms_Opcode;
-//	int						ms_OpcodeSize;
-//	int						ms_ClearRegMask;
-//	int						ms_LibCall;				// Well Possible LibCall
-//	int						ms_IsPea;
+//	S32						ms_MemoryAdr;
+//	MEM 					ms_MemoryBuf;
+//	MEM 					ms_MemoryType;
+//	U32						ms_Opcode;
+//	S32						ms_OpcodeSize;
+//	S32						ms_ClearRegMask;
+//	S32						ms_LibCall;				// Well Possible LibCall
+//	S32						ms_IsPea;
 
-	const char *			ms_Str_Opcode;
-	char *					ms_Buf_Argument;
-	char *					ms_Buf_Comment;			// Only used by Build/Save Source
+	CSTR 					ms_Str_Opcode;
+	STR 					ms_Buf_Argument;
+	STR 					ms_Buf_Comment;			// Only used by Build/Save Source
 	RS4Label *				ms_Ptr_Label;
-	int64_t					ms_StartAddr;
+	S64						ms_StartAddr;
 
 //	enum M68KStat			ms_DecodeStatus;
-//	int						ms_JumpTable;
-//	int						ms_LastOpcode;			// Rts or Jmp .. sets this
+//	S32						ms_JumpTable;
+//	S32						ms_LastOpcode;			// Rts or Jmp .. sets this
 //	enum M68KOpcodeSize		ms_ArgType;				// Opcode Type (b/w/l)
-//	int						ms_ArgSize;				// Opcode Size in bytes
-//	int						ms_ArgEMode;			// Effective Addreess Mode
-//	int						ms_ArgEReg;				// Effective Addreess Register
-//	int						ms_DecMode;
-//	int						ms_DoExternal;
+//	S32						ms_ArgSize;				// Opcode Size in bytes
+//	S32						ms_ArgEMode;			// Effective Addreess Mode
+//	S32						ms_ArgEReg;				// Effective Addreess Register
+//	S32						ms_DecMode;
+//	S32						ms_DoExternal;
 //
 //	struct M68kRegister *	ms_CurRegister;
 //	struct M68kRegister		ms_JmpRegister;

@@ -15,23 +15,23 @@
 
 // --
 
-int 					DebugInfo		= 0;		// Add ' $12345678 1122 3344 ' to source lines
-int 					ShortOpcodes	= 0;		// 0 = movea.l, 1 = move.l
+S32 					DebugInfo		= 0;		// Add ' $12345678 1122 3344 ' to source lines
+S32 					ShortOpcodes	= 0;		// 0 = movea.l, 1 = move.l
 RS4FileHeader *			RS4FileData		= NULL;
 
-char *					InputFile		= NULL;
-char *					OutputFile		= NULL;
-char *					ConfigFile		= NULL;
+STR 					InputFile		= NULL;
+STR 					OutputFile		= NULL;
+STR 					ConfigFile		= NULL;
 
-int						DoVerbose		= 1;
-int						LabTabs			= 1;
-int						OpcodeTabs		= 2;
-int						ArgTabs			= 5;
-int						AutoAnser		= ANSER_Ask;
+S32						DoVerbose		= 1;
+S32						LabTabs			= 1;
+S32						OpcodeTabs		= 2;
+S32						ArgTabs			= 5;
+S32						AutoAnser		= ANSER_Ask;
 
-char *					LabNames		= "L";		// Label names
-char *					ExtNames		= "Ext_";	// External Label names
-char *					SecNames		= "Sec_";	// Section Label names
+STR 					LabNames		= "L";		// Label names
+STR 					ExtNames		= "Ext_";	// External Label names
+STR 					SecNames		= "Sec_";	// Section Label names
 
 static void myPrintErr( enum RS4ErrorCode ec )
 {
@@ -47,7 +47,7 @@ static void myPrintErr( enum RS4ErrorCode ec )
 
 // --
 
-int main( int argc, char *argv[] )
+int main( S32 argc, STR argv[] )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;

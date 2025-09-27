@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_RTD( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int16_t val;
+S16 val;
 
 	// --
 

@@ -22,11 +22,11 @@
 enum RS4ErrorCode Misc_Set__Src_is_Exec( 
 	struct M68kRegister *dst_reg, 
 	RS4Trace *rt,
-	uint8_t *mem )
+	MEM mem )
 {
 enum RS4ErrorCode ec;
 RS4Label *dst_rl;
-uint32_t val;
+U32 val;
 	
 	ec = RS4ErrStat_Error;
 

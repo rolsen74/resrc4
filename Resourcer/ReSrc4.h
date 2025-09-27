@@ -26,14 +26,18 @@
 
 // --
 
+#include "Resourcer/Types.h"
+
+// --
+
 #define DATE				"10-Apr-2025"
 #define YEAR				2025
 #define VERSION				2
 #define REVISION			13
 
-#define MAX_REF_HASH		29			// Prime Nr .. bigger value more memory pr. HunkNode
-#define MAX_LAB_HASH		83			// Prime Nr .. Global Label Hash
-#define MAX_LabelName		32			// Max Label Name Length
+#define MAX_REF_HASH		29U			// Prime Nr .. bigger value more memory pr. HunkNode
+#define MAX_LAB_HASH		83U			// Prime Nr .. Global Label Hash
+#define MAX_LabelName		32U			// Max Label Name Length
 
 // --
 
@@ -54,42 +58,10 @@
 
 #endif
 
-#ifndef TRUE
-#define TRUE				1 
-#endif
-
-#ifndef FALSE
-#define FALSE				0 
-#endif
-
-#ifndef RS4MIN
-#define RS4MIN(a, b)		(((a) < (b) ? (a) : (b)))
-#endif
-
-#ifndef RS4MAX
-#define RS4MAX(a, b)		(((a) > (b) ? (a) : (b)))
-#endif
-
-#ifndef USED
-#if defined(__GNUC__) || defined(__clang__)
-#define USED				__attribute__((used))
-#else
-#define USED
-#endif
-#endif
-
-#ifndef UNUSED
-#if defined(__GNUC__) || defined(__clang__)
-#define UNUSED				__attribute__((unused))
-#else
-#define UNUSED
-#endif
-#endif
-
 // --
 // -- ReSrc4
 
-typedef struct _RS4Ref	RS4Ref;
+typedef struct _RS4Ref RS4Ref;
 typedef struct _RS4Node	RS4Node;
 typedef struct _RS4Trace RS4Trace;
 typedef struct _RS4Label RS4Label;
@@ -124,17 +96,17 @@ enum
 
 struct _RS4Node
 {
-	void *					Next;
-	void *					Prev;
+	PTR 				Next;
+	PTR 				Prev;
 };
 
 // --
 
 struct _RS4Header
 {
-	void *					Head;
-	void *					Tail;
-	int						Nodes;
+	PTR 				Head;
+	PTR 				Tail;
+	S32					Nodes;
 };
 
 // --
@@ -230,7 +202,7 @@ enum RS4DecodeStat
 
 enum RS4JumpStat
 {
-	RS4JumpStat_Skip,	// Okay
+	RS4JumpStat_Skip,				// Okay
 	RS4JumpStat_Error,
 	RS4JumpStat_Handled,
 };
@@ -272,6 +244,18 @@ enum RS4RegType
 	RRT_Library,
 	RRT_Struct,
 	RRT_Last,
+};
+
+enum RS4LabelSize
+{
+	RS4LABSIZE_Unset,		//
+	RS4LABSIZE_Unknown,		// Diffrent sizes have been used on label
+	RS4LABSIZE_Integer8,		// move.b
+	RS4LABSIZE_Integer16,		// move.w
+	RS4LABSIZE_Integer32,		// move.l
+	RS4LABSIZE_Integer64,		// move.q
+	RS4LABSIZE_Float32,		// move.s
+	RS4LABSIZE_Float64,		// move.d
 };
 
 // --
@@ -326,21 +310,21 @@ struct _RS4FileSection
 	RS4Node					rfs_Node;
 	enum RS4ID				rfs_ID;
 
-	int						rfs_SecNr;
+	S32						rfs_SecNr;
 	enum RS4SectionType		rfs_SecType;
 	RS4Header				rfs_SecLabels;
 	RS4Header				rfs_SecRefs;
 	RS4Ref *				rfs_SecRefs2[MAX_REF_HASH];
 
-	int64_t					rfs_MemorySize;
-	uint8_t *				rfs_MemoryType;
-	int64_t					rfs_MemoryAdr;				// Virtual memory address
-	uint8_t *				rfs_MemoryBuf;
+	S64						rfs_MemorySize;
+	MEM 					rfs_MemoryType;
+	S64						rfs_MemoryAdr;				// Virtual memory address
+	MEM 					rfs_MemoryBuf;
 
-	int64_t					rfs_DataSize;
+	S64						rfs_DataSize;
 
 	RS4FileHeader *			rfs_File;
-	int64_t					rfs_FileOffset;
+	S64						rfs_FileOffset;
 
 	#ifdef SUPPORT_HUNK
 	struct HunkFileSection	rfs_HunkData;
@@ -352,8 +336,8 @@ struct _RS4FileSection
 struct _RS4FileSectionInfo
 {
 	RS4FileSection *		rsi_Section;
-	int64_t					rsi_MemoryAdr;				// Virtual memory address
-	int64_t					rsi_MemorySize;
+	S64						rsi_MemoryAdr;				// Virtual memory address
+	S64						rsi_MemorySize;
 };
 
 // --
@@ -363,20 +347,20 @@ struct _RS4FileHeader
 	RS4Node					rfh_Node;
 	enum RS4ID				rfh_ID;
 
-	char					rfh_FileMD5[34];			// Ascii
-	char *					rfh_FileName;
+	CHR						rfh_FileMD5[34];			// Ascii
+	STR 					rfh_FileName;
 	enum RS4FileType		rfh_FileType;
-	int64_t					rfh_FileSize;
-	uint8_t *				rfh_FileBuffer;
+	S64						rfh_FileSize;
+	MEM 					rfh_FileBuffer;
 
 	RS4Header				rfh_BranceList;
 	RS4Header				rfh_SourceList;
 	RS4Header				rfh_ExtLabelList;
 
 	RS4FileSecInfo *		rfh_SecArray;
-	int						rfh_SecArraySize;
-	int						rfh_SecFirst;
-	int64_t					rfh_StartAdr;
+	S32						rfh_SecArraySize;
+	S32						rfh_SecFirst;
+	S64						rfh_StartAdr;
 
 	RS4Label *				rfh_LabelHash[MAX_LAB_HASH];
 
@@ -393,9 +377,9 @@ struct _RS4Trace
 	enum RS4TracePass		rt_Pass;
 	RS4FileHeader *			rt_File;
 	RS4FileSection *		rt_Section;
-	int64_t					rt_CurMemAdr;
-	uint8_t *				rt_CurMemBuf;
-	uint8_t *				rt_CurMemType;
+	S64						rt_CurMemAdr;
+	MEM 					rt_CurMemBuf;
+	MEM 					rt_CurMemType;
 	enum RS4DecodeStat		(*rt_Decoder)( enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 	// -- File Containers
@@ -426,30 +410,32 @@ struct _RS4Brance
 	RS4Node					rb_Node;
 	enum RS4ID				rb_ID;
 	RS4FileSection *		rb_Section;
-	int64_t					rb_Address;
-	int64_t					rb_Offset;
+	S64						rb_Address;
+	S64						rb_Offset;
 	struct M68kRegister		rb_Registers[16];
 };
 
 // --
+
 
 struct _RS4Label
 {
 	RS4Node					rl_Node;
 	enum RS4ID				rl_ID;
 	enum RS4LabelType		rl_Type1;
-	int						rl_Type2;
-	int						rl_Type3;
-	int						rl_UserLocked;
+	S32						rl_Type2;
+	S32						rl_Type3;
+	enum RS4LabelSize		rl_Label_RW_Size;		// hmm : Byte/Word/Long/Float/Double
+	S32						rl_UserLocked;
 	RS4FileSection *		rl_Section;
 	RS4Label *				rl_Parent;
 	RS4Label *				rl_HashPtr;
 	RS4Label *				rl_Ref;					// Jump Table Relative Address (Label)
-	uint8_t *				rl_Memory;
-	int64_t					rl_Offset;
-	int64_t					rl_Address;				// Virtual 32bit memory address
-	int64_t					rl_Size;				// ie Size of Jump Table or Struct (in bytes)
-	char					rl_Name[ MAX_LabelName ];
+	MEM 					rl_Memory;
+	S64						rl_Offset;
+	S64						rl_Address;				// Virtual 32bit memory address
+	S64						rl_Size;				// ie Size of Jump Table or Struct (in bytes)
+	CHR						rl_Name[ MAX_LabelName ];
 	struct M68kRegister		rl_Registers[16];
 };
 
@@ -460,9 +446,9 @@ struct _RS4Ref
 	RS4Node					rr_Node;
 	enum RS4ID				rr_ID;
 	RS4Ref *				rr_HashPtr;
-	int64_t					rr_Address;
-	int64_t					rr_Offset;
-	int						rr_Handled;				// Have we handled this Pointer Refs?
+	S64						rr_Address;
+	S64						rr_Offset;
+	S32						rr_Handled;				// Have we handled this Pointer Refs?
 };
 
 // --
@@ -478,21 +464,21 @@ enum RS4SourceType
 
 struct _SrcCode
 {
-	int64_t					rs_Address;				// Debug info
+	S64						rs_Address;				// Debug info
 	RS4Label *				rs_Label;
-	const char *			rs_Opcode;
-	char *				    rs_Argument;
-	char *					rs_Comment;
+	CSTR 					rs_Opcode;
+	STR 					rs_Argument;
+	STR 					rs_Comment;
 };
 
 struct _SrcString
 {
-	char *					rs_String;
+	STR 					rs_String;
 };
 
 struct _SrcNewLine
 {
-	int						rs_Count;				// Number of Newlines
+	S32						rs_Count;				// Number of Newlines
 };
 
 struct _RS4Source
@@ -525,16 +511,16 @@ enum DataStructType
 struct DataStructNode
 {
 	enum DataStructType		dsn_Type;
-	int						dsn_Size;		// Size
-	char *					dsn_Name;
-	int						dsn_ID;			// Struct ID
+	S32						dsn_Size;		// Size
+	STR 					dsn_Name;
+	S32						dsn_ID;			// Struct ID
 };
 
 struct DataStructHeader
 {
-	int						dsh_Size;		// Total size
-	int						dsh_Entries;
-	const char *			dsh_Title;
+	S32						dsh_Size;		// Total size
+	S32						dsh_Entries;
+	CSTR 					dsh_Title;
 	struct DataStructNode	dsh_Data[];
 };
 
@@ -544,99 +530,99 @@ struct DataStructHeader
 // -- ReSrc4 Protos
 
 // -- Brance
-RS4Brance *			RS4AddBrance_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, int64_t addr );
+RS4Brance *			RS4AddBrance_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr );
 enum RS4FuncStat	RS4FreeBrance(			enum RS4ErrorCode *errcode, RS4Brance *rb );
 
 // -- Cmd Line
-enum RS4FuncStat	RS4ParseArgs(			enum RS4ErrorCode *errcode, int argc, char *argv[] );
+enum RS4FuncStat	RS4ParseArgs(			enum RS4ErrorCode *errcode, S32 argc, STR argv[] );
 void				RS4PrintUsage(			void );
 
 // -- Config
 enum RS4FuncStat	RS4ParseConfig_File(	enum RS4ErrorCode *errcode, RS4FileHeader *fh );
 
 // -- File Header
-RS4FileHeader *		RS4LoadExe(				enum RS4ErrorCode *errcode, char *filename );
-RS4FileHeader *		RS4LoadFile( 			enum RS4ErrorCode *errcode, char *filename );
+RS4FileHeader *		RS4LoadExe(				enum RS4ErrorCode *errcode, STR filename );
+RS4FileHeader *		RS4LoadFile( 			enum RS4ErrorCode *errcode, STR filename );
 void				RS4FreeFile(			enum RS4ErrorCode *errcode, RS4FileHeader *fh );
 
 // -- File Section
-RS4FileSection *	RS4AllocSection(		enum RS4ErrorCode *errcode, int secnr, int64_t secsize );
+RS4FileSection *	RS4AllocSection(		enum RS4ErrorCode *errcode, S32 secnr, S64 secsize );
 void				RS4FreeSection(			enum RS4ErrorCode *errcode, RS4FileSection *sec );
-RS4FileSection *	RS4FindSection_File(	RS4FileHeader *fh, int64_t addr );
+RS4FileSection *	RS4FindSection_File(	RS4FileHeader *fh, S64 addr );
 
 // -- Label
-RS4Label *			RS4AddLabel_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, int64_t addr, enum RS4LabelType type );
-RS4Label *			RS4AddLabel_Sec(		enum RS4ErrorCode *errcode, RS4FileSection *sec, int64_t addr, enum RS4LabelType type );
+RS4Label *			RS4AddLabel_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr, enum RS4LabelType type );
+RS4Label *			RS4AddLabel_Sec(		enum RS4ErrorCode *errcode, RS4FileSection *sec, S64 addr, enum RS4LabelType type );
 enum RS4FuncStat	RS4FreeLabel(			enum RS4ErrorCode *errcode, RS4Label *rl );
-RS4Label *			RS4FindLabel_File(		RS4FileHeader *fh, int64_t addr );
+RS4Label *			RS4FindLabel_File(		RS4FileHeader *fh, S64 addr );
 
 // -- Label Magic
 enum RS4FuncStat	RS4LabelMagic_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh );
 
 // -- Misc
-char *				RS4Strdup(				char *string );
+STR 				RS4Strdup(				STR string );
 enum RS4FuncStat	RS4InitTrace(			enum RS4ErrorCode *errcode, RS4Trace *rt, RS4FileHeader *fh, enum RS4TracePass type );
 
 // -- Nodes
-void				RS4AddHead(				RS4Header *h, void *new );
-void				RS4AddTail(				RS4Header *h, void *new );
-void				RS4AddAfter( 			RS4Header *h, void *cur, void *new );
-void *				RS4RemHead(				RS4Header *h );
-void *				RS4GetHead(				RS4Header *h );
-void *				RS4GetTail(				RS4Header *h );
-void *				RS4GetNext(				void *cur );
-void *				RS4GetPrev(				void *cur );
+void				RS4AddHead(				RS4Header *h, PTR new );
+void				RS4AddTail(				RS4Header *h, PTR new );
+void				RS4AddAfter( 			RS4Header *h, PTR cur, PTR new );
+PTR 				RS4RemHead(				RS4Header *h );
+PTR 				RS4GetHead(				RS4Header *h );
+PTR 				RS4GetTail(				RS4Header *h );
+PTR 				RS4GetNext(				PTR cur );
+PTR 				RS4GetPrev(				PTR cur );
 
 // -- Refs
-RS4Ref *			RS4AddRef_Sec(			enum RS4ErrorCode *errcode, RS4FileSection *sec, int64_t addr );
+RS4Ref *			RS4AddRef_Sec(			enum RS4ErrorCode *errcode, RS4FileSection *sec, S64 addr );
 enum RS4FuncStat	RS4FreeRef(				enum RS4ErrorCode *errcode, RS4Ref *rr );
-RS4Ref *			RS4FindRef_Sec(			RS4FileSection *sec, int64_t addr );
-RS4Ref *			RS4FirstReloc_Sec(		RS4FileSection *sec, int64_t adr1, int64_t adr2 );
+RS4Ref *			RS4FindRef_Sec(			RS4FileSection *sec, S64 addr );
+RS4Ref *			RS4FirstReloc_Sec(		RS4FileSection *sec, S64 adr1, S64 adr2 );
 
 // -- Sourc Build
 enum RS4FuncStat	RS4BuildSource_File(	enum RS4ErrorCode *errcode, RS4FileHeader *fh );
 
 // -- Source Save
-enum RS4FuncStat	RS4SaveSource_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, char *filename );
-enum RS4FuncStat	RS4SaveWriteString(		enum RS4ErrorCode *errcode, char *buffer, size_t length );
+enum RS4FuncStat	RS4SaveSource_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, STR filename );
+enum RS4FuncStat	RS4SaveWriteString(		enum RS4ErrorCode *errcode, STR buffer, U64 length );
 
 // -- Trace
 enum RS4FuncStat	RS4Trace_File(			enum RS4ErrorCode *errcode, RS4FileHeader *fh );
 enum RS4FuncStat	RS4Trace_JumpTable(		enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 // -- hmm
-enum RS4FuncStat	RS4BuildLabelString(	enum RS4ErrorCode *errcode, RS4Label *rl, char *buf );
-enum RS4FuncStat	RS4BuildLabelString2(	enum RS4ErrorCode *errcode, RS4Trace *rt, char *buf, int64_t adr, int64_t val );
+enum RS4FuncStat	RS4BuildLabelString(	enum RS4ErrorCode *errcode, RS4Label *rl, STR buf );
+enum RS4FuncStat	RS4BuildLabelString2(	enum RS4ErrorCode *errcode, RS4Trace *rt, STR buf, S64 adr, S64 val );
 void				Mark_NulString(			RS4Label *rl );
 enum RS4FuncStat	Mark_Struct(			enum RS4ErrorCode *errcode, RS4Label *rl, enum RS4StructID id );
-char *				FindFileName(			char *name );
-RS4Label *			RS4AddExtLabel(			enum RS4ErrorCode *errcode, RS4FileHeader *fh, int64_t addr );
-enum RS4JumpStat	RS4JumpTable_Rel16(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, int64_t tabel_adr, int64_t relative_adr, int32_t entries );
+STR 				FindFileName(			STR name );
+RS4Label *			RS4AddExtLabel(			enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr );
+enum RS4JumpStat	RS4JumpTable_Rel16(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 tabel_adr, S64 relative_adr, S32 entries );
 
 #ifdef SUPPORT_M68K
-void				M68k_ClearRegs(			RS4Trace *rt, int mask );
+void				M68k_ClearRegs(			RS4Trace *rt, S32 mask );
 #endif
 
 // --
 // -- Extern 
 
 extern struct DataStructHeader *DataStructTable[RS4StructID_Last];
-extern const char *ErrorStrings[RS4ErrStat_Last];
-extern int64_t RS4CurrentVirtAdr;
-extern char *SaveLineBuffer;
-extern char *ConfigFile;
-extern char *OutputFile;
-extern char *InputFile;
-extern char *LabNames;
-extern char *ExtNames;
-extern char *SecNames;
-extern int ShortOpcodes;
-extern int OpcodeTabs;
-extern int AutoAnser;
-extern int DebugInfo;
-extern int DoVerbose;
-extern int LabTabs;
-extern int ArgTabs;
+extern CSTR ErrorStrings[RS4ErrStat_Last];
+extern S64 RS4CurrentVirtAdr;
+extern STR SaveLineBuffer;
+extern STR ConfigFile;
+extern STR OutputFile;
+extern STR InputFile;
+extern STR LabNames;
+extern STR ExtNames;
+extern STR SecNames;
+extern S32 ShortOpcodes;
+extern S32 OpcodeTabs;
+extern S32 AutoAnser;
+extern S32 DebugInfo;
+extern S32 DoVerbose;
+extern S32 LabTabs;
+extern S32 ArgTabs;
 
 #endif
 

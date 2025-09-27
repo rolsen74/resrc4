@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_BCHG( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int nr;
+S32 nr;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "BChg";
 
@@ -73,7 +73,7 @@ enum RS4DecodeStat M68kCmd_BCHG2( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int reg;
+S32 reg;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "BChg";
 

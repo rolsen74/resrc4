@@ -12,14 +12,14 @@
 // --
 // -- Mode 50 - jsr (d16,Ax)
 
-inline static enum RS4DecodeStat MODE_50( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
+inline static enum RS4DecodeStat MODE_50( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int16_t val;
-uint8_t *mem;
-char *lvostr;
-int pos;
+S16 val;
+MEM mem;
+STR lvostr;
+S32 pos;
 
 	// --
 

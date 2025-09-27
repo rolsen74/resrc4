@@ -23,11 +23,11 @@ enum RS4ErrorCode Misc_Set__Src_is_Unknown(
 	struct AmigaOS3_Misc_Move_GetSetStruct *gss UNUSED,
 	struct M68kRegister *dst_reg, 
 	RS4Trace *rt,
-	uint8_t *mem UNUSED )
+	MEM mem UNUSED )
 {
 enum RS4ErrorCode ec;
 RS4Label *dst_rl;
-uint32_t val;
+U32 val;
 
 	ec = RS4ErrStat_Error;
 

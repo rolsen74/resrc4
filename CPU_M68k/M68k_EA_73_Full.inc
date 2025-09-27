@@ -12,25 +12,25 @@
 // --
 // -- Mode 73 - Full Extension Word Format
 
-inline static enum RS4DecodeStat MODE_73_Full_0( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
+inline static enum RS4DecodeStat MODE_73_Full_0( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-uint8_t *mem;
-int32_t adr;
-char labname[ MAX_LabelName + 8 ];
-int SCALE;
-int mode;
-int REG;
-int pos;
-int IIS;
-int AD;
-int WL;
-int BS;
-int IS;
-int BD;
+MEM mem;
+S32 adr;
+CHR labname[ MAX_LabelName + 8 ];
+S32 SCALE;
+S32 mode;
+S32 REG;
+S32 pos;
+S32 IIS;
+S32 AD;
+S32 WL;
+S32 BS;
+S32 IS;
+S32 BD;
 
 	ec = RS4ErrStat_Okay;
 	ds = RS4DecodeStat_Okay;
@@ -159,7 +159,7 @@ int BD;
 	
 		case 0x0002: // BS 0, IS 0, IIS 0, BD 2 - (label.w,PC,d0.w*4)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -220,7 +220,7 @@ int BD;
 
 		case 0x0003: // BS 0, IS 0, IIS 0, BD 3 - (label.l,PC,d0.w*4)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -293,7 +293,7 @@ int BD;
 
 		case 0x0012: // BS 0, IS 0, IIS 1, BD 2 - ([label.w,PC,d0.w*4])
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -354,7 +354,7 @@ int BD;
 
 		case 0x0013: // BS 0, IS 0, IIS 1, BD 3 - ([label.l,PC,d0.w*4])
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -415,7 +415,7 @@ int BD;
 
 		case 0x0021: // BS 0, IS 0, IIS 2, BD 1 - ([PC,d0.w*4],$11.w)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
 
 			sprintf( outstr, "([PC,%s%s%s]),%d.w", 
 				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
@@ -430,8 +430,8 @@ int BD;
 
 		case 0x0022: // BS 0, IS 0, IIS 2, BD 2 - ([label.w,PC,d0.w*4],$11.w)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-			int16_t v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -494,8 +494,8 @@ int BD;
 
 		case 0x0023: // BS 0, IS 0, IIS 2, BD 3 - ([label.l,PC,d0.w*4],$11.w)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			int16_t v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -558,7 +558,7 @@ int BD;
 
 		case 0x0031: // BS 0, IS 0, IIS 3, BD 1 - ([PC,d0.w*4],$11.l)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			sprintf( outstr, "([PC,%s%s%s]),%d.l", 
 				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
@@ -573,8 +573,8 @@ int BD;
 
 		case 0x0032: // BS 0, IS 0, IIS 3, BD 2 - ([label.w,PC,d0.w*4],$11.l)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			int32_t v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
+			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
+			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -637,8 +637,8 @@ int BD;
 
 		case 0x0033: // BS 0, IS 0, IIS 3, BD 3 - ([label.l,PC,d0.w*4],$11.l)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			int32_t v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -713,7 +713,7 @@ int BD;
 
 		case 0x0052: // BS 0, IS 0, IIS 5, BD 2 - ([label.w,PC],d0.w*4)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -774,7 +774,7 @@ int BD;
 
 		case 0x0053: // BS 0, IS 0, IIS 5, BD 3 - ([label.l,PC],d0.w*4)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -835,7 +835,7 @@ int BD;
 
 		case 0x0061: // BS 0, IS 0, IIS 6, BD 1 - ([PC],d0.w*4,$11.w)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
 
 			sprintf( outstr, "([PC],%s%s%s),%d.w", 
 				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
@@ -850,8 +850,8 @@ int BD;
 
 		case 0x0062: // BS 0, IS 0, IIS 6, BD 2 - ([label.w,PC],d0.w*4,$11.w)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-			int16_t v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -914,8 +914,8 @@ int BD;
 
 		case 0x0063: // BS 0, IS 0, IIS 6, BD 3 - ([label.l,PC],d0.w*4,$11.w)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			int16_t v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -978,7 +978,7 @@ int BD;
 
 		case 0x0071: // BS 0, IS 0, IIS 7, BD 1 - ([PC],d0.w*4,$11.l)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			sprintf( outstr, "([PC],%s%s%s),%d.l", 
 				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
@@ -993,8 +993,8 @@ int BD;
 
 		case 0x0072: // BS 0, IS 0, IIS 7, BD 2 - ([label.w,PC],d0.w*4,$11.l)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			int32_t v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
+			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
+			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -1057,8 +1057,8 @@ int BD;
 
 		case 0x0073: // BS 0, IS 0, IIS 7, BD 3 - ([label.l,PC],d0.w*4,$11.l)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			int32_t v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -1121,7 +1121,7 @@ int BD;
 
 		case 0x0103: // BS 0, IS 1, IIS 0, BD 3 - (label.l,PC)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -1184,7 +1184,7 @@ int BD;
 
 		case 0x0112: // BS 0, IS 1, IIS 1, BD 2 - ([label.w,PC])
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -1239,7 +1239,7 @@ int BD;
 
 		case 0x0113: // BS 0, IS 1, IIS 1, BD 3 - ([label.l,PC])
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -1294,8 +1294,8 @@ int BD;
 
 		case 0x0122: // BS 0, IS 1, IIS 2, BD 2 - ([label.w,PC],$22.w)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-			int16_t v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -1352,7 +1352,7 @@ int BD;
 
 		case 0x0121: // BS 0, IS 1, IIS 2, BD 1 - ([PC],$22.w)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
 
 			sprintf( outstr, "([PC],%d.w)", 
 				v1
@@ -1364,8 +1364,8 @@ int BD;
 
 		case 0x0123: // BS 0, IS 1, IIS 2, BD 3 - ([label.l,PC],$22.w)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			int16_t v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -1422,7 +1422,7 @@ int BD;
 
 		case 0x0131: // BS 0, IS 1, IIS 3, BD 1 - ([PC],$0044.l)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
 
 			sprintf( outstr, "([PC],%d.l)", 
 				v1
@@ -1434,8 +1434,8 @@ int BD;
 
 		case 0x0132: // BS 0, IS 1, IIS 3, BD 2 - ([label.w,PC],$0044.l)
 		{
-			int16_t v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			int32_t v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
+			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
+			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
@@ -1492,8 +1492,8 @@ int BD;
 
 		case 0x0133: // BS 0, IS 1, IIS 3, BD 3 - ([label.l,PC],$0044.l)
 		{
-			int32_t v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			int32_t v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
+			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 

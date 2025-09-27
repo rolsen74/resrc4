@@ -19,10 +19,10 @@ enum RS4DecodeStat M68kCmd_PACK( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint16_t val;
-int rx;
-int ry;
-int rm;
+U16 val;
+S32 rx;
+S32 ry;
+S32 rm;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Pack";
 

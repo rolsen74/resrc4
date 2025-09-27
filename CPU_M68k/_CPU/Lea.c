@@ -15,7 +15,7 @@
 
 // --
 
-int leatst = 0;
+S32 leatst = 0;
 
 enum RS4DecodeStat M68kCmd_LEA( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
@@ -30,6 +30,7 @@ struct M68kRegister *src;
 	// --
 
 	rt->rt_CPU.M68k.mt_ArgType		= M68KSIZE_Long;
+	rt->rt_CPU.M68k.mt_DoLabelSize	= FALSE;
 	rt->rt_CPU.M68k.mt_ArgEMode		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	rt->rt_CPU.M68k.mt_ArgEReg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	rt->rt_CPU.M68k.mt_CurRegister	= & rt->rt_CPU.M68k.mt_SrcRegister;

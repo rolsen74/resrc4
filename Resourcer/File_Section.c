@@ -15,7 +15,7 @@
 
 // --
 
-int64_t RS4CurrentVirtAdr;
+S64 RS4CurrentVirtAdr;
 
 // --
 
@@ -75,7 +75,7 @@ bailout:
 
 // --
 
-RS4FileSection *RS4AllocSection( enum RS4ErrorCode *errcode, int secnr, int64_t memsize )
+RS4FileSection *RS4AllocSection( enum RS4ErrorCode *errcode, S32 secnr, S64 memsize )
 {
 enum RS4ErrorCode ec;
 RS4FileSection *sec;
@@ -89,7 +89,7 @@ RS4FileSection *sec;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (int) sizeof( RS4FileSection ) );
+		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32) sizeof( RS4FileSection ) );
 		#endif
 
 		goto bailout;
@@ -165,11 +165,11 @@ bailout:
 
 // --
 
-RS4FileSection *RS4FindSection_File( RS4FileHeader *fh, int64_t addr )
+RS4FileSection *RS4FindSection_File( RS4FileHeader *fh, S64 addr )
 {
 RS4FileSection *sec;
-int64_t memadr;
-int cnt;
+S64 memadr;
+S32 cnt;
 
 	if ( ! addr )
 	{

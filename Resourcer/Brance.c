@@ -67,7 +67,7 @@ bailout:
 
 // --
 
-RS4Brance *RS4AddBrance_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, int64_t addr )
+RS4Brance *RS4AddBrance_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -126,7 +126,7 @@ RS4Label *rl;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (int) sizeof( RS4Brance ));
+		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32) sizeof( RS4Brance ));
 		#endif
 
 		goto bailout;
@@ -140,7 +140,7 @@ RS4Label *rl;
 	#ifdef DEBUG
 	#ifdef SUPPORT_M68K
 
-	for( int cnt=0 ; cnt<8 ; cnt++ )
+	for( S32 cnt=0 ; cnt<8 ; cnt++ )
 	{
 		rb->rb_Registers[cnt+0].mr_Number = 0xd0 + cnt;
 		rb->rb_Registers[cnt+8].mr_Number = 0xa0 + cnt;

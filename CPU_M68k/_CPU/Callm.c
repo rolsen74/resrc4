@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_CALLM( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint8_t val;
+U8 val;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Callm";
 	rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Byte; // Unsized

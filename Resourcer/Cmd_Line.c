@@ -15,10 +15,10 @@
 
 // --
 
-static enum RS4FuncStat ArgFunc_ArgTabs( char *arg )
+static enum RS4FuncStat ArgFunc_ArgTabs( STR arg )
 {
 enum RS4FuncStat fs;
-int val;
+S32 val;
 
 	fs = RS4FuncStat_Error;
 
@@ -45,10 +45,10 @@ bailout:
 
 // --
 
-static enum RS4FuncStat ArgFunc_OpcodeTabs( char *arg )
+static enum RS4FuncStat ArgFunc_OpcodeTabs( STR arg )
 {
 enum RS4FuncStat fs;
-int val;
+S32 val;
 
 	fs = RS4FuncStat_Error;
 
@@ -75,10 +75,10 @@ bailout:
 
 // --
 
-static enum RS4FuncStat ArgFunc_LabTabs( char *arg )
+static enum RS4FuncStat ArgFunc_LabTabs( STR arg )
 {
 enum RS4FuncStat fs;
-int val;
+S32 val;
 
 	fs = RS4FuncStat_Error;
 
@@ -105,7 +105,7 @@ bailout:
 
 // --
 
-static enum RS4FuncStat ArgFunc_AutoYes( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_AutoYes( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -118,7 +118,7 @@ enum RS4FuncStat fs;
 
 // --
 
-static enum RS4FuncStat ArgFunc_AutoNo( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_AutoNo( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -131,7 +131,7 @@ enum RS4FuncStat fs;
 
 // --
 
-static enum RS4FuncStat ArgFunc_DebugInfo( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_DebugInfo( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -144,7 +144,7 @@ enum RS4FuncStat fs;
 
 /* -- */
 
-static enum RS4FuncStat ArgFunc_Verbose0( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_Verbose0( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -157,7 +157,7 @@ enum RS4FuncStat fs;
 
 /* -- */
 
-static enum RS4FuncStat ArgFunc_Verbose1( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_Verbose1( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -170,7 +170,7 @@ enum RS4FuncStat fs;
 
 /* -- */
 
-static enum RS4FuncStat ArgFunc_Verbose2( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_Verbose2( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -183,7 +183,7 @@ enum RS4FuncStat fs;
 
 /* -- */
 
-static enum RS4FuncStat ArgFunc_Verbose3( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_Verbose3( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -196,7 +196,7 @@ enum RS4FuncStat fs;
 
 /* -- */
 
-static enum RS4FuncStat ArgFunc_Verbose4( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_Verbose4( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -209,7 +209,7 @@ enum RS4FuncStat fs;
 
 /* -- */
 
-static enum RS4FuncStat ArgFunc_Short( char *arg UNUSED )
+static enum RS4FuncStat ArgFunc_Short( STR arg UNUSED )
 {
 enum RS4FuncStat fs;
 
@@ -222,7 +222,7 @@ enum RS4FuncStat fs;
 
 // --
 
-static enum RS4FuncStat ArgFunc_Config( char *arg )
+static enum RS4FuncStat ArgFunc_Config( STR arg )
 {
 enum RS4FuncStat fs;
 
@@ -255,7 +255,7 @@ bailout:
 
 // --
 
-static enum RS4FuncStat ArgFunc_Input( char *arg )
+static enum RS4FuncStat ArgFunc_Input( STR arg )
 {
 enum RS4FuncStat fs;
 
@@ -288,7 +288,7 @@ bailout:
 
 // --
 
-static enum RS4FuncStat ArgFunc_Output( char *arg )
+static enum RS4FuncStat ArgFunc_Output( STR arg )
 {
 enum RS4FuncStat fs;
 
@@ -325,11 +325,11 @@ bailout:
 
 struct myArgs
 {
-	const char *		Name1;
-	const char *		Name2;
-	int					Type;		// 0 = verbose, 1 = config, 2 = Normal
-	int					Options;
-	enum RS4FuncStat	(*Function)( char *arg );
+	CSTR 		Name1;
+	CSTR 		Name2;
+	S32					Type;		// 0 = verbose, 1 = config, 2 = Normal
+	S32					Options;
+	enum RS4FuncStat	(*Function)( STR arg );
 };
 
 // -- Early Options before Config file
@@ -386,14 +386,14 @@ void RS4PrintUsage( void )
 
 /* -- */
 
-static int _ParseList( struct myArgs *args, int argc, char *argv[], int type )
+static S32 _ParseList( struct myArgs *args, S32 argc, STR argv[], S32 type )
 {
 struct myArgs *arg;
-int error;
-int stat;
-int skip;
-int pos;
-int cnt;
+S32 error;
+S32 stat;
+S32 skip;
+S32 pos;
+S32 cnt;
 
 	error = true;
 
@@ -458,11 +458,11 @@ bailout:
 	return( error );
 }
 
-enum RS4FuncStat RS4ParseArgs( enum RS4ErrorCode *errcode, int argc, char *argv[] )
+enum RS4FuncStat RS4ParseArgs( enum RS4ErrorCode *errcode, S32 argc, STR argv[] )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-int cnt;
+S32 cnt;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;

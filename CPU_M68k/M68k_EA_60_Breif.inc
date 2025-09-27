@@ -12,17 +12,17 @@
 // --
 // -- Mode 60 - Brief Extension Word Format
 
-inline static enum RS4DecodeStat MODE_60_Brief( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
+inline static enum RS4DecodeStat MODE_60_Brief( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint8_t *mem;
-int8_t Offset;
-int SCALE;
-int REG;
-int pos;
-int AD;
-int WL;
+MEM mem;
+S8 Offset;
+S32 SCALE;
+S32 REG;
+S32 pos;
+S32 AD;
+S32 WL;
 
 	// --
 

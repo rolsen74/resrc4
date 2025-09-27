@@ -19,9 +19,9 @@ enum RS4DecodeStat M68kCmd_MOVEP( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int mode;
-int areg;
-int dreg;
+S32 mode;
+S32 areg;
+S32 dreg;
 
 	areg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	dreg = ( rt->rt_CPU.M68k.mt_Opcode & 0x07000000 ) >> 24;

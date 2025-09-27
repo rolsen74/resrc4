@@ -193,23 +193,23 @@ enum EntryType
 
 struct JTable
 {
-	int			TabelPos;
+	S32			TabelPos;
 
-	int			RelativePos;
+	S32			RelativePos;
 
-	int			EntryPos;
-	int			EntryType;
+	S32			EntryPos;
+	S32			EntryType;
 
-	int			DataPos;
-	int			DataSize;
+	S32			DataPos;
+	S32			DataSize;
 
-	uint8_t		Data[32];
-	uint8_t		Mask[32];
+	U8		Data[32];
+	U8		Mask[32];
 };
 
 // --
 
-enum RS4JumpStat RS4JumpTable_Rel16( enum RS4ErrorCode *errcode, RS4FileHeader *fh, int64_t tabel_adr, int64_t relative_adr, int32_t entries )
+enum RS4JumpStat RS4JumpTable_Rel16( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 tabel_adr, S64 relative_adr, S32 entries )
 {
 enum RS4ErrorCode ec;
 enum RS4JumpStat js;
@@ -217,12 +217,12 @@ RS4FileSection *sec;
 RS4Brance *rb;
 RS4Label *rel;
 RS4Label *rl;
-int16_t *offsets;
-uint8_t *type;
-int64_t adr;
-int32_t off;
-int16_t r16;
-int cnt;
+S16 *offsets;
+MEM type;
+S64 adr;
+S32 off;
+S16 r16;
+S32 cnt;
 
 	ec	= RS4ErrStat_Error;
 	js	= RS4JumpStat_Error;
@@ -278,7 +278,7 @@ int cnt;
 
 	// --
 
-	offsets = (void *) & sec->rfs_MemoryBuf[ off ];
+	offsets = (PTR ) & sec->rfs_MemoryBuf[ off ];
 
 	for( cnt=0 ; cnt<entries ; cnt++ )
 	{
@@ -1054,19 +1054,19 @@ static struct JTable *JumpTables[] =
 
 // --
 
-static enum RS4JumpStat check_JumpTable( enum RS4ErrorCode *errcode, RS4Trace *rt, struct JTable *jt, int count )
+static enum RS4JumpStat check_JumpTable( enum RS4ErrorCode *errcode, RS4Trace *rt, struct JTable *jt, S32 count )
 {
 enum RS4ErrorCode ec;
 enum RS4JumpStat js;
 RS4FileSection *sec;
-uint8_t *type;
-uint8_t *mem;
-int32_t entries;
-int64_t adr;
-int64_t off;
-int64_t pos;
-uint8_t chr;
-int cnt;
+MEM type;
+MEM mem;
+S32 entries;
+S64 adr;
+S64 off;
+S64 pos;
+U8 chr;
+S32 cnt;
 
 	ec		= RS4ErrStat_Error;
 	js		= RS4JumpStat_Error;
@@ -1172,7 +1172,7 @@ enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 enum RS4JumpStat js;
 struct JTable *jt;
-int pos;
+S32 pos;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;

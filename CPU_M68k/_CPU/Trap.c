@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_TRAP( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int vec;
+S32 vec;
 
 	vec = ( rt->rt_CPU.M68k.mt_Opcode & 0x000f0000 ) >> 16;
 

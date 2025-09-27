@@ -12,7 +12,7 @@
 // --
 // -- Mode 40 - Clr -(Ax)
 
-inline static enum RS4DecodeStat MODE_40( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
+inline static enum RS4DecodeStat MODE_40( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;

@@ -19,9 +19,9 @@ enum RS4DecodeStat M68kCmd_FMOVE( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int mode;
-int src;
-int dst;
+S32 mode;
+S32 src;
+S32 dst;
 
 // printf( "M68kCmd_FMOVE 1\n" );
 
@@ -62,12 +62,12 @@ enum RS4DecodeStat M68kCmd_FMOVE2( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int emode;
-int ereg;
-int mode;
-int src;
-int dst;
-int len;
+S32 emode;
+S32 ereg;
+S32 mode;
+S32 src;
+S32 dst;
+S32 len;
 
 // printf( "M68kCmd_FMOVE 2\n" );
 
@@ -195,12 +195,12 @@ enum RS4DecodeStat M68kCmd_FMOVE3( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int emode;
-int ereg;
-int fmt;
-int src;
-//int len;
-//int k;
+S32 emode;
+S32 ereg;
+S32 fmt;
+S32 src;
+//S32 len;
+//S32 k;
 
 // printf( "M68kCmd_FMOVE 3 : at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 
@@ -334,12 +334,12 @@ enum RS4DecodeStat M68kCmd_FMOVE4( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-char *name;
-int emode;
-int ereg;
-int len;
-int reg;
-int dr;
+STR name;
+S32 emode;
+S32 ereg;
+S32 len;
+S32 reg;
+S32 dr;
 
 	// --
 

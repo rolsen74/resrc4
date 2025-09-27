@@ -17,10 +17,10 @@
 
 struct myLibType1
 {
-	int						Used1;
+	S32						Used1;
 	enum AOS3_LibType		Type1;
 	AOS3_LVOStruct *		Data1;
-	char *					Name1;
+	STR 					Name1;
 };
 
 #define myentry1(x,y)			{ 0, AOS3_LibType_##x, AOS3_##x, y }
@@ -71,7 +71,7 @@ static struct myLibType1 myLibs[] =
 
 // --
 
-char *AmigaOS3_FindLibFunc( enum RS4ErrorCode *errcode, RS4Trace *rt, int16_t offset )
+STR AmigaOS3_FindLibFunc( enum RS4ErrorCode *errcode, RS4Trace *rt, S16 offset )
 {
 enum RS4DecodeStat ds;
 enum AOS3_LibType lib;
@@ -80,11 +80,11 @@ enum RS4FuncStat fs;
 AOS3_LVOStruct *liblvos;
 AOS3_RegStruct *rs;
 RS4Label *rl;
-char *lvo;
-int pos1;
-int pos2;
-int pos3;
-int reg;
+STR lvo;
+S32 pos1;
+S32 pos2;
+S32 pos3;
+S32 reg;
 
 	ec	= RS4ErrStat_Okay;
 	lvo	= NULL;
@@ -323,9 +323,9 @@ enum RS4FuncStat AmigaOS3_SaveLibFunc( enum RS4ErrorCode *errcode )
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 AOS3_LVOStruct *liblvos;
-int pos1;
-int pos2;
-int len;
+S32 pos1;
+S32 pos2;
+S32 len;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;

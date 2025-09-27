@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_ADDQ( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int data;
-int size;
+S32 data;
+S32 size;
 
 	data = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;

@@ -52,9 +52,9 @@ enum RS4DecodeStat M68kCmd_FScc( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int emode;
-int ereg;
-int cond;
+S32 emode;
+S32 ereg;
+S32 cond;
 
 	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000003f );
 	emode= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
@@ -67,7 +67,7 @@ int cond;
 		goto bailout;
 	}
 
-	static const char *fscc_RegNames[] = 
+	static CSTR fscc_RegNames[] = 
 	{
 		"FSf.b",	"FSeq.b",	"FSogt.b",	"FSoge.b",	// 0x00
 		"FSolt.b",	"FSole.b",	"FSogl.b",	"FSor.b",	// 0x04

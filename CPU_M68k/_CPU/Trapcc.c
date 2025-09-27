@@ -20,10 +20,10 @@ enum RS4DecodeStat M68kCmd_TRAPcc( enum RS4ErrorCode *errcode, RS4Trace *rt )
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-char labname[ MAX_LabelName + 8 ];
-uint8_t *mem;
-int cond;
-int size;
+CHR labname[ MAX_LabelName + 8 ];
+MEM mem;
+S32 cond;
+S32 size;
 
 	ec	= RS4ErrStat_Error;
 	ds	= RS4DecodeStat_Error;
@@ -36,11 +36,11 @@ int size;
 	{
 		case 2: // Trapcc.w
 		{
-			uint16_t val;
+			U16 val;
 
 			val = (( mem[2] << 8 ) | ( mem[3] << 0 ));
 
-			static const char *trapcc_RegNames[16] =
+			static CSTR trapcc_RegNames[16] =
 			{
 				"Trapt.w",  "Trapf.w",  "Traphi.w", "Trapls.w",
 				"Trapcc.w", "Trapcs.w", "Trapne.w", "Trapeq.w",
@@ -58,11 +58,11 @@ int size;
 
 		case 3: // Trapcc.l
 		{
-			uint32_t val;
+			U32 val;
 
 			val = (( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ));
 
-			static const char *trapcc_RegNames[16] =
+			static CSTR trapcc_RegNames[16] =
 			{
 				"Trapt.l",  "Trapf.l",  "Traphi.l", "Trapls.l",
 				"Trapcc.l", "Trapcs.l", "Trapne.l", "Trapeq.l",
@@ -94,7 +94,7 @@ int size;
 
 		case 4: // Trapcc
 		{
-			static const char *trapcc_RegNames[16] =
+			static CSTR trapcc_RegNames[16] =
 			{
 				"Trapt",  "Trapf",  "Traphi", "Trapls",
 				"Trapcc", "Trapcs", "Trapne", "Trapeq",

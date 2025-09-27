@@ -15,18 +15,18 @@
 
 // --
 
-const char *	FPx_RegNames[8]	= { "FP0","FP1","FP2","FP3","FP4","FP5","FP6","FP7" };
-const char *	Ax_RegNames[8]	= { "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7" };
-const char *	Dx_RegNames[8]	= { "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7" };
-const char *	scale_Names[4]	= { "",   "*2", "*4", "*8" };
+CSTR 	FPx_RegNames[8]	= { "FP0","FP1","FP2","FP3","FP4","FP5","FP6","FP7" };
+CSTR 	Ax_RegNames[8]	= { "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7" };
+CSTR 	Dx_RegNames[8]	= { "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7" };
+CSTR 	scale_Names[4]	= { "",   "*2", "*4", "*8" };
 
 // --
 
 struct CmdStruct
 {
 	enum RS4DecodeStat (*cs_Function)( enum RS4ErrorCode *errcode, RS4Trace *rt );
-	uint32_t	cs_Mask;
-	uint32_t	cs_Opcode;
+	U32	cs_Mask;
+	U32	cs_Opcode;
 };
 
 // --
@@ -94,13 +94,13 @@ static const struct CmdStruct m68kCmds_0000[] =
 	{ M68kCmd_MOVEP,	0xf1f80000, 0x01c80000 },	// MOVEP.l	0000 xxx1 1100 1xxx
 	{ M68kCmd_BSET2,	0xf1c00000, 0x01c00000 },	// BSET		0000 xxx1 11xx xxxx
 
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0001[] =
 {
 	{ M68kCmd_MOVE,		0xf0000000, 0x10000000 },	// MOVE.b	0001 xxxx xxxx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0010[] =
@@ -113,7 +113,7 @@ static const struct CmdStruct m68kCmds_0010[] =
 	{ M68kCmd_MOVE,		0xf1c00000, 0x21400000 },	// MOVE.l	0010 xxx1 01xx xxxx
 	{ M68kCmd_MOVE,		0xf1c00000, 0x21800000 },	// MOVE.l	0010 xxx1 10xx xxxx
 	{ M68kCmd_MOVE,		0xf1c00000, 0x21c00000 },	// MOVE.l	0010 xxx1 11xx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0011[] =
@@ -126,7 +126,7 @@ static const struct CmdStruct m68kCmds_0011[] =
 	{ M68kCmd_MOVE,		0xf1c00000, 0x31400000 },	// MOVE.w	0010 xxx1 01xx xxxx
 	{ M68kCmd_MOVE,		0xf1c00000, 0x31800000 },	// MOVE.w	0010 xxx1 10xx xxxx
 	{ M68kCmd_MOVE,		0xf1c00000, 0x31c00000 },	// MOVE.w	0010 xxx1 11xx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0100[] =
@@ -195,7 +195,7 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ M68kCmd_JSR,		0xffc00000, 0x4e800000 },	// JSR		0100 1110 10xx xxxx
 	{ M68kCmd_JMP,		0xffc00000, 0x4ec00000 },	// JMP		0100 1110 11xx xxxx
 	{ M68kCmd_LEA,		0xf1c00000, 0x41c00000 },	// LEA		0100 xxx1 11xx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0101[] =
@@ -214,19 +214,19 @@ static const struct CmdStruct m68kCmds_0101[] =
 	{ M68kCmd_TRAPcc,	0xf0ff0000, 0x50fc0000 },	// TRAPcc	0101 xxxx 1111 1100
 	{ M68kCmd_Scc,		0xf0c00000, 0x50c00000 },	// Scc		0101 1111 11xx xxxx
 
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0110[] =
 {
 	{ M68kCmd_Bcc,		0xf0000000, 0x60000000 },	// Bcc		0110 xxxx xxxx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_0111[] =
 {
 	{ M68kCmd_MOVEQ,	0xf1000000, 0x70000000 },	// MOVEQ	0111 xxx0 xxxx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1000[] =
@@ -242,7 +242,7 @@ static const struct CmdStruct m68kCmds_1000[] =
 	{ M68kCmd_UNPK,		0xf1f00000, 0x81800000 },	// UNPK		1000 xxx1 1000 xxxx
 	{ M68kCmd_OR,		0xf1c00000, 0x81800000 },	// OR		1000 xxx1 10xx xxxx
 	{ M68kCmd_DIV,		0xf1c00000, 0x81c00000 },	// DIVS.w	1000 xxx1 11xx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1001[] =
@@ -258,12 +258,12 @@ static const struct CmdStruct m68kCmds_1001[] =
 	{ M68kCmd_SUBX,		0xf1f00000, 0x91800000 },	// SUBX.l	1001 xxx1 1000 xxxx
 	{ M68kCmd_SUB,		0xf1c00000, 0x91800000 },	// SUB		1001 xxx1 10xx xxxx
 	{ M68kCmd_SUBA,		0xf1c00000, 0x91c00000 },	// SUBA		1001 xxx1 11xx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1010[] =
 {
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1011[] =
@@ -280,7 +280,7 @@ static const struct CmdStruct m68kCmds_1011[] =
 	{ M68kCmd_EOR,		0xf1c00000, 0xb1800000 },	// EOR.l	1011 xxx1 10xx xxxx
 	{ M68kCmd_CMPA,		0xf1c00000, 0xb1c00000 },	// CMPA.l	1011 xxx1 11xx xxxx
 
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1100[] =
@@ -297,7 +297,7 @@ static const struct CmdStruct m68kCmds_1100[] =
 	{ M68kCmd_EXG,		0xf1f80000, 0xc1880000 },	// EXG.l	1100 xxx1 1000 1xxx
 	{ M68kCmd_AND,		0xf1c00000, 0xc1800000 },	// AND.l	1100 xxx1 10xx xxxx
 	{ M68kCmd_MUL,		0xf1c00000, 0xc1c00000 },	// MULS.w	1100 xxx1 11xx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1101[] =
@@ -313,7 +313,7 @@ static const struct CmdStruct m68kCmds_1101[] =
 	{ M68kCmd_ADDX,		0xf1f00000, 0xd1800000 },	// ADDX.l	1101 xxx1 1000 xxxx
 	{ M68kCmd_ADD,		0xf1c00000, 0xd1800000 },	// ADD.l	1101 xxx1 10xx xxxx
 	{ M68kCmd_ADDA,		0xf1c00000, 0xd1c00000 },	// ADDA.l	1101 xxx1 11xx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1110[] =
@@ -359,7 +359,7 @@ static const struct CmdStruct m68kCmds_1110[] =
 	{ M68kCmd_LSL2,		0xffc00000, 0xe3c00000 },	// LSL		1110 0011 11xx xxxx
 	{ M68kCmd_ROXL2,	0xffc00000, 0xe5c00000 },	// ROXL		1110 0101 11xx xxxx
 	{ M68kCmd_ROL2,		0xffc00000, 0xe7c00000 },	// ROL		1110 0111 11xx xxxx
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 static const struct CmdStruct m68kCmds_1111[] =
@@ -922,7 +922,7 @@ static const struct CmdStruct m68kCmds_1111[] =
 
 	{ M68kCmd_LPSTOP,	0xffffffff, 0xf80001c0 },	// LPStop	1111 1000 0000 0000 0000 0001 1100 0000
 
-	{ NULL,			0x00000000, 0x00000000 },
+	{ NULL,				0x00000000, 0x00000000 },
 };
 
 // --
@@ -932,8 +932,8 @@ static const struct CmdStruct *Find_Opcode( enum RS4ErrorCode *errcode, RS4Trace
 const struct CmdStruct *retval;
 const struct CmdStruct *list;
 enum RS4ErrorCode ec;
-uint32_t opcode;
-uint32_t cnt;
+U32 opcode;
+U32 cnt;
 
 	ec = RS4ErrStat_Error;
 
@@ -1027,9 +1027,9 @@ enum RS4DecodeStat M68k_Decoder( enum RS4ErrorCode *errcode, RS4Trace *rt )
 const struct CmdStruct *cmd;
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint8_t *mem;
-//int mask;
-//int cnt;
+MEM mem;
+//S32 mask;
+//S32 cnt;
 
 	ec = RS4ErrStat_Error;
 	ds = RS4DecodeStat_Error;
@@ -1100,6 +1100,7 @@ uint8_t *mem;
 	rt->rt_CPU.M68k.mt_ArgSize		= 2;
 	rt->rt_CPU.M68k.mt_LastOpcode	= FALSE;
 	rt->rt_CPU.M68k.mt_IsPea		= FALSE;
+	rt->rt_CPU.M68k.mt_DoLabelSize	= TRUE;
 	rt->rt_CPU.M68k.mt_DoExternal	= TRUE;
 	rt->rt_CPU.M68k.mt_LibCall		= FALSE;
 	rt->rt_CPU.M68k.mt_ClearRegMask	= 0;
@@ -1121,9 +1122,9 @@ uint8_t *mem;
 
 	if ( DoVerbose > 3 )
 	{
-		char lebuf[16];
-		int ii;
-		int c;
+		CHR lebuf[16];
+		S32 ii;
+		S32 c;
 
 		for( ii=0 ; ii<12 ; ii ++ )
 		{
@@ -1146,9 +1147,9 @@ uint8_t *mem;
 
 		printf( "Decode: [%08" PRIx64 "] %s [", rt->rt_CurMemAdr, lebuf );
 
-		for( int ii=0 ; ii < rt->rt_CPU.M68k.mt_OpcodeSize ; ii += 2 )
+		for( S32 ii=0 ; ii < rt->rt_CPU.M68k.mt_OpcodeSize ; ii += 2 )
 		{
-			uint16_t vv1 = (( rt->rt_CurMemBuf[ii+0] << 8 ) | ( rt->rt_CurMemBuf[ii+1] << 0 ));
+			U16 vv1 = (( rt->rt_CurMemBuf[ii+0] << 8 ) | ( rt->rt_CurMemBuf[ii+1] << 0 ));
 
 			if ( ! ii )
 			{
@@ -1167,7 +1168,7 @@ uint8_t *mem;
 	#if 0
 //	if (( rt->rt_CurMemAdr >= 0x00100000 ) && ( rt->rt_CurMemAdr < 0x001200e0 ))
 	{
-	int cnt;
+	S32 cnt;
 
 	printf( "Decoded : Adr $%08" PRIx64 " : %08x\n", rt->rt_CurMemAdr, rt->rt_CPU.M68k.mt_Opcode );
 

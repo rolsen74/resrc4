@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_MOVE( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t size;
-uint8_t *mem;
+U32 size;
+MEM mem;
 
 #ifdef SUPPORT_AMIGAOS3
 struct AmigaOS3_Misc_Move_GetSetStruct gss;
@@ -300,7 +300,7 @@ enum RS4DecodeStat M68kCmd_MOVE3( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int pos;
+S32 pos;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Move.w";
 	rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Word;
@@ -394,7 +394,7 @@ enum RS4DecodeStat M68kCmd_MOVE5( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int pos;
+S32 pos;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Move.w";
 	rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Word;
@@ -442,8 +442,8 @@ enum RS4DecodeStat M68kCmd_MOVE6( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int reg;
-int dr;
+S32 reg;
+S32 dr;
 
 	dr	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00080000 );
 	reg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;

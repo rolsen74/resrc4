@@ -15,12 +15,12 @@
 
 // --
 
-static char RC4MD5[34];
+static CHR RC4MD5[34];
 
-static char *CONFIG_HEADER =	
+static STR CONFIG_HEADER =	
 	"[## ReSrc4 v1 : Configfile ##]";
 
-static char CONFIG_BODY_FMT[] =
+static CHR CONFIG_BODY_FMT[] =
 	"\n" // Header Newline
 	"\n"
 	";\n"
@@ -68,7 +68,7 @@ static char CONFIG_BODY_FMT[] =
 
 // --
 
-static const int8_t HexData[256] =
+static const S8 HexData[256] =
 {
 //	 0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,	// 0
@@ -102,10 +102,10 @@ enum
 
 struct TypeStruct
 {
-	int		NameLen;
-	char *	Name;
-	int		Type;
-	int		Value;
+	S32		NameLen;
+	STR 	Name;
+	S32		Type;
+	S32		Value;
 };
 
 struct TypeStruct myTypes[] =
@@ -135,12 +135,12 @@ struct TypeStruct myTypes[] =
 	{  0, NULL, 0, 0 }
 };
 
-static enum RS4FuncStat RS4SetType( enum RS4ErrorCode *errcode, RS4Label *rl, char *buf, int *posptr )
+static enum RS4FuncStat RS4SetType( enum RS4ErrorCode *errcode, RS4Label *rl, STR buf, S32 *posptr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-int pos;
-int cnt;
+S32 pos;
+S32 cnt;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
@@ -236,16 +236,16 @@ bailout:
 
 // --
 
-static enum RS4FuncStat RS4ReadAddress( enum RS4ErrorCode *errcode, char *buf, int *p, int64_t *a )
+static enum RS4FuncStat RS4ReadAddress( enum RS4ErrorCode *errcode, STR buf, S32 *p, S64 *a )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-int64_t adr;
-int off;
-int pos;
-int hex;
-int cnt;
-int val;
+S64 adr;
+S32 off;
+S32 pos;
+S32 hex;
+S32 cnt;
+S32 val;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
@@ -321,13 +321,13 @@ bailout:
 
 // --
 
-static enum RS4FuncStat RS4ReadNumber( enum RS4ErrorCode *errcode, char *buf, int *p, int64_t *n )
+static enum RS4FuncStat RS4ReadNumber( enum RS4ErrorCode *errcode, STR buf, S32 *p, S64 *n )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-int64_t val;
-int pos;
-int c;
+S64 val;
+S32 pos;
+S32 c;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
@@ -388,13 +388,13 @@ bailout:
 
 // --
 
-static enum RS4FuncStat RS4ReadString( enum RS4ErrorCode *errcode, char *buf, int *p, char *str, int max )
+static enum RS4FuncStat RS4ReadString( enum RS4ErrorCode *errcode, STR buf, S32 *p, STR str, S32 max )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-int pos;
-int cnt;
-int c;
+S32 pos;
+S32 cnt;
+S32 c;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
@@ -474,15 +474,15 @@ static enum RS4FuncStat RS4Cmd_RELATIVE16(
 	RS4FileHeader *cfgfile UNUSED, 
 	RS4FileHeader *exefile, 
 	enum RS4ErrorCode *errcode, 
-	char *buf, int linenr )
+	STR buf, S32 linenr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 enum RS4JumpStat js;
-int64_t relative_adr;
-int64_t tabel_adr;
-int64_t entries;
-int pos;
+S64 relative_adr;
+S64 tabel_adr;
+S64 entries;
+S32 pos;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
@@ -590,14 +590,14 @@ static enum RS4FuncStat RS4Cmd_LABELNAME(
 	RS4FileHeader *cfgfile UNUSED, 
 	RS4FileHeader *exefile, 
 	enum RS4ErrorCode *errcode, 
-	char *buf, 
-	int linenr )
+	STR buf, 
+	S32 linenr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-int64_t adr;
-int pos;
+S64 adr;
+S32 pos;
 
 // printf( "Label Name\n" );
 
@@ -647,7 +647,7 @@ int pos;
 
 	if ( buf[pos] == ',' )
 	{
-		int p = pos;
+		S32 p = pos;
 
 		p++;
 
@@ -718,14 +718,14 @@ static enum RS4FuncStat RS4Cmd_LABELTYPE(
 	RS4FileHeader *cfgfile UNUSED, 
 	RS4FileHeader *exefile, 
 	enum RS4ErrorCode *errcode, 
-	char *buf, 
-	int linenr )
+	STR buf, 
+	S32 linenr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-int64_t adr;
-int pos;
+S64 adr;
+S32 pos;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
@@ -849,15 +849,15 @@ static enum RS4FuncStat RS4Cmd_MD5(
 	RS4FileHeader *cfgfile UNUSED, 
 	RS4FileHeader *exefile UNUSED, 
 	enum RS4ErrorCode *errcode, 
-	char *buf, 
-	int linenr )
+	STR buf, 
+	S32 linenr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-int stat;
-int pos;
-int cnt;
-int p;
+S32 stat;
+S32 pos;
+S32 cnt;
+S32 p;
 
 	fs = RS4FuncStat_Error;
 	ec = RS4ErrStat_Error;
@@ -930,14 +930,14 @@ static enum RS4FuncStat RS4Cmd_CODE(
 	RS4FileHeader *cfgfile UNUSED, 
 	RS4FileHeader *exefile, 
 	enum RS4ErrorCode *errcode, 
-	char *buf, 
-	int linenr )
+	STR buf, 
+	S32 linenr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Brance *rb;
-int64_t adr;
-int pos;
+S64 adr;
+S32 pos;
 
 	fs = RS4FuncStat_Error;
 	ec = RS4ErrStat_Error;
@@ -1013,22 +1013,22 @@ static enum RS4FuncStat RS4Cmd_MEMWRITE(
 	RS4FileHeader *cfgfile UNUSED, 
 	RS4FileHeader *exefile, 
 	enum RS4ErrorCode *errcode, 
-	char *buf, 
-	int linenr )
+	STR buf, 
+	S32 linenr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-uint8_t *mem;
-uint32_t adr;
-uint8_t chr;
-int off;
-int max;
-int pos;
-int cnt;
-int hex;
-int val;
-int len;
+MEM mem;
+U32 adr;
+U8 chr;
+S32 off;
+S32 max;
+S32 pos;
+S32 cnt;
+S32 hex;
+S32 val;
+S32 len;
 
 	fs = RS4FuncStat_Error;
 	ec = RS4ErrStat_Error;
@@ -1144,7 +1144,7 @@ int len;
 
 	len = pos;
 	chr = 0;
-	int oo = 1;
+	S32 oo = 1;
 
 	while( TRUE )
 	{
@@ -1252,15 +1252,15 @@ bailout:
 
 // --
 
-static int RS4CreateConfigFile( RS4FileHeader *fh, enum RS4ErrorCode *errcode )
+static S32 RS4CreateConfigFile( RS4FileHeader *fh, enum RS4ErrorCode *errcode )
 {
 enum RS4ErrorCode ec;
-char buf[1024];
+CHR buf[1024];
 FILE *file;
-int total;
-int fsize;
-int len;
-int err;
+S32 total;
+S32 fsize;
+S32 len;
+S32 err;
 
 	ec = RS4ErrStat_Error;
 
@@ -1363,9 +1363,9 @@ bailout:
 
 struct cmdstr
 {
-	int		len;
-	char *	name;
-	enum RS4FuncStat (*func)( RS4FileHeader *cfgfile, RS4FileHeader *exefile, enum RS4ErrorCode *errcode, char *buf, int linenr );
+	S32		len;
+	STR 	name;
+	enum RS4FuncStat (*func)( RS4FileHeader *cfgfile, RS4FileHeader *exefile, enum RS4ErrorCode *errcode, STR buf, S32 linenr );
 };
 
 struct cmdstr cmds[] =
@@ -1379,17 +1379,17 @@ struct cmdstr cmds[] =
 	{	0,	NULL,			NULL },
 };
 
-static int RS4ParseFile( RS4FileHeader *cfgfile, RS4FileHeader *exefile, enum RS4ErrorCode *errcode )
+static S32 RS4ParseFile( RS4FileHeader *cfgfile, RS4FileHeader *exefile, enum RS4ErrorCode *errcode )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-char *mem;
-int linenr;
-int size;
-int err;
-int pos;
-int len;
-int cnt;
+STR mem;
+S32 linenr;
+S32 size;
+S32 err;
+S32 pos;
+S32 len;
+S32 cnt;
 
 	ec = RS4ErrStat_Error;
 
@@ -1397,7 +1397,7 @@ int cnt;
 
 	len = strlen( CONFIG_HEADER );
 
-	mem = (char *) cfgfile->rfh_FileBuffer;
+	mem = (STR ) cfgfile->rfh_FileBuffer;
 
 	size = cfgfile->rfh_FileSize;
 
@@ -1502,7 +1502,7 @@ int cnt;
 			else
 			{
 				printf( "Skipping : LineNr %d : '", linenr );
-				for( int ii=0 ; ii<len ; ii++ )
+				for( S32 ii=0 ; ii<len ; ii++ )
 				{
 					printf( "%c", mem[pos+ii] );
 				}
@@ -1546,12 +1546,12 @@ bailout:
 
 // --
 
-static int RS4BuildConfigName( enum RS4ErrorCode *errcode )
+static S32 RS4BuildConfigName( enum RS4ErrorCode *errcode )
 {
 enum RS4ErrorCode ec;
-int err;
-int stat;
-int len;
+S32 err;
+S32 stat;
+S32 len;
 
 	ec = RS4ErrStat_Error;
 
@@ -1621,9 +1621,9 @@ enum RS4FuncStat RS4ParseConfig_File( enum RS4ErrorCode *errcode, RS4FileHeader 
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileHeader *cfgfile;
-char response[10];
-int create;
-int loaded;
+CHR response[10];
+S32 create;
+S32 loaded;
 
 	fs = RS4FuncStat_Error;
 	ec = RS4ErrStat_Error;

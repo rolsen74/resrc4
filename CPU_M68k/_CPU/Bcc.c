@@ -21,12 +21,14 @@ enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-uint32_t cond;
-uint32_t size;
-uint8_t *mem;
-int64_t adr;
+U32 cond;
+U32 size;
+MEM mem;
+S64 adr;
 
 	mem = rt->rt_CurMemBuf;
+
+	rt->rt_CPU.M68k.mt_DoLabelSize	= FALSE;
 
 	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x0f000000 ) >> 24;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00ff0000 ) >> 16;
@@ -40,9 +42,9 @@ int64_t adr;
 	{
 		case 0:
 		{
-			int16_t offset;
+			S16 offset;
 
-			static const char *bcc_RegNames[16] = 
+			static CSTR bcc_RegNames[16] = 
 			{
 				"Bra.w", "Bsr.w", "Bhi.w", "Bls.w",
 				"Bcc.w", "Bcs.w", "Bne.w", "Beq.w",
@@ -65,9 +67,9 @@ int64_t adr;
 
 		case 255:
 		{
-			int32_t offset;
+			S32 offset;
 
-			static const char *bcc_RegNames[] = 
+			static CSTR bcc_RegNames[] = 
 			{
 				"Bra.l", "Bsr.l", "Bhi.l", "Bls.l",
 				"Bcc.l", "Bcs.l", "Bne.l", "Beq.l",
@@ -90,9 +92,9 @@ int64_t adr;
 
 		default:
 		{
-			int8_t offset;
+			S8 offset;
 
-			static const char *bcc_RegNames[] = 
+			static CSTR bcc_RegNames[] = 
 			{
 				"Bra.b", "Bsr.b", "Bhi.b", "Bls.b",
 				"Bcc.b", "Bcs.b", "Bne.b", "Beq.b",

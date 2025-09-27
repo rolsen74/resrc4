@@ -18,7 +18,7 @@
 struct myLibType
 {
 	enum AOS3_LibType	Type;
-	char *				Name;
+	STR 				Name;
 };
 
 // --
@@ -68,8 +68,8 @@ enum RS4DecodeStat AOS3_Exec_OpenLibrary_Func( enum RS4ErrorCode *errcode, RS4Tr
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 RS4Label *rl;
-char *buf;
-int pos;
+STR buf;
+S32 pos;
 
 	ec = RS4ErrStat_Okay;
 	ds = RS4DecodeStat_Okay;
@@ -97,7 +97,7 @@ int pos;
 	}
 	#endif
 
-	buf = (void *) rl->rl_Memory;
+	buf = (PTR ) rl->rl_Memory;
 
 	if ( ! buf )
 	{

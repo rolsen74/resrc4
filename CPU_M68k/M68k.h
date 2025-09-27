@@ -69,11 +69,11 @@ enum M68KStat
 struct M68kRegister
 {
 	enum RS4RegType			mr_Type1;
-	int						mr_Type2;			// Subtype
+	S32						mr_Type2;			// Subtype
 	#ifdef DEBUG
-	int32_t					mr_Number;			// Temp debug
+	S32						mr_Number;			// Temp debug
 	#endif
-	int32_t					mr_Address;			// should I do 64bit?
+	S32						mr_Address;			// should I do 64bit?
 	RS4Label *				mr_Label;
 };
 
@@ -81,8 +81,8 @@ struct M68kRegister
 
 struct AmigaOS3_Misc_Move_GetSetStruct
 {
-	int						SrcType;
-	int						LibType;
+	S32						SrcType;
+	S32						LibType;
 	RS4Label *				Label;
 	struct M68kRegister 	Reg;
 };
@@ -98,18 +98,19 @@ enum M68kDecMode
 
 struct M68kTrace
 {
-	uint32_t				mt_Opcode;				// First 4 bytes of Opcode
-	int						mt_OpcodeSize;			// Total size of Opcode
-	int						mt_ArgEMode;			// Effective Addreess Mode
-	int						mt_ArgEReg;				// Effective Addreess Register
-	int						mt_ArgSize;				// Opcode Size in bytes
+	U32						mt_Opcode;				// First 4 bytes of Opcode
+	S32						mt_OpcodeSize;			// Total size of Opcode
+	S32						mt_ArgEMode;			// Effective Addreess Mode
+	S32						mt_ArgEReg;				// Effective Addreess Register
+	S32						mt_ArgSize;				// Opcode Size in bytes
 	enum M68KOpcodeSize		mt_ArgType;				// Opcode Type (b/w/l)
 	enum M68kDecMode		mt_DecMode;				// Hex, Sign Dec, Unsign Dec
-	int						mt_LastOpcode;			// Rts or Jmp .. sets this
-	int						mt_IsPea;				// Negative values, will be printed as Decimal
-	int						mt_LibCall;				// Well Possible LibCall
-	int						mt_ClearRegMask;		// Regs to Destroy on Return
-	int						mt_DoExternal;
+	S32						mt_LastOpcode;			// Rts or Jmp .. sets this
+	S32						mt_IsPea;				// Negative values, will be printed as Decimal
+	S32						mt_DoLabelSize;		// 
+	S32						mt_LibCall;				// Well Possible LibCall
+	S32						mt_ClearRegMask;		// Regs to Destroy on Return
+	S32						mt_DoExternal;
 	struct M68kRegister *	mt_CurRegister;
 	struct M68kRegister		mt_JmpRegister;
 	struct M68kRegister		mt_SrcRegister;
@@ -119,10 +120,10 @@ struct M68kTrace
 
 // -- Extern
 
-extern const char *FPx_RegNames[8];
-extern const char *Ax_RegNames[8];
-extern const char *Dx_RegNames[8];
-extern const char *scale_Names[4];
+extern CSTR FPx_RegNames[8];
+extern CSTR Ax_RegNames[8];
+extern CSTR Dx_RegNames[8];
+extern CSTR scale_Names[4];
 
 
 // -- Protos
@@ -132,7 +133,7 @@ enum RS4DecodeStat	M68k_Decoder(			enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat	M68k_EffectiveAddress(	enum RS4ErrorCode *, RS4Trace * );
 void				M68k_Set_Cur_to_Unknown( RS4Trace *rt );
 
-char *	AmigaOS3_FindLibFunc(			enum RS4ErrorCode *errcode, RS4Trace *rt, int16_t val );
+STR 	AmigaOS3_FindLibFunc(			enum RS4ErrorCode *errcode, RS4Trace *rt, S16 val );
 
 // -- Opcodes
 enum RS4DecodeStat M68kCmd_ABCD(		enum RS4ErrorCode *, RS4Trace * );

@@ -40,10 +40,10 @@ enum RS4DecodeStat M68k_EffectiveAddress( enum RS4ErrorCode *errcode, RS4Trace *
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-char *outstr;
-char *buf;
-int mode;
-int pos;
+STR outstr;
+STR buf;
+S32 mode;
+S32 pos;
 
 	buf = rt->rt_Container.Hunk.ms_Buf_Argument;
 	pos = strlen( buf );

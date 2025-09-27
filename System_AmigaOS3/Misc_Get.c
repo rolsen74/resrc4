@@ -23,13 +23,13 @@ enum RS4FuncStat AmigaOS3_Misc_Move_Get(
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt, struct 
 	M68kRegister *cur, 
-	uint8_t *mem, 
+	MEM mem, 
 	struct AmigaOS3_Misc_Move_GetSetStruct *gss )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-uint32_t val;
+U32 val;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;

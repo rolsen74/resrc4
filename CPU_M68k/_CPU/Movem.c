@@ -19,18 +19,18 @@ static enum RS4DecodeStat RegMask( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-const char **regs;
-char *buf;
-uint32_t mask;
-uint32_t pos;
-uint32_t bit;
-int ClearReg;
-int reverse;
-int start;
-int loop;
-int end;
-int cnt;
-int reg;
+CSTR *regs;
+STR buf;
+U32 mask;
+U32 pos;
+U32 bit;
+S32 ClearReg;
+S32 reverse;
+S32 start;
+S32 loop;
+S32 end;
+S32 cnt;
+S32 reg;
 
 	reverse = (( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) == 0x00200000 ) ? TRUE : FALSE;
 

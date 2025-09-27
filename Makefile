@@ -22,6 +22,12 @@ LIBS		:=
 # Source Dirs
 SRCDIRS		:= Resourcer
 
+# Object Dir
+OBJDIR		:= obj
+
+# Binary Dir
+BINDIR		:= bin
+
 ###########################################################################
 
 # Loaders
@@ -180,37 +186,43 @@ endif
 
 ###############################################################################
 
-all: $(TARGET)
+all: $(BINDIR)/$(TARGET)
 
 ###########################################################################
 
-SRCS	+= $(wildcard $(addsuffix /*.c, $(SRCDIRS)))
+SRCS		+= $(wildcard $(addsuffix /*.c, $(SRCDIRS)))
+OBJS		:= $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
+DEPS		:= $(patsubst %.c,$(OBJDIR)/%.d,$(SRCS))
 
-OBJS	:= $(SRCS:.c=.o)
+###########################################################################
 
-DEPS	:= $(OBJS:.o=.d)
+$(BINDIR)/$(TARGET): $(OBJS) | $(BINDIR)
+	$(CC) $(LDFLAGS) -o $(BINDIR)/$(TARGET) $(OBJS) $(LIBS) -Wl,--cref,-M,-Map=$(TARGET).map
+
+$(BINDIR):
+	$(MKDIR) $(BINDIR)
 
 ###########################################################################
 
 -include $(DEPS)
 
-$(TARGET): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
-
-%.o: %.c
-	$(CC) -c $(CFLAGS) -o$@ $<
-
 ###########################################################################
 
 clean:
-	$(RM) $(OBJS) $(DEPS) $(TARGET)
+	$(RM) $(OBJS) $(DEPS) $(BINDIR)/$(TARGET)
 
 strip:
-	@$(LS) $(TARGET)
-	@$(STRIP) $(TARGET)
-	@$(LS) $(TARGET)
+	@$(LS)		$(BINDIR)/$(TARGET)
+	@$(STRIP)	$(BINDIR)/$(TARGET)
+	@$(LS)		$(BINDIR)/$(TARGET)
 
 install:
-	install -m 755 $(TARGET) /home/vm/bin
+	install -m 755 $(BINDIR)/$(TARGET) ~/bin
+
+###########################################################################
+
+$(OBJDIR)/%.o: %.c
+	@$(MKDIR) $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 ###########################################################################

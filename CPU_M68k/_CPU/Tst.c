@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_TST( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t size;
+U32 size;
 
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
 

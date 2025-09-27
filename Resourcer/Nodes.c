@@ -15,7 +15,7 @@
 
 // --
 
-void RS4AddHead( RS4Header *h, void *n2 )
+void RS4AddHead( RS4Header *h, PTR n2 )
 {
 RS4Node *n = n2;
 RS4Node *t;
@@ -44,7 +44,7 @@ RS4Node *t;
 
 // --
 
-void RS4AddTail( RS4Header *h, void *n2 )
+void RS4AddTail( RS4Header *h, PTR n2 )
 {
 RS4Node *n = n2;
 RS4Node *t;
@@ -73,7 +73,7 @@ RS4Node *t;
 
 // --
 
-void RS4AddAfter( RS4Header *h, void *curptr, void *newptr )
+void RS4AddAfter( RS4Header *h, PTR curptr, PTR newptr )
 {
 RS4Node *n;	// New Node
 RS4Node *c;	// Current Node
@@ -138,7 +138,7 @@ bailout:
 
 // --
 
-void *RS4RemHead( RS4Header *h )
+PTR RS4RemHead( RS4Header *h )
 {
 RS4Node *next;
 RS4Node *n;
@@ -177,9 +177,9 @@ RS4Node *n;
 
 // --
 
-void *RS4GetHead( RS4Header *h )
+PTR RS4GetHead( RS4Header *h )
 {
-void *head;
+PTR head;
 
 	if ( h )
 	{
@@ -195,9 +195,9 @@ void *head;
 
 // --
 
-void *RS4GetTail( RS4Header *h )
+PTR RS4GetTail( RS4Header *h )
 {
-void *tail;
+PTR tail;
 
 	if ( h )
 	{
@@ -213,10 +213,10 @@ void *tail;
 
 // --
 
-void *RS4GetNext( void *nodeptr )
+PTR RS4GetNext( PTR nodeptr )
 {
 RS4Node *node;
-void *next;
+PTR next;
 
 	node = nodeptr;
 
@@ -234,10 +234,10 @@ void *next;
 
 // --
 
-void *RS4GetPrev( void *nodeptr )
+PTR RS4GetPrev( PTR nodeptr )
 {
 RS4Node *node;
-void *prev;
+PTR prev;
 
 	node = nodeptr;
 

@@ -22,25 +22,25 @@
 enum RS4ErrorCode Misc_Set__Src_is_Exec( 
 	struct M68kRegister *dst_reg, 
 	RS4Trace *rt,
-	uint8_t *mem );
+	MEM mem );
 
 enum RS4ErrorCode Misc_Set__Src_is_Label( 
 	struct AmigaOS3_Misc_Move_GetSetStruct *gss,
 	struct M68kRegister *dst_reg, 
 	RS4Trace *rt,
-	uint8_t *mem );
+	MEM mem );
 
 enum RS4ErrorCode Misc_Set__Src_is_Reg( 
 	struct AmigaOS3_Misc_Move_GetSetStruct *gss,
 	struct M68kRegister *dst_reg, 
 	RS4Trace *rt,
-	uint8_t *mem );
+	MEM mem );
 
 enum RS4ErrorCode Misc_Set__Src_is_Unknown( 
 	struct AmigaOS3_Misc_Move_GetSetStruct *gss,
 	struct M68kRegister *dst_reg, 
 	RS4Trace *rt,
-	uint8_t *mem );
+	MEM mem );
 
 // --
 
@@ -48,7 +48,7 @@ enum RS4FuncStat AmigaOS3_Misc_Move_Set(
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt, 
 	struct M68kRegister *cur, 
-	uint8_t *mem, 
+	MEM mem, 
 	struct AmigaOS3_Misc_Move_GetSetStruct *gss )
 {
 enum RS4ErrorCode ec;

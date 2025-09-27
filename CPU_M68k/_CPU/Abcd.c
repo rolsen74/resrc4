@@ -19,9 +19,9 @@ enum RS4DecodeStat M68kCmd_ABCD( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int rx;
-int ry;
-int rm;
+S32 rx;
+S32 ry;
+S32 rm;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Abcd.b";
 	rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Byte;

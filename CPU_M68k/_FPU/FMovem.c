@@ -21,17 +21,17 @@
 
 // --
 
-static enum RS4DecodeStat RegMask( enum RS4ErrorCode *errcode, RS4Trace *rt, int reverse )
+static enum RS4DecodeStat RegMask( enum RS4ErrorCode *errcode, RS4Trace *rt, S32 reverse )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-char *buf;
-uint32_t mask;
-uint32_t pos;
-uint32_t bit;
-int start;
-int end;
-int cnt;
+STR buf;
+U32 mask;
+U32 pos;
+U32 bit;
+S32 start;
+S32 end;
+S32 cnt;
 
 	mask = rt->rt_CPU.M68k.mt_Opcode & 0x00ff;
 
@@ -114,32 +114,32 @@ int cnt;
 // --
 
 #if 0
-enum RS4DecodeStat M68kCmd_FMOVEM_1_0( RS4Trace *rt, int emode, int ereg, int dr )
+enum RS4DecodeStat M68kCmd_FMOVEM_1_0( RS4Trace *rt, S32 emode, S32 ereg, S32 dr )
 {
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_FMOVEM_1_1( RS4Trace *rt, int emode, int ereg, int dr )
+enum RS4DecodeStat M68kCmd_FMOVEM_1_1( RS4Trace *rt, S32 emode, S32 ereg, S32 dr )
 {
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_FMOVEM_1_2( RS4Trace *rt, int emode, int ereg, int dr )
+enum RS4DecodeStat M68kCmd_FMOVEM_1_2( RS4Trace *rt, S32 emode, S32 ereg, S32 dr )
 {
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_FMOVEM_1_3( RS4Trace *rt, int emode, int ereg, int dr )
+enum RS4DecodeStat M68kCmd_FMOVEM_1_3( RS4Trace *rt, S32 emode, S32 ereg, S32 dr )
 {
 }
 #endif
 
 // --
 
-enum RS4DecodeStat M68kCmd_FMOVEM_2_0( enum RS4ErrorCode *errcode, RS4Trace *rt, int emode, int ereg, int dr )
+enum RS4DecodeStat M68kCmd_FMOVEM_2_0( enum RS4ErrorCode *errcode, RS4Trace *rt, S32 emode, S32 ereg, S32 dr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
@@ -197,14 +197,14 @@ bailout:
 // --
 
 #if 0
-enum RS4DecodeStat M68kCmd_FMOVEM_2_1( RS4Trace *rt, int emode, int ereg, int dr )
+enum RS4DecodeStat M68kCmd_FMOVEM_2_1( RS4Trace *rt, S32 emode, S32 ereg, S32 dr )
 {
 }
 #endif
 
 // --
 
-enum RS4DecodeStat M68kCmd_FMOVEM_2_2( enum RS4ErrorCode *errcode, RS4Trace *rt, int emode, int ereg, int dr )
+enum RS4DecodeStat M68kCmd_FMOVEM_2_2( enum RS4ErrorCode *errcode, RS4Trace *rt, S32 emode, S32 ereg, S32 dr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
@@ -305,7 +305,7 @@ bailout:
 // --
 
 #if 0
-enum RS4DecodeStat M68kCmd_FMOVEM_2_3( RS4Trace *rt, int emode, int ereg, int dr )
+enum RS4DecodeStat M68kCmd_FMOVEM_2_3( RS4Trace *rt, S32 emode, S32 ereg, S32 dr )
 {
 }
 #endif
@@ -316,10 +316,10 @@ enum RS4DecodeStat M68kCmd_FMOVEM( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int emode;
-int ereg;
-int list;
-int dr;
+S32 emode;
+S32 ereg;
+S32 list;
+S32 dr;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "FMovem.l";
 	rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Long;
@@ -357,10 +357,10 @@ enum RS4DecodeStat M68kCmd_FMOVEM2( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int emode;
-int ereg;
-int mode;
-int dr;
+S32 emode;
+S32 ereg;
+S32 mode;
+S32 dr;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "FMovem.x";
 	rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Extended;

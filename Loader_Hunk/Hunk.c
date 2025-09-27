@@ -19,20 +19,20 @@
 
 struct HunkParseStruct
 {
-	uint32_t *	mem;
-	int32_t		pos;
-	int			bytes;
-	uint32_t	cache;
+	U32 *	mem;
+	S32		pos;
+	S32			bytes;
+	U32	cache;
 };
 
 // --
 
-enum RS4FuncStat RS4BuildLabelString( enum RS4ErrorCode *errcode, RS4Label *rl, char *buf )
+enum RS4FuncStat RS4BuildLabelString( enum RS4ErrorCode *errcode, RS4Label *rl, STR buf )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *parent;
-int off;
+S32 off;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -88,10 +88,10 @@ bailout:
 
 // --
 
-void BuildLabelString( RS4Label *rl, char *buf )
+void BuildLabelString( RS4Label *rl, STR buf )
 {
 RS4Label *parent;
-int off;
+S32 off;
 
 	parent = rl->rl_Parent;
 
@@ -116,7 +116,7 @@ int off;
 
 // --
 
-enum RS4FuncStat RS4BuildLabelString2( enum RS4ErrorCode *errcode, RS4Trace *rt, char *buf, int64_t adr, int64_t val )
+enum RS4FuncStat RS4BuildLabelString2( enum RS4ErrorCode *errcode, RS4Trace *rt, STR buf, S64 adr, S64 val )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -193,19 +193,19 @@ bailout:
 
 // --
 
-static int DupCount = 0;
+static S32 DupCount = 0;
 
-static enum RS4FuncStat RS4SetLabelName( enum RS4ErrorCode *errcode, RS4FileHeader *fh, RS4Label *rl, int32_t pos, int max )
+static enum RS4FuncStat RS4SetLabelName( enum RS4ErrorCode *errcode, RS4FileHeader *fh, RS4Label *rl, S32 pos, S32 max )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
 RS4Label *cur;
-char name[MAX_LabelName+16];
-uint8_t *buf;
-int cnt;
-int len;
-int c;
+CHR name[MAX_LabelName+16];
+MEM buf;
+S32 cnt;
+U32 len;
+S32 c;
 
 	// -- Get Name and add NUL
 
@@ -295,7 +295,7 @@ int c;
 
 // --
 
-RS4Label *RS4AddExtLabel( enum RS4ErrorCode *errcode, RS4FileHeader *fh, int64_t addr )
+RS4Label *RS4AddExtLabel( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr )
 {
 enum RS4ErrorCode ec;
 RS4Label *new;
@@ -334,7 +334,7 @@ RS4Label *rl;
 		ec	= RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating Memory (%d Bytes)\n", __FILE__, __LINE__, (int) sizeof( RS4Label ));
+		printf( "%s:%04d: Error allocating Memory (%d Bytes)\n", __FILE__, __LINE__, (S32) sizeof( RS4Label ));
 		#endif
 
 		goto bailout;
@@ -376,10 +376,10 @@ bailout:
 
 // --
 
-static uint32_t myReadU32( struct HunkParseStruct *ps )
+static U32 myReadU32( struct HunkParseStruct *ps )
 {
-uint32_t val;
-uint32_t pos;
+U32 val;
+U32 pos;
 
 	pos = ps->pos;
 	val = ps->mem[ pos ];
@@ -390,10 +390,10 @@ uint32_t pos;
 
 // --
 
-static uint32_t myPeekU32( struct HunkParseStruct *hps, int offset )
+static U32 myPeekU32( struct HunkParseStruct *hps, S32 offset )
 {
-uint32_t val;
-uint32_t pos;
+U32 val;
+U32 pos;
 
 	pos = hps->pos;
 	pos += offset;
@@ -404,9 +404,9 @@ uint32_t pos;
 
 // --
 
-static uint16_t myReadU16( struct HunkParseStruct *hps )
+static U16 myReadU16( struct HunkParseStruct *hps )
 {
-uint16_t val;
+U16 val;
 
 	if ( hps->bytes == 0 )
 	{
@@ -437,7 +437,7 @@ uint16_t val;
 
 // --
 
-static uint32_t Hunk_KnownHunk( uint32_t type )
+static U32 Hunk_KnownHunk( U32 type )
 {
 	switch( type )
 	{
@@ -481,19 +481,19 @@ RS4FileSection *current;
 RS4FileSection *sec;
 RS4Label *rl;
 RS4Ref *rr;
-uint32_t *DestMemory;
-uint32_t TargetAdr;
-uint32_t numreloc;
-uint32_t hunktype;
-uint32_t val32;
-uint32_t size;
-uint16_t val16;
-int64_t offset;
-int sections;
-int hunknum;
-int relcnt;
-int first;
-int cnt;
+U32 *DestMemory;
+U32 TargetAdr;
+U32 numreloc;
+U32 hunktype;
+U32 val32;
+U32 size;
+U16 val16;
+S64 offset;
+S32 sections;
+S32 hunknum;
+S32 relcnt;
+S32 first;
+S32 cnt;
 
 	fs = RS4FuncStat_Error;
 	ec = RS4ErrStat_Error;
@@ -502,7 +502,7 @@ int cnt;
 
 	memset( & hps, 0, sizeof( hps ));
 
-	hps.mem = (void *) fh->rfh_FileBuffer;
+	hps.mem = (PTR ) fh->rfh_FileBuffer;
 
 	// --
 
@@ -537,7 +537,7 @@ int cnt;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (int) ( sections * sizeof( RS4FileSecInfo ) ));
+		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32) ( sections * sizeof( RS4FileSecInfo ) ));
 		#endif
 
 		goto bailout;
@@ -568,7 +568,7 @@ int cnt;
 			// ec allready set
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (int) ( sections * sizeof( RS4FileSection ) ));
+			printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32) ( sections * sizeof( RS4FileSection ) ));
 			#endif
 
 			goto bailout;
@@ -789,7 +789,7 @@ int cnt;
 							goto bailout;
 						}
 
-						DestMemory	= (uint32_t *) & current->rfs_MemoryBuf[ offset ];
+						DestMemory	= (U32 *) & current->rfs_MemoryBuf[ offset ];
 						val32		= *DestMemory;
 						val32		= SWAP32( val32 );
 						val32	   += TargetAdr;
@@ -1043,7 +1043,7 @@ int cnt;
 							goto bailout;
 						}
 
-						DestMemory	= (uint32_t *) & current->rfs_MemoryBuf[ offset ];
+						DestMemory	= (U32 *) & current->rfs_MemoryBuf[ offset ];
 						val32		= *DestMemory;
 						val32		= SWAP32( val32 );
 						val32	   += TargetAdr;
@@ -1156,7 +1156,7 @@ int cnt;
 							goto bailout;
 						}
 
-						DestMemory	= (uint32_t *) & current->rfs_MemoryBuf[ offset ];
+						DestMemory	= (U32 *) & current->rfs_MemoryBuf[ offset ];
 
 						val32		= *DestMemory;
 						val32		= SWAP32( val32 );
@@ -1206,11 +1206,11 @@ int cnt;
 
 				if ( DoVerbose > 0 )
 				{
-					char txt[] = { "'....'" };
-					int v1 = (( hunktype & 0xff000000 ) >> 24 );
-					int v2 = (( hunktype & 0x00ff0000 ) >> 16 );
-					int v3 = (( hunktype & 0x0000ff00 ) >>  8 );
-					int v4 = (( hunktype & 0x000000ff ) >>  0 );
+					CHR txt[] = { "'....'" };
+					S32 v1 = (( hunktype & 0xff000000 ) >> 24 );
+					S32 v2 = (( hunktype & 0x00ff0000 ) >> 16 );
+					S32 v3 = (( hunktype & 0x0000ff00 ) >>  8 );
+					S32 v4 = (( hunktype & 0x000000ff ) >>  0 );
 					txt[1] = (( v1 > 0x1f ) && ( v1 < 127 )) ? v1 : '.';
 					txt[2] = (( v2 > 0x1f ) && ( v2 < 127 )) ? v2 : '.';
 					txt[3] = (( v3 > 0x1f ) && ( v3 < 127 )) ? v3 : '.';

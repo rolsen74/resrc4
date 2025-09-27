@@ -13,17 +13,17 @@
 // -- Mode 72 - Clr (xxxx.w,pc)
 // xxxx is Signed
 
-inline static enum RS4DecodeStat MODE_72( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
+inline static enum RS4DecodeStat MODE_72( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-uint32_t adr;
-int16_t val;
-uint8_t *mem;
-char labname[ MAX_LabelName + 8 ];
-int pos;
+U32 adr;
+S16 val;
+MEM mem;
+CHR labname[ MAX_LabelName + 8 ];
+S32 pos;
 
 	// --
 
@@ -56,6 +56,77 @@ int pos;
 			goto bailout;
 		}
 	}
+
+	// --
+
+	if (( rl ) && ( rt->rt_CPU.M68k.mt_DoLabelSize ))
+	{
+		enum RS4LabelSize rls;
+
+		/**/ if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Byte )		rls = RS4LABSIZE_Integer8;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Word )		rls = RS4LABSIZE_Integer16;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Long )		rls = RS4LABSIZE_Integer32;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Single )	rls = RS4LABSIZE_Float32;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Double )	rls = RS4LABSIZE_Float64;
+		else rls = RS4LABSIZE_Unknown;
+
+		if ( rl->rl_Label_RW_Size == RS4LABSIZE_Unset )
+		{
+			rl->rl_Label_RW_Size = rls;
+		}
+		else
+		{
+			if ( rl->rl_Label_RW_Size != rls )
+			{
+				/**/ if (( rl->rl_Label_RW_Size == RS4LABSIZE_Integer32 ) && ( rls == RS4LABSIZE_Float32 ))
+				{
+					// Convert Long to Float
+					rl->rl_Label_RW_Size = rls;
+				}
+				else if (( rl->rl_Label_RW_Size == RS4LABSIZE_Float32 ) && ( rls == RS4LABSIZE_Integer32 ))
+				{
+					// Do not convert Float to Long
+					// so do nothing, not an error
+				}
+				else
+				{
+					rl->rl_Label_RW_Size = RS4LABSIZE_Unknown;
+				}
+			}
+			else
+			{
+				rl->rl_Label_RW_Size = rls;
+			}
+		}
+	}
+
+	#if 0
+	enum M68KOpcodeSize
+	{
+		M68KSIZE_Unsized,
+		M68KSIZE_Byte,		// move.b
+		M68KSIZE_Word,		// move.w
+		M68KSIZE_Long,		// move.l
+		M68KSIZE_Single,	// fmove.s
+		M68KSIZE_Double,	// fmove.d
+		M68KSIZE_Extended,	// fmove.x
+		M68KSIZE_Packed,	// fmove.p
+	};
+
+	enum RS4LabelSize
+	{
+		RS4LABSIZE_Unset,		//
+		RS4LABSIZE_Unknown,		// Diffrent sizes have been used on label
+		RS4LABSIZE_Integer8,		// move.b
+		RS4LABSIZE_Integer16,		// move.w
+		RS4LABSIZE_Integer32,		// move.l
+		RS4LABSIZE_Integer64,		// move.q
+		RS4LABSIZE_Float,		// move.s
+		RS4LABSIZE_Double,		// move.d
+	};
+	#endif
+
+	// --
 
 	if ( rt->rt_Pass != RS4TracePass_Trace )
 	{

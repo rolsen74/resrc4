@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_RTM( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int reg;
-int da;
+S32 reg;
+S32 da;
 
 	// --
 

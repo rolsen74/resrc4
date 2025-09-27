@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_SUB( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int opmode;
+S32 opmode;
 
 	opmode = ( rt->rt_CPU.M68k.mt_Opcode & 0x01c00000 ) >> 22;
 

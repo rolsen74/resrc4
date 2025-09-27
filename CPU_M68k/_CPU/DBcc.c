@@ -21,14 +21,14 @@ enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-uint32_t cond;
-uint32_t reg;
-int32_t adr;
-int16_t offset;
-uint8_t *mem;
-char labname[ MAX_LabelName + 8 ];
+U32 cond;
+U32 reg;
+S32 adr;
+S16 offset;
+MEM mem;
+CHR labname[ MAX_LabelName + 8 ];
 
-	static const char *dbcc_RegNames[16] =
+	static CSTR dbcc_RegNames[16] =
 	{
 		"DBt.w",  "DBf.w",  "DBhi.w", "DBls.w",
 		"DBcc.w", "DBcs.w", "DBne.w", "DBeq.w",
@@ -36,13 +36,15 @@ char labname[ MAX_LabelName + 8 ];
 		"DBge.w", "DBlt.w", "DBgt.w", "DBle.w"
 	};
 
+	rt->rt_CPU.M68k.mt_DoLabelSize	= FALSE;
+
 	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x0f000000 ) >> 24;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = dbcc_RegNames[cond];
 
 	reg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-    // --
+	// --
 
 	mem = rt->rt_CurMemBuf;
 

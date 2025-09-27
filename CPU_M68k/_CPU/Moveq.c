@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_MOVEQ( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t reg;
-int8_t value;
+U32 reg;
+S8 value;
 
 	reg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 	value	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00ff0000 ) >> 16;

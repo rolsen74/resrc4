@@ -67,13 +67,13 @@ bailout:
 // --
 // The _File version need the Address to be inside Section
 
-RS4Label *RS4AddLabel_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, int64_t addr, enum RS4LabelType type )
+RS4Label *RS4AddLabel_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr, enum RS4LabelType type )
 {
 enum RS4ErrorCode ec;
 RS4FileSection *sec;
 RS4Label *new;
-int64_t memadr;
-int cnt;
+S64 memadr;
+S32 cnt;
 
 	if ( ! addr )
 	{
@@ -136,13 +136,13 @@ bailout:
 // --
 // The _Sec version can handle addesses out side Sections
 
-RS4Label *RS4AddLabel_Sec( enum RS4ErrorCode *errcode, RS4FileSection *sec, int64_t addr, enum RS4LabelType type )
+RS4Label *RS4AddLabel_Sec( enum RS4ErrorCode *errcode, RS4FileSection *sec, S64 addr, enum RS4LabelType type )
 {
 enum RS4ErrorCode ec;
 RS4FileHeader *fh;
 RS4Label *new;
 RS4Label *rl;
-int hash;
+U32 hash;
 
 	if ( ! addr )
 	{
@@ -201,7 +201,7 @@ int hash;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating Memory (%d Bytes)\n", __FILE__, __LINE__, (int) sizeof( RS4Label ));
+		printf( "%s:%04d: Error allocating Memory (%d Bytes)\n", __FILE__, __LINE__, (S32) sizeof( RS4Label ));
 		#endif
 
 		goto bailout;
@@ -213,6 +213,7 @@ int hash;
 	new->rl_Address		= addr;
 	new->rl_Offset		= addr - sec->rfs_MemoryAdr;
 	new->rl_Memory		= & sec->rfs_MemoryBuf[ new->rl_Offset ];
+	new->rl_Label_RW_Size = RS4LABSIZE_Unset;
 
 	if ( DoVerbose > 3 )
 	{
@@ -248,7 +249,7 @@ int hash;
 	// -- Insert Hash
 	// Add into File Header
 
-	hash = ( (uint64_t) addr ) % MAX_LAB_HASH;
+	hash = ( (U64) addr ) % MAX_LAB_HASH;
 
 	new->rl_HashPtr = fh->rfh_LabelHash[hash];
 
@@ -274,17 +275,17 @@ bailout:
 
 // --
 
-RS4Label *RS4FindLabel_File( RS4FileHeader *fh, int64_t addr )
+RS4Label *RS4FindLabel_File( RS4FileHeader *fh, S64 addr )
 {
 RS4Label *rl;
-int hash;
+U32 hash;
 
 	if ( ! addr )
 	{
 		return( NULL );
 	}
 
-	hash = ( (uint64_t) addr ) % MAX_LAB_HASH;
+	hash = ( (U64) addr ) % MAX_LAB_HASH;
 
 	rl = fh->rfh_LabelHash[ hash ];
 

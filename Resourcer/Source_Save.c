@@ -19,10 +19,10 @@
 #define LineBufferSize		1024
 
 static FILE *				SaveHandle		= NULL;
-static size_t				SaveUsed		= 0;
-static uint8_t *			SaveBuffer		= NULL;
-char *						SaveLineBuffer	= NULL;
-static size_t				SavedBytes		= 0;
+static U64				SaveUsed		= 0;
+static MEM 					SaveBuffer		= NULL;
+STR 						SaveLineBuffer	= NULL;
+static U64				SavedBytes		= 0;
 
 // --
 
@@ -30,7 +30,7 @@ static enum RS4FuncStat RS4SaveFlush( enum RS4ErrorCode *errcode )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-size_t written;
+U64 written;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -89,11 +89,11 @@ bailout:
 
 // --
 
-enum RS4FuncStat RS4SaveWriteString( enum RS4ErrorCode *errcode, char *buffer, size_t length )
+enum RS4FuncStat RS4SaveWriteString( enum RS4ErrorCode *errcode, STR buffer, U64 length )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-size_t len;
+U64 len;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -111,7 +111,7 @@ size_t len;
 
 	while( length )
 	{
-		len = RS4MIN( length, SaveBufferSize - SaveUsed );
+		len = MIN( length, SaveBufferSize - SaveUsed );
 
 		if ( len <= 0 )
 		{
@@ -161,7 +161,7 @@ enum RS4FuncStat RS4ExternalLabel( enum RS4ErrorCode *errcode, RS4FileHeader *fh
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-int len;
+S32 len;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -254,11 +254,11 @@ bailout:
 
 #define TAB_SIZE 8
 
-static void _GetStringInfo( const char *str, int *lenptr, int *posptr )
+static void _GetStringInfo( CSTR str, S32 *lenptr, S32 *posptr )
 {
-int pos;
-int len;
-int chr;
+S32 pos;
+S32 len;
+S32 chr;
 
 	pos = 0;
 	len = 0;
@@ -306,11 +306,11 @@ static enum RS4FuncStat RS4SaveWrite_Code( enum RS4ErrorCode *errcode, RS4Source
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 struct _SrcCode *sc;
-char labname[ MAX_LabelName + 2 ];
-char adrname[256];
+CHR labname[ MAX_LabelName + 2 ];
+CHR adrname[256];
 RS4Label *rl;
-int len;
-int oo;
+S32 len;
+S32 oo;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -535,12 +535,12 @@ bailout:
 
 // --
 
-int SaveWriteString( char *buffer UNUSED, size_t length UNUSED )
+S32 SaveWriteString( STR buffer UNUSED, U64 length UNUSED )
 {
 	return( 0 );
 }
 
-enum RS4FuncStat RS4SaveSource_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, char *filename )
+enum RS4FuncStat RS4SaveSource_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, STR filename )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -772,7 +772,7 @@ bailout:
 
 			if ( DoVerbose > 0 )
 			{
-				printf( "Saved %s (%d bytes)\n", filename, (int) SavedBytes );
+				printf( "Saved %s (%d bytes)\n", filename, (S32) SavedBytes );
 			}
 		}
 

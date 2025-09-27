@@ -54,11 +54,11 @@ enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-int64_t adr;
-uint8_t *mem;
-char labname[ MAX_LabelName + 8 ];
-int size;
-int cond;
+S64 adr;
+MEM mem;
+CHR labname[ MAX_LabelName + 8 ];
+S32 size;
+S32 cond;
 
 	mem  = rt->rt_CurMemBuf;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00400000 );
@@ -73,9 +73,9 @@ int cond;
 
 	if ( size == 0 )
 	{
-		int16_t off;
+		S16 off;
 
-		static const char *fbcc_RegNames[] = 
+		static CSTR fbcc_RegNames[] = 
 		{
 			"FBf.w",	"FBeq.w",	"FBogt.w",	"FBoge.w",	// 0x00
 			"FBolt.w",	"FBole.w",	"FBogl.w",	"FBor.w",	// 0x04
@@ -100,9 +100,9 @@ int cond;
 	}
 	else
 	{
-		int32_t off;
+		S32 off;
 
-		static const char *fbcc_RegNames[] = 
+		static CSTR fbcc_RegNames[] = 
 		{
 			"FBf.l",	"FBeq.l",	"FBogt.l",	"FBoge.l",
 			"FBolt.l",	"FBole.l",	"FBogl.l",	"FBor.l",

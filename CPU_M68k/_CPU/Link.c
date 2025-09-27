@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_LINK( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int16_t link;
-int reg;
+S16 link;
+S32 reg;
 
 	reg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	link = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000ffff );
@@ -56,8 +56,8 @@ enum RS4DecodeStat M68kCmd_LINK_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t link;
-int reg;
+U32 link;
+S32 reg;
 
 	reg  =  ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 

@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_FLOGN( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int src;
-int dst;
+S32 src;
+S32 dst;
 
 	src  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00001c00 ) >> 10;
 	dst  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
@@ -62,11 +62,11 @@ enum RS4DecodeStat M68kCmd_FLOGN2( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int emode;
-int ereg;
-int src;
-int dst;
-int len;
+S32 emode;
+S32 ereg;
+S32 src;
+S32 dst;
+S32 len;
 
 	emode= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	ereg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;

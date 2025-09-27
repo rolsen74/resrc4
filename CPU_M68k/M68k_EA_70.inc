@@ -12,14 +12,14 @@
 // --
 // -- Mode 70 - move.l $0004.w
 
-inline static enum RS4DecodeStat MODE_70( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
+inline static enum RS4DecodeStat MODE_70( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 RS4Label *rl;
-uint8_t *mem;
-int16_t val;
-int pos;
+MEM mem;
+S16 val;
+S32 pos;
 
 	// --
 

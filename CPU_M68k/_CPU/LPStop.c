@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_LPSTOP( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint16_t val;
-uint8_t *mem;
+U16 val;
+MEM mem;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "LPStop";
 	rt->rt_CPU.M68k.mt_OpcodeSize = 6;

@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_FDMOVE( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int src;
-int dst;
+S32 src;
+S32 dst;
 
 // printf( "M68kCmd_FDMOVE 1\n" );
 
@@ -57,11 +57,11 @@ enum RS4DecodeStat M68kCmd_FDMOVE2( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int emode;
-int ereg;
-int src;
-int dst;
-int len;
+S32 emode;
+S32 ereg;
+S32 src;
+S32 dst;
+S32 len;
 
 // printf( "M68kCmd_FDMOVE 2\n" );
 

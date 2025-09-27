@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_FMOVECR( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int reg;
-int rom;
+S32 reg;
+S32 rom;
 
 	reg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
 	rom  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000007f );

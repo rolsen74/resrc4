@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_MUL( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int opmode;
+S32 opmode;
 
 	opmode = ( rt->rt_CPU.M68k.mt_Opcode & 0x01c00000 ) >> 22;
 
@@ -124,7 +124,7 @@ enum RS4DecodeStat M68kCmd_MULS_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t pos;
+U32 pos;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Muls.l";
 
@@ -241,7 +241,7 @@ enum RS4DecodeStat M68kCmd_MULU_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t pos;
+U32 pos;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Mulu.l";
 

@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_DIV( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t opmode;
+U32 opmode;
 
 	opmode = ( rt->rt_CPU.M68k.mt_Opcode & 0x01c00000 ) >> 22;
 
@@ -123,12 +123,12 @@ enum RS4DecodeStat M68kCmd_DIVS_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t pos;
-int EMode;
-int EReg;
-int Size;
-int Dq;
-int Dr;
+U32 pos;
+S32 EMode;
+S32 EReg;
+S32 Size;
+S32 Dq;
+S32 Dr;
 
 	EMode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	EReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
@@ -311,12 +311,12 @@ enum RS4DecodeStat M68kCmd_DIVU_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t pos;
-int EMode;
-int EReg;
-int Size;
-int Dq;
-int Dr;
+U32 pos;
+S32 EMode;
+S32 EReg;
+S32 Size;
+S32 Dq;
+S32 Dr;
 
 	EMode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	EReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;

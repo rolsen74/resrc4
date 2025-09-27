@@ -19,12 +19,12 @@ enum RS4DecodeStat M68kCmd_MOVES( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-const char *rname;
-int size;
-int reg;
-int pos;
-int ad;
-int dr;
+CSTR rname;
+S32 size;
+S32 reg;
+S32 pos;
+S32 ad;
+S32 dr;
 
 	size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
 	ad		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00008000 );

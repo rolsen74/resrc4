@@ -98,14 +98,14 @@ struct _AOS3_RegStruct
 {
 	enum M68kRegisterType	Reg3;
 	enum AOS3_RegType		Type3;
-	int						Val3;
+	S32						Val3;
 };
 
 struct _AOS3_LVOStruct
 {
-	int16_t					Used2;
-	int16_t					Offset2;
-	char *					Name2;
+	S16					Used2;
+	S16					Offset2;
+	STR 					Name2;
 	enum AOS3_LVOType		Type2;
 	enum RS4DecodeStat		(*Func2)( enum RS4ErrorCode *errcode, RS4Trace *rt );
 	AOS3_RegStruct *		Regs2;
@@ -115,9 +115,9 @@ struct _AOS3_LVOStruct
 
 struct AOS3LVOStruct
 {
-	int16_t	Used;
-	int16_t	Offset;
-	char *	Name;
+	S16	Used;
+	S16	Offset;
+	STR 	Name;
 	enum RS4DecodeStat (*Func)( enum RS4ErrorCode *errcode, RS4Trace *rt );
 };
 
@@ -169,8 +169,8 @@ extern AOS3_LVOStruct AOS3_WorkbenchBase[];
 
 // --
 
-enum RS4FuncStat	AmigaOS3_Misc_Move_Get(			enum RS4ErrorCode *errcode, RS4Trace *rt, struct M68kRegister *cur, uint8_t *mem, struct AmigaOS3_Misc_Move_GetSetStruct *gss );
-enum RS4FuncStat	AmigaOS3_Misc_Move_Set(			enum RS4ErrorCode *errcode, RS4Trace *rt, struct M68kRegister *cur, uint8_t *mem, struct AmigaOS3_Misc_Move_GetSetStruct *gss );
+enum RS4FuncStat	AmigaOS3_Misc_Move_Get(			enum RS4ErrorCode *errcode, RS4Trace *rt, struct M68kRegister *cur, MEM mem, struct AmigaOS3_Misc_Move_GetSetStruct *gss );
+enum RS4FuncStat	AmigaOS3_Misc_Move_Set(			enum RS4ErrorCode *errcode, RS4Trace *rt, struct M68kRegister *cur, MEM mem, struct AmigaOS3_Misc_Move_GetSetStruct *gss );
 
 // --
 

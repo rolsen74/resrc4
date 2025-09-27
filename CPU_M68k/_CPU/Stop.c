@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_STOP( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint16_t val;
+U16 val;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Stop";
 	rt->rt_CPU.M68k.mt_OpcodeSize = 4;

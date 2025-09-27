@@ -19,9 +19,9 @@ inline static enum RS4DecodeStat Args6( enum RS4ErrorCode *errcode, RS4Trace *rt
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int size;
-int reg;
-int ir;
+S32 size;
+S32 reg;
+S32 ir;
 
 	ec		= RS4ErrStat_Okay;
 	ds		= RS4DecodeStat_Okay;
@@ -65,7 +65,7 @@ enum RS4DecodeStat M68kCmd_ASR( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int size;
+S32 size;
 
 	size    = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
 

@@ -15,8 +15,8 @@
 
 // --
 
-//static char *Header ="\n; Intuition\n";
-//static int Global_Intuition_Used = FALSE;
+//static STR Header ="\n; Intuition\n";
+//static S32 Global_Intuition_Used = FALSE;
 
 // --
 

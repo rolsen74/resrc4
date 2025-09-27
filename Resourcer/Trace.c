@@ -25,14 +25,14 @@ enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *next;
 RS4Label *rl;
-uint8_t *type;
-uint8_t *buf;
-int size;
-int max;
-int len;
-int cnt;
-int c;
-int i;
+MEM type;
+MEM buf;
+S32 size;
+S32 max;
+S32 len;
+S32 cnt;
+S32 c;
+S32 i;
 
 	DDEBUG( { printf( "%s:%04d: Text_ScanHunk\n", __FILE__, __LINE__ ); } )
 
@@ -62,7 +62,7 @@ int i;
 
 			if ( next )
 			{
-				max = RS4MIN( max, next->rl_Offset - rl->rl_Offset );
+				max = MIN( max, next->rl_Offset - rl->rl_Offset );
 			}
 
 			for( cnt=0 ; cnt<max ; cnt++ )
@@ -136,7 +136,7 @@ static enum RS4FuncStat RS4Text_Scan( enum RS4ErrorCode *errcode, RS4FileHeader 
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-int cnt;
+S32 cnt;
 
 	DDEBUG( { printf( "%s:%04d: Text_Scan\n", __FILE__, __LINE__ ); } )
 
@@ -190,11 +190,11 @@ static enum RS4FuncStat RS4ScanSecJumps( enum RS4ErrorCode *errcode, RS4Trace *r
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-uint8_t *type;
-uint8_t *mem;
-int64_t size;
-int64_t pos;
-int64_t adr;
+MEM type;
+MEM mem;
+S64 size;
+S64 pos;
+S64 adr;
 
 	DDEBUG( { printf( "%s:%04d: RS4ScanSecJumps\n", __FILE__, __LINE__ ); } )
 
@@ -269,7 +269,7 @@ static enum RS4FuncStat RS4ScanForJumps( enum RS4ErrorCode *errcode, RS4Trace *r
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-int cnt;
+S32 cnt;
 
 	DDEBUG( { printf( "%s:%04d: RS4ScanForJumps\n", __FILE__, __LINE__ ); } )
 
@@ -327,11 +327,11 @@ enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
 RS4Label *rl;
-uint8_t *type;
-int64_t jmpadr;
-int64_t size;
-int64_t pos;
-int64_t adr;
+MEM type;
+S64 jmpadr;
+S64 size;
+S64 pos;
+S64 adr;
 
 	DDEBUG( { printf( "%s:%04d: RC4TraceBrance\n", __FILE__, __LINE__ ); } )
 
@@ -407,9 +407,9 @@ int64_t adr;
 			// ec allready set
 
 			#ifdef DEBUG
-			uint16_t vv1 = (( rt->rt_CurMemBuf[0] << 8 ) | ( rt->rt_CurMemBuf[1] << 0 ));
-			uint16_t vv2 = (( rt->rt_CurMemBuf[2] << 8 ) | ( rt->rt_CurMemBuf[3] << 0 ));
-			uint16_t vv3 = (( rt->rt_CurMemBuf[4] << 8 ) | ( rt->rt_CurMemBuf[5] << 0 ));
+			U16 vv1 = (( rt->rt_CurMemBuf[0] << 8 ) | ( rt->rt_CurMemBuf[1] << 0 ));
+			U16 vv2 = (( rt->rt_CurMemBuf[2] << 8 ) | ( rt->rt_CurMemBuf[3] << 0 ));
+			U16 vv3 = (( rt->rt_CurMemBuf[4] << 8 ) | ( rt->rt_CurMemBuf[5] << 0 ));
 
 			printf( "\n" );
 			printf( "Opcode ....... : $%04x:%04x:%04x\n", vv1, vv2, vv3 );
@@ -603,7 +603,7 @@ enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Brance *rb;
 RS4Trace rt;
-char argbuf[256];
+CHR argbuf[256];
 
 	DDEBUG( { printf( "%s:%04d: RS4Trace_File\n", __FILE__, __LINE__ ); } )
 

@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_SWAP( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int reg;
+S32 reg;
 
 	reg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 

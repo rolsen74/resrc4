@@ -19,9 +19,9 @@ enum RS4DecodeStat M68kCmd_CMPM( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int size;
-int yreg;
-int xreg;
+S32 size;
+S32 yreg;
+S32 xreg;
 
 	xreg = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;

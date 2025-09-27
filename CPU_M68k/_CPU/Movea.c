@@ -19,8 +19,8 @@ enum RS4DecodeStat M68kCmd_MOVEA( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint32_t size;
-uint8_t *mem;
+U32 size;
+MEM mem;
 
 #ifdef SUPPORT_AMIGAOS3
 struct AmigaOS3_Misc_Move_GetSetStruct gss;

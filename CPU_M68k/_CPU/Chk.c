@@ -19,9 +19,9 @@ enum RS4DecodeStat M68kCmd_CHK( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int size;
-int reg;
-int pos;
+S32 size;
+S32 reg;
+S32 pos;
 
 	reg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x01800000 ) >> 23;

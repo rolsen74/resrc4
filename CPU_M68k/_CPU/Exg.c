@@ -20,9 +20,9 @@ enum RS4DecodeStat M68kCmd_EXG( enum RS4ErrorCode *errcode, RS4Trace *rt )
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 struct M68kRegister tmp;
-int mode;
-int yreg;
-int xreg;
+S32 mode;
+S32 yreg;
+S32 xreg;
 
 	xreg = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 	mode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00f80000 ) >> 19;

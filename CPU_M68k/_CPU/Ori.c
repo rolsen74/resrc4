@@ -19,7 +19,7 @@ enum RS4DecodeStat M68kCmd_ORI( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int size;
+S32 size;
 
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
 
@@ -116,7 +116,7 @@ enum RS4DecodeStat M68kCmd_ORI2( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint8_t val;
+U8 val;
 
 	val = ( rt->rt_CPU.M68k.mt_Opcode & 0x000000ff );
 
@@ -151,7 +151,7 @@ enum RS4DecodeStat M68kCmd_ORI3( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-uint16_t val;
+U16 val;
 
 	val = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000ffff );
 

@@ -17,7 +17,7 @@
 
 // -- Error Strings
 
-const char *ErrorStrings[RS4ErrStat_Last] =
+CSTR ErrorStrings[RS4ErrStat_Last] =
 {
 	[RS4ErrStat_Okay]				= "No error",
 	[RS4ErrStat_Error]				= "General Error",

@@ -66,12 +66,12 @@ bailout:
 
 // --
 
-RS4Ref *RS4AddRef_Sec( enum RS4ErrorCode *errcode, RS4FileSection *sec, int64_t offset )
+RS4Ref *RS4AddRef_Sec( enum RS4ErrorCode *errcode, RS4FileSection *sec, S64 offset )
 {
 enum RS4ErrorCode ec;
 RS4Ref *new;
 RS4Ref *rr;
-int hash;
+U32 hash;
 
 	ec	= RS4ErrStat_Error;
 	rr	= NULL;
@@ -99,7 +99,7 @@ if ( offset < 0x0000daf8 && offset > 0x0000daf0 )	{ printf( "add ref : Offset $%
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating Memory (%d Bytes)\n", __FILE__, __LINE__, (int) sizeof( RS4Ref ));
+		printf( "%s:%04d: Error allocating Memory (%d Bytes)\n", __FILE__, __LINE__, (S32) sizeof( RS4Ref ));
 		#endif
 
 		goto bailout;
@@ -156,7 +156,7 @@ if ( offset < 0x0000daf8 && offset > 0x0000daf0 )	{ printf( "add ref : Offset $%
 	// --
 	// -- Insert Hash
 
-	hash = ( (uint64_t) new->rr_Address ) % MAX_REF_HASH;
+	hash = ( (U64) new->rr_Address ) % MAX_REF_HASH;
 
 	new->rr_HashPtr = sec->rfs_SecRefs2[hash];
 
@@ -178,17 +178,17 @@ bailout:
 
 // --
 
-RS4Ref *RS4FindRef_Sec( RS4FileSection *sec, int64_t addr )
+RS4Ref *RS4FindRef_Sec( RS4FileSection *sec, S64 addr )
 {
 RS4Ref *rr;
-int hash;
+U32 hash;
 
 	if ( ! addr )
 	{
 		return( NULL );
 	}
 
-	hash = ( (uint64_t) addr ) % MAX_REF_HASH;
+	hash = ( (U64) addr ) % MAX_REF_HASH;
 
 	rr = sec->rfs_SecRefs2[ hash ];
 
@@ -217,7 +217,7 @@ int hash;
 
 // --
 
-RS4Ref *RS4FirstReloc_Sec( RS4FileSection *sec, int64_t adr1, int64_t adr2 )
+RS4Ref *RS4FirstReloc_Sec( RS4FileSection *sec, S64 adr1, S64 adr2 )
 {
 RS4Ref *rr;
 

@@ -19,11 +19,11 @@ enum RS4DecodeStat M68kCmd_Scc( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int cond;
+S32 cond;
 
 	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x0f000000 ) >> 24;
 
-	static const char *scc_RegNames[16] =
+	static CSTR scc_RegNames[16] =
 	{
 		"St",  "Sf",  "Shi", "Sls",
 		"Scc", "Scs", "Sne", "Seq",

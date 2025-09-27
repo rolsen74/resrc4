@@ -20,11 +20,11 @@ enum RS4DecodeStat M68kCmd_MOVE16( enum RS4ErrorCode *errcode, RS4Trace *rt )
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-uint32_t val;
-uint8_t *mem;
-char labname[ MAX_LabelName + 8 ];
-int mode;
-int ay;
+U32 val;
+MEM mem;
+CHR labname[ MAX_LabelName + 8 ];
+S32 mode;
+S32 ay;
 
 	ec		= RS4ErrStat_Error;
 	ds		= RS4DecodeStat_Error;
@@ -105,8 +105,8 @@ enum RS4DecodeStat M68kCmd_MOVE162( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
-int ax;
-int ay;
+S32 ax;
+S32 ay;
 
 	ax = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	ay = ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;

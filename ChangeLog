@@ -216,3 +216,14 @@ ReSrc4 v2.13 ( 10-Apr-2025 )
   -v2 = extra info (hunk)
   -v3 = even more
   -v4 = alot
+
+
+ReSrc4 v2.14 ( 28-Sep-2025 )
+
+- Changed source types too U8/U16/U32/U64 and so on.
+
+- Updated Makefile too put .o and .d files into its own subdir.
+
+- Parser now try and identify the Label access size. It will add
+  i08_/i16_/i32_/i64_/f32_/f64 too label name if it can detect size.
+ 

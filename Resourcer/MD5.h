@@ -5,19 +5,20 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include "Resourcer/Types.h"
 
 typedef struct
 {
-	uint64_t	size;			// Size of input in bytes
-	uint32_t	buffer[4];		// Current accumulation of hash
-	uint8_t		input[64];		// Input to be used in the next step
-	uint8_t		digest[16];		// Result of algorithm
+	U64		size;			// Size of input in bytes
+	U32		buffer[4];		// Current accumulation of hash
+	U8		input[64];		// Input to be used in the next step
+	U8		digest[16];		// Result of algorithm
 
 } MD5Context;
 
 void md5Init(MD5Context *ctx);
-void md5Update(MD5Context *ctx, uint8_t *input, size_t input_len);
+void md5Update(MD5Context *ctx, MEM input, U64 input_len);
 void md5Finalize(MD5Context *ctx);
-void md5Step(uint32_t *buffer, uint32_t *input);
+void md5Step(U32 *buffer, U32 *input);
 
 #endif

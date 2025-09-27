@@ -61,17 +61,17 @@ bailout:
 
 // --
 
-RS4FileHeader *RS4LoadFile( enum RS4ErrorCode *errcode, char *filename )
+RS4FileHeader *RS4LoadFile( enum RS4ErrorCode *errcode, STR filename )
 {
 enum RS4ErrorCode ec;
 RS4FileHeader *fh;
 MD5Context ctx;
-size_t fsize;
-size_t size;
 FILE *file;
-void *mem;
-int err;
-int cnt;
+U64 fsize;
+U64 size;
+PTR mem;
+S32 err;
+S32 cnt;
 
 	err = TRUE;
 
@@ -84,7 +84,7 @@ int cnt;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (int) sizeof( RS4FileHeader ));
+		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32) sizeof( RS4FileHeader ));
 		#endif
 
 		goto bailout;
@@ -166,7 +166,7 @@ int cnt;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (int) size );
+		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32) size );
 		#endif
 
 		goto bailout;
@@ -209,7 +209,7 @@ int cnt;
 	// -- NUL terminate file, in case we have an ASCII file.
 	// It makes parsing the file so much easier/safer
 
-	((char *)mem)[size] = 0;
+	((STR )mem)[size] = 0;
 
 	// -- Calculate MD5 hash
 
@@ -251,7 +251,7 @@ enum RS4FileType RS4IdentifyFile( enum RS4ErrorCode *errcode, RS4FileHeader *fil
 {
 enum RS4ErrorCode ec;
 enum RS4FileType type;
-uint32_t fid;
+U32 fid;
 
 	ec = RS4ErrStat_Error;
 
@@ -294,13 +294,13 @@ bailout:
 
 // --
 
-RS4FileHeader *RS4LoadExe( enum RS4ErrorCode *errcode, char *filename )
+RS4FileHeader *RS4LoadExe( enum RS4ErrorCode *errcode, STR filename )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileHeader *file;
-int type;
-int err;
+S32 type;
+S32 err;
 
 	ec = RS4ErrStat_Error;
 

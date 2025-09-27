@@ -22,6 +22,7 @@ enum RS4ErrorCode ec;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode	= "Pea";
 	rt->rt_CPU.M68k.mt_DoExternal	= FALSE;
+	rt->rt_CPU.M68k.mt_DoLabelSize	= FALSE;
 	rt->rt_CPU.M68k.mt_IsPea		= TRUE;
 	rt->rt_CPU.M68k.mt_ArgType		= M68KSIZE_Long;
 	rt->rt_CPU.M68k.mt_ArgEMode		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;

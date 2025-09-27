@@ -15,10 +15,10 @@
 
 // --
 
-char *RS4Strdup( char *string ) 
+STR RS4Strdup( STR string ) 
 {
-char *str;
-int len;
+STR str;
+S32 len;
 
 	str = NULL;
 
@@ -80,7 +80,7 @@ enum RS4FuncStat fs;
 	#ifdef DEBUG
 	#ifdef SUPPORT_M68K
 
-	for( int cnt=0 ; cnt<8 ; cnt++ )
+	for( S32 cnt=0 ; cnt<8 ; cnt++ )
 	{
 		rt->rt_CPU.M68k.mt_Registers[cnt+0].mr_Number = 0xd0 + cnt;
 		rt->rt_CPU.M68k.mt_Registers[cnt+8].mr_Number = 0xa0 + cnt;
@@ -137,10 +137,10 @@ bailout:
 
 // --
 
-char *FindFileName( char *name )
+STR FindFileName( STR name )
 {
-char *str;
-int pos;
+STR str;
+S32 pos;
 
 	pos = 0;
 	str = name;
@@ -170,11 +170,11 @@ int pos;
 void Mark_NulString( RS4Label *rl )
 {
 RS4FileSection *sec;
-uint8_t *type;
-uint8_t *mem;
-int64_t off;
-int chr;
-int len;
+MEM type;
+MEM mem;
+S64 off;
+S32 chr;
+S32 len;
 
 	if ( rl->rl_UserLocked )
 	{
@@ -249,14 +249,14 @@ enum RS4FuncStat fs;
 RS4FileSection *sec;
 RS4FileHeader *fh;
 RS4Label *rl2;
-uint8_t *type;
-uint8_t *mem;
-int64_t off;
-//int64_t adr;
-int64_t val;
-//int64_t cnt;
-int size;
-int cnt;
+MEM type;
+MEM mem;
+S64 off;
+//S64 adr;
+S64 val;
+//S64 cnt;
+S32 size;
+S32 cnt;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -294,7 +294,7 @@ int cnt;
 	if ( rl->rl_Type1 != RS4LabelType_Unset )
 	{
 		if (( rl->rl_Type1 != RS4LabelType_Struct )		
-		||	( rl->rl_Type2 != (int) id ))
+		||	( rl->rl_Type2 != (S32) id ))
 		{
 			ec = RS4ErrStat_Error;
 			fs = RS4FuncStat_Error;
@@ -342,10 +342,10 @@ int cnt;
 			{
 				case DST_Pointer:
 				{
-					val	= ( (uint64_t) mem[ off + 0 ] << 24 | 
-							(uint64_t) mem[ off + 1 ] << 16 | 
-							(uint64_t) mem[ off + 2 ] <<  8 | 
-							(uint64_t) mem[ off + 3 ] <<  0 );
+					val	= ( (U64) mem[ off + 0 ] << 24 | 
+							(U64) mem[ off + 1 ] << 16 | 
+							(U64) mem[ off + 2 ] <<  8 | 
+							(U64) mem[ off + 3 ] <<  0 );
 
 					if ( val )
 					{
@@ -361,10 +361,10 @@ int cnt;
 
 				case DST_String:
 				{
-					val	= ( (uint64_t) mem[ off + 0 ] << 24 | 
-							(uint64_t) mem[ off + 1 ] << 16 | 
-							(uint64_t) mem[ off + 2 ] <<  8 | 
-							(uint64_t) mem[ off + 3 ] <<  0 );
+					val	= ( (U64) mem[ off + 0 ] << 24 | 
+							(U64) mem[ off + 1 ] << 16 | 
+							(U64) mem[ off + 2 ] <<  8 | 
+							(U64) mem[ off + 3 ] <<  0 );
 
 					if ( val )
 					{
@@ -384,10 +384,10 @@ int cnt;
 
 				case DST_Struct:
 				{
-					val	= ( (uint64_t) mem[ off + 0 ] << 24 | 
-							(uint64_t) mem[ off + 1 ] << 16 | 
-							(uint64_t) mem[ off + 2 ] <<  8 | 
-							(uint64_t) mem[ off + 3 ] <<  0 );
+					val	= ( (U64) mem[ off + 0 ] << 24 | 
+							(U64) mem[ off + 1 ] << 16 | 
+							(U64) mem[ off + 2 ] <<  8 | 
+							(U64) mem[ off + 3 ] <<  0 );
 
 					if ( val )
 					{
@@ -453,10 +453,10 @@ bailout:
 // --
 
 #ifdef SUPPORT_M68K
-void M68k_ClearRegs( RS4Trace *rt, int mask )
+void M68k_ClearRegs( RS4Trace *rt, S32 mask )
 {
-int cnt;
-int reg;
+S32 cnt;
+S32 reg;
 
 	reg = 1;
 

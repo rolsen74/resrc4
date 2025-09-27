@@ -12,21 +12,21 @@
 // --
 // -- Mode 73 - Brief Extension Word Format
 
-inline static enum RS4DecodeStat MODE_73_Brief( enum RS4ErrorCode *errcode, RS4Trace *rt, char *outstr )
+inline static enum RS4DecodeStat MODE_73_Brief( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-uint32_t adr;
-uint8_t *mem;
-int8_t Offset;
-char labname[ MAX_LabelName + 8 ];
-int SCALE;
-int REG;
-int pos;
-int AD;
-int WL;
+U32 adr;
+MEM mem;
+S8 Offset;
+CHR labname[ MAX_LabelName + 8 ];
+S32 SCALE;
+S32 REG;
+S32 pos;
+S32 AD;
+S32 WL;
 
 	// --
 
@@ -89,6 +89,49 @@ int WL;
 			( WL ) ? ".l" : ".w",
 			scale_Names[SCALE]
 		);
+	}
+
+	// --
+
+	if (( rl ) && ( rt->rt_CPU.M68k.mt_DoLabelSize ))
+	{
+		enum RS4LabelSize rls;
+
+		/**/ if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Byte )		rls = RS4LABSIZE_Integer8;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Word )		rls = RS4LABSIZE_Integer16;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Long )		rls = RS4LABSIZE_Integer32;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Single )	rls = RS4LABSIZE_Float32;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Double )	rls = RS4LABSIZE_Float64;
+		else rls = RS4LABSIZE_Unknown;
+
+		if ( rl->rl_Label_RW_Size == RS4LABSIZE_Unset )
+		{
+			rl->rl_Label_RW_Size = rls;
+		}
+		else
+		{
+			if ( rl->rl_Label_RW_Size != rls )
+			{
+				/**/ if (( rl->rl_Label_RW_Size == RS4LABSIZE_Integer32 ) && ( rls == RS4LABSIZE_Float32 ))
+				{
+					// Convert Long to Float
+					rl->rl_Label_RW_Size = rls;
+				}
+				else if (( rl->rl_Label_RW_Size == RS4LABSIZE_Float32 ) && ( rls == RS4LABSIZE_Integer32 ))
+				{
+					// Do not convert Float to Long
+					// so do nothing, not an error
+				}
+				else
+				{
+					rl->rl_Label_RW_Size = RS4LABSIZE_Unknown;
+				}
+			}
+			else
+			{
+				rl->rl_Label_RW_Size = rls;
+			}
+		}
 	}
 
 	// --

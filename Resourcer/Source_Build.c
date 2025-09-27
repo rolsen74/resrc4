@@ -40,9 +40,9 @@ enum RS4FuncStat fs;
 struct _SrcCode *sc;
 RS4FileHeader *fh;
 RS4Source *rs;
-char *str;
-int comlen;
-int len;
+STR str;
+S32 comlen;
+S32 len;
 
 	DDEBUG( { printf( "%s:%04d: RS4AddSourceLine\n", __FILE__, __LINE__ ); } )
 
@@ -84,13 +84,13 @@ int len;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
- 		printf( "%s:%04d: Error allocating memory (%d)\n", __FILE__, __LINE__, (int) sizeof( RS4Source ) + len );
+ 		printf( "%s:%04d: Error allocating memory (%d)\n", __FILE__, __LINE__, (S32) sizeof( RS4Source ) + len );
 		#endif
 
  		goto bailout;
  	}
 
-	str = (char *)( rs + 1 );
+	str = (STR )( rs + 1 );
 
 	// -- Init Code
 
@@ -131,15 +131,15 @@ bailout:
 
 // --
 
-static enum RS4FuncStat RS4AddSourceString( enum RS4ErrorCode *errcode, RS4Trace *rt, const char *fmt, ... )
+static enum RS4FuncStat RS4AddSourceString( enum RS4ErrorCode *errcode, RS4Trace *rt, CSTR fmt, ... )
 {
 struct _SrcString *ss;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Source *rs;
 va_list args;
-char *str;
-int len;
+STR str;
+S32 len;
 
 	// -- Get Size
 
@@ -156,7 +156,7 @@ int len;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
- 		printf( "%s:%04d: Error allocating memory (%d)\n", __FILE__, __LINE__, (int) sizeof( RS4Source ) + len );
+ 		printf( "%s:%04d: Error allocating memory (%d)\n", __FILE__, __LINE__, (S32) sizeof( RS4Source ) + len );
 		#endif
 
  		goto bailout;
@@ -164,7 +164,7 @@ int len;
 
 	// -- Init Struct
 
-	str = (char *)( rs + 1 );
+	str = (STR )( rs + 1 );
 
 	ss = & rs->rs_Data.rs_String;
 
@@ -275,19 +275,19 @@ enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
 RS4Label *rl;
-int64_t val;
-char *buf;
-int len;
+S64 val;
+STR buf;
+S32 len;
 
 	fs	= RS4FuncStat_Error;
 	ec	= RS4ErrStat_Error;
 
 	buf = rt->rt_Container.Hunk.ms_Buf_Argument;
 
-	val	= ( (uint64_t) rt->rt_CurMemBuf[ 0 ] << 24 | 
-			(uint64_t) rt->rt_CurMemBuf[ 1 ] << 16 | 
-			(uint64_t) rt->rt_CurMemBuf[ 2 ] <<  8 | 
-			(uint64_t) rt->rt_CurMemBuf[ 3 ] <<  0 );
+	val	= ( (U64) rt->rt_CurMemBuf[ 0 ] << 24 | 
+			(U64) rt->rt_CurMemBuf[ 1 ] << 16 | 
+			(U64) rt->rt_CurMemBuf[ 2 ] <<  8 | 
+			(U64) rt->rt_CurMemBuf[ 3 ] <<  0 );
 
 	sec = rt->rt_Section;
 
@@ -379,13 +379,13 @@ static enum RS4FuncStat __Struct_Byte( enum RS4ErrorCode *errcode, struct DataSt
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-int64_t val;
-char *buf;
-int len;
+S64 val;
+STR buf;
+S32 len;
 
 	buf = rt->rt_Container.Hunk.ms_Buf_Argument;
 
-	val	= ( (uint64_t) rt->rt_CurMemBuf[ 0 ] );
+	val	= ( (U64) rt->rt_CurMemBuf[ 0 ] );
 
 	sec = rt->rt_Section;
 
@@ -441,14 +441,14 @@ static enum RS4FuncStat __Struct_Word( enum RS4ErrorCode *errcode, struct DataSt
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-int64_t val;
-char *buf;
-int len;
+S64 val;
+STR buf;
+S32 len;
 
 	buf = rt->rt_Container.Hunk.ms_Buf_Argument;
 
-	val	= ( (uint64_t) rt->rt_CurMemBuf[ 0 ] << 8 | 
-			(uint64_t) rt->rt_CurMemBuf[ 1 ] << 0 );
+	val	= ( (U64) rt->rt_CurMemBuf[ 0 ] << 8 | 
+			(U64) rt->rt_CurMemBuf[ 1 ] << 0 );
 
 	sec = rt->rt_Section;
 
@@ -504,16 +504,16 @@ static enum RS4FuncStat __Struct_Long( enum RS4ErrorCode *errcode, struct DataSt
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-int64_t val;
-char *buf;
-int len;
+S64 val;
+STR buf;
+S32 len;
 
 	buf = rt->rt_Container.Hunk.ms_Buf_Argument;
 
-	val	= ( (uint64_t) rt->rt_CurMemBuf[ 0 ] << 24 | 
-			(uint64_t) rt->rt_CurMemBuf[ 1 ] << 16 |
-			(uint64_t) rt->rt_CurMemBuf[ 2 ] <<  8 |
-			(uint64_t) rt->rt_CurMemBuf[ 3 ] <<  0 );
+	val	= ( (U64) rt->rt_CurMemBuf[ 0 ] << 24 | 
+			(U64) rt->rt_CurMemBuf[ 1 ] << 16 |
+			(U64) rt->rt_CurMemBuf[ 2 ] <<  8 |
+			(U64) rt->rt_CurMemBuf[ 3 ] <<  0 );
 
 	sec = rt->rt_Section;
 
@@ -564,18 +564,18 @@ int len;
 
 // --
 
-static enum RS4FuncStat RS4Decode_Struct( enum RS4ErrorCode *errcode, RS4Trace *rt, RS4Label *rl, int64_t off, int64_t *lenptr )
+static enum RS4FuncStat RS4Decode_Struct( enum RS4ErrorCode *errcode, RS4Trace *rt, RS4Label *rl, S64 off, S64 *lenptr )
 {
 struct DataStructHeader *dsh;
 struct DataStructNode *dsn;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-uint8_t *mem;
-int64_t adr;
-int cnt;
-int len;
-int id;
+MEM mem;
+S64 adr;
+S32 cnt;
+S32 len;
+S32 id;
 
 //printf( "Build: RS4Decode_Struct\n" );
 
@@ -757,8 +757,8 @@ static enum RS4FuncStat RS4Decode_RelativeWord(
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt,
 	RS4Label *rl, 
-	int64_t pos, 
-	int64_t *l )
+	S64 pos, 
+	S64 *l )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -767,14 +767,14 @@ RS4FileHeader *fh;
 RS4Label *parent;
 RS4Label *brance;
 RS4Label *rel;
-int16_t *data;
-int64_t adr;
-int16_t off;
-char buf[32];
-int size;
-int len;
-int cnt;
-int p;
+CHR buf[32];
+S16 *data;
+S32 size;
+S64 adr;
+S16 off;
+S32 len;
+S32 cnt;
+S32 p;
 
 	DDEBUG( { printf( "%s:%04d: RS4Decode_RelativeWord\n", __FILE__, __LINE__ ); } )
 
@@ -809,7 +809,7 @@ int p;
 		goto bailout;
 	}
 
-	data = (void *) rl->rl_Memory;
+	data = (PTR ) rl->rl_Memory;
 	size = rl->rl_Size/2;
 
 	rt->rt_Container.Hunk.ms_Buf_Comment = buf;
@@ -852,7 +852,7 @@ int p;
 
 		if ( parent )
 		{
-			int off = brance->rl_Offset - parent->rl_Offset;
+			S32 off = brance->rl_Offset - parent->rl_Offset;
 
 			if ( off < 0 )
 			{
@@ -877,7 +877,7 @@ int p;
 
 		if ( parent )
 		{
-			int off = rel->rl_Offset - parent->rl_Offset;
+			S32 off = rel->rl_Offset - parent->rl_Offset;
 
 			if ( off < 0 )
 			{
@@ -953,19 +953,19 @@ static enum RS4FuncStat RS4Decode_Code(
 	enum RS4ErrorCode *errcode,
 	RS4Trace *rt,
 	RS4Label *rl,
-	int64_t size,
-	int64_t pos,
-	uint8_t *type,
-	int64_t *len_ptr )
+	S64 size,
+	S64 pos,
+	MEM type,
+	S64 *len_ptr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-int64_t len;
-char buf[256];
-uint8_t *mem;
-int cnt;
+CHR buf[256];
+S64 len;
+S32 cnt;
+MEM mem;
 
 	DDEBUG( { printf( "%s:%04d: RS4Decode_Code\n", __FILE__, __LINE__ ); } )
 
@@ -1051,7 +1051,7 @@ int cnt;
 
 		for( cnt=0 ; cnt<rt->rt_CPU.M68k.mt_OpcodeSize ; cnt++ )
 		{
-			int p = strlen( buf );
+			S32 p = strlen( buf );
 
 			if (( cnt & 1 ) || ( cnt == 0 ))
 			{
@@ -1141,25 +1141,25 @@ static enum RS4FuncStat RS4Decode_Data(
 	RS4Trace *rt,
 	RS4Label *rl,
 	RS4Ref *rr, 
-	int64_t max,
-	int64_t *len_ptr )
+	S64 max,
+	S64 *len_ptr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 //RS4FileSection *sec;
 RS4FileHeader *fh;
 RS4Label *newrl;
-int64_t offset;
-int64_t size;
-int64_t val;
-int64_t len;
-uint8_t c;
-char buf[256];
-int doblk;
-int doptr;
-int loop;
-int cnt;
-int mm;
+CHR buf[256];
+S64 offset;
+S32 doblk;
+S32 doptr;
+S32 loop;
+S64 size;
+S64 val;
+S64 len;
+S32 cnt;
+S32 mm;
+U8 c;
 
 	DDEBUG( { printf( "%s:%04d: RS4Decode_Data\n", __FILE__, __LINE__ ); } )
 
@@ -1232,10 +1232,10 @@ int mm;
 	{
 		rt->rt_Container.Hunk.ms_Str_Opcode = "dc.l";
 
-		val =  (( (uint64_t) rt->rt_CurMemBuf[ 0 ] << 24 )
-			|   ( (uint64_t) rt->rt_CurMemBuf[ 1 ] << 16 )
-			|   ( (uint64_t) rt->rt_CurMemBuf[ 2 ] <<  8 )
-			|   ( (uint64_t) rt->rt_CurMemBuf[ 3 ] <<  0 ));
+		val =  (( (U64) rt->rt_CurMemBuf[ 0 ] << 24 )
+			|   ( (U64) rt->rt_CurMemBuf[ 1 ] << 16 )
+			|   ( (U64) rt->rt_CurMemBuf[ 2 ] <<  8 )
+			|   ( (U64) rt->rt_CurMemBuf[ 3 ] <<  0 ));
 
 		rt->rt_Container.Hunk.ms_Buf_Argument[0] = 0;
 
@@ -1298,10 +1298,10 @@ int mm;
 
 		for( cnt=0 ; cnt<loop ; cnt++ )
 		{
-			val =  (( (uint64_t) rt->rt_CurMemBuf[ offset+0 ] << 24 )
-				|   ( (uint64_t) rt->rt_CurMemBuf[ offset+1 ] << 16 )
-				|   ( (uint64_t) rt->rt_CurMemBuf[ offset+2 ] <<  8 )
-				|   ( (uint64_t) rt->rt_CurMemBuf[ offset+3 ] <<  0 ));
+			val =  (( (U64) rt->rt_CurMemBuf[ offset+0 ] << 24 )
+				|   ( (U64) rt->rt_CurMemBuf[ offset+1 ] << 16 )
+				|   ( (U64) rt->rt_CurMemBuf[ offset+2 ] <<  8 )
+				|   ( (U64) rt->rt_CurMemBuf[ offset+3 ] <<  0 ));
 
 			len = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
 
@@ -1379,24 +1379,24 @@ enum STRINGMODE
 
 #define MAX_LINELEN		38
 
-static enum RS4FuncStat RS4Decode_String( enum RS4ErrorCode *errcode, RS4Trace *rt, RS4Label *rl, int64_t max, int64_t *len_ptr )
+static enum RS4FuncStat RS4Decode_String( enum RS4ErrorCode *errcode, RS4Trace *rt, RS4Label *rl, S64 max, S64 *len_ptr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 enum STRINGMODE mode;
 RS4FileSection *sec;
-int64_t adr;
-uint8_t *mem;
-char *arg;
-char comment[128];
-int linelen;
-int bytes;
-int size;
-int chr;
-int len;
-int pos;
-int cnt;
-int p;
+CHR comment[128];
+S32 linelen;
+S32 bytes;
+S32 size;
+S64 adr;
+STR arg;
+S32 chr;
+S32 len;
+S32 pos;
+S32 cnt;
+S32 p;
+MEM mem;
 
 	DDEBUG( { printf( "%s:%04d: RS4Decode_String\n", __FILE__, __LINE__ ); } )
 
@@ -1635,11 +1635,11 @@ bailout:
 
 // --
 
-static enum RS4FuncStat RS4Decode_BSS( enum RS4ErrorCode *errcode, RS4Trace *rt, int64_t max, int64_t *len_ptr )
+static enum RS4FuncStat RS4Decode_BSS( enum RS4ErrorCode *errcode, RS4Trace *rt, S64 max, S64 *len_ptr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
-int64_t size;
+S64 size;
 
 	DDEBUG( { printf( "%s:%04d: RS4Decode_BSS\n", __FILE__, __LINE__ ); } )
 
@@ -1702,8 +1702,8 @@ static enum RS4FuncStat Handle_Init( enum RS4ErrorCode *errcode, RS4Trace *rt UN
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
-char *sectype;
-char *memtype;
+STR sectype;
+STR memtype;
 
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
@@ -1809,10 +1809,10 @@ static enum RS4FuncStat Handle_Exit(
 UNUSED	RS4Trace *rt,		// Trace info
 UNUSED	RS4Label **rlptr,	// Current Label
 UNUSED	RS4Ref **rrptr,		// Current Ref
-UNUSED	uint8_t *type,		// MemType
-UNUSED	int64_t size,		// MemSize
-UNUSED	int64_t max,		// max bytes ( too .. next label, next ref, sec end, type change )
-UNUSED	int64_t pos )		// mem/type pos
+UNUSED	MEM type,		// MemType
+UNUSED	S64 size,		// MemSize
+UNUSED	S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
+UNUSED	S64 pos )		// mem/type pos
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -1856,23 +1856,23 @@ RS4Label *rl;
 // --
 // len == 0 is Error
 
-static int64_t Handle_Unset( 
+static S64 Handle_Unset( 
 		enum RS4ErrorCode *errcode, 
 		RS4Trace *rt,		// Trace info
 		RS4Label **rlptr,	// Current Label
 		RS4Ref **rrptr,		// Current Ref
-UNUSED	uint8_t *type,		// MemType
-UNUSED	int64_t size,		// MemSize
-		int64_t max,		// max bytes ( too .. next label, next ref, sec end, type change )
-		int64_t pos )		// mem/type pos
+UNUSED	MEM type,		// MemType
+UNUSED	S64 size,		// MemSize
+		S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
+		S64 pos )		// mem/type pos
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
 RS4Label *rl;
 RS4Ref *rr;
-int64_t len;
-int64_t l;
+S64 len;
+S64 l;
 
 	l	= 0;
 	ec	= RS4ErrStat_Error;
@@ -1924,21 +1924,21 @@ bailout:
 
 // --
 
-static int64_t Handle_Code( 
+static S64 Handle_Code( 
 		enum RS4ErrorCode *errcode, 
 		RS4Trace *rt,		// Trace info
 		RS4Label **rlptr,	// Current Label
 UNUSED	RS4Ref **rrptr,		// Current Ref
-		uint8_t *type,		// MemType
-		int64_t size,		// MemSize
-UNUSED	int64_t max,		// max bytes ( too .. next label, next ref, sec end, type change )
-		int64_t pos )		// mem/type pos
+		MEM type,		// MemType
+		S64 size,		// MemSize
+UNUSED	S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
+		S64 pos )		// mem/type pos
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
-int64_t len;
-int64_t l;
+S64 len;
+S64 l;
 
 	l	= 0;
 	ec	= RS4ErrStat_Error;
@@ -1980,23 +1980,23 @@ bailout:
 
 // --
 
-static int64_t Handle_Data( 
+static S64 Handle_Data( 
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt,		// Trace info
 	RS4Label **rlptr,	// Current Label
 	RS4Ref **rrptr,		// Current Ref
-//	uint8_t *type,		// MemType
-//	int64_t size,		// MemSize
-	int64_t max,		// max bytes ( too .. next label, next ref, sec end, type change )
-	int64_t pos )		// mem/type pos
+//	MEM type,		// MemType
+//	S64 size,		// MemSize
+	S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
+	S64 pos )		// mem/type pos
 {
 enum RS4LabelType t;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Label *rl;
 RS4Ref *rr;
-int64_t len;
-int64_t l;
+S64 len;
+S64 l;
 
 	l	= 0;
 	ec	= RS4ErrStat_Error;
@@ -2129,15 +2129,15 @@ RS4Label *nextrl;
 RS4Label *rl;
 RS4Ref *nextrr;
 RS4Ref *rr;
-uint8_t *type;
-uint8_t *mem;
-int64_t size;
-int64_t pos;
-int64_t len;
-int64_t max;
-int64_t cnt;
-int64_t mlen;
-uint8_t mtyp;
+MEM type;
+MEM mem;
+S64 size;
+S64 pos;
+S64 len;
+S64 max;
+S64 cnt;
+S64 mlen;
+U8 mtyp;
 
 	// --
 
@@ -2207,7 +2207,7 @@ uint8_t mtyp;
 		{
 			if ( rl->rl_Offset > pos )
 			{
-				max = RS4MIN( max, rl->rl_Offset - pos );
+				max = MIN( max, rl->rl_Offset - pos );
 			}
 			else
 			{
@@ -2215,7 +2215,7 @@ uint8_t mtyp;
 
 				if ( nextrl )
 				{
-					max = RS4MIN( max, nextrl->rl_Offset - pos );
+					max = MIN( max, nextrl->rl_Offset - pos );
 				}
 			}
 		}
@@ -2226,7 +2226,7 @@ uint8_t mtyp;
 		{
 			if ( rr->rr_Offset > pos )
 			{
-				max = RS4MIN( max, rr->rr_Offset - pos );
+				max = MIN( max, rr->rr_Offset - pos );
 			}
 			else
 			{
@@ -2234,7 +2234,7 @@ uint8_t mtyp;
 
 				if ( nextrr )
 				{
-					max = RS4MIN( max, nextrr->rr_Offset - pos );
+					max = MIN( max, nextrr->rr_Offset - pos );
 				}
 			}
 		}
@@ -2278,8 +2278,8 @@ uint8_t mtyp;
 				break;
 			}
 
-			int type1 = type[pos];
-			int type2 = type[pos-1];
+			S32 type1 = type[pos];
+			S32 type2 = type[pos-1];
 
 			if ( type1 == type2 )
 			{
@@ -2423,8 +2423,8 @@ enum RS4FuncStat RS4BuildSource_File( enum RS4ErrorCode *errcode, RS4FileHeader 
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Trace rt;
-char argbuf[256];
-int cnt;
+CHR argbuf[256];
+S32 cnt;
 
 	DDEBUG( { printf( "%s:%04d: RS4BuildSource_File\n", __FILE__, __LINE__ ); } )
 
