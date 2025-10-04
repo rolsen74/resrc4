@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 // -- Mode 73 - Brief Extension Word Format

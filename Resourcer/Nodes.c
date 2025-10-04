@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -24,21 +26,21 @@ RS4Node *t;
 	{
 		t = h->Head;
 
-		n->Next	    = h->Head;
-		n->Prev     = NULL;
+		n->Next = t;
+		n->Prev = NULL;
 
-		t->Prev		= n;
-		h->Head		= n;
-		h->Nodes   += 1;
+		t->Prev	= n;
+		h->Head	= n;
+		h->Nodes += 1;
 	}
 	else
 	{
-		n->Next		= NULL;
-		n->Prev		= NULL;
+		n->Next	= NULL;
+		n->Prev	= NULL;
 
-		h->Head		= n;
-		h->Tail		= n;
-		h->Nodes	= 1;
+		h->Head	= n;
+		h->Tail	= n;
+		h->Nodes = 1;
 	}
 }
 
@@ -53,21 +55,21 @@ RS4Node *t;
 	{
 		t = h->Tail;
 
-		n->Next	    = NULL;
-		n->Prev     = h->Tail;
+		n->Next	= NULL;
+		n->Prev	= t;
 
-		t->Next		= n;
-		h->Tail		= n;
-		h->Nodes   += 1;
+		t->Next	= n;
+		h->Tail	= n;
+		h->Nodes += 1;
 	}
 	else
 	{
-		n->Next		= NULL;
-		n->Prev		= NULL;
+		n->Next	= NULL;
+		n->Prev	= NULL;
 
-		h->Head		= n;
-		h->Tail		= n;
-		h->Nodes	= 1;
+		h->Head	= n;
+		h->Tail	= n;
+		h->Nodes = 1;
 	}
 }
 

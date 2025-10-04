@@ -1,13 +1,15 @@
  
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -140,6 +142,9 @@ RS4Source *rs;
 va_list args;
 STR str;
 S32 len;
+
+	fs = RS4FuncStat_Error;
+	ec = RS4ErrStat_Error;
 
 	// -- Get Size
 
@@ -291,7 +296,7 @@ S32 len;
 
 	sec = rt->rt_Section;
 
-	rl = RS4FindLabel_File( rt->rt_File, val );
+	rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
@@ -307,7 +312,7 @@ S32 len;
 			goto bailout;
 		}
 
-		sprintf( buf, "1" );
+		sprintf( buf, "4" );
 	}
 	else
 	{
@@ -317,9 +322,10 @@ S32 len;
 
 			if ( fs != RS4FuncStat_Okay )
 			{
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
+				if ( DoVerbose > 2 )
+				{
+					printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+				}
 
 				goto bailout;
 			}
@@ -349,7 +355,7 @@ S32 len;
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
-		rt->rt_Container.Hunk.ms_Str_Opcode = "ds.l";
+		rt->rt_Container.Hunk.ms_Str_Opcode = "ds.b";
 	}
 	else
 	{
@@ -454,7 +460,7 @@ S32 len;
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
-		sprintf( buf, "1" );
+		sprintf( buf, "2" );
 	}
 	else
 	{
@@ -476,7 +482,7 @@ S32 len;
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
-		rt->rt_Container.Hunk.ms_Str_Opcode = "ds.w";
+		rt->rt_Container.Hunk.ms_Str_Opcode = "ds.b";
 	}
 	else
 	{
@@ -519,7 +525,7 @@ S32 len;
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
-		sprintf( buf, "1" );
+		sprintf( buf, "4" );
 	}
 	else
 	{
@@ -541,7 +547,7 @@ S32 len;
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
-		rt->rt_Container.Hunk.ms_Str_Opcode = "ds.l";
+		rt->rt_Container.Hunk.ms_Str_Opcode = "ds.b";
 	}
 	else
 	{
@@ -577,8 +583,6 @@ S32 cnt;
 S32 len;
 S32 id;
 
-//printf( "Build: RS4Decode_Struct\n" );
-
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
 	sec	= rl->rl_Section;
@@ -587,6 +591,8 @@ S32 id;
 	mem	= sec->rfs_MemoryBuf;
 	dsh	= DataStructTable[id];
 	len = 0;
+
+//	printf( "Build: RS4Decode_Struct : StructID %d : %s\n", id, (dsh)?dsh->dsh_Title:"" );
 
 	if ( rl->rl_Type1 != RS4LabelType_Struct )
 	{
@@ -632,6 +638,8 @@ S32 id;
 	for( cnt=0 ; cnt < dsh->dsh_Entries ; cnt++ )
 	{
 		dsn = & dsh->dsh_Data[cnt];
+
+//	printf( "--> %s\n", dsn->dsn_Name );
 
 		rt->rt_CurMemAdr = adr + off;
 		rt->rt_CurMemBuf = & mem[ off ];
@@ -809,7 +817,7 @@ S32 p;
 		goto bailout;
 	}
 
-	data = (PTR ) rl->rl_Memory;
+	data = (PTR) rl->rl_Memory;
 	size = rl->rl_Size/2;
 
 	rt->rt_Container.Hunk.ms_Buf_Comment = buf;
@@ -829,7 +837,7 @@ S32 p;
 		adr = rel->rl_Address;
 		adr += off;
 
-		brance = RS4FindLabel_File( fh, adr );
+		brance = RS4FindLabel_File( fh, adr, __FILE__ );
 
 		if ( ! brance )
 		{
@@ -1239,7 +1247,7 @@ U8 c;
 
 		rt->rt_Container.Hunk.ms_Buf_Argument[0] = 0;
 
-		newrl = RS4FindLabel_File( fh, val );
+		newrl = RS4FindLabel_File( fh, val, __FILE__ );
 //		newrl = RS4AddLabel_File( rt->rt_Container.Hunk.ms_HunkStruct, val, RS4LabelType_Unset );
 //		newrl = RS4AddLabel_Sec( rt->rt_Container.Hunk.ms_HunkStruct, sec->rt_Section, val, RS4LabelType_Unset );
 
@@ -2080,7 +2088,7 @@ S64 l;
 			fs = RS4FuncStat_Error;
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+			printf( "%s:%04d: Error : Unknow Label Type %d\n", __FILE__, __LINE__, t );
 			goto bailout;
 			#endif
 

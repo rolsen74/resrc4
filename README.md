@@ -138,6 +138,7 @@ Please be aware of the following:
 - Move
 - Move16
 - Movea
+- Movec
 - Movem
 - Movep
 - Moveq
@@ -345,5 +346,5 @@ Again, only what is needed has been implemented, so it's a little limited. The o
 - HUNK_END (3F2)
 - HUNK_HEADER (3F3)
 - HUNK_DREL32 (3F7)
-- HUNK_RELRELOC32 (3FD) (New)
+- HUNK_RELRELOC32 (3FD)
 - HUNK_RELOC32SHORT (3FC)

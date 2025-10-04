@@ -227,3 +227,20 @@ ReSrc4 v2.14 ( 28-Sep-2025 )
 - Parser now try and identify the Label access size. It will add
   i08_/i16_/i32_/i64_/f32_/f64 too label name if it can detect size.
  
+
+ReSrc4 v2.15 ( 04-Oct-2025 )
+
+- Added support for MsgPort and TextFont structures.
+
+- Changed ds.w/ds.l to use dc.b as its easyer to read.
+
+- Improved Tracing.. handling of putting Library bases into labels
+  and retriving them again.. works alot better now.
+
+- Improved extended library function support.. ie OpenResource was
+  not converted too my new library scanning. This one and others
+  have now better handling.
+
+- Added support for Movec opcode.
+
+- Changed file header, still gpl v3 but added "SPDX-License-Identifier"

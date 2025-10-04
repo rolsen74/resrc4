@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -71,21 +73,30 @@ static struct myLibType1 myLibs[] =
 
 // --
 
-STR AmigaOS3_FindLibFunc( enum RS4ErrorCode *errcode, RS4Trace *rt, S16 offset )
+STR AmigaOS3_FindLibFunc( enum RS4ErrorCode *errcode, RS4Trace *rt, S16 offset, STR file UNUSED )
 {
-enum RS4DecodeStat ds;
+//enum RS4DecodeStat ds;
 enum AOS3_LibType lib;
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 AOS3_LVOStruct *liblvos;
-AOS3_RegStruct *rs;
-RS4Label *rl;
-STR lvo;
+//AOS3_RegStruct *rs;
+//RS4Label *rl;
 S32 pos1;
 S32 pos2;
-S32 pos3;
-S32 reg;
+//S32 pos3;
+//S32 reg;
+STR lvo;
 
+	/*
+	** 1> Find Library
+	** 2> Find Offset
+	** 3> 
+	*/
+
+//	printf( "AmigaOS3_FindLibFunc : Enter\n" );
+
+	fs	= RS4FuncStat_Error;
 	ec	= RS4ErrStat_Okay;
 	lvo	= NULL;
 	lib	= ( rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg ].mr_Type2 );
@@ -120,9 +131,10 @@ S32 reg;
 
 		ec = RS4ErrStat_Okay;
 
-		#ifdef DEBUG
-		printf( "Unknown : LibType %d : Offset %d : libcall at $%08" PRIx64 "\n", lib, offset, rt->rt_CurMemAdr );
-		#endif
+		if ( DoVerbose > 2 )
+		{
+			printf( "Unknown lib call : LibType %d : Offset %d : libcall at $%08" PRIx64 "\n", lib, offset, rt->rt_CurMemAdr );
+		}
 
 		goto bailout;
 	}
@@ -164,136 +176,38 @@ S32 reg;
 	{
 		case AOS3_LVOType_Name:	// Only define Name and Offset
 		{
-			// We only have a name, so do nothing
+			// Name only, so do nothing
+//			printf( "AOS3_LVOType_Name\n" );
+			fs = RS4FuncStat_Okay;
 			break;
 		}
 
 		case AOS3_LVOType_Regs:	// Name+Offset and Reg struct
 		{
-			rs = liblvos[pos2].Regs2;
-
-			#ifdef DEBUG
-			if ( ! rs )
-			{
-				ec = RS4ErrStat_Internal;
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				goto bailout;
-			}
-			#endif
-
-			pos3 = -1;
-
-			while( ++pos3 < 16 )
-			{
-				reg = rs[pos3].Reg3;
-
-				if ( reg < 0 )
-				{
-					break;
-				}
-
-				switch( rs[pos3].Type3 )
-				{
-					case AOS3_RegType_String:
-					{
-						if ( rt->rt_CPU.M68k.mt_Registers[ reg ].mr_Type1 != RRT_Label )
-						{
-							continue;
-						}
-
-						rl = rt->rt_CPU.M68k.mt_Registers[ reg ].mr_Label;
-
-						if ( ! rl )
-						{
-							continue;
-						}
-
-						Mark_NulString( rl );
-						break;
-					}
-
-					case AOS3_RegType_Struct:
-					{
-						if ( rt->rt_CPU.M68k.mt_Registers[ reg ].mr_Type1 != RRT_Label )
-						{
-							continue;
-						}
-
-						rl = rt->rt_CPU.M68k.mt_Registers[ reg ].mr_Label;
-
-						if ( ! rl )
-						{
-							continue;
-						}
-
-						fs = Mark_Struct( & ec, rl, rs[ reg ].Val3 );
-
-						if ( fs != RS4FuncStat_Okay )
-						{
-							// ec allready set
-
-							#ifdef DEBUG
-							printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-							#endif
-
-							goto bailout;
-						}
-						break;
-					}
-
-					default:
-					{
-						ec = RS4ErrStat_Internal;
-
-						#ifdef DEBUG
-						printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-						#endif
-
-						goto bailout;
-					}
-				}
-			}
+			// Parse AOS3_RegStruct struct
+			fs = AmigaOS3_FindLibFunc_Regs( & ec, rt, liblvos[pos2].Regs2 );
 			break;
 		}
 
 		case AOS3_LVOType_Func:	// Name+Offset and Function
 		{
-			rs = liblvos[pos2].Regs2;
-
-			#ifdef DEBUG
-			if ( ! liblvos[pos2].Func2 )
-			{
-				ec = RS4ErrStat_Internal;
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				goto bailout;
-			}
-			#endif
-
-			ds = liblvos[pos2].Func2( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			// Call custom Function
+			fs = AmigaOS3_FindLibFunc_Func( & ec, rt, liblvos[pos2].Func2 );
 			break;
 		}
 
 		default:
 		{
+			printf( "%s:%04d: Unknown type : Type %d\n", __FILE__, __LINE__, liblvos[pos2].Type2 );
 			ec = RS4ErrStat_Internal;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error : Type %d\n", __FILE__, __LINE__, liblvos[pos2].Type2 );
-			#endif
-
-			goto bailout;
+			break;
 		}
+	}
+
+	if ( fs != RS4FuncStat_Okay )
+	{
+		printf( "%s:%04d: Error : fs %d : ec %d : Type %d\n", __FILE__, __LINE__, fs, ec, liblvos[pos2].Type2 );
+		goto bailout;
 	}
 
 	// --
@@ -312,6 +226,8 @@ bailout:
 	{
 		*errcode = ec;
 	}
+
+//	printf( "AmigaOS3_FindLibFunc : Exit\n" );
 
 	return( lvo );
 }

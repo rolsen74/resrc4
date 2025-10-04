@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -54,7 +56,7 @@ CHR labname[ MAX_LabelName + 8 ];
 
 	// --
 
-//	rl = RS4AddLabel_File( rt->rt_File, adr, RS4LabelType_Unset );
+//	rl = RS4AddLabel_File( rt->rt_File, adr, RS4LabelType_Unset, __FILE__ );
 	rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Code );
 
 	if ( rl )

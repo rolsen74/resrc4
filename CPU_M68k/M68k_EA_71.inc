@@ -1,17 +1,19 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 // -- Mode 71 - move.l $00000004
-extern S32 leatst;
+// extern S32 leatst;
 
 inline static enum RS4DecodeStat MODE_71( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
@@ -43,7 +45,7 @@ S32 pos;
 		isRef->rr_Handled = TRUE;
 
 		// if there is a Ref then the a label have been added
-		rl = RS4FindLabel_File( rt->rt_File, val );
+		rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
 
 		if ( ! rl )
 		{

@@ -133,7 +133,7 @@ RS4Ref *isRef;
 		isRef->rr_Handled = TRUE;
 
 		// if there is a Ref then the a label have been added
-		rl = RS4FindLabel_File( rt->rt_File, val );
+		rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
 
 		if ( ! rl )
 		{
@@ -502,7 +502,7 @@ S32 cnt;
 
 	memset( & hps, 0, sizeof( hps ));
 
-	hps.mem = (PTR ) fh->rfh_FileBuffer;
+	hps.mem = (PTR) fh->rfh_FileBuffer;
 
 	// --
 
@@ -1165,7 +1165,7 @@ S32 cnt;
 						*DestMemory	= SWAP32( ( val32 - current->rfs_MemoryAdr - offset ) );
 
 						// Possible Section jump
-						rl = RS4AddLabel_File( & ec, fh, val32, RS4LabelType_Unset );
+						rl = RS4AddLabel_File( & ec, fh, val32, RS4LabelType_Unset, __FILE__ );
 
 						if ( ! rl )
 						{

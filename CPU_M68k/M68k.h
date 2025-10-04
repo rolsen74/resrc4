@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 #ifndef CPU_M68K_H
 #define CPU_M68K_H 1
@@ -81,7 +83,7 @@ struct M68kRegister
 
 struct AmigaOS3_Misc_Move_GetSetStruct
 {
-	S32						SrcType;
+	enum GSSType			SrcType;
 	S32						LibType;
 	RS4Label *				Label;
 	struct M68kRegister 	Reg;
@@ -105,12 +107,13 @@ struct M68kTrace
 	S32						mt_ArgSize;				// Opcode Size in bytes
 	enum M68KOpcodeSize		mt_ArgType;				// Opcode Type (b/w/l)
 	enum M68kDecMode		mt_DecMode;				// Hex, Sign Dec, Unsign Dec
-	S32						mt_LastOpcode;			// Rts or Jmp .. sets this
-	S32						mt_IsPea;				// Negative values, will be printed as Decimal
-	S32						mt_DoLabelSize;		// 
-	S32						mt_LibCall;				// Well Possible LibCall
-	S32						mt_ClearRegMask;		// Regs to Destroy on Return
-	S32						mt_DoExternal;
+	S8						mt_LastOpcode;			// Rts or Jmp .. sets this
+	S8						mt_IsPea;				// Negative values, will be printed as Decimal
+	S8						mt_DoLabelSize;			// 
+	S8						mt_LibCall;				// Well Possible LibCall
+	S8						mt_DoExternal;
+	S8						mt_Pad;
+	U16						mt_ClearRegMask;		// Regs to Destroy on Return
 	struct M68kRegister *	mt_CurRegister;
 	struct M68kRegister		mt_JmpRegister;
 	struct M68kRegister		mt_SrcRegister;
@@ -133,7 +136,7 @@ enum RS4DecodeStat	M68k_Decoder(			enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat	M68k_EffectiveAddress(	enum RS4ErrorCode *, RS4Trace * );
 void				M68k_Set_Cur_to_Unknown( RS4Trace *rt );
 
-STR 	AmigaOS3_FindLibFunc(			enum RS4ErrorCode *errcode, RS4Trace *rt, S16 val );
+STR 	AmigaOS3_FindLibFunc(			enum RS4ErrorCode *errcode, RS4Trace *rt, S16 val, STR file );
 
 // -- Opcodes
 enum RS4DecodeStat M68kCmd_ABCD(		enum RS4ErrorCode *, RS4Trace * );
@@ -200,6 +203,7 @@ enum RS4DecodeStat M68kCmd_MOVE4(		enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat M68kCmd_MOVE5(		enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat M68kCmd_MOVE6(		enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat M68kCmd_MOVEA(		enum RS4ErrorCode *, RS4Trace * );
+enum RS4DecodeStat M68kCmd_MOVEC(		enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat M68kCmd_MOVEM(		enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat M68kCmd_MOVEP(		enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat M68kCmd_MOVEQ(		enum RS4ErrorCode *, RS4Trace * );

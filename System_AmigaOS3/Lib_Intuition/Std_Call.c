@@ -1,42 +1,49 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
 #include "Resourcer/ReSrc4.h"
 
 // --
+// Single Args
 
-//static STR Header ="\n; Intuition\n";
-//static S32 Global_Intuition_Used = FALSE;
-
-// --
-
-//enum RS4DecodeStat AOS3_Intuition_Func_PrintIText( enum RS4ErrorCode *errcode, RS4Trace *rt );
-
-// --
-
-#if 0
-PrintIText( RastPort, IText, LeftOffset, TopOffset )
-			A0        A1     D0          D1
-
-VOID PrintIText( struct RastPort *, struct IntuiText *, WORD, WORD );
-#endif
-
-static AOS3_RegStruct AOS3_PrintIText_Regs[] =
+static AOS3_RegStruct _NewScreen_A0[] =
 {
-//	AOS3_REG_Struct( M68KREGT_D0, RS4StructID_RastPort ),
+	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_NewScreen ),
+	AOS3_REG_EndMarker()
+};
+
+// --
+// Double Args
+
+static AOS3_RegStruct _RastPort_IntuiText_A0_A1[] =
+{
+	AOS3_REG_Struct( M68KREGT_A0, RS4StructID_RastPort ),
 	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_IntuiText ),
 	AOS3_REG_EndMarker()
 };
+
+// --
+// Single Arg functions
+
+#define AOS3_OpenScreen_Regs		_NewScreen_A0
+#define AOS3_CloseScreen_Regs		_NewScreen_A0
+
+// --
+// Double Args functions
+
+#define AOS3_PrintIText_Regs		_RastPort_IntuiText_A0_A1
 
 // --
 
@@ -70,7 +77,7 @@ AOS3_LVOStruct AOS3_IntuitionBase[] =
 	AOS3_LVO_Name( -180, OffMenu ),
 	AOS3_LVO_Name( -186, OnGadget ),
 	AOS3_LVO_Name( -192, OnMenu ),
-	AOS3_LVO_Name( -198, OpenScreen ),
+	AOS3_LVO_Regs( -198, OpenScreen ),
 	AOS3_LVO_Name( -204, OpenWindow ),
 	AOS3_LVO_Name( -210, OpenWorkBench ),
 	AOS3_LVO_Regs( -216, PrintIText ),

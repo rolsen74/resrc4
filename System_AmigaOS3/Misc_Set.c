@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -56,16 +58,16 @@ enum RS4FuncStat fs;
 
 	// --
 
-	DDEBUG( printf( "AmigaOS3_Misc_Move_Set\n" ); )
+	DDEBUG( printf( "AmigaOS3_Misc_Move_Set : Addr $%08lx\n", rt->rt_CurMemAdr ); )
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
 
 	switch( gss->SrcType )
 	{
-		case _Unset:
+		case GSSType_Unset:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : _Unset :\n" ); )
+			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Unset :\n" ); )
 
 			#ifdef DEBUG
 			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
@@ -85,9 +87,9 @@ enum RS4FuncStat fs;
 			goto bailout;
 		}
 
-		case _Unknown:
+		case GSSType_Unknown:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : _Unknown :\n" ); )
+			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Unknown :\n" ); )
 
 			ec = Misc_Set__Src_is_Unknown( gss, cur, rt, mem );
 
@@ -102,9 +104,9 @@ enum RS4FuncStat fs;
 			break;
 		}
 
-		case _Reg:
+		case GSSType_Reg:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : _Reg :\n" ); )
+			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Reg :\n" ); )
 
 			ec = Misc_Set__Src_is_Reg( gss, cur, rt, mem );
 
@@ -119,9 +121,9 @@ enum RS4FuncStat fs;
 			break;
 		}
 
-		case _Exec:
+		case GSSType_Exec:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : _Exec :\n" ); )
+			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Exec :\n" ); )
 
 			ec = Misc_Set__Src_is_Exec( cur, rt, mem );
 
@@ -136,9 +138,9 @@ enum RS4FuncStat fs;
 			break;
 		}
 
-		case _Label:
+		case GSSType_Label:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : _Label :\n" ); )
+			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Label :\n" ); )
 
 			ec = Misc_Set__Src_is_Label( gss, cur, rt, mem );
 

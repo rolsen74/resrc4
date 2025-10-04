@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -55,9 +57,13 @@ struct DataStructHeader	*DataStructTable[RS4StructID_Last] =
 	[RS4StructID_NewScreen]			= & Struct_NewScreen,
 	[RS4StructID_Gadget]			= & Struct_Gadget,
 	[RS4StructID_TextAttr]			= & Struct_TextAttr,
+	[RS4StructID_TextFont]			= & Struct_TextFont,
 	[RS4StructID_RastPort]			= & Struct_RastPort,
 	[RS4StructID_Rectangle]			= & Struct_Rectangle,
 	[RS4StructID_LWGadData]			= & Struct_LWGadData,
+	[RS4StructID_Interrupt]			= & Struct_Interrupt,
+	[RS4StructID_MsgPort]			= & Struct_MsgPort,
+	[RS4StructID_StackSwap]			= & Struct_StackSwap,
 	#endif
 };
 

@@ -1,13 +1,15 @@
  
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -258,7 +260,7 @@ RS4Label *parent;
 			// ec allready set
 
 			#ifdef DEBUG
-			printf( "%s:%04d: Error adding label at $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
+			printf( "%s:%04d: Error adding label at address $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
 			#endif
 
 			goto bailout;
@@ -543,7 +545,7 @@ S32 cnt;
 		goto bailout;
 	}
 
-	tablemem = (PTR ) rl->rl_Memory;
+	tablemem = (PTR) rl->rl_Memory;
 	tableadr = rl->rl_Address;
 
 	size = rl->rl_Size/2;
@@ -565,7 +567,7 @@ S32 cnt;
 
 		// --
 
-		brance = RS4FindLabel_File( rt->rt_File, adr );
+		brance = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
 
 		if ( ! brance )
 		{

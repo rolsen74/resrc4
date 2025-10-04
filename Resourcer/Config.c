@@ -1,13 +1,15 @@
  
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -128,6 +130,7 @@ struct TypeStruct myTypes[] =
 	{ 10, "Str_BitMap",		TYPE_Struct,	RS4StructID_BitMap },
 	{ 10, "Str_Gadget",		TYPE_Struct,	RS4StructID_Gadget },
 	{ 12, "Str_TextAttr",	TYPE_Struct,	RS4StructID_TextAttr },
+	{ 12, "Str_TextFont",	TYPE_Struct,	RS4StructID_TextFont },
 	{ 12, "Str_RastPort",	TYPE_Struct,	RS4StructID_RastPort },
 	{ 13, "Str_Rectangle",	TYPE_Struct,	RS4StructID_Rectangle },
 	{ 13, "Str_LWGadData",	TYPE_Struct,	RS4StructID_LWGadData },
@@ -173,9 +176,9 @@ S32 cnt;
 	{
 		case TYPE_Library:
 		{
-			rl->rl_Type1	= RS4LabelType_Pointer;
-			rl->rl_Type2	= RS4LabelPtrType_Library;
-			rl->rl_Type3	= myTypes[cnt].Value;
+			rl->rl_Type1 = RS4LabelType_Pointer;
+			rl->rl_Type2 = RS4LabelPtrType_Library;
+			rl->rl_Type3 = myTypes[cnt].Value;
 			rl->rl_UserLocked = TRUE;
 			break;
 		}
@@ -189,15 +192,16 @@ S32 cnt;
 
 		case TYPE_Struct:
 		{
-			fs = Mark_Struct( & ec, rl, myTypes[cnt].Value );
+			fs = Mark_Struct( & ec, rl, myTypes[cnt].Value, __FILE__ );
 
 			if ( fs != RS4FuncStat_Okay )
 			{
 				// ec allready set
 
-				#ifdef DEBUG
-				printf( "%s:%04d: Error marking Struct (%d)\n", __FILE__, __LINE__, myTypes[cnt].Value );
-				#endif
+				if ( DoVerbose > 2 )
+				{
+					printf( "%s:%04d: Error marking Struct (%d)\n", __FILE__, __LINE__, myTypes[cnt].Value );
+				}
 
 				goto bailout;
 			}
@@ -619,7 +623,7 @@ S32 pos;
 		goto bailout;
 	}
 
-	rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Unset );
+	rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Unset, __FILE__ );
 
 	if ( ! rl )
 	{
@@ -745,7 +749,7 @@ S32 pos;
 		goto bailout;
 	}
 
-	rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Unset );
+	rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Unset, __FILE__ );
 
 	if ( ! rl )
 	{
@@ -786,7 +790,7 @@ S32 pos;
 			goto bailout;
 		}
 
-		rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Pointer );
+		rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Pointer, __FILE__ );
 
 		if ( ! rl )
 		{

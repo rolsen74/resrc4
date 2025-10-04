@@ -1,53 +1,93 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
 #include "Resourcer/ReSrc4.h"
 
 // --
+// Single Arg
 
-// Default A0 = Label String
 static AOS3_RegStruct _String_A0[] =
 {
 	AOS3_REG_String( M68KREGT_A0 ),
 	AOS3_REG_EndMarker()
 };
 
-// Default A1 = Label String
 static AOS3_RegStruct _String_A1[] =
 {
 	AOS3_REG_String( M68KREGT_A1 ),
 	AOS3_REG_EndMarker()
 };
 
-static AOS3_RegStruct AOS3_AddIntServer_Regs[] =
+static AOS3_RegStruct _MsgPort_A1[] =
+{
+	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_MsgPort ),
+	AOS3_REG_EndMarker()
+};
+
+static AOS3_RegStruct _Code_A5[] =
+{
+	AOS3_REG_Code( M68KREGT_A5 ),
+	AOS3_REG_EndMarker()
+};
+
+// --
+
+static AOS3_RegStruct _Interrupt_A1[] =
 {
 	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_Interrupt ),
 	AOS3_REG_EndMarker()
 };
 
+static AOS3_RegStruct _StackSwap_A0[] =
+{
+	AOS3_REG_Struct( M68KREGT_A0, RS4StructID_StackSwap ),
+	AOS3_REG_EndMarker()
+};
+
+
+// --
+// Single Args
+
 #define AOS3_OpenDevice_Regs		_String_A0
+
 #define AOS3_FindName_Regs			_String_A1
 #define AOS3_FindTask_Regs			_String_A1
 #define AOS3_AddMemList_Regs		_String_A1
+
+#define AOS3_AddPort_Regs			_MsgPort_A1
+
+#define AOS3_AddIntServer_Regs		_Interrupt_A1
+#define AOS3_RemIntServer_Regs		_Interrupt_A1
+
+#define AOS3_StackSwap_Regs			_StackSwap_A0
+
+#define AOS3_Supervisor_Regs		_Code_A5
+
+// --
+// Functions
 
 #define AOS3_OpenLibrary_Func		AOS3_Exec_OpenLibrary_Func
 #define AOS3_OldOpenLibrary_Func	AOS3_Exec_OpenLibrary_Func
 #define AOS3_FindPort_Func			AOS3_Exec_FindPort_Func
 #define AOS3_FindResident_Func		AOS3_Exec_FindResident_Func
 #define AOS3_FindSemaphore_Func		AOS3_Exec_FindSemaphore_Func
+#define AOS3_OpenResource_Func		AOS3_Exec_OpenResource_Func
 
 // --
 
+enum RS4DecodeStat AOS3_Exec_OpenResource_Func( enum RS4ErrorCode *errcode, RS4Trace *rt );
 enum RS4DecodeStat AOS3_Exec_OpenLibrary_Func( enum RS4ErrorCode *errcode, RS4Trace *rt );
 enum RS4DecodeStat AOS3_Exec_FindPort_Func( enum RS4ErrorCode *errcode, RS4Trace *rt );
 enum RS4DecodeStat AOS3_Exec_FindResident_Func( enum RS4ErrorCode *errcode, RS4Trace *rt );
@@ -55,7 +95,7 @@ enum RS4DecodeStat AOS3_Exec_FindSemaphore_Func( enum RS4ErrorCode *errcode, RS4
 
 AOS3_LVOStruct AOS3_ExecBase[] =
 {
-	AOS3_LVO_Name( -30, Supervisor ),
+	AOS3_LVO_Regs( -30, Supervisor ),
 	AOS3_LVO_Name( -72, InitCode ),
 	AOS3_LVO_Name( -78, InitStruct ),
 	AOS3_LVO_Name( -84, MakeLibrary ),
@@ -73,7 +113,7 @@ AOS3_LVOStruct AOS3_ExecBase[] =
 	AOS3_LVO_Name( -156, UserState ),
 	AOS3_LVO_Name( -162, SetIntVector ),
 	AOS3_LVO_Regs( -168, AddIntServer ),
-	AOS3_LVO_Name( -174, RemIntServer ),
+	AOS3_LVO_Regs( -174, RemIntServer ),
 	AOS3_LVO_Name( -180, Cause ),
 	AOS3_LVO_Name( -186, Allocate ),
 	AOS3_LVO_Name( -192, Deallocate ),
@@ -103,7 +143,7 @@ AOS3_LVOStruct AOS3_ExecBase[] =
 	AOS3_LVO_Name( -336, FreeSignal ),
 	AOS3_LVO_Name( -342, AllocTrap ),
 	AOS3_LVO_Name( -348, FreeTrap ),
-	AOS3_LVO_Name( -354, AddPort ),
+	AOS3_LVO_Regs( -354, AddPort ),
 	AOS3_LVO_Name( -360, RemPort ),
 	AOS3_LVO_Name( -366, PutMsg ),
 	AOS3_LVO_Name( -372, GetMsg ),
@@ -127,7 +167,7 @@ AOS3_LVOStruct AOS3_ExecBase[] =
 	AOS3_LVO_Name( -480, AbortIO ),
 	AOS3_LVO_Name( -486, AddResource ),
 	AOS3_LVO_Name( -492, RemResource ),
-	AOS3_LVO_Name( -498, OpenResource ), //, AOS3_Exec_Func_OpenResource },
+	AOS3_LVO_Func( -498, OpenResource ), //, AOS3_Exec_Func_OpenResource },
 	AOS3_LVO_Name( -522, RawDoFmt ), //, AOS3_Exec_Func_DoRawFmt },
 	AOS3_LVO_Name( -528, GetCC ),
 	AOS3_LVO_Name( -534, TypeOfMem ),
@@ -163,7 +203,7 @@ AOS3_LVOStruct AOS3_ExecBase[] =
 	AOS3_LVO_Name( -714, FreePooled ),
 	AOS3_LVO_Name( -720, AttemptSemaphoreShared ),
 	AOS3_LVO_Name( -726, ColdReboot ),
-	AOS3_LVO_Name( -732, StackSwap ),
+	AOS3_LVO_Regs( -732, StackSwap ),
 	AOS3_LVO_Name( -738, ChildFree ),
 	AOS3_LVO_Name( -744, ChildOrphan ),
 	AOS3_LVO_Name( -750, ChildStatus ),

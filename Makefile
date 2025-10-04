@@ -7,10 +7,14 @@
 
 # Flags used for compiling
 CFLAGS		+= -I.
+CFLAGS		+= -IResourcer
 CFLAGS		+= -O2
-CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
-CFLAGS		+= -MMD
+CXXFLAGS	+= -MMD
+CXXFLAGS	+= -MP
+CFLAGS		+= -W
+CFLAGS		+= -Wall
+#CFLAGS		+= -g
 #CFLAGS		+= -DDEBUG
 
 # Flags passed to gcc during linking
@@ -21,6 +25,7 @@ LIBS		:=
 
 # Source Dirs
 SRCDIRS		:= Resourcer
+SRCDIRS		+= Resourcer/Label
 
 # Object Dir
 OBJDIR		:= obj
@@ -171,7 +176,7 @@ else
 LS			:= ls -lort
 AR			:= ar
 RM			:= rm
-CC			:= gcc
+CC			:= clang
 STRIP		:= strip
 MKDIR		:= mkdir -p
 COPY		:= cp

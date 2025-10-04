@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -21,17 +23,20 @@
 
 enum RS4ErrorCode Misc_Set__Src_is_Label( 
 	struct AmigaOS3_Misc_Move_GetSetStruct *gss,
-	struct M68kRegister *dst_reg, 
+	struct M68kRegister *reg, 
 	RS4Trace *rt,
 	MEM mem )
 {
+struct M68kRegister *dst_reg;
+struct M68kRegister *mr;
 enum RS4ErrorCode ec;
 RS4Label *src_rl;
 RS4Label *dst_rl;
-U32 val;
 
 	ec		= RS4ErrStat_Error;
 	src_rl	= gss->Label;
+	dst_rl	= NULL;
+	dst_reg	= NULL;
 
 	#ifdef DEBUG
 	if ( ! src_rl )
@@ -42,79 +47,137 @@ U32 val;
 	}
 	#endif
 
-	// Dst is Addr : $00000004.l
-	/**/ if (( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 1 ))	
+	// --
+
+	// Dst is Reg : Dx
+	/**/ if ( rt->rt_CPU.M68k.mt_ArgEMode == 0 )
 	{
-		val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
+		// Label -> Dx
 
-		DDEBUG( printf( "write : 21 :\n" ); )
+		dst_reg = reg;
 
-		dst_rl = RS4FindLabel_File( rt->rt_File, val );
+		DDEBUG( printf( "write : 23.1.1 : Label -> Dx : Reg %p\n", reg ); )
+	}
 
-		while(( dst_rl ) && ( ! dst_rl->rl_UserLocked ))
+	// Dst is Reg : Ax
+	else if ( rt->rt_CPU.M68k.mt_ArgEMode == 1 )
+	{
+		// Label -> Ax
+
+		dst_reg = reg;
+
+		DDEBUG( printf( "write : 23.2.1 : Label -> Ax : Reg %p\n", reg ); )
+	}
+
+	// Dst is Addr : (xxx,Ax)
+	else if ( rt->rt_CPU.M68k.mt_ArgEMode == 5 )
+	{
+		mr = & rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg ];
+
+		if (( mr->mr_Type1 == RRT_Label ) && ( mr->mr_Label ))
+		{
+			S16 off = (( mem[0] << 8 ) | ( mem[1] << 0 ));
+			S64 adr = mr->mr_Label->rl_Address + off;
+
+			dst_rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+		}
+
+		DDEBUG( printf( "write : 23.3.1 : Label -> (xxx,Ax) : dst_rl %p\n", dst_rl ); )
+	}
+
+	// Dst is Addr : $00000004.l
+	else if (( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 1 ))	
+	{
+		U32 val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
+
+		dst_rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
+
+		DDEBUG( printf( "write : 23.4.1 : Label -> $xxxxxxxx.l : dst_rl %p\n", dst_rl ); )
+	}
+
+	// Dst is Unknown : Unsupported
+	else
+	{
+		DDEBUG( printf( "write : 23.5.1 : Label -> ???\n" ); )
+		// Do Nothing
+	}
+
+	// -- Update Label -> Label
+
+	/**/ if ( dst_rl )
+	{
+		DDEBUG( printf( "write : 24.1.1 : Label -> Label :\n" ); )
+
+		while( TRUE )
 		{
 			// Label -> Label
 
-			DDEBUG( printf( "write : 22 :\n" ); )
-
-			if (( src_rl->rl_Type1	== RS4LabelType_Unset )
-			&&	( dst_rl->rl_Type1	== RS4LabelType_Unset ))
+			if ( dst_rl->rl_UserLocked )
 			{
-				// Both Labels have unset types, all okay
+				DDEBUG( printf( "write : 24.1.2 : Label -> Label : User locked\n" ); )
 				break;
 			}
 
-			if (( src_rl->rl_Type1	== dst_rl->rl_Type1	)
-			&&	( src_rl->rl_Type2	== dst_rl->rl_Type2 ))
+			if (( src_rl->rl_Type1 == RS4LabelType_Unset )
+			&&	( dst_rl->rl_Type1 == RS4LabelType_Unset ))
+			{
+				// Both Labels have unset types, all okay
+				DDEBUG( printf( "write : 24.1.3 : Label -> Label : Both unset\n" ); )
+				break;
+			}
+
+			if (( src_rl->rl_Type1 == dst_rl->rl_Type1 )
+			&&	( src_rl->rl_Type2 == dst_rl->rl_Type2 )
+			&&	( src_rl->rl_Type3 == dst_rl->rl_Type3 ))
 			{
 				// Same type, all okay
+				DDEBUG( printf( "write : 24.1.4 : Label -> Label : Same type : Src %d %d %d : Dst %d %d %d\n", 
+					src_rl->rl_Type1, src_rl->rl_Type2, src_rl->rl_Type3,
+					dst_rl->rl_Type1, dst_rl->rl_Type2, dst_rl->rl_Type3 ); )
 				break;
 			}
 
 			if ( dst_rl->rl_Type1 == RS4LabelType_Unset )
 			{
 				// Copy Src -> Dst
-				dst_rl->rl_Type1	= src_rl->rl_Type1;
-				dst_rl->rl_Type2	= src_rl->rl_Type2;
+				DDEBUG( printf( "write : 24.1.5 : Label -> Label : Copy\n" ); )
+				dst_rl->rl_Type1 = src_rl->rl_Type1;
+				dst_rl->rl_Type2 = src_rl->rl_Type2;
+				dst_rl->rl_Type3 = src_rl->rl_Type3;
 			}
 			else
 			{
 				// We have two diffrent types, set it to unknown
-				dst_rl->rl_Type1	= RS4LabelType_Unknown;
+				DDEBUG( printf( "write : 24.1.6 : Label -> Label : Unknown\n" ); )
+				dst_rl->rl_Type1 = RS4LabelType_Unknown;
+				dst_rl->rl_Type2 = 0;
+				dst_rl->rl_Type3 = 0;
 			}
 
 			break;
 		}
 	}
 
-	// Dst is Reg : Dx / Ax
-	else if (( rt->rt_CPU.M68k.mt_ArgEMode == 0 ) || ( rt->rt_CPU.M68k.mt_ArgEMode == 1 ))
-	{
-		// Label -> Reg
+	// -- Update Label -> Reg
 
-		DDEBUG( printf( "write : 23 : Src Type1 %d\n", src_rl->rl_Type1 ); )
+	else if ( dst_reg )
+	{
+		DDEBUG( printf( "write : 24.2.1 : Label -> Reg :\n" ); )
+
+		// Default
+		dst_reg->mr_Type1 = RRT_Unknown;
 
 		switch( src_rl->rl_Type1 )
 		{
 			case RS4LabelType_Pointer:
 			{
-				DDEBUG( printf( "write : 24 : \n" ); )
+				DDEBUG( printf( "write : 24.2.1 : Label -> Reg : Pointer :\n" ); )
 
 				switch( src_rl->rl_Type2 )
 				{
 					case RS4LabelPtrType_Library:
 					{
-						DDEBUG( printf( "write : 25 : \n" ); )
-
-//	mr_Type1	= RRT_Library,
-//	mr_Type2	= AOS3_LibType_
-//	mr_Label	= 
-//	mr_Address	= 
-
-//	rl_Type1 = RS4LabelType_Pointer,		// From current label Pos .. 4 bytes
-//	rl_Type2 = RS4LabelPtrType_			RS4LabelPtrType_Library		RS4LabelPtrType_Struct
-//	rl_Type3 = type					AOS3_LibType_
-
+						DDEBUG( printf( "write : 24.2.2 : Label -> Reg : Pointer : Library :\n" ); )
 
 						dst_reg->mr_Type1	= RRT_Library;
 						dst_reg->mr_Type2	= src_rl->rl_Type3;
@@ -125,39 +188,44 @@ U32 val;
 
 					default:
 					{
-						#ifdef DEBUG
-						printf( "%s:%04d: Error Type 2 : %d\n", __FILE__, __LINE__, src_rl->rl_Type2 );
-						#endif
-						goto bailout;
+						DDEBUG( printf( "write : 24.2.3 : Label -> Reg : Pointer : ?? :\n" ); )
+						break;
 					}
 				}
+				break;
+			}
 
+			case RS4LabelType_Unset:
+			{
+				DDEBUG( printf( "write : 24.3.1 : Label -> Reg : Pointer :\n" ); )
+
+				dst_reg->mr_Type1	= RRT_Label;
+				dst_reg->mr_Type2	= 0;
+				dst_reg->mr_Address = 0;
+				dst_reg->mr_Label	= src_rl;
 				break;
 			}
 
 			default:
-//			case RS4LabelType_Code:
-//			case RS4LabelType_Unset:
-//			case RS4LabelType_String:
-//			case RS4LabelType_Unknown:
-//			case RS4LabelType_RelativeWord:
 			{
-				dst_reg->mr_Type1 = RRT_Unknown;
+				DDEBUG( printf( "write : 24.4.1 : Label -> Reg : Type1 #%d : ?? :\n", src_rl->rl_Type1 ); )
 				break;
 			}
 		}
 	}
 
-	// Dst is Unknown : Unsupported
+	// -- Update Label -> ??
+
 	else
 	{
-		DDEBUG( printf( "write : 26 :\n" ); )
-		// Do Nothing
+		DDEBUG( printf( "write : 24.5.1 : Label -> ??? :\n" ); )
 	}
+
+	// --
 
 	ec = RS4ErrStat_Okay;
 
-bailout:
+// bailout:
 
 	return( ec );
 }

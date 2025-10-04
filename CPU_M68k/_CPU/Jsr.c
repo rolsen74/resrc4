@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -44,13 +46,6 @@ enum RS4ErrorCode ec;
 	}
 
 	ds = M68k_EffectiveAddress( & ec, rt );
-
-#if 0
-if ( rt->rt_CurMemAdr == 0x00120082 )
-{
-	printf( "mt_ClearRegMask: %08x\n", rt->rt_CPU.M68k.mt_ClearRegMask );
-}
-#endif
 
 	if ( ds != RS4DecodeStat_Okay )
 	{

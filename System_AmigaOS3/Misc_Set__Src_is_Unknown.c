@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -23,26 +25,27 @@ enum RS4ErrorCode Misc_Set__Src_is_Unknown(
 	struct AmigaOS3_Misc_Move_GetSetStruct *gss UNUSED,
 	struct M68kRegister *dst_reg, 
 	RS4Trace *rt,
-	MEM mem UNUSED )
+	MEM mem )
 {
 enum RS4ErrorCode ec;
 RS4Label *dst_rl;
-U32 val;
 
-	ec = RS4ErrStat_Error;
+ec = RS4ErrStat_Error;
 
 	// Dst is Addr : $00000004.l
 	/**/ if (( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 1 ))	
 	{
 		DDEBUG( printf( "write : 41 :\n" ); )
 
-		val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
+		U32 val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
 
-		dst_rl = RS4FindLabel_File( rt->rt_File, val );
+		dst_rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
 
 		if (( dst_rl ) && ( ! dst_rl->rl_UserLocked ))
 		{
-			dst_rl->rl_Type1	= RS4LabelType_Unknown;
+			dst_rl->rl_Type1 = RS4LabelType_Unknown;
+			dst_rl->rl_Type2 = 0;
+			dst_rl->rl_Type3 = 0;
 		}
 	}
 
@@ -52,7 +55,7 @@ U32 val;
 		// Reg -> Reg
 		dst_reg->mr_Type1 = RRT_Unknown;
 
-		DDEBUG( printf( "write : 42 : destroy Reg %x\n", dst_reg->mr_Number ); )
+		DDEBUG( printf( "write : 42 : destroy Reg\n" ); )
 
 	}
 
@@ -62,7 +65,7 @@ U32 val;
 		// Reg -> Reg
 		dst_reg->mr_Type1 = RRT_Unknown;
 
-		DDEBUG( printf( "write : 43 : destroy Reg %x\n", dst_reg->mr_Number ); )
+		DDEBUG( printf( "write : 43 : destroy Reg\n" ); )
 
 	}
 

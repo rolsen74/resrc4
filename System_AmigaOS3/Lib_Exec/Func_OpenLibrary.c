@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -62,7 +64,6 @@ static struct myLibType myLibs[] =
 // --
 // Used by OpenLibrary and OldOpenLibrary
 
-
 enum RS4DecodeStat AOS3_Exec_OpenLibrary_Func( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
@@ -87,25 +88,12 @@ S32 pos;
 		goto bailout;
 	}
 
-	#ifdef DEBUG
-	if ( rl->rl_ID != RS4ID_Label )
-	{
-		ec = RS4ErrStat_Internal;
-		ds = RS4DecodeStat_Error;
-		printf( "%s:%04d: Error Invalid Label ID (rl %p)\n", __FILE__, __LINE__, rl );
-		goto bailout;
-	}
-	#endif
-
-	buf = (PTR ) rl->rl_Memory;
+	buf = (PTR) rl->rl_Memory;
 
 	if ( ! buf )
 	{
 		goto bailout;
 	}
-
-	// todo?? validate that buf is a ASCII string
-	// make Mark_NulString do it
 
 	Mark_NulString( rl );
 
@@ -129,14 +117,6 @@ S32 pos;
 		rt->rt_CPU.M68k.mt_ClearRegMask &= ~( 1 << M68KREGT_D0 ); 
 		rt->rt_CPU.M68k.mt_Registers[ M68KREGT_D0 ].mr_Type1 = RRT_Library,
 		rt->rt_CPU.M68k.mt_Registers[ M68KREGT_D0 ].mr_Type2 = myLibs[pos].Type;
-
-// printf( "OpenLib: '%s'\n", myLibs[pos].Name );
-
-//	mr_Type1	= RRT_Library,
-//	mr_Type2	= AOS3_LibType_
-//	mr_Label	= 
-//	mr_Address	= 
-
 	}
 	else
 	{

@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -245,9 +247,14 @@ S32 cnt;
 
 	if ( ! rl )
 	{
-		#ifdef DEBUG
-		printf( "%s:%04d: Error adding label at address $%08" PRIx64 "\n", __FILE__, __LINE__, tabel_adr );
-		#endif
+		if ( DoVerbose > 1 )
+		{
+			printf( "%s:%04d: Error adding label at address $%08" PRIx64 "\n", __FILE__, __LINE__, tabel_adr );
+		}
+		else
+		{
+			printf( "Error adding label at address $%08" PRIx64 "\n", tabel_adr );
+		}
 		goto bailout;
 	}
 
@@ -257,15 +264,22 @@ S32 cnt;
 
 	if ( ! rel )
 	{
-		#ifdef DEBUG
-		printf( "%s:%04d: Error adding label at address $%08" PRIx64 "\n", __FILE__, __LINE__, relative_adr );
-		#endif
+		if ( DoVerbose > 1 )
+		{
+			printf( "%s:%04d: Error adding label at address $%08" PRIx64 "\n", __FILE__, __LINE__, relative_adr );
+		}
+		else
+		{
+			printf( "Error adding label at address $%08" PRIx64 "\n", tabel_adr );
+		}
 		goto bailout;
 	}
 
 	// --
 
 	rl->rl_Type1	= RS4LabelType_RelativeWord;
+	rl->rl_Type2	= 0;
+	rl->rl_Type3	= 0;
 	rl->rl_Size		= entries * 2;
 	rl->rl_Ref		= rel;
 
@@ -278,7 +292,7 @@ S32 cnt;
 
 	// --
 
-	offsets = (PTR ) & sec->rfs_MemoryBuf[ off ];
+	offsets = (PTR) & sec->rfs_MemoryBuf[ off ];
 
 	for( cnt=0 ; cnt<entries ; cnt++ )
 	{
@@ -289,9 +303,14 @@ S32 cnt;
 
 		if ( ! rl )
 		{
-			#ifdef DEBUG
-			printf( "%s:%04d: Error adding label at $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
-			#endif
+			if ( DoVerbose > 1 )
+			{
+				printf( "%s:%04d: Error adding label at address $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
+			}
+			else
+			{
+				printf( "Error adding label at address $%08" PRIx64 "\n", adr );
+			}
 			goto bailout;
 		}
 
@@ -299,9 +318,14 @@ S32 cnt;
 
 		if ( ! rb )
 		{
-			#ifdef DEBUG
-			printf( "%s:%04d: Error adding brance at $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
-			#endif
+			if ( DoVerbose > 1 )
+			{
+				printf( "%s:%04d: Error adding code brance at address $%08" PRIx64 "\n", __FILE__, __LINE__, adr );
+			}
+			else
+			{
+				printf( "Error adding code brance at address $%08" PRIx64 "\n", adr );
+			}
 			goto bailout;
 		}
 	}
@@ -1136,6 +1160,8 @@ S32 cnt;
 		{
 			ec = RS4ErrStat_Error;
 			js = RS4JumpStat_Error;
+
+
 			#ifdef DEBUG
 			printf( "%s:%04d: Error, Type #%d\n", __FILE__, __LINE__, jt->EntryType );
 			#endif
@@ -1198,10 +1224,10 @@ S32 pos;
 		{
 			// ec allready set
 
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
+			if ( DoVerbose > 1 )
+			{
+				printf( "%s:%04d: Error check_JumpTable() failed\n", __FILE__, __LINE__ );
+			}
 			goto bailout;
 		}
 		else if ( js == RS4JumpStat_Handled )
@@ -1214,10 +1240,7 @@ S32 pos;
 		{
 			// ec allready set
 
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
+			printf( "%s:%04d: Error check_JumpTable()\n", __FILE__, __LINE__ );
 			goto bailout;
 		}
 		#endif

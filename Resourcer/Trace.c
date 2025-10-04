@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -48,6 +50,11 @@ S32 i;
 
 	while( rl )
 	{
+		if ( rl->rl_Address == 65790 )
+		{
+			printf( "!!!!\n" );
+		}
+
 		if (( rl->rl_Offset >= 0 ) 
 		&&	( rl->rl_Offset < size )
 		&&	( rl->rl_Type1 == RS4LabelType_Unset )
@@ -101,6 +108,8 @@ S32 i;
 			if (( len > 3 ) && ( len == max ))
 			{
 				rl->rl_Type1 = RS4LabelType_String;
+				rl->rl_Type2 = 0;
+				rl->rl_Type3 = 0;
 				rl->rl_Size = len;
 
 				memset( & type[ rl->rl_Offset ], RS4MT_Data, len );
@@ -374,7 +383,7 @@ S64 adr;
 
 	if ( type[ pos ] == RS4MT_Unset )
 	{
-		rl = RS4FindLabel_File( rt->rt_File, adr + pos );
+		rl = RS4FindLabel_File( rt->rt_File, adr + pos, __FILE__ );
 
 		if ( rl )
 		{
@@ -395,6 +404,19 @@ S64 adr;
 		{
 			break;
 		}
+
+{
+RS4Label *qqrl;
+
+	qqrl = RS4GetHead( & sec->rfs_SecLabels );
+
+	while( qqrl )
+	{
+
+		qqrl = RS4GetNext( qqrl );
+	}
+}
+
 
 		rt->rt_CurMemAdr	=   sec->rfs_MemoryAdr + pos  ;
 		rt->rt_CurMemBuf	= & sec->rfs_MemoryBuf [ pos ];
@@ -486,7 +508,7 @@ S64 adr;
 						goto bailout;
 					}
 
-					rl = RS4FindLabel_File( rt->rt_File, jmpadr );
+					rl = RS4FindLabel_File( rt->rt_File, jmpadr, __FILE__ );
 
 					if ( ! rl )
 					{
@@ -523,7 +545,7 @@ S64 adr;
 						goto bailout;
 					}
 
-					rl = RS4FindLabel_File( rt->rt_File, jmpadr );
+					rl = RS4FindLabel_File( rt->rt_File, jmpadr, __FILE__ );
 
 					if ( ! rl )
 					{

@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 #ifndef M68KSIZE_AMIGA_H
 #define M68KSIZE_AMIGA_H 1
@@ -26,6 +28,7 @@ typedef struct _AOS3_LVOStruct	AOS3_LVOStruct;
 #define AOS3_LVO_Regs(x,y)		{ 0, x, "_LVO" #y,	AOS3_LVOType_Regs,	NULL,				AOS3_##y##_Regs }
 #define AOS3_LVO_EndMarker()	{ 0, 0, NULL,		AOS3_LVOType_End,	NULL,				NULL }
 
+#define AOS3_REG_Code(x)		{ x, AOS3_RegType_Code, 0 }
 #define AOS3_REG_String(x)		{ x, AOS3_RegType_String, 0 }
 #define AOS3_REG_Struct(x,y)	{ x, AOS3_RegType_Struct, y }
 #define AOS3_REG_EndMarker()	{ -1, 0, 0 }
@@ -34,6 +37,7 @@ enum AOS3_RegType
 {
 	AOS3_RegType_String = 0x10,
 	AOS3_RegType_Struct,
+	AOS3_RegType_Code,
 };
 
 enum AOS3_LVOType
@@ -103,8 +107,8 @@ struct _AOS3_RegStruct
 
 struct _AOS3_LVOStruct
 {
-	S16					Used2;
-	S16					Offset2;
+	S16						Used2;
+	S16						Offset2;
 	STR 					Name2;
 	enum AOS3_LVOType		Type2;
 	enum RS4DecodeStat		(*Func2)( enum RS4ErrorCode *errcode, RS4Trace *rt );
@@ -115,8 +119,8 @@ struct _AOS3_LVOStruct
 
 struct AOS3LVOStruct
 {
-	S16	Used;
-	S16	Offset;
+	S16		Used;
+	S16		Offset;
 	STR 	Name;
 	enum RS4DecodeStat (*Func)( enum RS4ErrorCode *errcode, RS4Trace *rt );
 };
@@ -171,6 +175,8 @@ extern AOS3_LVOStruct AOS3_WorkbenchBase[];
 
 enum RS4FuncStat	AmigaOS3_Misc_Move_Get(			enum RS4ErrorCode *errcode, RS4Trace *rt, struct M68kRegister *cur, MEM mem, struct AmigaOS3_Misc_Move_GetSetStruct *gss );
 enum RS4FuncStat	AmigaOS3_Misc_Move_Set(			enum RS4ErrorCode *errcode, RS4Trace *rt, struct M68kRegister *cur, MEM mem, struct AmigaOS3_Misc_Move_GetSetStruct *gss );
+enum RS4FuncStat	AmigaOS3_FindLibFunc_Func(		enum RS4ErrorCode *errcode, RS4Trace *rt, enum RS4DecodeStat (*Func)( enum RS4ErrorCode *errcode, RS4Trace *rt ));
+enum RS4FuncStat	AmigaOS3_FindLibFunc_Regs(		enum RS4ErrorCode *errcode, RS4Trace *rt, struct _AOS3_RegStruct *rs );
 
 // --
 
@@ -179,9 +185,12 @@ extern struct DataStructHeader Struct_BitMap;
 extern struct DataStructHeader Struct_NewScreen;
 extern struct DataStructHeader Struct_Gadget;
 extern struct DataStructHeader Struct_TextAttr;
+extern struct DataStructHeader Struct_TextFont;
 extern struct DataStructHeader Struct_RastPort;
 extern struct DataStructHeader Struct_Rectangle;
 extern struct DataStructHeader Struct_LWGadData;
 extern struct DataStructHeader Struct_Interrupt;
+extern struct DataStructHeader Struct_MsgPort;
+extern struct DataStructHeader Struct_StackSwap;
 
 #endif

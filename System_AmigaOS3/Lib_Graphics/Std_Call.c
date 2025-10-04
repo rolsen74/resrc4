@@ -1,36 +1,135 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
 #include "Resourcer/ReSrc4.h"
 
 // --
+// Single Args structs
 
-//enum RS4DecodeStat AOS3_Graphics_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
-//enum RS4DecodeStat AOS3_Graphics_Func_InitBitMap( enum RS4ErrorCode *errcode, RS4Trace *rt );
+static AOS3_RegStruct _BitMap_A0[] =
+{
+	AOS3_REG_Struct( M68KREGT_A0, RS4StructID_BitMap ),
+	AOS3_REG_EndMarker()
+};
+
+static AOS3_RegStruct _RastPort_A1[] =
+{
+	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_RastPort ),
+	AOS3_REG_EndMarker()
+};
+
+static AOS3_RegStruct _TextAttr_A0[] =
+{
+	AOS3_REG_Struct( M68KREGT_A0, RS4StructID_TextAttr ),
+	AOS3_REG_EndMarker()
+};
+
+static AOS3_RegStruct _TextFont_A0[] =
+{
+	AOS3_REG_Struct( M68KREGT_A0, RS4StructID_TextFont ),
+	AOS3_REG_EndMarker()
+};
+
+static AOS3_RegStruct _TextFont_A1[] =
+{
+	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_TextFont ),
+	AOS3_REG_EndMarker()
+};
+
+// --
+// Double input
+
+static AOS3_RegStruct _BitMap_Bitmap_A0_A1[] =
+{
+	AOS3_REG_Struct( M68KREGT_A0, RS4StructID_BitMap ),
+	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_BitMap ),
+	AOS3_REG_EndMarker()
+};
+
+static AOS3_RegStruct _BitMap_RastPort_A0_A1[] =
+{
+	AOS3_REG_Struct( M68KREGT_A0, RS4StructID_BitMap ),
+	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_RastPort ),
+	AOS3_REG_EndMarker()
+};
+
+static AOS3_RegStruct _TextFont_RastPort_A0_A1[] =
+{
+	AOS3_REG_Struct( M68KREGT_A0, RS4StructID_TextFont ),
+	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_RastPort ),
+	AOS3_REG_EndMarker()
+};
+
+static AOS3_RegStruct _String_RastPort_A0_A1[] =
+{
+	AOS3_REG_String( M68KREGT_A0 ),
+	AOS3_REG_Struct( M68KREGT_A1, RS4StructID_RastPort ),
+	AOS3_REG_EndMarker()
+};
+
+// --
+// Single Arg functions
+
+#define AOS3_InitBitMap_Regs		_BitMap_A0
+#define AOS3_FreeBitMap_Regs		_BitMap_A0
+
+#define AOS3_OpenFont_Regs			_TextAttr_A0
+
+#define AOS3_StripFont_Regs			_TextFont_A0
+
+#define AOS3_CloseFont_Regs			_TextFont_A1
+#define AOS3_AddFont_Regs			_TextFont_A1
+#define AOS3_RemFont_Regs			_TextFont_A1
+
+#define AOS3_ClearScreen_Regs		_RastPort_A1
+#define AOS3_ClearEOL_Regs			_RastPort_A1
+#define AOS3_SetRast_Regs			_RastPort_A1
+#define AOS3_RectFill_Regs			_RastPort_A1
+#define AOS3_AreaMove_Regs			_RastPort_A1
+#define AOS3_AreaDraw_Regs			_RastPort_A1
+#define AOS3_AreaEnd_Regs			_RastPort_A1
+#define AOS3_Move_Regs				_RastPort_A1
+#define AOS3_Draw_Regs				_RastPort_A1
+#define AOS3_ClearEOL_Regs			_RastPort_A1
+#define AOS3_InitRastPort_Regs		_RastPort_A1
+
+// --
+// Double Args
+
+#define AOS3_BltBitMap_Regs			_BitMap_Bitmap_A0_A1
+
+#define AOS3_BltBitMapRastPort_Regs	_BitMap_RastPort_A0_A1
+
+#define AOS3_TextLength_Regs		_String_RastPort_A0_A1
+#define AOS3_Text_Regs				_String_RastPort_A0_A1
+
+#define AOS3_SetFont_Regs			_TextFont_RastPort_A0_A1
 
 // --
 
 AOS3_LVOStruct AOS3_GraphicsBase[] =
 {
-	AOS3_LVO_Name( -30, BltBitMap ),
+	AOS3_LVO_Regs( -30, BltBitMap ),
 	AOS3_LVO_Name( -36, BltTemplate ),
-	AOS3_LVO_Name( -42, ClearEOL ),
-	AOS3_LVO_Name( -48, ClearScreen ),
-	AOS3_LVO_Name( -54, TextLength ),
-	AOS3_LVO_Name( -60, Text ),
-	AOS3_LVO_Name( -66, SetFont ),
-	AOS3_LVO_Name( -72, OpenFont ),
-	AOS3_LVO_Name( -78, CloseFont ),
+	AOS3_LVO_Regs( -42, ClearEOL ),
+	AOS3_LVO_Regs( -48, ClearScreen ),
+	AOS3_LVO_Regs( -54, TextLength ),
+	AOS3_LVO_Regs( -60, Text ),
+	AOS3_LVO_Regs( -66, SetFont ),
+	AOS3_LVO_Regs( -72, OpenFont ),
+	AOS3_LVO_Regs( -78, CloseFont ),
 	AOS3_LVO_Name( -84, AskSoftStyle ),
 	AOS3_LVO_Name( -90, SetSoftStyle ),
 	AOS3_LVO_Name( -96, AddBob ),
@@ -50,25 +149,25 @@ AOS3_LVOStruct AOS3_GraphicsBase[] =
 	AOS3_LVO_Name( -180, DrawEllipse ),
 	AOS3_LVO_Name( -186, AreaEllipse ),
 	AOS3_LVO_Name( -192, LoadRGB4 ),
-	AOS3_LVO_Name( -198, InitRastPort ),
+	AOS3_LVO_Regs( -198, InitRastPort ),
 	AOS3_LVO_Name( -204, InitVPort ),
 	AOS3_LVO_Name( -210, MrgCop ),
 	AOS3_LVO_Name( -216, MakeVPort ),
 	AOS3_LVO_Name( -222, LoadView ),
 	AOS3_LVO_Name( -228, WaitBlit ),
-	AOS3_LVO_Name( -234, SetRast ),
-	AOS3_LVO_Name( -240, Move ),
-	AOS3_LVO_Name( -246, Draw ),
-	AOS3_LVO_Name( -252, AreaMove ),
-	AOS3_LVO_Name( -258, AreaDraw ),
-	AOS3_LVO_Name( -264, AreaEnd ),
+	AOS3_LVO_Regs( -234, SetRast ),
+	AOS3_LVO_Regs( -240, Move ),
+	AOS3_LVO_Regs( -246, Draw ),
+	AOS3_LVO_Regs( -252, AreaMove ),
+	AOS3_LVO_Regs( -258, AreaDraw ),
+	AOS3_LVO_Regs( -264, AreaEnd ),
 	AOS3_LVO_Name( -270, WaitTOF ),
 	AOS3_LVO_Name( -276, QBlit ),
 	AOS3_LVO_Name( -282, InitArea ),
 	AOS3_LVO_Name( -288, SetRGB4 ),
 	AOS3_LVO_Name( -294, QBSBlit ),
 	AOS3_LVO_Name( -300, BltClear ),
-	AOS3_LVO_Name( -306, RectFill ),
+	AOS3_LVO_Regs( -306, RectFill ),
 	AOS3_LVO_Name( -312, BltPattern ),
 	AOS3_LVO_Name( -318, ReadPixel ),
 	AOS3_LVO_Name( -324, WritePixel ),
@@ -82,7 +181,7 @@ AOS3_LVOStruct AOS3_GraphicsBase[] =
 	AOS3_LVO_Name( -372, CMove ),
 	AOS3_LVO_Name( -378, CWait ),
 	AOS3_LVO_Name( -384, VBeamPos ),
-	AOS3_LVO_Name( -390, InitBitMap ), //", AOS3_Graphics_Func_InitBitMap },
+	AOS3_LVO_Regs( -390, InitBitMap ), //", AOS3_Graphics_Func_InitBitMap },
 	AOS3_LVO_Name( -396, ScrollRaster ),
 	AOS3_LVO_Name( -402, WaitBOVP ),
 	AOS3_LVO_Name( -408, GetSprite ),
@@ -97,7 +196,7 @@ AOS3_LVOStruct AOS3_GraphicsBase[] =
 	AOS3_LVO_Name( -462, DisownBlitter ),
 	AOS3_LVO_Name( -468, InitTmpRas ),
 	AOS3_LVO_Name( -474, AskFont ),
-	AOS3_LVO_Name( -480, AddFont ),
+	AOS3_LVO_Regs( -480, AddFont ),
 	AOS3_LVO_Name( -486, RemFont ),
 	AOS3_LVO_Name( -492, AllocRaster ),
 	AOS3_LVO_Name( -498, FreeRaster ),
@@ -118,7 +217,7 @@ AOS3_LVOStruct AOS3_GraphicsBase[] =
 	AOS3_LVO_Name( -588, ScrollVPort ),
 	AOS3_LVO_Name( -594, UCopperListInit ),
 	AOS3_LVO_Name( -600, FreeGBuffers ),
-	AOS3_LVO_Name( -606, BltBitMapRastPort ),
+	AOS3_LVO_Regs( -606, BltBitMapRastPort ),
 	AOS3_LVO_Name( -612, OrRegionRegion ),
 	AOS3_LVO_Name( -618, XorRegionRegion ),
 	AOS3_LVO_Name( -624, AndRegionRegion ),
@@ -151,7 +250,7 @@ AOS3_LVOStruct AOS3_GraphicsBase[] =
 	AOS3_LVO_Name( -804, WeighTAMatch ),
 	AOS3_LVO_Name( -810, EraseRect ),
 	AOS3_LVO_Name( -816, ExtendFont ),
-	AOS3_LVO_Name( -822, StripFont ),
+	AOS3_LVO_Regs( -822, StripFont ),
 	AOS3_LVO_Name( -828, CalcIVG ),
 	AOS3_LVO_Name( -834, AttachPalExtra ),
 	AOS3_LVO_Name( -840, ObtainBestPenA ),
@@ -167,7 +266,7 @@ AOS3_LVOStruct AOS3_GraphicsBase[] =
 	AOS3_LVO_Name( -900, GetRGB32 ),
 	AOS3_LVO_Name( -906, GfxSpare1 ),
 	AOS3_LVO_Name( -918, AllocBitMap ),
-	AOS3_LVO_Name( -924, FreeBitMap ),
+	AOS3_LVO_Regs( -924, FreeBitMap ),
 	AOS3_LVO_Name( -930, GetExtSpriteA ),
 	AOS3_LVO_Name( -936, CoerceMode ),
 	AOS3_LVO_Name( -942, ChangeVPBitMap ),

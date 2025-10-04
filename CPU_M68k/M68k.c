@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -191,7 +193,7 @@ static const struct CmdStruct m68kCmds_0100[] =
 	{ M68kCmd_RTS,		0xffff0000, 0x4e750000 },	// RTS		0100 1110 0111 0101
 	{ M68kCmd_TRAPV,	0xffff0000, 0x4e760000 },	// TRAPV	0100 1110 0111 0110
 	{ M68kCmd_RTR,		0xffff0000, 0x4e770000 },	// RTR		0100 1110 0111 0111
-//	{ M68kCmd_MOVEC,	wwwwwwwwww, wwwwwwwwww },	// MOVEC	0100 1110 0111 101x
+	{ M68kCmd_MOVEC,	0xfffe0000, 0x4e7a0000 },	// MOVEC	0100 1110 0111 101x
 	{ M68kCmd_JSR,		0xffc00000, 0x4e800000 },	// JSR		0100 1110 10xx xxxx
 	{ M68kCmd_JMP,		0xffc00000, 0x4ec00000 },	// JMP		0100 1110 11xx xxxx
 	{ M68kCmd_LEA,		0xf1c00000, 0x41c00000 },	// LEA		0100 xxx1 11xx xxxx
@@ -1011,6 +1013,8 @@ RS4Label *rl;
 		if (( rl ) && ( ! rl->rl_UserLocked ))
 		{
 			rl->rl_Type1 = RS4LabelType_Unknown;
+			rl->rl_Type2 = 0;
+			rl->rl_Type3 = 0;
 		}
 
 		cur->mr_Address = 0;

@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -36,7 +38,7 @@ static struct myLibType myRes[] =
 
 // --
 
-enum RS4DecodeStat AOS3_Exec_Func_OpenResource( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat AOS3_Exec_OpenResource_Func( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
@@ -60,7 +62,7 @@ S32 pos;
 		goto bailout;
 	}
 
-	buf = (PTR ) rl->rl_Memory;
+	buf = (PTR) rl->rl_Memory;
 
 	if ( ! buf )
 	{
@@ -100,7 +102,7 @@ S32 pos;
 			printf( "Unsupported %s Resource found at $%08" PRIx64 "\n", buf, rt->rt_CurMemAdr );
 		}
 	}
-	
+
 bailout:
 
 	// --

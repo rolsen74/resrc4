@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
@@ -167,6 +169,45 @@ S32 pos;
 
 // --
 
+void Mark_Code( RS4Label *rl )
+{
+RS4FileSection *sec;
+
+	// Check we have not been set before
+	if ( rl->rl_Type1 != RS4LabelType_Unset )
+	{
+		if (( rl->rl_Type1 != RS4LabelType_Code )	
+		&&	( rl->rl_Type1 != RS4LabelType_Unknown ))
+		{
+			// Change rl type, and continue?
+			printf( "Label Allready set with diffrent type\n" );
+			printf( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
+			return;
+		}
+		else
+		{
+			// Same Type, no error
+			return;
+		}
+	}
+
+	// -- Check Section Type
+	sec = rl->rl_Section;
+
+	if ( sec->rfs_SecType == RS4ST_BSS )
+	{
+		return;
+	}
+
+	rl->rl_Type1 = RS4LabelType_Code;
+	rl->rl_Type2 = 0;
+	rl->rl_Type3 = 0;
+
+	RS4AddBrance_File( NULL, sec->rfs_File, rl->rl_Address );
+}
+
+// --
+
 void Mark_NulString( RS4Label *rl )
 {
 RS4FileSection *sec;
@@ -189,7 +230,7 @@ S32 len;
 		&&	( rl->rl_Type1 != RS4LabelType_Unknown ))
 		{
 			// Change rl type, and continue?
-			printf( "String Allready set\n" );
+//			printf( "String Allready set\n" );
 			printf( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
 			return;
 		}
@@ -235,12 +276,14 @@ S32 len;
 
 //	rl->rl_UserLocked = TRUE;
 	rl->rl_Type1 = RS4LabelType_String;
+	rl->rl_Type2 = 0;
+	rl->rl_Type3 = 0;
 	rl->rl_Size = len;
 }
 
 // --
 
-enum RS4FuncStat Mark_Struct( enum RS4ErrorCode *errcode, RS4Label *rl, enum RS4StructID id )
+enum RS4FuncStat Mark_Struct( enum RS4ErrorCode *errcode, RS4Label *rl, enum RS4StructID id, STR file )
 {
 struct DataStructHeader *dsh;
 struct DataStructNode *dsn;
@@ -250,13 +293,13 @@ RS4FileSection *sec;
 RS4FileHeader *fh;
 RS4Label *rl2;
 MEM type;
+S32 size;
 MEM mem;
 S64 off;
-//S64 adr;
 S64 val;
-//S64 cnt;
-S32 size;
 S32 cnt;
+
+//	printf( "Mark_Struct : StructID %2d : Label Adr $%08lx\n", id, rl->rl_Address );
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -266,30 +309,40 @@ S32 cnt;
 		// No Error
 		ec = RS4ErrStat_Okay;
 		fs = RS4FuncStat_Okay;
-//		printf( "Mark_Struct : Locked : %p\n", rl );
 		goto bailout;
 	}
 
-	#if 0
-	// we can define ds.b structs
-	if ( sec->rfs_SecType == RS4ST_BSS )
-	{
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-		goto bailout;
-	}
-	#endif
-
+	// --
 	// Validate ID
 	if (( id <= RS4StructID_Unknown ) || ( id >= RS4StructID_Last ))
 	{
-		#ifdef DEBUG
-		printf( "%s:%04d: Error : ID %d\n", __FILE__, __LINE__, id );
-		#endif
+		ec = RS4ErrStat_InvalidStructID;
+
+		if ( DoVerbose > 1 )
+		{
+			printf( "%s:%04d: Error : Invalid StructID %d : File '%s'\n", __FILE__, __LINE__, id, file );
+		}
 		goto bailout;
 	}
 
+	dsh	= DataStructTable[id];
+
+	if ( ! dsh )
+	{
+		// missing DataStructTable[] entry
+		printf( "%s:%04d: Error : NULL Pointer : StructID %d\n", __FILE__, __LINE__, id );
+		goto bailout;
+	}
+
+	size = dsh->dsh_Size;
+
+	if ( size <= 0 )
+	{
+		printf( "%s:%04d: Error : Zero Size : StructID %d\n", __FILE__, __LINE__, id );
+		goto bailout;
+	}
+
+	// --
 	// Check we have not been set before
 	if ( rl->rl_Type1 != RS4LabelType_Unset )
 	{
@@ -299,7 +352,9 @@ S32 cnt;
 			ec = RS4ErrStat_Error;
 			fs = RS4FuncStat_Error;
 			// Change rl type, and continue?
-			printf( "Struct Allready set\n" );
+			printf( "Error  : Struct Diffrent Type : File %s\n", file );
+			printf( "Struct : rl_Type1 : %2d != %2d\n", rl->rl_Type1, RS4LabelType_Struct );
+			printf( "Struct : rl_Type2 : %2d != %2d\n", rl->rl_Type2, id );
 			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
 			goto bailout;
 		}
@@ -313,22 +368,13 @@ S32 cnt;
 	}
 
 	// --
+
 	sec 	= rl->rl_Section;
-	fh		= sec->rfs_File;
-	dsh		= DataStructTable[id];
 	off		= rl->rl_Offset;
+	fh		= sec->rfs_File;
 //	adr		= sec->rfs_MemoryAdr;
 	mem		= sec->rfs_MemoryBuf;
 	type	= sec->rfs_MemoryType;
-	size	= dsh->dsh_Size;
-
-	#ifdef DEBUG
-	if ( size <= 0 )
-	{
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		goto bailout;
-	}
-	#endif
 
 	// --
 
@@ -347,13 +393,22 @@ S32 cnt;
 							(U64) mem[ off + 2 ] <<  8 | 
 							(U64) mem[ off + 3 ] <<  0 );
 
+//					printf( "Pointer $%08lx\n", val );
+
 					if ( val )
 					{
-						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset );
+						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset, __FILE__ );
 
 						if ( ! rl2 )
 						{
-							printf( "Error adding Label at $%08" PRIx64 "\n", rl->rl_Address );
+							/**/ if ( DoVerbose > 1 )
+							{
+								printf( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : StructID %d : Entry Nr %d : %s\n", __FILE__, __LINE__, val, id, cnt, file );
+							}
+							else
+							{
+								printf( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : StructID %d :\n", val, id );
+							}
 						}
 					}
 					break;
@@ -366,13 +421,22 @@ S32 cnt;
 							(U64) mem[ off + 2 ] <<  8 | 
 							(U64) mem[ off + 3 ] <<  0 );
 
+//					printf( "String $%08lx\n", val );
+
 					if ( val )
 					{
-						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset );
+						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset, __FILE__ );
 
 						if ( ! rl2 )
 						{
-							printf( "Error adding Label at $%08" PRIx64 "\n", rl->rl_Address );
+							/**/ if ( DoVerbose > 1 )
+							{
+								printf( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : %s\n", __FILE__, __LINE__, val, file );
+							}
+							else
+							{
+								printf( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ??\n", val );
+							}
 						}
 						else
 						{
@@ -389,23 +453,33 @@ S32 cnt;
 							(U64) mem[ off + 2 ] <<  8 | 
 							(U64) mem[ off + 3 ] <<  0 );
 
+//					printf( "Struct $%08lx\n", val );
+
 					if ( val )
 					{
-						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset );
+						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset, __FILE__ );
 
 						if ( ! rl2 )
 						{
-							printf( "Error adding Label at $%08" PRIx64 "\n", rl->rl_Address );
+							/**/ if ( DoVerbose > 1 )
+							{
+								printf( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : %s\n", __FILE__, __LINE__, val, file );
+							}
+							else
+							{
+								printf( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ??\n", val );
+							}
 						}
 						else
 						{
-							fs = Mark_Struct( & ec, rl2, dsn->dsn_ID );
+							fs = Mark_Struct( & ec, rl2, dsn->dsn_ID, __FILE__ );
 
 							if ( fs != RS4FuncStat_Okay )
 							{
-								#ifdef DEBUG
-								printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-								#endif
+								if ( DoVerbose > 1 )
+								{
+									printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+								}
 								goto bailout;
 							}
 						}
@@ -425,12 +499,61 @@ S32 cnt;
 
 	// --
 
+	#if 0
+{
+RS4FileSection *sec;
+RS4Label *qqqrl;
+S32 cnt;
+
+	sec = rl->rl_Section;
+
+		{
+			qqqrl = RS4GetHead( & sec->rfs_SecLabels );
+
+			while( qqqrl )
+			{
+
+
+				qqqrl = RS4GetNext( qqqrl );
+			}
+		}
+}
+	#endif
+
+	// --
+
 	off		= rl->rl_Offset;
 	memset( & type[off], RS4MT_Data, size );
+
+	// --
+
+	#if 0
+{
+RS4FileSection *sec;
+RS4Label *qqqrl;
+S32 cnt;
+
+	sec = rl->rl_Section;
+
+		{
+			qqqrl = RS4GetHead( & sec->rfs_SecLabels );
+
+			while( qqqrl )
+			{
+
+
+				qqqrl = RS4GetNext( qqqrl );
+			}
+		}
+}
+	#endif
+
+	// --
 
 //	rl->rl_UserLocked = TRUE;
 	rl->rl_Type1 = RS4LabelType_Struct;
 	rl->rl_Type2 = id;
+	rl->rl_Type3 = 0;
 	rl->rl_Size = size;
 
 	fs = RS4FuncStat_Okay;

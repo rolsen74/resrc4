@@ -1,13 +1,15 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 #ifndef RESOURCER_RESRC4_H
 #define RESOURCER_RESRC4_H 1
@@ -30,10 +32,10 @@
 
 // --
 
-#define DATE				"10-Apr-2025"
+#define DATE				"04-Oct-2025"
 #define YEAR				2025
 #define VERSION				2
-#define REVISION			13
+#define REVISION			15
 
 #define MAX_REF_HASH		29U			// Prime Nr .. bigger value more memory pr. HunkNode
 #define MAX_LAB_HASH		83U			// Prime Nr .. Global Label Hash
@@ -74,13 +76,13 @@ typedef struct _RS4FileSectionInfo RS4FileSecInfo;
 
 // --
 
-enum
+enum GSSType
 {
-	_Unset = 0,		// Init (Error)
-	_Unknown,		// 1
-	_Reg,			// 2
-	_Exec,			// 3
-	_Label,			// 4
+	GSSType_Unset = 0,		// Init (Error)
+	GSSType_Unknown,		// 1
+	GSSType_Reg,			// 2
+	GSSType_Exec,			// 3
+	GSSType_Label,			// 4
 };
 
 // --
@@ -250,10 +252,10 @@ enum RS4LabelSize
 {
 	RS4LABSIZE_Unset,		//
 	RS4LABSIZE_Unknown,		// Diffrent sizes have been used on label
-	RS4LABSIZE_Integer8,		// move.b
-	RS4LABSIZE_Integer16,		// move.w
-	RS4LABSIZE_Integer32,		// move.l
-	RS4LABSIZE_Integer64,		// move.q
+	RS4LABSIZE_Integer8,	// move.b
+	RS4LABSIZE_Integer16,	// move.w
+	RS4LABSIZE_Integer32,	// move.l
+	RS4LABSIZE_Integer64,	// move.q
 	RS4LABSIZE_Float32,		// move.s
 	RS4LABSIZE_Float64,		// move.d
 };
@@ -265,15 +267,18 @@ enum RS4StructID
 	RS4StructID_Unknown = 0,
 
 	#ifdef SUPPORT_AMIGAOS3
-	RS4StructID_IntuiText,
-	RS4StructID_BitMap,
-	RS4StructID_NewScreen,
-	RS4StructID_Gadget,
-	RS4StructID_TextAttr,
-	RS4StructID_RastPort,
-	RS4StructID_Rectangle,
-	RS4StructID_LWGadData,
-	RS4StructID_Interrupt,
+	RS4StructID_IntuiText,		// 1
+	RS4StructID_BitMap,			// 2
+	RS4StructID_NewScreen,		// 3
+	RS4StructID_Gadget,			// 4
+	RS4StructID_TextAttr,		// 5
+	RS4StructID_TextFont,		// 6
+	RS4StructID_RastPort,		// 7
+	RS4StructID_Rectangle,		// 8
+	RS4StructID_LWGadData,		// 9
+	RS4StructID_Interrupt,		// 10
+	RS4StructID_MsgPort,		// 11
+	RS4StructID_StackSwap,		// 12
 	#endif
 
 	RS4StructID_Last
@@ -524,7 +529,6 @@ struct DataStructHeader
 	struct DataStructNode	dsh_Data[];
 };
 
-// --
 
 // --
 // -- ReSrc4 Protos
@@ -551,10 +555,10 @@ void				RS4FreeSection(			enum RS4ErrorCode *errcode, RS4FileSection *sec );
 RS4FileSection *	RS4FindSection_File(	RS4FileHeader *fh, S64 addr );
 
 // -- Label
-RS4Label *			RS4AddLabel_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr, enum RS4LabelType type );
+RS4Label *			RS4AddLabel_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr, enum RS4LabelType type, STR file );
 RS4Label *			RS4AddLabel_Sec(		enum RS4ErrorCode *errcode, RS4FileSection *sec, S64 addr, enum RS4LabelType type );
 enum RS4FuncStat	RS4FreeLabel(			enum RS4ErrorCode *errcode, RS4Label *rl );
-RS4Label *			RS4FindLabel_File(		RS4FileHeader *fh, S64 addr );
+RS4Label *			RS4FindLabel_File(		RS4FileHeader *fh, S64 addr, STR file );
 
 // -- Label Magic
 enum RS4FuncStat	RS4LabelMagic_File(		enum RS4ErrorCode *errcode, RS4FileHeader *fh );
@@ -593,8 +597,9 @@ enum RS4FuncStat	RS4Trace_JumpTable(		enum RS4ErrorCode *errcode, RS4Trace *rt )
 // -- hmm
 enum RS4FuncStat	RS4BuildLabelString(	enum RS4ErrorCode *errcode, RS4Label *rl, STR buf );
 enum RS4FuncStat	RS4BuildLabelString2(	enum RS4ErrorCode *errcode, RS4Trace *rt, STR buf, S64 adr, S64 val );
+void				Mark_Code(				RS4Label *rl );
 void				Mark_NulString(			RS4Label *rl );
-enum RS4FuncStat	Mark_Struct(			enum RS4ErrorCode *errcode, RS4Label *rl, enum RS4StructID id );
+enum RS4FuncStat	Mark_Struct(			enum RS4ErrorCode *errcode, RS4Label *rl, enum RS4StructID id, STR file );
 STR 				FindFileName(			STR name );
 RS4Label *			RS4AddExtLabel(			enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr );
 enum RS4JumpStat	RS4JumpTable_Rel16(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 tabel_adr, S64 relative_adr, S32 entries );

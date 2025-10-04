@@ -1,137 +1,19 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
- *
- * This software is released under the GNU General Public License, version 3.
- * For the full text of the license, please visit:
- * https://www.gnu.org/licenses/gpl-3.0.html
- *
- * You can also find a copy of the license in the LICENSE file included with this software.
- */
+** Copyright (c) 2014-2025 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
 
 // --
 
 #include "ReSrc4.h"
-
-// --
-
-enum RS4FuncStat RS4FreeLabel( enum RS4ErrorCode *errcode, RS4Label *rl )
-{
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
-
-	// --
-
-	if ( ! rl )
-	{
-		goto bailout;
-	}
-
-	if ( rl->rl_ID != RS4ID_Label )
-	{
-		ec = RS4ErrStat_InvalidStructID;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error Invalid Struct ID\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	rl->rl_ID = 0;
-
-	// --
-
-
-
-	free( rl );
-
-	// --
-
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
-
-bailout:
-
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
-}
-
-// --
-// The _File version need the Address to be inside Section
-
-RS4Label *RS4AddLabel_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr, enum RS4LabelType type )
-{
-enum RS4ErrorCode ec;
-RS4FileSection *sec;
-RS4Label *new;
-S64 memadr;
-S32 cnt;
-
-	if ( ! addr )
-	{
-		return( NULL );
-	}
-
-	// --
-
-	ec	= RS4ErrStat_Error;
-	new	= NULL;
-
-	// --
-	// First find the Hunk where the label should be
-
-	for( cnt=0 ; cnt<fh->rfh_SecArraySize ; cnt++ )
-	{
-		memadr = fh->rfh_SecArray[cnt].rsi_MemoryAdr;
-
-		if ( addr < memadr )
-		{
-			continue;
-		}
-
-		memadr += fh->rfh_SecArray[cnt].rsi_MemorySize;
-
-		if ( addr > memadr )
-		{
-			continue;
-		}
-
-		break;
-	}
-
-	// Hunk found or is it an address outside our code?
-
-	if ( cnt == fh->rfh_SecArraySize )
-	{
-		ec = RS4ErrStat_OutOfBounds;
-		printf( "AddLabel: External? Addr $%08" PRIx64 " ??\n", addr );
-		goto bailout;
-	}
-
-	// --
-
-	sec = fh->rfh_SecArray[cnt].rsi_Section;
-	new = RS4AddLabel_Sec( & ec, sec, addr, type );
-
-bailout:
-
-	// --
-
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( new );
-}
 
 // --
 // The _Sec version can handle addesses out side Sections
@@ -178,11 +60,15 @@ U32 hash;
 			{
 				// Set type
 				rl->rl_Type1 = type;
+				rl->rl_Type2 = 0;
+				rl->rl_Type3 = 0;
 			}
 			else if ( rl->rl_Type1 != type )
 			{
 				printf( "%s:%04d: rl->rl_Address $%08" PRIx64 " (Type: %d)\n", __FILE__, __LINE__, rl->rl_Address, type );
 				rl->rl_Type1 = RS4LabelType_Unknown;
+				rl->rl_Type2 = 0;
+				rl->rl_Type3 = 0;
 				// we have multible types
 			}
 		}
@@ -271,53 +157,6 @@ bailout:
 	}
 
 	return(	new );
-}
-
-// --
-
-RS4Label *RS4FindLabel_File( RS4FileHeader *fh, S64 addr )
-{
-RS4Label *rl;
-U32 hash;
-
-	if ( ! addr )
-	{
-		return( NULL );
-	}
-
-	hash = ( (U64) addr ) % MAX_LAB_HASH;
-
-	rl = fh->rfh_LabelHash[ hash ];
-
-	while( rl )
-	{
-		if ( rl->rl_Address == addr )
-		{
-			break;
-		}
-		else
-		{
-			rl = rl->rl_HashPtr;
-		}
-	}
-
-	if ( DoVerbose > 2 )
-	{
-		if ( ! rl )
-		{
-			printf( "Label NOT Found : Address $%08" PRIx64 "\n", addr );
-		}
-	}
-
-	#ifdef DEBUG
-	if (( rl ) && ( rl->rl_ID != RS4ID_Label ))
-	{
-		printf( "Invalid Label ID : %08x\n", rl->rl_ID );
-		rl = NULL;
-	}
-	#endif
-
-	return(	rl );
 }
 
 // --
