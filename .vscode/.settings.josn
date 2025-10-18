@@ -1,0 +1,46 @@
+{
+	"editor.indentSize": "tabSize",
+	"editor.detectIndentation": true,
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"files.eol": "\n",
+	"[c]": {
+	  "editor.detectIndentation": false,
+	  "editor.insertSpaces": false,
+	  "editor.tabSize": 4,
+	  "files.eol": "\n"
+	},
+	"[makefile]": {
+	  "editor.detectIndentation": false,
+	  "editor.insertSpaces": false,
+	  "editor.tabSize": 4,
+	  "files.eol": "\n"
+	},
+	"[plaintext]": {
+	  "editor.suggestOnTriggerCharacters": false,
+	  "editor.quickSuggestions": {
+		"comments": "off",
+		"strings": "off",
+		"other": "off"
+	  },
+	  "editor.detectIndentation": false,
+	  "editor.insertSpaces": false,
+	  "editor.tabSize": 8,
+	  "files.eol": "\n"
+	},
+	"files.associations": {
+		"*.vma": "plaintext",
+		"*.vmi": "plaintext",
+		"*.asm": "plaintext",
+		"*.s": "plaintext",
+		"*.i": "plaintext",
+		"*.h": "c",
+		"*.c": "c"
+	},
+	"editor.quickSuggestions": {
+	  "comments": false,
+	  "strings": false,
+	  "other": false
+	},
+	"editor.inlineSuggest.enabled": false
+  }
