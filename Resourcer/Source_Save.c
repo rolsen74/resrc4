@@ -547,6 +547,7 @@ enum RS4FuncStat RS4SaveSource_File( enum RS4ErrorCode *errcode, RS4FileHeader *
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4Source *rs;
+STR ftype;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -612,21 +613,45 @@ RS4Source *rs;
 
 	// --
 
+	if ( 0 )
+	{
+
+	}
+	#ifdef SUPPORT_FHR
+	else if ( fh->rfh_FileType == RS4FileType_FHR )
+	{
+		ftype = "FHR";
+	}
+	#endif
+	#ifdef SUPPORT_HUNK
+	else if ( fh->rfh_FileType == RS4FileType_Hunk )
+	{
+		ftype = "Hunk";
+	}
+	#endif
+	else
+	{
+		ftype = "???";
+	}
+
 	sprintf( SaveLineBuffer,
 		"\n"
 		";\n"
 		"; Disassembled with ReSrc4 v%d.%d (%s)\n"
-		"; Written by Rene W. Olsen (c) 2014-%d\n"
+//		"; Written by Rene W. Olsen (c) 2014-%d\n"
 		";\n"
-		"; Filename: %s (%" PRId64 " bytes)\n"
-		"; MD5 Sum: $%s\n"
+		"; Size .. : %" PRId64 " bytes\n"
+		"; Type .. : %s\n"
+		"; Name .. : '%s'\n"
+		"; MD5 ... : $%s\n"
 		";\n", 
 		VERSION,
 		REVISION,
 		DATE,
-		YEAR,
-		fh->rfh_FileName,
+//		YEAR,
 		fh->rfh_FileSize,
+		ftype,
+		fh->rfh_FileName,
 		fh->rfh_FileMD5
 	);
 

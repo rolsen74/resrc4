@@ -95,15 +95,28 @@ enum RS4FuncStat fs;
 
 	// --
 	// -- Figure out what Decoder to use
+	// we should proberly check cpu type instead
 
 	switch( fh->rfh_FileType )
 	{
 		#ifdef SUPPORT_HUNK
+
 		case RS4FileType_Hunk:
 		{
 			rt->rt_Decoder = M68k_Decoder;
 			break;
 		}
+
+		#endif
+
+		#ifdef SUPPORT_FHR
+
+		case RS4FileType_FHR:
+		{
+			rt->rt_Decoder = M68k_Decoder;
+			break;
+		}
+
 		#endif
 
 		default:

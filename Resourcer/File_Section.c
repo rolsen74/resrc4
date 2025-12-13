@@ -82,6 +82,8 @@ RS4FileSection *RS4AllocSection( enum RS4ErrorCode *errcode, S32 secnr, S64 mems
 enum RS4ErrorCode ec;
 RS4FileSection *sec;
 
+//	printf( "RS4AllocSection : SrcNr #%d : MemSize %ld\n", secnr, memsize );
+
 	ec = RS4ErrStat_Error;
 
 	sec = calloc( 1, sizeof( RS4FileSection ));

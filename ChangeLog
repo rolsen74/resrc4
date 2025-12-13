@@ -244,3 +244,9 @@ ReSrc4 v2.15 ( 04-Oct-2025 )
 - Added support for Movec opcode.
 
 - Changed file header, still gpl v3 but added "SPDX-License-Identifier"
+
+
+ReSrc4 v2.16 ( 13-Dec-2025 )
+
+- Added support for FHR file (Container), still a m68k file.
+  Its still in beta, so there are proberly some hidden bugs.

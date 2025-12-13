@@ -270,14 +270,38 @@ U32 fid;
 
 	#ifdef SUPPORT_HUNK
 
-	fid =	( file->rfh_FileBuffer[0] << 24 ) +
-			( file->rfh_FileBuffer[1] << 16 ) +
-			( file->rfh_FileBuffer[2] <<  8 ) +
-			( file->rfh_FileBuffer[3] <<  0 ) ;
-
-	if ( fid == HUNK_HEADER )
+	if ( type == RS4FileType_Unknown )
 	{
-		type = RS4FileType_Hunk;
+		fid =	( file->rfh_FileBuffer[0] << 24 ) +
+				( file->rfh_FileBuffer[1] << 16 ) +
+				( file->rfh_FileBuffer[2] <<  8 ) +
+				( file->rfh_FileBuffer[3] <<  0 ) ;
+
+		/**/ if ( fid == HUNK_HEADER )
+		{
+			type = RS4FileType_Hunk;
+		}
+	}
+
+	#endif
+
+	#ifdef SUPPORT_FHR
+
+	if ( type == RS4FileType_Unknown )
+	{
+		struct FHR_Header *h = (PTR) file->rfh_FileBuffer;
+
+		if (( SWAP32( h->FHR_ID )			== FHR_HEADER )
+		&&	( SWAP16( h->FHR_OSType )		== FHR_OS_AmigaOS3 )
+		&&	( SWAP16( h->FHR_CPUType )		== FHR_CPU_M68k )
+		&&	( SWAP16( h->FHR_Encryption )	== FHR_ENC_None )
+		&&	( h->FHR_Size	== FHR_SIZE_32 )
+		&&	( h->FHR_Type	== FHR_TYPE_Exe )
+		&&	( h->FHR_Pack	== FHR_PACK_None )
+		&&	( h->FHR_Endian == FHR_ENDIAN_Big ))
+		{
+			type = RS4FileType_FHR;
+		}
 	}
 
 	#endif
@@ -358,6 +382,14 @@ S32 err;
 
 	switch( type )
 	{
+		#ifdef SUPPORT_FHR
+		case RS4FileType_FHR:
+		{
+			fs = FHR_ParseFile( & ec, file );
+			break;
+		}
+		#endif
+
 		#ifdef SUPPORT_HUNK
 		case RS4FileType_Hunk:
 		{

@@ -32,10 +32,10 @@
 
 // --
 
-#define DATE				"04-Oct-2025"
+#define DATE				"13-Dec-2025"
 #define YEAR				2025
 #define VERSION				2
-#define REVISION			15
+#define REVISION			16
 
 #define MAX_REF_HASH		29U			// Prime Nr .. bigger value more memory pr. HunkNode
 #define MAX_LAB_HASH		83U			// Prime Nr .. Global Label Hash
@@ -129,6 +129,10 @@ enum RS4FileType
 {
 	RS4FileType_Error,
 	RS4FileType_Unknown,
+
+	#ifdef SUPPORT_FHR
+	RS4FileType_FHR,
+	#endif
 
 	#ifdef SUPPORT_HUNK
 	RS4FileType_Hunk,
@@ -295,6 +299,10 @@ enum RS4StructID
 
 // --
 // -- Loaders
+
+#ifdef SUPPORT_FHR
+#include "Loader_FHR/FHR.h"
+#endif
 
 #ifdef SUPPORT_HUNK
 #include "Loader_Hunk/Hunk.h"

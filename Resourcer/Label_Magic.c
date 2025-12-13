@@ -1435,7 +1435,7 @@ S32 cnt;
 	// --
 	// -- Parse First Section (if we have one)
 
-	if ( fh->rfh_SecFirst >= 0 )
+	if (( fh->rfh_SecFirst >= 0 ) && ( fh->rfh_SecArraySize > 0 ))
 	{
 		rt.rt_Section = fh->rfh_SecArray[ fh->rfh_SecFirst ].rsi_Section;
 

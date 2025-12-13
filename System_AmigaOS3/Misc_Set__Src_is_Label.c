@@ -225,7 +225,9 @@ RS4Label *dst_rl;
 
 	ec = RS4ErrStat_Okay;
 
-// bailout:
+	#ifdef DEBUG
+	bailout:
+	#endif
 
 	return( ec );
 }

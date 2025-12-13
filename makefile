@@ -36,6 +36,7 @@ BINDIR		:= bin
 ###########################################################################
 
 # Loaders
+LOADER_FHR		:= 1
 LOADER_HUNK		:= 1
 
 # Systems
@@ -45,6 +46,11 @@ SYSTEM_AMIGAOS3	:= 1
 CPU_M68K		:= 1
 
 ###########################################################################
+
+ifeq ($(LOADER_FHR),1)
+CFLAGS		+= -DSUPPORT_FHR
+SRCDIRS		+= Loader_FHR
+endif
 
 ifeq ($(LOADER_HUNK),1)
 CFLAGS		+= -DSUPPORT_HUNK
