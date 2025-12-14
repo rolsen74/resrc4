@@ -34,33 +34,28 @@ data = 32bit Data value<br>
 
 ### Supported
 
-- Dn
-- An
-- ( An )
-- ( An )+
-- -( An )
-- ( d16 , An )
-- ( d16 , PC )
-- ( d8 , An , Xn )
-- ( d8 , PC , Xn )
-- ( bd , An , Xn )
-- ( bd , PC , Xn )
-- ( [ bd , An ] , Xn , od )
-- ( [ bd , PC ] , Xn , od )
-- ( [ bd , An , Xn ] , od )
-- ( [ bd , PC , Xn ] , od )
-- ( xxx ).w
-- ( xxx ).l
+- `Dn`
+- `An`
+- `( An )`
+- `( An )+`
+- `-( An )`
+- `( d16 , An )`
+- `( d16 , PC )`
+- `( d8 , An , Xn )`
+- `( d8 , PC , Xn )`
+- `( bd , An , Xn )`
+- `( bd , PC , Xn )`
+- `( [ bd , An ] , Xn , od )`
+- `( [ bd , PC ] , Xn , od )`
+- `( [ bd , An , Xn ] , od )`
+- `( [ bd , PC , Xn ] , od )`
+- `( xxx ).w`
+- `( xxx ).l`
 - `# <data>`
 
-## Opcodes
-
-Please be aware of the following:
-
-- The movec opcode is missing.
-- There are no MMU opcode handling.
-
-**Integer Opcodes (Currently Supported)**
+## ***CPU Opcodes list
+<details>
+<summary>Show CPU opcodes</summary>
 
 - Abcd
 - Add
@@ -210,7 +205,11 @@ Please be aware of the following:
 - Unlk
 - Unpk
 
-**FPU Opcodes (Currently Supported)**
+</details>
+
+## ***FPU Opcodes list
+<details>
+<summary>Show FPU opcodes</summary>
 
 - FAbs
 - FACos
@@ -331,20 +330,40 @@ Please be aware of the following:
 - FTst
 - FTwotox
 
+</details>
 
-# Hunk file support
+# Hunk / FHR Containers
 
 Again, only what is needed has been implemented, so it's a little limited. The original Civ game did not include Symbol, DRel32, and Relloc32Short, but when I assembled the disassembled source with vasm, those hunks were used.
 
-**Hunks Supported:**
-- HUNK_CODE (3E9)
-- HUNK_DATA (3EA)
-- HUNK_BSS (3EB)
-- HUNK_RELOC32 (3EC)
-- HUNK_SYMBOL (3F0)
-- HUNK_DEBUG (3F1) [Skipping]
-- HUNK_END (3F2)
-- HUNK_HEADER (3F3)
-- HUNK_DREL32 (3F7)
-- HUNK_RELRELOC32 (3FD)
-- HUNK_RELOC32SHORT (3FC)
+Added my own custom FHR Container, for testing.
+
+## Hunk Container
+<details>
+<summary>Hunks Supported:</summary>
+
+- `HUNK_CODE` (3E9)  
+- `HUNK_DATA` (3EA)  
+- `HUNK_BSS` (3EB)  
+- `HUNK_RELOC32` (3EC)  
+- `HUNK_SYMBOL` (3F0)  
+- `HUNK_DEBUG` (3F1) *(skipped)*  
+- `HUNK_END` (3F2)  
+- `HUNK_HEADER` (3F3)  
+- `HUNK_DREL32` (3F7)  
+- `HUNK_RELRELOC32` (3FD)  
+- `HUNK_RELOC32SHORT` (3FC)  
+
+</details>
+
+## FHR Container
+<details>
+<summary>FHR Chunks Supported:</summary>
+
+- `FHR_HEADER` — `"FHR\0"` — File Header  
+- `FHR_COD0` — `"COD\0"` — Executable Code Section  
+- `FHR_DAT0` — `"DAT\0"` — Executable Data Section  
+- `FHR_BSS0` — `"BSS\0"` — Executable BSS Section  
+- `FHR_END0` — `"END\0"` — End of Section List  
+
+</details>
