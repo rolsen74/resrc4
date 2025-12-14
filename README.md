@@ -22,15 +22,15 @@ You will likely need to create a config file and use the Relative16 option.
 
 ### Modes
 
-PC = Program Counter<br>
-d8 = Signed 8bit value<br>
-d16 = Signed 16bit value<br>
-d32 = Signed 32bit value<br>
-An = Ax Register<br>
-Dn = Dx Register<br>
-Xn = Ax/Dx Register.[W/L] with Scale<br>
-xxx = Address<br>
-data = 32bit Data value<br>
+- **PC** – Program Counter  
+- **d8** – Signed 8-bit value  
+- **d16** – Signed 16-bit value  
+- **d32** – Signed 32-bit value  
+- **An** – Ax Register  
+- **Dn** – Dx Register  
+- **Xn** – Ax/Dx Register \[W/L\] with scale  
+- **xxx** – Address  
+- **data** – 32-bit data value  
 
 ### Supported
 
@@ -360,10 +360,12 @@ Added my own custom FHR Container, for testing.
 <details>
 <summary>FHR Chunks Supported</summary>
 
-- `FHR_HEADER` | `"FHR\0"` | File Header  
-- `FHR_COD0` | `"COD\0"` | Executable Code Section  
-- `FHR_DAT0` | `"DAT\0"` | Executable Data Section  
-- `FHR_BSS0` | `"BSS\0"` | Executable BSS Section  
-- `FHR_END0` | `"END\0"` | End of Section List  
+| Label        | ID        | Description               |
+|--------------|-----------|---------------------------|
+| `FHR_HEADER` | `FHR\0`   | File Header               |
+| `FHR_COD0`   | `COD\0`   | Executable Code Section   |
+| `FHR_DAT0`   | `DAT\0`   | Executable Data Section   |
+| `FHR_BSS0`   | `BSS\0`   | Executable BSS Section    |
+| `FHR_END0`   | `END\0`   | End of Section List       |
 
 </details>
