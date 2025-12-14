@@ -340,30 +340,30 @@ Added my own custom FHR Container, for testing.
 
 ## Hunk Container
 <details>
-<summary>Hunks Supported:</summary>
+<summary>Hunks Supported</summary>
 
-- `HUNK_CODE` (3E9)  
-- `HUNK_DATA` (3EA)  
-- `HUNK_BSS` (3EB)  
-- `HUNK_RELOC32` (3EC)  
-- `HUNK_SYMBOL` (3F0)  
-- `HUNK_DEBUG` (3F1) *(skipped)*  
-- `HUNK_END` (3F2)  
-- `HUNK_HEADER` (3F3)  
-- `HUNK_DREL32` (3F7)  
-- `HUNK_RELRELOC32` (3FD)  
-- `HUNK_RELOC32SHORT` (3FC)  
+- `HUNK_CODE (3E9)`
+- `HUNK_DATA (3EA)`  
+- `HUNK_BSS (3EB)`
+- `HUNK_RELOC32 (3EC)`  
+- `HUNK_SYMBOL (3F0)`
+- `HUNK_DEBUG (3F1) *(skipped)*`
+- `HUNK_END (3F2)`
+- `HUNK_HEADER (3F3)`
+- `HUNK_DREL32 (3F7)`
+- `HUNK_RELRELOC32 (3FD)`
+- `HUNK_RELOC32SHORT (3FC)`
 
 </details>
 
 ## FHR Container
 <details>
-<summary>FHR Chunks Supported:</summary>
+<summary>FHR Chunks Supported</summary>
 
-- `FHR_HEADER` — `"FHR\0"` — File Header  
-- `FHR_COD0` — `"COD\0"` — Executable Code Section  
-- `FHR_DAT0` — `"DAT\0"` — Executable Data Section  
-- `FHR_BSS0` — `"BSS\0"` — Executable BSS Section  
-- `FHR_END0` — `"END\0"` — End of Section List  
+- `FHR_HEADER` | `"FHR\0"` | File Header  
+- `FHR_COD0` | `"COD\0"` | Executable Code Section  
+- `FHR_DAT0` | `"DAT\0"` | Executable Data Section  
+- `FHR_BSS0` | `"BSS\0"` | Executable BSS Section  
+- `FHR_END0` | `"END\0"` | End of Section List  
 
 </details>
