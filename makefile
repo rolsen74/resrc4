@@ -149,6 +149,7 @@ SDK			:= sdk:
 CRT			:= newlib
 TARGET		:= ReSrc4
 CFLAGS		+= -DBIGENDIAN
+INSTALLCMD	:= copy clone $(BINDIR)/$(TARGET) c:
 
 CFLAGS		+= -mcrt=$(CRT)
 LDFLAGS		+= -mcrt=$(CRT)
@@ -172,6 +173,7 @@ COPY		:= cp
 SDK			:= /SDK/
 CRT			:= newlib
 TARGET		:= ReSrc4
+INSTALLCMD	:= 
 
 CFLAGS		+= -mcrt=$(CRT)
 LDFLAGS		+= -mcrt=$(CRT)
@@ -189,6 +191,7 @@ COPY		:= cp
 SDK			:= 
 CRT			:= 
 TARGET		:= ReSrc4
+INSTALLCMD	:= install -m 755 $(BINDIR)/$(TARGET) ~/bin
 
 endif
 endif
@@ -228,7 +231,8 @@ strip:
 	@$(LS)		$(BINDIR)/$(TARGET)
 
 install:
-	install -m 755 $(BINDIR)/$(TARGET) ~/bin
+	$(INSTALLCMD)
+	@echo "Done"
 
 ###########################################################################
 

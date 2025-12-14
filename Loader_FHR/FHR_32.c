@@ -68,7 +68,7 @@ U8 val;
 
 	/**/ if ( ps->pos < 0 )
 	{
-		printf( "Error Reading 8 : Pos %ld\n", ps->pos );
+		printf( "Error Reading 8 : Pos %" PRId64 "\n", ps->pos );
 
 		ec = RS4ErrStat_Error;
 	}
@@ -98,7 +98,7 @@ U32 val;
 
 	/**/ if ( ps->pos < 0 )
 	{
-		printf( "Error Reading 32 Swap : Pos %ld\n", ps->pos );
+		printf( "Error Reading 32 Swap : Pos %" PRId64 "\n", ps->pos );
 
 		ec = RS4ErrStat_Error;
 	}
@@ -128,7 +128,7 @@ U32 val;
 
 	if ( ps->pos < 0 )
 	{
-		printf( "Error Reading 32 Big : Pos %ld\n", ps->pos );
+		printf( "Error Reading 32 Big : Pos %" PRId64 "\n", ps->pos );
 
 		ec = RS4ErrStat_Error;
 	}

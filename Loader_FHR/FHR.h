@@ -127,14 +127,14 @@ struct PACKED FHR_Header
 
 /* -- Section Header Info (for Exe Files) -- */
 
-struct PACKED SEC_Header_32	// Header is set to FHR_SIZE_32
+struct PACKED SEC_Header_32		// Header is set to FHR_SIZE_32
 {
 	U32		SEC_MemorySize;
 	U16		SEC_MemoryAlign;
 	U16		SEC_MemoryFlags;
 };
 
-struct PACKED SEC_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED SEC_Header_64		// Header is set to FHR_SIZE_64
 {
 	U64		SEC_MemorySize;		/* Memory allocated for Section */
 	U16		SEC_MemoryAlign;	/* Minimum alignment for Section */
