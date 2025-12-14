@@ -27,6 +27,17 @@
 
 // --
 
+#if defined(__GNUC__) || defined(__clang__)
+    #define PACKED __attribute__((packed))
+#elif defined(_MSC_VER)
+    #pragma pack(push, 1)
+    #define PACKED
+#else
+    #error "Unknown compiler — please define PACKED for this compiler"
+#endif
+
+// --
+
 /*
 ** -- Section IDs -- 
 **
@@ -86,7 +97,7 @@
 
 /* Default Header */
 
-struct FHR_Header
+struct PACKED FHR_Header
 {
 	U32		FHR_ID;				/* FHR_HEADER */
 	U8		FHR_Size;			/* 0 = 32 bits, 1 = 64 bits */
@@ -115,14 +126,14 @@ struct FHR_Header
 
 /* -- Section Header Info (for Exe Files) -- */
 
-struct SEC_Header_32	// Header is set to FHR_SIZE_32
+struct PACKED SEC_Header_32	// Header is set to FHR_SIZE_32
 {
 	U32		SEC_MemorySize;
 	U16		SEC_MemoryAlign;
 	U16		SEC_MemoryFlags;
 };
 
-struct SEC_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED SEC_Header_64	// Header is set to FHR_SIZE_64
 {
 	U64		SEC_MemorySize;		/* Memory allocated for Section */
 	U16		SEC_MemoryAlign;	/* Minimum alignment for Section */
@@ -136,7 +147,7 @@ struct SEC_Header_64	// Header is set to FHR_SIZE_64
 /* -- COD0 : Header -- */
 /* Main Section, needs END marker */
 
-struct COD0_Header_32	// Header is set to FHR_SIZE_32
+struct PACKED COD0_Header_32	// Header is set to FHR_SIZE_32
 {
 	U32		COD0_ID;			/* FHR_COD0 */
 	U32		COD0_Length;		/* Section length (excluding ID and Length) */
@@ -144,7 +155,7 @@ struct COD0_Header_32	// Header is set to FHR_SIZE_32
 	U8		COD0_Data[1];		/* Minimum data size is 1 */
 };
 
-struct COD0_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED COD0_Header_64	// Header is set to FHR_SIZE_64
 {
 	U32		COD0_ID;			/* FHR_COD0 */
 	U64		COD0_Length;		/* Section length (excluding ID and Length) */
@@ -179,7 +190,7 @@ struct COD0_Header_64	// Header is set to FHR_SIZE_64
 /* -- COD1 : Header -- */
 /* Main Section, needs END marker */
 
-struct COD1_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED COD1_Header_64	// Header is set to FHR_SIZE_64
 {
 	U32		COD1_ID;			/* FHR_COD1 */
 	U64		COD1_Length;		/* Section length (excluding ID and Length) */
@@ -192,7 +203,7 @@ struct COD1_Header_64	// Header is set to FHR_SIZE_64
 /* -- DAT0 : Header -- */
 /* Main Section, needs END marker */
 
-struct DAT0_Header_32	// Header is set to FHR_SIZE_32
+struct PACKED DAT0_Header_32	// Header is set to FHR_SIZE_32
 {
 	U32		DAT0_ID;			/* FHR_DAT0 */
 	U32		DAT0_Length;		/* Section length (excluding ID and Length) */
@@ -200,7 +211,7 @@ struct DAT0_Header_32	// Header is set to FHR_SIZE_32
 	U8		DAT0_Data[1];		/* Minimum data size is 1 */
 };
 
-struct DAT0_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED DAT0_Header_64	// Header is set to FHR_SIZE_64
 {
 	U32		DAT0_ID;			/* FHR_DAT0 */
 	U64		DAT0_Length;		/* Section length (excluding ID and Length) */
@@ -233,7 +244,7 @@ struct DAT0_Header_64	// Header is set to FHR_SIZE_64
 /* -- DAT1 : Header -- */
 /* Main Section, needs END marker */
 
-struct DAT1_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED DAT1_Header_64	// Header is set to FHR_SIZE_64
 {
 	U32		DAT1_ID;			/* FHR_COD1 */
 	U64		DAT1_Length;		/* Section length (excluding ID and Length) */
@@ -246,12 +257,12 @@ struct DAT1_Header_64	// Header is set to FHR_SIZE_64
 /* -- BSS0 : Header -- */
 /* Main Section, needs END marker */
 
-struct BSS0_Header_32	// Header is set to FHR_SIZE_32
+struct PACKED BSS0_Header_32	// Header is set to FHR_SIZE_32
 {
 	U32		BSS0_ID;			/* FHR_BSS0 */
 };
 
-struct BSS0_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED BSS0_Header_64	// Header is set to FHR_SIZE_64
 {
 	U32		BSS0_ID;			/* FHR_BSS0 */
 };
@@ -278,7 +289,7 @@ struct BSS0_Header_64	// Header is set to FHR_SIZE_64
 /* -- BSS1 : Header -- */
 /* Main Section, needs END marker */
 
-struct BSS1_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED BSS1_Header_64	// Header is set to FHR_SIZE_64
 {
 	U32		BSS1_ID;			/* FHR_COD1 */
 	U64		BSS1_Length;		/* Section length (excluding ID and Length) */
@@ -291,12 +302,12 @@ struct BSS1_Header_64	// Header is set to FHR_SIZE_64
 /* -- END0 : Header -- */
 /* Main Section terminator */
 
-struct END0_Header_32	// Header is set to FHR_SIZE_32
+struct PACKED END0_Header_32	// Header is set to FHR_SIZE_32
 {
 	U32		END0_ID;			/* FHR_END0 */
 };
 
-struct END0_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED END0_Header_64	// Header is set to FHR_SIZE_64
 {
 	U32		END0_ID;			/* FHR_END0 */
 };
@@ -323,7 +334,7 @@ struct END0_Header_64	// Header is set to FHR_SIZE_64
 
 /* -- SYM0 : Header -- */
 
-struct SYM0_Header_32	// Header is set to FHR_SIZE_32
+struct PACKED SYM0_Header_32	// Header is set to FHR_SIZE_32
 {
 	U32		SYM0_ID;			/* FHR_SYM0 */
 	U32		SYM0_Length;		/* Section length (excluding ID and Length) */
@@ -335,7 +346,7 @@ struct SYM0_Header_32	// Header is set to FHR_SIZE_32
 
 };
 
-struct SYM0_Header_64	// Header is set to FHR_SIZE_64
+struct PACKED SYM0_Header_64	// Header is set to FHR_SIZE_64
 {
 	U32		SYM0_ID;			/* FHR_SYM0 */
 	U64		SYM0_Length;		/* Section length (excluding ID and Length) */
@@ -484,5 +495,11 @@ struct SYM0_Header_64	// Header is set to FHR_SIZE_64
 
 enum RS4FuncStat FHR_ParseFile(			enum RS4ErrorCode *errcode, RS4FileHeader *fh );
 enum RS4FuncStat FHR_ParseFile_32(		enum RS4ErrorCode *errcode, RS4FileHeader *fh, struct FHR_Header *h );
+
+/* -- */
+
+#if defined(_MSC_VER)
+    #pragma pack(pop)
+#endif
 
 #endif
