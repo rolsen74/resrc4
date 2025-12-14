@@ -50,11 +50,6 @@ S32 i;
 
 	while( rl )
 	{
-		if ( rl->rl_Address == 65790 )
-		{
-			printf( "!!!!\n" );
-		}
-
 		if (( rl->rl_Offset >= 0 ) 
 		&&	( rl->rl_Offset < size )
 		&&	( rl->rl_Type1 == RS4LabelType_Unset )
@@ -405,6 +400,7 @@ S64 adr;
 			break;
 		}
 
+#if 0
 {
 RS4Label *qqrl;
 
@@ -416,13 +412,17 @@ RS4Label *qqrl;
 		qqrl = RS4GetNext( qqrl );
 	}
 }
+#endif
 
+//printf( "---tbrance 5 : %lx %lx %p %p\n", pos, sec->rfs_MemoryAdr, sec->rfs_MemoryBuf, sec->rfs_MemoryType ); fflush(stdout);
 
 		rt->rt_CurMemAdr	=   sec->rfs_MemoryAdr + pos  ;
 		rt->rt_CurMemBuf	= & sec->rfs_MemoryBuf [ pos ];
 		rt->rt_CurMemType	= & sec->rfs_MemoryType[ pos ];
 
 		ds = rt->rt_Decoder( & ec, rt );
+
+//printf( "---tbrance 6\n" ); fflush(stdout);
 
 		/**/ if ( ds == RS4DecodeStat_Error )
 		{

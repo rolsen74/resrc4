@@ -250,3 +250,10 @@ ReSrc4 v2.16 ( 13-Dec-2025 )
 
 - Added support for FHR file (Container), still a m68k file.
   Its still in beta, so there are proberly some hidden bugs.
+
+
+ReSrc4 v2.17 ( 14-Dec-2025 )
+
+- Added (xxx,pc) mode for move Label/Pointer types. Too track Lib Bases
+
+- Fixed a SegFault in AmigaOS3_Misc_Move_Get() function.

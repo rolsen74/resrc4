@@ -32,10 +32,10 @@
 
 // --
 
-#define DATE				"13-Dec-2025"
+#define DATE				"14-Dec-2025"
 #define YEAR				2025
 #define VERSION				2
-#define REVISION			16
+#define REVISION			17
 
 #define MAX_REF_HASH		29U			// Prime Nr .. bigger value more memory pr. HunkNode
 #define MAX_LAB_HASH		83U			// Prime Nr .. Global Label Hash

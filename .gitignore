@@ -2,4 +2,5 @@
 *.o
 *.map
 ReSrc4
-runrsync.sh
+rsync__git_to_svn.sh
+rsync__svn_to_git.sh

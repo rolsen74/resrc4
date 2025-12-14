@@ -70,7 +70,7 @@ enum RS4FuncStat fs;
 
 	if ( DoVerbose > 1 )
 	{
-		printf( "11 - Load and Parse Hunk File\n" );
+		printf( "11 - Load and Parse Hunk File\n" ); fflush(stdout);
 	}
 
 	RS4FileData = RS4LoadExe( & ec, InputFile );
@@ -82,7 +82,7 @@ enum RS4FuncStat fs;
 
 	if ( DoVerbose > 1 )
 	{
-		printf( "22 - Load and Parse Config\n" );
+		printf( "22 - Load and Parse Config\n" ); fflush(stdout);
 	}
 
 	fs = RS4ParseConfig_File( & ec, RS4FileData );
@@ -94,7 +94,7 @@ enum RS4FuncStat fs;
 
 	if ( DoVerbose > 1 )
 	{
-		printf( "33 - Trace Memory\n" );
+		printf( "33 - Trace Memory\n" ); fflush(stdout);
 	}
 
 	fs = RS4Trace_File( & ec, RS4FileData );
@@ -106,7 +106,7 @@ enum RS4FuncStat fs;
 
 	if ( DoVerbose > 1 )
 	{
-		printf( "44 - Label Adjust\n" );
+		printf( "44 - Label Adjust\n" ); fflush(stdout);
 	}
 
 	fs = RS4LabelMagic_File( & ec, RS4FileData );
@@ -118,7 +118,7 @@ enum RS4FuncStat fs;
 
 	if ( DoVerbose > 1 )
 	{
-		printf( "55 - Build Source\n" );
+		printf( "55 - Build Source\n" ); fflush(stdout);
 	}
 
 	fs = RS4BuildSource_File( & ec, RS4FileData );
@@ -130,7 +130,7 @@ enum RS4FuncStat fs;
 
 	if ( DoVerbose > 1 )
 	{
-		printf( "66 - Save Source\n" );
+		printf( "66 - Save Source\n" ); fflush(stdout);
 	}
 
 	fs = RS4SaveSource_File( & ec, RS4FileData, OutputFile );
@@ -142,7 +142,7 @@ enum RS4FuncStat fs;
 
 	if ( DoVerbose > 1 )
 	{
-		printf( "77 - Done Yay\n" );
+		printf( "77 - Done Yay\n" ); fflush(stdout);
 	}
 
 bailout:
