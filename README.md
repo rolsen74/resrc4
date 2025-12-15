@@ -342,19 +342,19 @@ Added my own custom FHR Container, for testing.
 <details>
 <summary>Hunks Supported</summary>
 
-| Label               |  Hex ID  |  Dec ID  | Description               |
+| Label               |  Hex ID  |  Dec ID  | Description / Note        |
 |---------------------|----------|----------|---------------------------|
-| `HUNK_CODE`         | `0x03E9` |  `1001`  | Code Section              |
-| `HUNK_DATA`         | `0x03EA` |  `1002`  | Data Section              |
-| `HUNK_BSS`          | `0x03EB` |  `1003`  | Bss Section               |
-| `HUNK_RELOC32`      | `0x03EC` |  `1004`  |                           |
-| `HUNK_SYMBOL`       | `0x03F0` |  `1008`  |                           |
-| `HUNK_DEBUG`        | `0x03F1` |  `1009`  | *skipping only*           |
-| `HUNK_END`          | `0x03F2` |  `1010`  |                           |
-| `HUNK_HEADER`       | `0x03F3` |  `1011`  | File Header               |
-| `HUNK_DREL32`       | `0x03F7` |  `1015`  | Same as HUNK_RELRELOC32   |
-| `HUNK_RELOC32SHORT` | `0x03FC` |  `1020`  | Save as HUNK_DREL32       |
-| `HUNK_RELRELOC32`   | `0x03FD` |  `1021`  |                           |
+| `HUNK_CODE`         | `0x03E9` | `1001`   | Code Section              |
+| `HUNK_DATA`         | `0x03EA` | `1002`   | Data Section              |
+| `HUNK_BSS`          | `0x03EB` | `1003`   | Bss Section               |
+| `HUNK_RELOC32`      | `0x03EC` | `1004`   |                           |
+| `HUNK_SYMBOL`       | `0x03F0` | `1008`   |                           |
+| `HUNK_DEBUG`        | `0x03F1` | `1009`   | *skipping only*           |
+| `HUNK_END`          | `0x03F2` | `1010`   |                           |
+| `HUNK_HEADER`       | `0x03F3` | `1011`   | File Header               |
+| `HUNK_DREL32`       | `0x03F7` | `1015`   | Same as HUNK_RELRELOC32   |
+| `HUNK_RELOC32SHORT` | `0x03FC` | `1020`   | Save as HUNK_DREL32       |
+| `HUNK_RELRELOC32`   | `0x03FD` | `1021`   |                           |
 
 </details>
 
