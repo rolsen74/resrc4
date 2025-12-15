@@ -353,7 +353,7 @@ Added my own custom FHR Container, for testing.
 | `HUNK_END`          | `0x03F2` | `1010`   |                           |
 | `HUNK_HEADER`       | `0x03F3` | `1011`   | File Header               |
 | `HUNK_DREL32`       | `0x03F7` | `1015`   | *Same as HUNK_RELRELOC32* |
-| `HUNK_RELOC32SHORT` | `0x03FC` | `1020`   | *Save as HUNK_DREL32*     |
+| `HUNK_RELOC32SHORT` | `0x03FC` | `1020`   | *Same as HUNK_DREL32*     |
 | `HUNK_RELRELOC32`   | `0x03FD` | `1021`   |                           |
 
 </details>
