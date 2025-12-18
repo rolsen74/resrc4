@@ -12,9 +12,13 @@
 */
 
 // --
+
+#include "Resourcer/ReSrc4.h"
+
+// --
 // -- Mode 60 - Full Extension Word Format
 
-inline static enum RS4DecodeStat MODE_60_Full_0( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat MODE_60_Full_0( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;

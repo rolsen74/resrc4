@@ -12,10 +12,14 @@
 */
 
 // --
+
+#include "Resourcer/ReSrc4.h"
+
+// --
 // -- Mode 72 - Clr (xxxx.w,pc)
 // xxxx is Signed
 
-inline static enum RS4DecodeStat MODE_72( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat MODE_72( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;

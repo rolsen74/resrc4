@@ -12,10 +12,14 @@
 */
 
 // --
+
+#include "Resourcer/ReSrc4.h"
+
+// --
 // -- Mode 71 - move.l $00000004
 // extern S32 leatst;
 
-inline static enum RS4DecodeStat MODE_71( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat MODE_71( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;

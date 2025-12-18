@@ -373,6 +373,21 @@ enum RS4DecodeStat M68kCmd_FTST2(		enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat M68kCmd_FTWOTOX(		enum RS4ErrorCode *, RS4Trace * );
 enum RS4DecodeStat M68kCmd_FTWOTOX2(	enum RS4ErrorCode *, RS4Trace * );
 
+enum RS4DecodeStat MODE_00(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_10(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_20(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_30(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_40(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_50(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_60_Brief(		enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_60_Full(		enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_70(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_71(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_72(				enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_73_Brief(		enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_73_Full(		enum RS4ErrorCode *, RS4Trace *, STR );
+enum RS4DecodeStat MODE_74(				enum RS4ErrorCode *, RS4Trace *, STR );
+
 // --
 
 #endif

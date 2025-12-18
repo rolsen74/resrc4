@@ -365,9 +365,9 @@ Added my own custom FHR Container, for testing.
 | Label        | ID        | Description               |
 |--------------|-----------|---------------------------|
 | `FHR_HEADER` | `FHR\0`   | File Header               |
-| `FHR_COD0`   | `COD\0`   | Executable Code Section   |
-| `FHR_DAT0`   | `DAT\0`   | Executable Data Section   |
-| `FHR_BSS0`   | `BSS\0`   | Executable BSS Section    |
+| `FHR_COD0`   | `COD\0`   | Code Section (Exe File)   |
+| `FHR_DAT0`   | `DAT\0`   | Data Section (Exe File)   |
+| `FHR_BSS0`   | `BSS\0`   | BSS Section (Exe File)    |
 | `FHR_END0`   | `END\0`   | End of Section            |
 
 </details>

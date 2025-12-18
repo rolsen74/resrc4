@@ -12,9 +12,13 @@
 */
 
 // --
-// -- Mode 20 - Clr (Ax)
 
-inline static enum RS4DecodeStat MODE_20( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+#include "Resourcer/ReSrc4.h"
+
+// --
+// -- Mode 00 - Clr Dx
+
+enum RS4DecodeStat MODE_00( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
@@ -28,17 +32,14 @@ enum RS4ErrorCode ec;
 
 	if ( rt->rt_Pass != RS4TracePass_Trace )
 	{
-		sprintf( outstr, "(%s)", Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+		sprintf( outstr, "%s", Dx_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
 	}
 	else
 	{
 		outstr[0] = 0;
 	}
 
-//	if ( rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg ].mr_Type == RRT_Label )
-//	{
-//		rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg ].mr_Data.mr_Label->rl_Type = RS4LabelType_Unset;
-//	}
+	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Dx + rt->rt_CPU.M68k.mt_ArgEReg ];
 
 	// --
 

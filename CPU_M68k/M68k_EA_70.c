@@ -12,9 +12,13 @@
 */
 
 // --
+
+#include "Resourcer/ReSrc4.h"
+
+// --
 // -- Mode 70 - move.l $0004.w
 
-inline static enum RS4DecodeStat MODE_70( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat MODE_70( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;

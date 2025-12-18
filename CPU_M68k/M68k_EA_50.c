@@ -12,9 +12,13 @@
 */
 
 // --
+
+#include "Resourcer/ReSrc4.h"
+
+// --
 // -- Mode 50 - jsr (d16,Ax)
 
-inline static enum RS4DecodeStat MODE_50( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat MODE_50( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
 {
 struct M68kRegister *mr;
 enum RS4DecodeStat ds;
