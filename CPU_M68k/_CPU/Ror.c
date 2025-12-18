@@ -27,7 +27,7 @@ S32 ir;
 
 	size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 	reg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
-	ir		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00200000 );
+	ir		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00200000 ) >> 20;
 
 	if (( size == 0 ) && ( ir == 0 ))
 	{

@@ -27,7 +27,7 @@ S32 cos;
 
 	src  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00001c00 ) >> 10;
 	dst  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
-	cos  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 );
+	cos  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 ) >> 0;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "FSincos.x";
 	rt->rt_CPU.M68k.mt_OpcodeSize = 4;
@@ -66,7 +66,7 @@ S32 cos;
 	ereg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	src  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00001c00 ) >> 10;
 	dst  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
-	cos  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 );
+	cos  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 ) >> 0;
 
 	switch( src )
 	{

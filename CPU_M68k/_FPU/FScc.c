@@ -82,7 +82,7 @@ S32 cond;
 	};
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = fscc_RegNames[cond];
-	rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Byte;
+	rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Byte;
 	rt->rt_CPU.M68k.mt_ArgEMode = emode;
 	rt->rt_CPU.M68k.mt_ArgEReg  = ereg;
 	rt->rt_CPU.M68k.mt_ArgSize	= 4;

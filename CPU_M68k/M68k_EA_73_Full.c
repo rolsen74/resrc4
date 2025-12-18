@@ -52,14 +52,14 @@ S32 BD;
 	mem = rt->rt_CurMemBuf;
 	pos = rt->rt_CPU.M68k.mt_ArgSize;
 
-	AD		= ( mem[ pos + 0 ] & 0x80 );
+	AD		= ( mem[ pos + 0 ] & 0x80 ) >> 7;
 	REG		= ( mem[ pos + 0 ] & 0x70 ) >> 4;
-	WL		= ( mem[ pos + 0 ] & 0x08 );
+	WL		= ( mem[ pos + 0 ] & 0x08 ) >> 3;
 	SCALE	= ( mem[ pos + 0 ] & 0x06 ) >> 1;
-	BS		= ( mem[ pos + 1 ] & 0x80 );
-	IS		= ( mem[ pos + 1 ] & 0x40 );
+	BS		= ( mem[ pos + 1 ] & 0x80 ) >> 7;
+	IS		= ( mem[ pos + 1 ] & 0x40 ) >> 6;
 	BD		= ( mem[ pos + 1 ] & 0x30 ) >> 4;
-	IIS		= ( mem[ pos + 1 ] & 0x07 );
+	IIS		= ( mem[ pos + 1 ] & 0x07 ) >> 0;
 
 	mode	 = BD;
 	mode	|= ( IIS ) << 4;

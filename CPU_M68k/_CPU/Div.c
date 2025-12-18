@@ -135,8 +135,8 @@ S32 Dr;
 	EMode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	EReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	Dq		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
-	Size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 );
-	Dr		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 );
+	Size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 ) >> 10;
+	Dr		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 ) >> 0;
 
 	// --
 
@@ -323,8 +323,8 @@ S32 Dr;
 	EMode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	EReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	Dq		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
-	Size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 );
-	Dr		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 );
+	Size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 ) >> 10;
+	Dr		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 ) >> 0;
 
 	// --
 

@@ -29,9 +29,9 @@ S32 ad;
 S32 dr;
 
 	size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
-	ad		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00008000 );
+	ad		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00008000 ) >> 15;
 	reg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
-	dr		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000800 );
+	dr		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000800 ) >> 11;
 
 	switch( size )
 	{
