@@ -21,23 +21,6 @@
 
 // --
 
-#include "M68k_EA_00.inc"			// Clr Dn
-#include "M68k_EA_10.inc"			// Clr An
-#include "M68k_EA_20.inc"			// Clr (An)
-#include "M68k_EA_30.inc"			// Clr (An)+
-#include "M68k_EA_40.inc"			// Clr -(An)
-#include "M68k_EA_50.inc"			// Clr (xxxx.w,An)
-#include "M68k_EA_60_Breif.inc"		// Clr (d8,An,Xn.SIZE*SCALE)
-#include "M68k_EA_60_Full.inc"
-#include "M68k_EA_70.inc"			// Clr $0004.w
-#include "M68k_EA_71.inc"			// Clr $00000004.l
-#include "M68k_EA_72.inc"			// Clr (xxxx.w,pc)
-#include "M68k_EA_73_Breif.inc"		// Clr (d8,PC,Xn.SIZE*SCALE)
-#include "M68k_EA_73_Full.inc"
-#include "M68k_EA_74.inc"			// # <xxx>
-
-// --
-
 enum RS4DecodeStat M68k_EffectiveAddress( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
