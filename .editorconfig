@@ -1,0 +1,49 @@
+# Root EditorConfig file
+root = true
+
+# Default settings (if a file type isn't matched below)
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+# -------------------------------------------------------------------
+# Assembly source files (.vma) and includes (.vmi) — use tabs = 8 spaces
+[*.vma]
+indent_style = tab
+tab_width = 8
+
+[*.vmi]
+indent_style = tab
+tab_width = 8
+
+# -------------------------------------------------------------------
+# C source and headers — use 4 spaces
+[*.c]
+indent_style = space
+indent_size = 4
+
+[*.h]
+indent_style = space
+indent_size = 4
+
+# -------------------------------------------------------------------
+# Makefiles — MUST use tabs
+[makefile]
+indent_style = tab
+tab_width = 4
+
+[Makefile]
+indent_style = tab
+tab_width = 4
+
+[GNUmakefile]
+indent_style = tab
+tab_width = 4
+
+# -------------------------------------------------------------------
+# Release / build helper scripts
+[mkrelease]
+indent_style = tab
+tab_width = 8
