@@ -409,9 +409,11 @@ void RS4PrintUsage( void )
 	printf( "  -n, --no             Auto select no\n" );
 	printf( "      --short          Output short opcodes ( movea.l -> move.l )\n" );
 	printf( "      --debuginfo      Will Append Address and Memory Codes\n" );
-	printf( "      --labtabs        Number of Tabs after labels (Default 1)\n" );
+	printf( "      --labtabs        Number of Tabs after labels (Default 2)\n" );
 	printf( "      --opcodetabs     Number of Tabs after opcodes (Default 2)\n" );
 	printf( "      --argtabs        Number of Tabs after arguments (Default 5)\n" );
+	printf( "      --secsplit       Split output source file\n" );
+	printf( "      --secxdef        Add xDef to Sections\n" );
 	printf( "  -v  --verbose        Print extra information\n" );
 	printf( "\n" );
 }
