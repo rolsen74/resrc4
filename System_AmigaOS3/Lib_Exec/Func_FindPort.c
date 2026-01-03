@@ -21,6 +21,7 @@ enum RS4DecodeStat AOS3_Exec_FindPort_Func( enum RS4ErrorCode *errcode, RS4Trace
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *rl;
 
 	ec = RS4ErrStat_Okay;
@@ -39,7 +40,7 @@ RS4Label *rl;
 		goto bailout;
 	}
 
-	Mark_NulString( rl );
+	ERR_CHK( Mark_NulString( & ec, rl ))
 
 	// Todo return MsgPort pointer in D0
 //	rt->rt_CPU.M68k.mt_ClearRegMask &= ~( 1 << M68KREGT_D0 ); 

@@ -42,7 +42,7 @@ enum RS4FuncStat fs;
 	}
 	else if ( h->FHR_Size == FHR_SIZE_32 )
 	{
-		fs = FHR_ParseFile_32( & ec, fh, h );
+		ERR_CHK( FHR_ParseFile_32( & ec, fh, h ))
 	}
 	else
 	{
@@ -50,6 +50,8 @@ enum RS4FuncStat fs;
 	}
 
 	// --
+
+bailout:
 
 	if ( errcode )
 	{

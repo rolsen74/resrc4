@@ -23,6 +23,7 @@ enum RS4DecodeStat MODE_50( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr
 struct M68kRegister *mr;
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *rl;
 STR lvostr;
 S64 adr;
@@ -57,11 +58,13 @@ S16 val;
 		{
 			adr = rl->rl_Address + val;
 
-			RS4FileSection *sec = RS4FindSection_File( rt->rt_File, adr );
+			RS4FileSection *sec;
+			
+			ERR_CHK( RS4FindSection_File( & ec, & sec, rt->rt_File, adr ))
 
 			if ( sec )
 			{
-				rl = RS4AddLabel_Sec( NULL, sec, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( NULL, & rl, sec, adr, RS4LabelType_Unset ))
 			}
 			else
 			{

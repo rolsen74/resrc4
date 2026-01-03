@@ -64,38 +64,11 @@ struct HunkFileSection
 
 struct HunkTrace
 {
-//	RS4FileHeader *			ms_HunkStruct;
-//	RS4FileSection *		ms_HunkNode;
-//	S32						ms_MemoryAdr;
-//	MEM 					ms_MemoryBuf;
-//	MEM 					ms_MemoryType;
-//	U32						ms_Opcode;
-//	S32						ms_OpcodeSize;
-//	S32						ms_ClearRegMask;
-//	S32						ms_LibCall;				// Well Possible LibCall
-//	S32						ms_IsPea;
-
 	CSTR 					ms_Str_Opcode;
 	STR 					ms_Buf_Argument;
 	STR 					ms_Buf_Comment;			// Only used by Build/Save Source
 	RS4Label *				ms_Ptr_Label;
 	S64						ms_StartAddr;
-
-//	enum M68KStat			ms_DecodeStatus;
-//	S32						ms_JumpTable;
-//	S32						ms_LastOpcode;			// Rts or Jmp .. sets this
-//	enum M68KOpcodeSize		ms_ArgType;				// Opcode Type (b/w/l)
-//	S32						ms_ArgSize;				// Opcode Size in bytes
-//	S32						ms_ArgEMode;			// Effective Addreess Mode
-//	S32						ms_ArgEReg;				// Effective Addreess Register
-//	S32						ms_DecMode;
-//	S32						ms_DoExternal;
-//
-//	struct M68kRegister *	ms_CurRegister;
-//	struct M68kRegister		ms_JmpRegister;
-//	struct M68kRegister		ms_SrcRegister;
-//	struct M68kRegister		ms_DstRegister;
-//	struct M68kRegister		ms_Registers[16];
 };
 
 // --

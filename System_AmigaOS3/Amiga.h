@@ -89,6 +89,7 @@ enum AOS3_LibType
 	AOS3_LibType_NonvolatileBase,
 	AOS3_LibType_PotgoBase,
 //	AOS3_LibType_RamdriveBase,
+	AOS3_LibType_RexxappBase,
 	AOS3_LibType_RexxsyslibBase,
 //	AOS3_LibType_TimerBase,
 	AOS3_LibType_TranslatorBase,
@@ -129,7 +130,7 @@ struct AOS3LVOStruct
 
 // -- Protos
 
-enum RS4FuncStat AmigaOS3_SaveLibFunc( enum RS4ErrorCode *errcode );
+S32 AmigaOS3_SaveLibFunc( PTR in, STR buffer );
 
 extern AOS3_LVOStruct AOS3_AmigaguideBase[];
 extern AOS3_LVOStruct AOS3_AslBase[];
@@ -166,6 +167,7 @@ extern AOS3_LVOStruct AOS3_MathtransBase[];
 extern AOS3_LVOStruct AOS3_MiscBase[];
 extern AOS3_LVOStruct AOS3_PotgoBase[];
 extern AOS3_LVOStruct AOS3_RamdriveBase[];
+extern AOS3_LVOStruct AOS3_RexxappBase[];
 extern AOS3_LVOStruct AOS3_RexxsyslibBase[];
 extern AOS3_LVOStruct AOS3_TimerBase[];
 extern AOS3_LVOStruct AOS3_UtilityBase[];

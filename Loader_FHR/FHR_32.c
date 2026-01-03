@@ -265,6 +265,7 @@ bailout:
 static void my_Parse_Reloc_Exe( enum RS4ErrorCode *ecptr, struct ParseStruct *ps, RS4FileHeader *fh )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 S64 reloff;
 U64 addval;
 U64 type;
@@ -353,8 +354,8 @@ U32 tmp;
 				tmp += addval;
 				my_RawWrite_U32( ps, off, tmp );
 
-				RS4AddRef_Sec( & ec, ps->sec, off );
-				RS4AddLabel_File( & ec, fh, tmp, RS4LabelType_Unset, __FILE__ );
+				ERR_CHK( RS4AddRef_Sec( & ec, NULL, ps->sec, off ))
+				ERR_CHK( RS4AddLabel_File( & ec, NULL, fh, tmp, RS4LabelType_Unset, __FILE__ ))
 			}
 		}
 		else
@@ -442,7 +443,7 @@ U32 id;
 
 		// --
 
-		sec = RS4AllocSection( & ec, cnt, Size );
+		ERR_CHK( RS4AllocSection( & ec, & sec, cnt, Size ))
 
 		if ( ! sec )
 		{

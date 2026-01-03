@@ -21,9 +21,11 @@ enum RS4DecodeStat AOS3_Exec_Func_DoRawFmt( enum RS4ErrorCode *errcode, RS4Trace
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *rl;
 
 	ec = RS4ErrStat_Okay;
+	fs = RS4FuncStat_Okay;
 	ds = RS4DecodeStat_Okay;
 
 	// A0 = String
@@ -39,7 +41,7 @@ RS4Label *rl;
 		goto bailout;
 	}
 
-	Mark_NulString( rl );
+	ERR_CHK( Mark_NulString( & ec, rl ))
 
 bailout:
 

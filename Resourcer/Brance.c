@@ -69,7 +69,7 @@ bailout:
 
 // --
 
-RS4Brance *RS4AddBrance_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr )
+enum RS4FuncStat RS4AddBrance_File( enum RS4ErrorCode *errcode, RS4Brance **rb_ptr, RS4FileHeader *fh, S64 addr )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -96,7 +96,7 @@ RS4Label *rl;
 
 	// --
 
-	sec = RS4FindSection_File( fh, addr );
+	ERR_CHK( RS4FindSection_File( & ec, & sec, fh, addr ))
 
 	if ( ! sec )
 	{
@@ -106,7 +106,7 @@ RS4Label *rl;
 
 	// --
 
-	rl = RS4AddLabel_Sec( & ec, sec, addr, RS4LabelType_Unset );
+	ERR_CHK( RS4AddLabel_Sec( & ec, & rl, sec, addr, RS4LabelType_Unset ))
 
 	if ( ! rl )
 	{
@@ -171,7 +171,12 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( rb );
+	if ( rb_ptr )
+	{
+		*rb_ptr = rb;
+	}
+
+	return( fs );
 }
 
 // --

@@ -64,6 +64,7 @@ static struct myLibType1 myLibs[] =
 	myentry1( MiscBase,					"Misc" ),
 	myentry1( PotgoBase,				"Potgo" ),
 //	myentry1( RamdriveBase,				"Ramdrive" ),
+	myentry1( RexxappBase,				"Rexxapp" ),
 	myentry1( RexxsyslibBase,			"Rexxsyslib" ),
 //	myentry1( TimerBase,				"Timer" ),
 	myentry1( UtilityBase,				"Utility" ),
@@ -185,14 +186,14 @@ STR lvo;
 		case AOS3_LVOType_Regs:	// Name+Offset and Reg struct
 		{
 			// Parse AOS3_RegStruct struct
-			fs = AmigaOS3_FindLibFunc_Regs( & ec, rt, liblvos[pos2].Regs2 );
+			ERR_CHK( AmigaOS3_FindLibFunc_Regs( & ec, rt, liblvos[pos2].Regs2 ))
 			break;
 		}
 
 		case AOS3_LVOType_Func:	// Name+Offset and Function
 		{
 			// Call custom Function
-			fs = AmigaOS3_FindLibFunc_Func( & ec, rt, liblvos[pos2].Func2 );
+			ERR_CHK( AmigaOS3_FindLibFunc_Func( & ec, rt, liblvos[pos2].Func2 ))
 			break;
 		}
 
@@ -233,18 +234,19 @@ bailout:
 }
 
 // --
+// Called from Source_Save
 
-enum RS4FuncStat AmigaOS3_SaveLibFunc( enum RS4ErrorCode *errcode )
+S32 __Buf_WriteString( PTR in, STR, U64  );
+
+S32 AmigaOS3_SaveLibFunc( PTR in, STR buffer )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
 AOS3_LVOStruct *liblvos;
+S32 error;
 S32 pos1;
 S32 pos2;
 S32 len;
 
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
+	error = TRUE;
 
 	// -- Search Library types
 
@@ -254,13 +256,13 @@ S32 len;
 	{
 		if ( myLibs[pos1].Used1 )
 		{
-			sprintf( SaveLineBuffer, "\n; %s\n", myLibs[pos1].Name1 );
+			sprintf( buffer, "\n; %s\n", myLibs[pos1].Name1 );
 
-			fs = RS4SaveWriteString( & ec, SaveLineBuffer, strlen( SaveLineBuffer ));
-
-			if ( fs != RS4FuncStat_Okay )
+			if ( __Buf_WriteString( in, buffer, strlen( buffer )))
 			{
-				printf( "%s:%04d: Error Writting Exec lvo's\n", __FILE__, __LINE__ );
+				#ifdef DEBUG
+				printf( "%s:%04d: Error : AmigaOS3_SaveLibFunc : 1 :\n", __FILE__, __LINE__ );
+				#endif
 				goto bailout;
 			}
 
@@ -276,31 +278,26 @@ S32 len;
 
 					if ( len < 8 )
 					{
-						sprintf( SaveLineBuffer, "%s:\t\t\tEQU\t%d\n", liblvos[pos2].Name2, liblvos[pos2].Offset2 );
+						sprintf( buffer, "%s:\t\t\tEQU\t%d\n", liblvos[pos2].Name2, liblvos[pos2].Offset2 );
 					}
 					else if ( len < 16 )
 					{
-						sprintf( SaveLineBuffer, "%s:\t\tEQU\t%d\n", liblvos[pos2].Name2, liblvos[pos2].Offset2 );
+						sprintf( buffer, "%s:\t\tEQU\t%d\n", liblvos[pos2].Name2, liblvos[pos2].Offset2 );
 					}
 					else if ( len < 24 )
 					{
-						sprintf( SaveLineBuffer, "%s:\tEQU\t%d\n", liblvos[pos2].Name2, liblvos[pos2].Offset2 );
+						sprintf( buffer, "%s:\tEQU\t%d\n", liblvos[pos2].Name2, liblvos[pos2].Offset2 );
 					}
 					else
 					{
-						sprintf( SaveLineBuffer, "%s: EQU\t%d\n", liblvos[pos2].Name2, liblvos[pos2].Offset2 );
+						sprintf( buffer, "%s: EQU\t%d\n", liblvos[pos2].Name2, liblvos[pos2].Offset2 );
 					}
 
-					fs = RS4SaveWriteString( & ec, SaveLineBuffer, strlen( SaveLineBuffer ));
-
-					if ( fs != RS4FuncStat_Okay )
+					if ( __Buf_WriteString( in, buffer, strlen( buffer )))
 					{
-						// ec allready set
-
 						#ifdef DEBUG
-						printf( "%s:%04d: Error Writting Exec Data\n", __FILE__, __LINE__ );
+						printf( "%s:%04d: Error : AmigaOS3_SaveLibFunc : 2 :\n", __FILE__, __LINE__ );
 						#endif
-
 						goto bailout;
 					}
 				}
@@ -312,17 +309,9 @@ S32 len;
 		pos1++;
 	}
 
-	// --
-
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
+	error = FALSE;
 
 bailout:
 
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
+	return( error );
 }

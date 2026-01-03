@@ -28,6 +28,8 @@ U32 size;
 MEM mem;
 S64 adr;
 
+	ds = RS4DecodeStat_Error;
+
 	mem = rt->rt_CurMemBuf;
 
 	rt->rt_CPU.M68k.mt_DoLabelSize	= FALSE;
@@ -63,7 +65,7 @@ S64 adr;
 			rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 			rt->rt_CPU.M68k.mt_OpcodeSize = 4;
 
-			rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Code );
+			ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Code ))
 			break;
 		}
 
@@ -88,7 +90,7 @@ S64 adr;
 			rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 			rt->rt_CPU.M68k.mt_OpcodeSize = 6;
 
-			rl = RS4AddLabel_File( & ec, rt->rt_File, adr, RS4LabelType_Code, __FILE__ );
+			ERR_CHK( RS4AddLabel_File( & ec, & rl, rt->rt_File, adr, RS4LabelType_Code, __FILE__ ))
 			break;
 		}
 
@@ -113,7 +115,7 @@ S64 adr;
 			rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 			rt->rt_CPU.M68k.mt_OpcodeSize = 2;
 
-			rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Code );
+			ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Code ))
 			break;
 		}
 	}
@@ -133,19 +135,7 @@ S64 adr;
 
 	if ( rl )
 	{
-		fs = RS4BuildLabelString( & ec, rl, rt->rt_Container.Hunk.ms_Buf_Argument );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-			ds = RS4DecodeStat_Error;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, rt->rt_Container.Hunk.ms_Buf_Argument );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4BuildLabelString( & ec, rl, rt->rt_Container.Hunk.ms_Buf_Argument ))
 	}
 	else
 	{

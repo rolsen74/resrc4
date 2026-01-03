@@ -70,36 +70,14 @@ U32 opmode;
 
 	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 
 	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	M68k_Set_Cur_to_Unknown( rt );
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
@@ -148,18 +126,7 @@ S32 Dr;
 
 	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
@@ -176,54 +143,21 @@ S32 Dr;
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 		}
 		else
 		{
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dr;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
 
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
 		}
@@ -237,18 +171,7 @@ S32 Dr;
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 		}
 		else
 		{
@@ -257,36 +180,14 @@ S32 Dr;
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dr;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
 
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
 		}
@@ -336,18 +237,7 @@ S32 Dr;
 
 	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
@@ -364,54 +254,21 @@ S32 Dr;
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 		}
 		else
 		{
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dr;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
 
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
 		}
@@ -425,18 +282,7 @@ S32 Dr;
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 		}
 		else
 		{
@@ -445,36 +291,14 @@ S32 Dr;
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dr;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
 
 			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
 		}

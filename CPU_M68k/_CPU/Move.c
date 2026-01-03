@@ -21,6 +21,7 @@ enum RS4DecodeStat M68kCmd_MOVE( enum RS4ErrorCode *errcode, RS4Trace *rt )
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 U32 size;
 MEM mem;
 
@@ -44,18 +45,7 @@ struct AmigaOS3_Misc_Move_GetSetStruct gss;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			// --
 
@@ -64,18 +54,7 @@ struct AmigaOS3_Misc_Move_GetSetStruct gss;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			// --
 
@@ -95,18 +74,7 @@ struct AmigaOS3_Misc_Move_GetSetStruct gss;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			// --
 
@@ -115,18 +83,7 @@ struct AmigaOS3_Misc_Move_GetSetStruct gss;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			// --
 
@@ -150,34 +107,11 @@ struct AmigaOS3_Misc_Move_GetSetStruct gss;
 			mem = & rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize ];
 			#endif
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			#ifdef SUPPORT_AMIGAOS3
 			{
-				enum RS4FuncStat fs = AmigaOS3_Misc_Move_Get( & ec, rt, rt->rt_CPU.M68k.mt_CurRegister, mem, & gss );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( AmigaOS3_Misc_Move_Get( & ec, rt, rt->rt_CPU.M68k.mt_CurRegister, mem, & gss ))
 			}
 			#endif
 
@@ -190,34 +124,11 @@ struct AmigaOS3_Misc_Move_GetSetStruct gss;
 
 			mem = & rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize ];
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			#ifdef SUPPORT_AMIGAOS3
 			{
-				enum RS4FuncStat fs = AmigaOS3_Misc_Move_Set( & ec, rt, rt->rt_CPU.M68k.mt_CurRegister, mem, & gss );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( AmigaOS3_Misc_Move_Set( & ec, rt, rt->rt_CPU.M68k.mt_CurRegister, mem, & gss ))
 			}
 			#endif
 
@@ -266,18 +177,7 @@ enum RS4ErrorCode ec;
 
 	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "CCR" );
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
@@ -311,18 +211,7 @@ S32 pos;
 
 	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
 	sprintf( & rt->rt_Container.Hunk.ms_Buf_Argument[ pos ], ",CCR" );
@@ -360,18 +249,7 @@ enum RS4ErrorCode ec;
 
 	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "SR" );
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
@@ -405,18 +283,7 @@ S32 pos;
 
 	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
 	sprintf( & rt->rt_Container.Hunk.ms_Buf_Argument[ pos ], ",SR" );

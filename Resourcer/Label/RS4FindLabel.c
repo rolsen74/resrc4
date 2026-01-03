@@ -17,14 +17,21 @@
 
 // --
 
-RS4Label *RS4FindLabel_File( RS4FileHeader *fh, S64 addr, STR file )
+enum RS4FuncStat RS4FindLabel_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, RS4Label **rl_ptr, S64 addr, STR file )
 {
+enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *rl;
 U32 hash;
 
+	rl = NULL;
+
+	ec = RS4ErrStat_Okay;
+	fs = RS4FuncStat_Okay;
+
 	if ( ! addr )
 	{
-		return( NULL );
+		goto bailout;
 	}
 
 	hash = ( (U64) addr ) % MAX_LAB_HASH;
@@ -59,7 +66,19 @@ U32 hash;
 	}
 	#endif
 
-	return(	rl );
+bailout:
+
+	if ( rl_ptr )
+	{
+		*rl_ptr = rl;
+	}
+
+	if ( errcode )
+	{
+		*errcode = ec;
+	}
+
+	return(	fs );
 }
 
 // --

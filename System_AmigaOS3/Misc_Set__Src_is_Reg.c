@@ -30,6 +30,7 @@ enum RS4ErrorCode Misc_Set__Src_is_Reg(
 struct M68kRegister *src_reg;
 struct M68kRegister *mr;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *src_rl;
 RS4Label *dst_rl;
 
@@ -71,7 +72,7 @@ RS4Label *dst_rl;
 			S16 off = (( mem[0] << 8 ) | ( mem[1] << 0 ));
 			S64 adr = mr->mr_Label->rl_Address + off;
 
-			dst_rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+			ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & dst_rl, adr, __FILE__ ))
 		}
 
 		DDEBUG( printf( "write : 35.3.1 : Reg -> Label : dst_rl %p\n", dst_rl ); )
@@ -84,7 +85,7 @@ RS4Label *dst_rl;
 
 		U32 val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
 
-		dst_rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
+		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & dst_rl, val, __FILE__ ))
 
 		DDEBUG( printf( "write : 35.4.1 : Reg -> Label : dst_rl %p\n", dst_rl ); )
 	}
@@ -201,7 +202,7 @@ RS4Label *dst_rl;
 
 	ec = RS4ErrStat_Okay;
 
-// mbailout:
+bailout:
 
 	return( ec );
 }

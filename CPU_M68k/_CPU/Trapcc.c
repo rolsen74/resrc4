@@ -76,19 +76,7 @@ S32 size;
 			rt->rt_CPU.M68k.mt_OpcodeSize = 6;
 			rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Long;
 
-			fs = RS4BuildLabelString2( & ec, rt, labname, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize, val );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-				ds = RS4DecodeStat_Error;
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4BuildLabelString2( & ec, rt, labname, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize, val ))
 
 			snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "#%s", labname );
 			break;

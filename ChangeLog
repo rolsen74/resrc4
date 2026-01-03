@@ -257,3 +257,23 @@ ReSrc4 v2.17 ( 14-Dec-2025 )
 - Added (xxx,pc) mode for move Label/Pointer types. Too track Lib Bases
 
 - Fixed a SegFault in AmigaOS3_Misc_Move_Get() function.
+
+
+ReSrc4 v2.18 ( 03-Jan-2026 )
+
+- Added RexxApp library detection.
+
+- Added ERR_CHK() and EA_CHK() macros to make the source code more readable,
+  and to help track down a segmentation fault that disappeared when debug
+  was enabled.
+
+- Added support for splitting the output file into multiple section files.
+  Use --secsplit to split the source output into multiple files.
+
+- Added the --secxdef option to emit xdef symbols for each section.
+  Since this can add many extra lines, it is disabled by default.
+
+- Fixed: Finally found it. I was reading memory from an offset of an offset,
+  which caused reads outside the allocated memory block. This one was
+  particularly hard to find — enabling gdb/DEBUG would not trigger the bug,
+  and using Printf() would only trigger it about 1 out of 10 times.

@@ -29,6 +29,7 @@ enum RS4ErrorCode Misc_Set__Src_is_Exec(
 struct M68kRegister *dst_reg;
 struct M68kRegister *mr;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *dst_rl;
 
 	ec = RS4ErrStat_Error;
@@ -59,7 +60,7 @@ RS4Label *dst_rl;
 
 		U32 val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
 
-		dst_rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
+		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & dst_rl, val, __FILE__ ))
 	}
 
 	// Dst is (xxx,Ax)
@@ -74,7 +75,7 @@ RS4Label *dst_rl;
 			S16 off = (( mem[0] << 8 ) | ( mem[1] << 0 ));
 			S64 adr = mr->mr_Label->rl_Address + off;
 
-			dst_rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+			ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & dst_rl, adr, __FILE__ ))
 		}
 	}
 
@@ -160,7 +161,7 @@ RS4Label *dst_rl;
 
 	ec = RS4ErrStat_Okay;
 
-// bailout:
+bailout:
 
 	return( ec );
 }

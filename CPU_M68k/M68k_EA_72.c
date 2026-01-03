@@ -44,23 +44,11 @@ S32 pos;
 	{
 		// We can get away with AddLabel2, as this is a PC function, 
 		// so we can handle Labels out side Hunk Memory area
-		rl = RS4AddLabel_Sec( NULL, rt->rt_Section, adr, RS4LabelType_Unset );
+		ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 	}
 	else
 	{
-		rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
-
-		if ( ! rl )
-		{
-			ec = RS4ErrStat_Error;
-			ds = RS4DecodeStat_Error;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error finding label at %08x\n", __FILE__, __LINE__, adr );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 	}
 
 	// --
@@ -138,18 +126,7 @@ S32 pos;
 	{
 		if (( rl ) && ( rl->rl_Name[0] ))
 		{
-			fs = RS4BuildLabelString( & ec, rl, labname );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 			sprintf( outstr, "(%s,PC)", labname );
 		}

@@ -132,14 +132,14 @@ RS4Ref *isRef;
 	ec	= RS4ErrStat_Error;
 	fs	= RS4FuncStat_Error;
 
-	isRef = RS4FindRef_Sec( rt->rt_Section, adr );
+	ERR_CHK( RS4FindRef_Sec( & ec, & isRef, rt->rt_Section, adr ))
 
 	if ( isRef )
 	{
 		isRef->rr_Handled = TRUE;
 
 		// if there is a Ref then the a label have been added
-		rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
+		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, val, __FILE__ ))
 
 		if ( ! rl )
 		{
@@ -154,18 +154,7 @@ RS4Ref *isRef;
 
 		if ( rl->rl_Name[0] )
 		{
-			fs = RS4BuildLabelString( & ec, rl, buf );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4BuildLabelString( & ec, rl, buf ))
 		}
 		else
 		{
@@ -301,13 +290,15 @@ S32 c;
 
 // --
 
-RS4Label *RS4AddExtLabel( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr )
+enum RS4FuncStat RS4AddExtLabel( enum RS4ErrorCode *errcode, RS4Label **rl_ptr, RS4FileHeader *fh, S64 addr )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *new;
 RS4Label *rl;
 
 	ec = RS4ErrStat_Error;
+	fs = RS4FuncStat_Okay;
 	rl = RS4GetTail( & fh->rfh_ExtLabelList );
 
 	while( rl )
@@ -337,7 +328,8 @@ RS4Label *rl;
 
 	if ( ! new )
 	{
-		ec	= RS4ErrStat_OutOfMemory;
+		fs = RS4FuncStat_Error;
+		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
 		printf( "%s:%04d: Error allocating Memory (%d Bytes)\n", __FILE__, __LINE__, (S32) sizeof( RS4Label ));
@@ -364,7 +356,7 @@ RS4Label *rl;
 
 	// --
 
-	ec	= RS4ErrStat_Okay;
+	ec = RS4ErrStat_Okay;
 
 	// --
 
@@ -377,7 +369,12 @@ bailout:
 		*errcode = ec;
 	}
 
-	return(	new );
+	if ( rl_ptr )
+	{
+		*rl_ptr = new;
+	}
+
+	return(	fs );
 }
 
 // --
@@ -567,7 +564,7 @@ S32 cnt;
 		val32 = READ_U32();
 		size = (( val32 & 0x7fffffff ) << 2 );
 
-		sec = RS4AllocSection( & ec, cnt, size );
+		ERR_CHK( RS4AllocSection( & ec, & sec, cnt, size ))
 
 		if ( ! sec )
 		{
@@ -802,7 +799,7 @@ S32 cnt;
 						*DestMemory	= SWAP32( val32 );
 
 						// This is where the it points to, we need a public label
-						rl = RS4AddLabel_Sec( & ec, TargetSec, val32, RS4LabelType_Unset );
+						ERR_CHK( RS4AddLabel_Sec( & ec, & rl, TargetSec, val32, RS4LabelType_Unset ))
 
 						if ( ! rl )
 						{
@@ -817,9 +814,14 @@ S32 cnt;
 							goto bailout;
 						}
 
+						if ( current->rfs_SecNr != TargetSec->rfs_SecNr )
+						{
+							rl->rl_xDef = TRUE;
+						}
+
 						// This is where the code/data points from
 						// We need the info, when dealing with Data areas
-						rr = RS4AddRef_Sec( & ec, current, offset );
+						ERR_CHK( RS4AddRef_Sec( & ec, & rr, current, offset ))
 
 						if ( ! rr )
 						{
@@ -935,7 +937,7 @@ S32 cnt;
 						offset += current->rfs_MemoryAdr;
 
 						// Create Label in current Section (and set name right after)
-						rl = RS4AddLabel_Sec( & ec, current, offset, RS4LabelType_Unset );
+						ERR_CHK( RS4AddLabel_Sec( & ec, & rl, current, offset, RS4LabelType_Unset ))
 
 						if ( ! rl )
 						{
@@ -950,18 +952,9 @@ S32 cnt;
 							goto bailout;
 						}
 
-						fs = RS4SetLabelName( & ec, fh, rl, hps.pos*4, val32*4 );
+						rl->rl_xDef = TRUE;
 
-						if ( fs != RS4FuncStat_Okay )
-						{
-							// ec allready set
-
-							#ifdef DEBUG
-							printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-							#endif
-
-							goto bailout;
-						}
+						ERR_CHK( RS4SetLabelName( & ec, fh, rl, hps.pos*4, val32*4 ))
 					}
 
 					hps.pos += val32;	// Skip Name
@@ -1056,7 +1049,7 @@ S32 cnt;
 						*DestMemory	= SWAP32( val32 );
 
 						// This is where the it points to, we need a public label
-						rl = RS4AddLabel_Sec( & ec, TargetSec, val32, RS4LabelType_Unset );
+						ERR_CHK( RS4AddLabel_Sec( & ec, & rl, TargetSec, val32, RS4LabelType_Unset ))
 
 						if ( ! rl )
 						{
@@ -1071,9 +1064,14 @@ S32 cnt;
 							goto bailout;
 						}
 
+						if ( current->rfs_SecNr != TargetSec->rfs_SecNr )
+						{
+							rl->rl_xDef = TRUE;
+						}
+
 						// This is where the code/data points from
 						// We need the info, when dealing with Data areas
-						rr = RS4AddRef_Sec( & ec, current, offset );
+						ERR_CHK( RS4AddRef_Sec( & ec, & rr, current, offset ))
 
 						if ( ! rr )
 						{
@@ -1171,7 +1169,7 @@ S32 cnt;
 						*DestMemory	= SWAP32( ( val32 - current->rfs_MemoryAdr - offset ) );
 
 						// Possible Section jump
-						rl = RS4AddLabel_File( & ec, fh, val32, RS4LabelType_Unset, __FILE__ );
+						ERR_CHK( RS4AddLabel_File( & ec, & rl, fh, val32, RS4LabelType_Unset, __FILE__ ))
 
 						if ( ! rl )
 						{
@@ -1186,9 +1184,14 @@ S32 cnt;
 							goto bailout;
 						}
 
+						if ( current->rfs_SecNr != TargetSec->rfs_SecNr )
+						{
+							rl->rl_xDef = TRUE;
+						}
+
 						// This is where the code/data points from
 						// We need the info, when dealing with Data areas
-						rr = RS4AddRef_Sec( & ec, current, offset );
+						ERR_CHK( RS4AddRef_Sec( & ec, & rr, current, offset ))
 
 						if ( ! rr )
 						{

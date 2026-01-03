@@ -185,26 +185,14 @@ S32 cnt;
 
 		case TYPE_String:
 		{
-			Mark_NulString( rl );
+			ERR_CHK( Mark_NulString( & ec, rl ))
 			rl->rl_UserLocked = TRUE;
 			break;
 		}
 
 		case TYPE_Struct:
 		{
-			fs = Mark_Struct( & ec, rl, myTypes[cnt].Value, __FILE__ );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				if ( DoVerbose > 2 )
-				{
-					printf( "%s:%04d: Error marking Struct (%d)\n", __FILE__, __LINE__, myTypes[cnt].Value );
-				}
-
-				goto bailout;
-			}
+			ERR_CHK( Mark_Struct( & ec, rl, myTypes[cnt].Value, __FILE__ ))
 
 			rl->rl_UserLocked = TRUE;
 			break;
@@ -497,50 +485,11 @@ S32 pos;
 		pos++;
 	}
 
-	fs = RS4ReadAddress( & ec, buf, & pos, & tabel_adr );
+	ERR_CHK( RS4ReadAddress( & ec, buf, & pos, & tabel_adr ))
 
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
+	ERR_CHK( RS4ReadAddress( & ec, buf, & pos, & relative_adr ))
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Line %d : Relative16 : Error reading address\n", __FILE__, __LINE__, linenr );
-		#else
-		printf( "Line %d : Relative16 : Error reading address\n", linenr );
-		#endif
-
-		goto bailout;
-	}
-
-	fs = RS4ReadAddress( & ec, buf, & pos, & relative_adr );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Line %d : Relative16 : Error reading address\n", __FILE__, __LINE__, linenr );
-		#else
-		printf( "Line %d : Relative16 : Error reading address\n", linenr );
-		#endif
-
-		goto bailout;
-	}
-
-	fs = RS4ReadNumber( & ec, buf, & pos, & entries );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Line %d : Relative16 : Error reading number\n", __FILE__, __LINE__, linenr );
-		#else
-		printf( "Line %d : Relative16 : Error reading number\n", linenr );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4ReadNumber( & ec, buf, & pos, & entries ))
 
 	js = RS4JumpTable_Rel16( & ec, exefile, tabel_adr, relative_adr, entries );
 
@@ -614,16 +563,9 @@ S32 pos;
 		pos++;
 	}
 
-	fs = RS4ReadAddress( & ec, buf, & pos, & adr );
+	ERR_CHK( RS4ReadAddress( & ec, buf, & pos, & adr ))
 
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-		printf( "Line %d : LabelName : Error reading address\n", linenr );
-		goto bailout;
-	}
-
-	rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Unset, __FILE__ );
+	ERR_CHK( RS4AddLabel_File( & ec, & rl, exefile, adr, RS4LabelType_Unset, __FILE__ ))
 
 	if ( ! rl )
 	{
@@ -633,14 +575,7 @@ S32 pos;
 		goto bailout;
 	}
 
-	fs = RS4ReadString( & ec, buf, & pos, rl->rl_Name, MAX_LabelName );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-		printf( "Line %d : LabelName : Error reading string\n", linenr );
-		goto bailout;
-	}
+	ERR_CHK( RS4ReadString( & ec, buf, & pos, rl->rl_Name, MAX_LabelName ))
 
 	while(( buf[pos] == 9 ) || ( buf[pos] == 32 ))
 	{
@@ -669,14 +604,7 @@ S32 pos;
 				p++;
 			}
 
-			fs = RS4SetType( & ec, rl, buf, & p );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-				printf( "Line %d : LabelName : Error setting label type at $%08" PRIx64 "\n", linenr, adr );
-				goto bailout;
-			}
+			ERR_CHK( RS4SetType( & ec, rl, buf, & p ))
 
 			while(( buf[p] == 9 ) || ( buf[p] == 32 ))
 			{
@@ -740,16 +668,9 @@ S32 pos;
 		pos++;
 	}
 
-	fs = RS4ReadAddress( & ec, buf, & pos, & adr );
+	ERR_CHK( RS4ReadAddress( & ec, buf, & pos, & adr ))
 
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-		printf( "Line %d : LabelType : Error reading address\n", linenr );
-		goto bailout;
-	}
-
-	rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Unset, __FILE__ );
+	ERR_CHK( RS4AddLabel_File( & ec, & rl, exefile, adr, RS4LabelType_Unset, __FILE__ ))
 
 	if ( ! rl )
 	{
@@ -790,7 +711,7 @@ S32 pos;
 			goto bailout;
 		}
 
-		rl = RS4AddLabel_File( & ec, exefile, adr, RS4LabelType_Pointer, __FILE__ );
+		ERR_CHK( RS4AddLabel_File( & ec, & rl, exefile, adr, RS4LabelType_Pointer, __FILE__ ))
 
 		if ( ! rl )
 		{
@@ -800,14 +721,7 @@ S32 pos;
 			goto bailout;
 		}
 
-		fs = RS4SetType( & ec, rl, buf, & pos );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-			printf( "Line %d : LabelType : Error Unsupported Command Argument at $%08" PRIx64 "\n", linenr, adr );
-			goto bailout;
-		}
+		ERR_CHK( RS4SetType( & ec, rl, buf, & pos ))
 	}
 	else
 	{
@@ -952,21 +866,9 @@ S32 pos;
 		pos++;
 	}
 
-	fs = RS4ReadAddress( & ec, buf, & pos, & adr );
+	ERR_CHK( RS4ReadAddress( & ec, buf, & pos, & adr ))
 
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Line %d : Code : Reading address failed (%d)\n", __FILE__, __LINE__, linenr, ec );
-		#endif
-
-//		printf( "Line %d : Code : Error reading address\n", linenr );
-		goto bailout;
-	}
-
-	rb = RS4AddBrance_File( & ec, exefile, adr );
+	ERR_CHK( RS4AddBrance_File( & ec, & rb, exefile, adr ))
 
 	if ( ! rb )
 	{
@@ -1090,7 +992,7 @@ S32 len;
 		pos++;
 	}
 
-	sec = RS4FindSection_File( exefile, adr );
+	ERR_CHK( RS4FindSection_File( & ec, & sec, exefile, adr ))
 
 	if ( ! sec )
 	{
@@ -1292,11 +1194,6 @@ S32 err;
 		{
 			ec = RS4ErrStat_OpeningFile;
 		}
-
-		#ifdef DEBUG
-		printf( "Debug: Error opening file '%s' (%d)\n", ConfigFile, ec );
-		#endif
-
 		goto bailout;
 	}
 
@@ -1489,30 +1386,26 @@ S32 cnt;
 
 			if ( cmds[cnt].func )
 			{
-				fs = cmds[cnt].func( cfgfile, exefile, & ec, & mem[pos], linenr );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Command Error (%d)\n", __FILE__, __LINE__, ec );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( cmds[cnt].func( cfgfile, exefile, & ec, & mem[pos], linenr ))
 			}
-			#ifdef DEBUG
 			else
 			{
 				printf( "Skipping : LineNr %d : '", linenr );
-				for( S32 ii=0 ; ii<len ; ii++ )
+				S32 ii = 0, ll = 10, c;
+				while( ll > 0 )
 				{
-					printf( "%c", mem[pos+ii] );
+					c = mem[pos+ii];
+
+					if (( c < 32 ) || ( c > 127 ))
+					{
+						break;
+					}
+
+					printf( "%c", c );
+					ii++;
 				}
 				printf( "'\n" );
 			}
-			#endif
 		}
 	}
 
@@ -1553,6 +1446,7 @@ bailout:
 static S32 RS4BuildConfigName( enum RS4ErrorCode *errcode )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 S32 err;
 S32 stat;
 S32 len;
@@ -1570,7 +1464,7 @@ S32 len;
 		if ((( len > 4 ) && ( ! strncasecmp( & InputFile[ len - 4 ], ".exe", 4 )))
 		||  (( len > 4 ) && ( ! strncasecmp( & InputFile[ len - 4 ], ".bin", 4 ))))
 		{
-			ConfigFile = RS4Strdup( InputFile );
+			ERR_CHK( RS4Strdup( & ConfigFile, InputFile ))
 
 			if ( ! ConfigFile )
 			{
@@ -1655,7 +1549,7 @@ S32 loaded;
 	// --
 	// -- Load config file
 
-	cfgfile = RS4LoadFile( & ec, ConfigFile );
+	ERR_CHK( RS4LoadFile( & ec, & cfgfile, ConfigFile ))
 
 	if (( ! cfgfile ) && ( ec == RS4ErrStat_FileNotFound ))
 	{
@@ -1709,7 +1603,7 @@ S32 loaded;
 		}
 
 		// -- Now load Config file
-		cfgfile = RS4LoadFile( & ec, ConfigFile );
+		ERR_CHK( RS4LoadFile( & ec, & cfgfile, ConfigFile ))
 	}
 	else
 	{

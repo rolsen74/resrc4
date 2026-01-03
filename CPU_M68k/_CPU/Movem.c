@@ -157,59 +157,15 @@ enum RS4ErrorCode ec;
 
 	if ( rt->rt_CPU.M68k.mt_Opcode & 0x04000000 )
 	{
-		ds = M68k_EffectiveAddress( & ec, rt );
+		EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
-		if ( ds != RS4DecodeStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
-
-		ds = RegMask( & ec, rt );
-
-		if ( ds != RS4DecodeStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		EA_CHK( RegMask( & ec, rt ))
 	}
 	else
 	{
-		ds = RegMask( & ec, rt );
+		EA_CHK( RegMask( & ec, rt ))
 
-		if ( ds != RS4DecodeStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
-
-		ds = M68k_EffectiveAddress( & ec, rt );
-
-		if ( ds != RS4DecodeStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 	}
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;

@@ -18,22 +18,20 @@
 // --
 // The _File version need the Address to be inside Section
 
-RS4Label *RS4AddLabel_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 addr, enum RS4LabelType type, STR file )
+enum RS4FuncStat RS4AddLabel_File( enum RS4ErrorCode *errcode, RS4Label **rl_ptr, RS4FileHeader *fh, S64 addr, enum RS4LabelType type, STR file )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4FileSection *sec;
 RS4Label *new;
 S64 memadr;
 S32 cnt;
 
+	fs = RS4FuncStat_Okay;
+
 	if ( ! addr )
 	{
-		return( NULL );
-	}
-
-	if ( addr == 0x00081e1a )
-	{
-printf( "!123\n" );
+		goto bailout;
 	}
 
 	// --
@@ -83,7 +81,7 @@ printf( "!123\n" );
 	// --
 
 	sec = fh->rfh_SecArray[cnt].rsi_Section;
-	new = RS4AddLabel_Sec( & ec, sec, addr, type );
+	ERR_CHK( RS4AddLabel_Sec( & ec, & new, sec, addr, type ))
 
 bailout:
 
@@ -94,7 +92,12 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( new );
+	if ( rl_ptr )
+	{
+		*rl_ptr = new;
+	}
+
+	return( fs );
 }
 
 // --

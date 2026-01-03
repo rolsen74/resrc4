@@ -38,6 +38,8 @@ CHR labname[ MAX_LabelName + 8 ];
 		"DBge.w", "DBlt.w", "DBgt.w", "DBle.w"
 	};
 
+	ds = RS4DecodeStat_Error;
+
 	rt->rt_CPU.M68k.mt_DoLabelSize	= FALSE;
 
 	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x0f000000 ) >> 24;
@@ -57,7 +59,7 @@ CHR labname[ MAX_LabelName + 8 ];
 	// --
 
 //	rl = RS4AddLabel_File( rt->rt_File, adr, RS4LabelType_Unset, __FILE__ );
-	rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Code );
+	ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Code ))
 
 	if ( rl )
 	{
@@ -73,19 +75,7 @@ CHR labname[ MAX_LabelName + 8 ];
 //	if (( rl ) && ( rl->rl_Name[0] ))
 	if ( rl )
 	{
-		fs = RS4BuildLabelString( & ec, rl, labname );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-			ds = RS4DecodeStat_Error;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,%s", Dx_RegNames[reg], labname );
 	}

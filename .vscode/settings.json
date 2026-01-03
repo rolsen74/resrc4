@@ -1,32 +1,36 @@
 {
-	"editor.indentSize": "tabSize",
+	"editor.renderControlCharacters": true,
+	"editor.quickSuggestionsDelay": 500,
 	"editor.detectIndentation": true,
+	"editor.renderWhitespace": "all",
 	"editor.insertSpaces": false,
+	"editor.hover.delay": 1000,
+	"editor.indentSize": "tabSize",
 	"editor.tabSize": 4,
 	"files.eol": "\n",
 	"[c]": {
-	  "editor.detectIndentation": false,
-	  "editor.insertSpaces": false,
-	  "editor.tabSize": 4,
-	  "files.eol": "\n"
+		"editor.detectIndentation": false,
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4,
+		"files.eol": "\n"
 	},
 	"[makefile]": {
-	  "editor.detectIndentation": false,
-	  "editor.insertSpaces": false,
-	  "editor.tabSize": 4,
-	  "files.eol": "\n"
+		"editor.detectIndentation": false,
+		"editor.insertSpaces": false,
+		"editor.tabSize": 4,
+		"files.eol": "\n"
 	},
 	"[plaintext]": {
-	  "editor.suggestOnTriggerCharacters": false,
-	  "editor.quickSuggestions": {
+		"editor.suggestOnTriggerCharacters": false,
+		"editor.quickSuggestions": {
 		"comments": "off",
 		"strings": "off",
 		"other": "off"
-	  },
-	  "editor.detectIndentation": false,
-	  "editor.insertSpaces": false,
-	  "editor.tabSize": 8,
-	  "files.eol": "\n"
+	},
+		"editor.detectIndentation": false,
+		"editor.insertSpaces": false,
+		"editor.tabSize": 8,
+		"files.eol": "\n"
 	},
 	"files.associations": {
 		"*.vma": "plaintext",
@@ -38,9 +42,9 @@
 		"*.c": "c"
 	},
 	"editor.quickSuggestions": {
-	  "comments": false,
-	  "strings": false,
-	  "other": false
+		"comments": false,
+		"strings": false,
+		"other": false
 	},
 	"editor.inlineSuggest.enabled": false
-  }
+}

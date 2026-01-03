@@ -54,6 +54,7 @@ static struct myLibType myLibs[] =
 { AOS3_LibType_MathieeesingtransBase,	"mathieeesingtrans.library" },
 { AOS3_LibType_MathtransBase,			"mathtrans.library" },
 { AOS3_LibType_NonvolatileBase,			"nonvolatile.library" },
+{ AOS3_LibType_RexxappBase,				"rexxapp.library" },
 { AOS3_LibType_RexxsyslibBase,			"rexxsyslib.library" },
 { AOS3_LibType_TranslatorBase,			"translator.library" },
 { AOS3_LibType_UtilityBase,				"utility.library" },
@@ -68,6 +69,7 @@ enum RS4DecodeStat AOS3_Exec_OpenLibrary_Func( enum RS4ErrorCode *errcode, RS4Tr
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *rl;
 STR buf;
 S32 pos;
@@ -95,7 +97,7 @@ S32 pos;
 		goto bailout;
 	}
 
-	Mark_NulString( rl );
+	ERR_CHK( Mark_NulString( & ec, rl ))
 
 	pos = 0;
 

@@ -22,6 +22,7 @@ enum RS4DecodeStat MODE_70( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *rl;
 MEM mem;
 S16 val;
@@ -41,9 +42,7 @@ S32 pos;
 
 	if ( rt->rt_CPU.M68k.mt_DoExternal )
 	{
-		rl = RS4AddExtLabel( NULL, rt->rt_File, val );
-
-		// rwo: why no check??
+		ERR_CHK( RS4AddExtLabel( & ec, & rl, rt->rt_File, val ))
 
 		if ( rt->rt_Pass != RS4TracePass_Trace )
 		{
@@ -95,7 +94,7 @@ S32 pos;
 
 	// --
 
-// bailout:
+bailout:
 
 	if ( errcode )
 	{

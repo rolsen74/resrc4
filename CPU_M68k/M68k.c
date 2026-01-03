@@ -1084,7 +1084,6 @@ MEM mem;
 
 	#endif
 
-
 	// --
 	mem = rt->rt_CurMemBuf;
 

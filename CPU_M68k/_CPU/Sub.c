@@ -37,36 +37,14 @@ S32 opmode;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			M68k_Set_Cur_to_Unknown( rt );
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
@@ -83,36 +61,14 @@ S32 opmode;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			M68k_Set_Cur_to_Unknown( rt );
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
@@ -129,36 +85,14 @@ S32 opmode;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			M68k_Set_Cur_to_Unknown( rt );
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
@@ -177,36 +111,14 @@ S32 opmode;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 			rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			M68k_Set_Cur_to_Unknown( rt );
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
@@ -223,36 +135,14 @@ S32 opmode;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 			rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			M68k_Set_Cur_to_Unknown( rt );
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
@@ -269,36 +159,14 @@ S32 opmode;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 			rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
 			rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
 
-			ds = M68k_EffectiveAddress( & ec, rt );
-
-			if ( ds != RS4DecodeStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 			M68k_Set_Cur_to_Unknown( rt );
 			rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;

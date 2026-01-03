@@ -21,10 +21,12 @@ S64 RS4CurrentVirtAdr;
 
 // --
 
-void RS4FreeSection( enum RS4ErrorCode *errcode, RS4FileSection *sec )
+enum RS4FuncStat RS4FreeSection( enum RS4ErrorCode *errcode, RS4FileSection *sec )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 
+	fs = RS4FuncStat_Okay;
 	ec = RS4ErrStat_Error;
 
 	if ( sec )
@@ -73,18 +75,22 @@ bailout:
 	{
 		*errcode = ec;
 	}
+
+	return( fs );
 };
 
 // --
 
-RS4FileSection *RS4AllocSection( enum RS4ErrorCode *errcode, S32 secnr, S64 memsize )
+enum RS4FuncStat RS4AllocSection( enum RS4ErrorCode *errcode, RS4FileSection **sec_ptr, S32 secnr, S64 memsize )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4FileSection *sec;
 
 //	printf( "RS4AllocSection : SrcNr #%d : MemSize %ld\n", secnr, memsize );
 
 	ec = RS4ErrStat_Error;
+	fs = RS4FuncStat_Okay;
 
 	sec = calloc( 1, sizeof( RS4FileSection ));
 
@@ -164,20 +170,30 @@ bailout:
 		*errcode = ec;
 	}
 
-	return(	sec );
+	if ( sec_ptr )
+	{
+		*sec_ptr = sec;
+	}
+
+	return(	fs );
 }
 
 // --
 
-RS4FileSection *RS4FindSection_File( RS4FileHeader *fh, S64 addr )
+enum RS4FuncStat RS4FindSection_File( enum RS4ErrorCode *errcode, RS4FileSection **sec_ptr, RS4FileHeader *fh, S64 addr )
 {
+enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4FileSection *sec;
 S64 memadr;
 S32 cnt;
 
+	ec = RS4ErrStat_Okay;
+	fs = RS4FuncStat_Okay;
+
 	if ( ! addr )
 	{
-		return( NULL );
+		goto bailout;
 	}
 
 	for( cnt=0 ; cnt<fh->rfh_SecArraySize ; cnt++ )
@@ -218,7 +234,19 @@ S32 cnt;
 	}
 	#endif
 
-	return( sec );
+bailout:
+
+	if ( errcode )
+	{
+		*errcode = ec;
+	}
+
+	if ( sec_ptr )
+	{
+		*sec_ptr = sec;
+	}
+
+	return( fs );
 }
 
 // --

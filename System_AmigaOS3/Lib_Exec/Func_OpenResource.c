@@ -42,6 +42,7 @@ enum RS4DecodeStat AOS3_Exec_OpenResource_Func( enum RS4ErrorCode *errcode, RS4T
 {
 enum RS4DecodeStat ds;
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *rl;
 STR buf;
 S32 pos;
@@ -69,7 +70,7 @@ S32 pos;
 		goto bailout;
 	}
 
-	Mark_NulString( rl );
+	ERR_CHK( Mark_NulString( & ec, rl ))
 
 	pos = 0;
 

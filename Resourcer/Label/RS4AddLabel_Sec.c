@@ -18,17 +18,22 @@
 // --
 // The _Sec version can handle addesses out side Sections
 
-RS4Label *RS4AddLabel_Sec( enum RS4ErrorCode *errcode, RS4FileSection *sec, S64 addr, enum RS4LabelType type )
+enum RS4FuncStat RS4AddLabel_Sec( enum RS4ErrorCode *errcode, RS4Label **rl_ptr, RS4FileSection *sec, S64 addr, enum RS4LabelType type )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4FileHeader *fh;
 RS4Label *new;
 RS4Label *rl;
 U32 hash;
 
+	fs = RS4FuncStat_Okay;
+
+	new = NULL;
+
 	if ( ! addr )
 	{
-		return( NULL );
+		goto bailout;
 	}
 
 	new = NULL;
@@ -65,7 +70,7 @@ U32 hash;
 			}
 			else if ( rl->rl_Type1 != type )
 			{
-				printf( "%s:%04d: rl->rl_Address $%08" PRIx64 " (Type: %d)\n", __FILE__, __LINE__, rl->rl_Address, type );
+//				printf( "%s:%04d: rl->rl_Address $%08" PRIx64 " (Type: %d)\n", __FILE__, __LINE__, rl->rl_Address, type );
 				rl->rl_Type1 = RS4LabelType_Unknown;
 				rl->rl_Type2 = 0;
 				rl->rl_Type3 = 0;
@@ -84,6 +89,7 @@ U32 hash;
 
 	if ( ! new )
 	{
+		fs = RS4FuncStat_Error;
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
@@ -105,20 +111,6 @@ U32 hash;
 	{
 		printf( "New Label : Hunk #%d : Address $%08" PRIx64 "\n", sec->rfs_SecNr, addr );
 	}
-
-	#if 0
-	if ( new->rl_Address < sec->rfs_MemoryAdr )
-	{
-		printf( "New label before Section start : LabAdr $%08" PRIx64 ", SecAdr $%08" PRIx64 "\n", 
-		new->rl_Address, sec->rfs_MemoryAdr );
-	}
-
-	if ( sec->rfs_MemorySize < new->rl_Offset )
-	{
-		printf( "New label after Section end : LabAdr $%08" PRIx64 ", SecAdr $%08" PRIx64 "\n", 
-		new->rl_Address, sec->rfs_MemoryAdr+sec->rfs_MemorySize );
-	}
-	#endif
 
 	// Insert node at correct place in the sorted list
 	// Add into File Section
@@ -156,7 +148,12 @@ bailout:
 		*errcode = ec;
 	}
 
-	return(	new );
+	if ( rl_ptr )
+	{
+		*rl_ptr = new;
+	}
+
+	return(	fs );
 }
 
 // --

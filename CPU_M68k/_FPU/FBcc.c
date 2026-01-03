@@ -62,6 +62,8 @@ CHR labname[ MAX_LabelName + 8 ];
 S32 size;
 S32 cond;
 
+	ds = RS4DecodeStat_Error;
+
 	mem  = rt->rt_CurMemBuf;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00400000 );
 	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x003f0000 ) >> 16;
@@ -98,7 +100,7 @@ S32 cond;
 		rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 		rt->rt_CPU.M68k.mt_OpcodeSize = 4;
 
-		rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Code );
+		ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Code ))
 	}
 	else
 	{
@@ -125,7 +127,7 @@ S32 cond;
 		rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 		rt->rt_CPU.M68k.mt_OpcodeSize = 6;
 
-		rl = RS4AddLabel_File( & ec, rt->rt_File, adr, RS4LabelType_Code, __FILE__ );
+		ERR_CHK( RS4AddLabel_File( & ec, & rl, rt->rt_File, adr, RS4LabelType_Code, __FILE__ ))
 	}
 
 	// --
@@ -144,19 +146,7 @@ S32 cond;
 //	if (( rl ) && ( rl->rl_Name[0] ))
 	if ( rl )
 	{
-		fs = RS4BuildLabelString( & ec, rl, labname );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-			ds = RS4DecodeStat_Error;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", labname );
 	}

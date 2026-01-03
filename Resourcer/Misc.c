@@ -17,14 +17,16 @@
 
 // --
 
-STR RS4Strdup( STR string ) 
+enum RS4FuncStat RS4Strdup( STR *strptr, STR string ) 
 {
+enum RS4FuncStat fs;
 STR str;
 S32 len;
 
+	fs = RS4FuncStat_Error;
 	str = NULL;
 
-	if ( string == NULL ) 
+	if ( ! string ) 
 	{
 		goto bailout;
 	}
@@ -33,16 +35,23 @@ S32 len;
 
 	str = malloc( len + 1 );
 
-	if ( str == NULL ) 
+	if ( ! str ) 
 	{
 		goto bailout;
 	}
 
 	strcpy( str, string );
 
+	fs = RS4FuncStat_Okay;
+
 bailout:
 
-	return( str );
+	if ( strptr )
+	{
+		*strptr = str;
+	}
+
+	return( fs );
 }
 
 // -- Init Trace
@@ -182,9 +191,14 @@ S32 pos;
 
 // --
 
-void Mark_Code( RS4Label *rl )
+enum RS4FuncStat Mark_Code( enum RS4ErrorCode *errcode, RS4Label *rl )
 {
+enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4FileSection *sec;
+
+	ec = RS4ErrStat_Okay;
+	fs = RS4FuncStat_Okay;
 
 	// Check we have not been set before
 	if ( rl->rl_Type1 != RS4LabelType_Unset )
@@ -195,12 +209,12 @@ RS4FileSection *sec;
 			// Change rl type, and continue?
 			printf( "Label Allready set with diffrent type\n" );
 			printf( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
-			return;
+			goto bailout;
 		}
 		else
 		{
 			// Same Type, no error
-			return;
+			goto bailout;
 		}
 	}
 
@@ -209,20 +223,31 @@ RS4FileSection *sec;
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
-		return;
+		goto bailout;
 	}
 
 	rl->rl_Type1 = RS4LabelType_Code;
 	rl->rl_Type2 = 0;
 	rl->rl_Type3 = 0;
 
-	RS4AddBrance_File( NULL, sec->rfs_File, rl->rl_Address );
+	ERR_CHK( RS4AddBrance_File( & ec, NULL, sec->rfs_File, rl->rl_Address ))
+
+bailout:
+
+	if ( errcode )
+	{
+		*errcode = ec;
+	}
+
+	return( fs );
 }
 
 // --
 
-void Mark_NulString( RS4Label *rl )
+enum RS4FuncStat Mark_NulString( enum RS4ErrorCode *errcode, RS4Label *rl )
 {
+enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4FileSection *sec;
 MEM type;
 MEM mem;
@@ -230,10 +255,13 @@ S64 off;
 S32 chr;
 S32 len;
 
+	ec = RS4ErrStat_Okay;
+	fs = RS4FuncStat_Okay;
+
 	if ( rl->rl_UserLocked )
 	{
 		// No Error
-		return;
+		goto bailout;
 	}
 
 	// Check we have not been set before
@@ -245,12 +273,12 @@ S32 len;
 			// Change rl type, and continue?
 //			printf( "String Allready set\n" );
 			printf( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
-			return;
+			goto bailout;
 		}
 		else
 		{
 			// Same Type, no error
-			return;
+			goto bailout;
 		}
 	}
 
@@ -261,7 +289,7 @@ S32 len;
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
-		return;
+		goto bailout;
 	}
 
 	// --
@@ -292,6 +320,15 @@ S32 len;
 	rl->rl_Type2 = 0;
 	rl->rl_Type3 = 0;
 	rl->rl_Size = len;
+
+bailout:
+
+	if ( errcode )
+	{
+		*errcode = ec;
+	}
+
+	return( fs );
 }
 
 // --
@@ -410,7 +447,7 @@ S32 cnt;
 
 					if ( val )
 					{
-						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset, __FILE__ );
+						ERR_CHK( RS4AddLabel_File( NULL, & rl2, fh, val, RS4LabelType_Unset, __FILE__ ))
 
 						if ( ! rl2 )
 						{
@@ -438,7 +475,7 @@ S32 cnt;
 
 					if ( val )
 					{
-						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset, __FILE__ );
+						ERR_CHK( RS4AddLabel_File( NULL, & rl2, fh, val, RS4LabelType_Unset, __FILE__ ))
 
 						if ( ! rl2 )
 						{
@@ -453,7 +490,7 @@ S32 cnt;
 						}
 						else
 						{
-							Mark_NulString( rl2 );
+							ERR_CHK( Mark_NulString( & ec, rl2 ))
 						}
 					}
 					break;
@@ -470,7 +507,7 @@ S32 cnt;
 
 					if ( val )
 					{
-						rl2 = RS4AddLabel_File( NULL, fh, val, RS4LabelType_Unset, __FILE__ );
+						ERR_CHK( RS4AddLabel_File( NULL, & rl2, fh, val, RS4LabelType_Unset, __FILE__ ))
 
 						if ( ! rl2 )
 						{
@@ -485,16 +522,7 @@ S32 cnt;
 						}
 						else
 						{
-							fs = Mark_Struct( & ec, rl2, dsn->dsn_ID, __FILE__ );
-
-							if ( fs != RS4FuncStat_Okay )
-							{
-								if ( DoVerbose > 1 )
-								{
-									printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-								}
-								goto bailout;
-							}
+							ERR_CHK( Mark_Struct( & ec, rl2, dsn->dsn_ID, __FILE__ ))
 						}
 					}
 					break;
@@ -512,54 +540,8 @@ S32 cnt;
 
 	// --
 
-	#if 0
-{
-RS4FileSection *sec;
-RS4Label *qqqrl;
-S32 cnt;
-
-	sec = rl->rl_Section;
-
-		{
-			qqqrl = RS4GetHead( & sec->rfs_SecLabels );
-
-			while( qqqrl )
-			{
-
-
-				qqqrl = RS4GetNext( qqqrl );
-			}
-		}
-}
-	#endif
-
-	// --
-
 	off		= rl->rl_Offset;
 	memset( & type[off], RS4MT_Data, size );
-
-	// --
-
-	#if 0
-{
-RS4FileSection *sec;
-RS4Label *qqqrl;
-S32 cnt;
-
-	sec = rl->rl_Section;
-
-		{
-			qqqrl = RS4GetHead( & sec->rfs_SecLabels );
-
-			while( qqqrl )
-			{
-
-
-				qqqrl = RS4GetNext( qqqrl );
-			}
-		}
-}
-	#endif
 
 	// --
 

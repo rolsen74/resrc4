@@ -75,7 +75,7 @@ S32 pos;
 
 				if ( rl->rl_Type1 == RS4LabelType_Pointer )
 				{
-					Mark_Code( rl );
+					ERR_CHK( Mark_Code( & ec, rl ))
 				}
 				else
 				{
@@ -106,7 +106,7 @@ S32 pos;
 				if (( rl->rl_Type1 == RS4LabelType_Unset )
 				||	( rl->rl_Type1 == RS4LabelType_String ))
 				{
-					Mark_NulString( rl );
+					ERR_CHK( Mark_NulString( & ec, rl ))
 				}
 				else
 				{
@@ -137,7 +137,7 @@ S32 pos;
 				if (( rl->rl_Type1 == RS4LabelType_Unset )
 				||	( rl->rl_Type1 == RS4LabelType_Struct ))
 				{
-					fs = Mark_Struct( & ec, rl, qregs->Val3, __FILE__ );
+					ERR_CHK( Mark_Struct( & ec, rl, qregs->Val3, __FILE__ ))
 				}
 				else
 				{

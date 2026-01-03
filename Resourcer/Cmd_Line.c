@@ -32,11 +32,11 @@ S32 val;
 
 	if (( val < 1 ) || ( 15 < val ))
 	{
-		printf( "ArgTabs %d is out of range (1-15)\n", val );
+		printf( "Tabs_Arg %d is out of range (1-15)\n", val );
 		goto bailout;
 	}
 
-	ArgTabs = val;
+	Tabs_Arg = val;
 
 	fs = RS4FuncStat_Okay;
 
@@ -62,11 +62,11 @@ S32 val;
 
 	if (( val < 1 ) || ( 15 < val ))
 	{
-		printf( "OpcodeTabs %d is out of range (1-15)\n", val );
+		printf( "Tabs_Opcode %d is out of range (1-15)\n", val );
 		goto bailout;
 	}
 
-	OpcodeTabs = val;
+	Tabs_Opcode = val;
 
 	fs = RS4FuncStat_Okay;
 
@@ -92,11 +92,11 @@ S32 val;
 
 	if (( val < 1 ) || ( 15 < val ))
 	{
-		printf( "LabTabs %d is out of range (1-15)\n", val );
+		printf( "Tabs_Label %d is out of range (1-15)\n", val );
 		goto bailout;
 	}
 
-	LabTabs = val;
+	Tabs_Label = val;
 
 	fs = RS4FuncStat_Okay;
 
@@ -105,6 +105,33 @@ bailout:
 	return( fs );
 }
 
+// --
+
+static enum RS4FuncStat ArgFunc_Sec_Split( STR arg UNUSED )
+{
+	Sec_Split = TRUE;
+
+	return( RS4FuncStat_Okay );
+}
+
+// --
+
+static enum RS4FuncStat ArgFunc_Sec_xDef( STR arg UNUSED )
+{
+	Sec_xDef = TRUE;
+
+	return( RS4FuncStat_Okay );
+}
+
+// --
+#if 0
+static enum RS4FuncStat ArgFunc_SecxRef( STR arg UNUSED )
+{
+	Sec_xRef = TRUE;
+
+	return( RS4FuncStat_Okay );
+}
+#endif
 // --
 
 static enum RS4FuncStat ArgFunc_AutoYes( STR arg UNUSED )
@@ -235,9 +262,9 @@ enum RS4FuncStat fs;
 		free( ConfigFile );
 	}
 
-	ConfigFile = RS4Strdup( arg );
+	ERR_CHK( RS4Strdup( & ConfigFile, arg ))
 
-	if ( ConfigFile == NULL )
+	if ( ! ConfigFile )
 	{
 		printf( "%s:%04d: Error copying string\n", __FILE__, __LINE__ );
 		goto bailout;
@@ -268,9 +295,9 @@ enum RS4FuncStat fs;
 		free( InputFile );
 	}
 
-	InputFile = RS4Strdup( arg );
+	ERR_CHK( RS4Strdup( & InputFile, arg ))
 
-	if ( InputFile == NULL )
+	if ( ! InputFile )
 	{
 		printf( "%s:%04d: Error copying string\n", __FILE__, __LINE__ );
 		goto bailout;
@@ -301,9 +328,9 @@ enum RS4FuncStat fs;
 		free( OutputFile );
 	}
 
-	OutputFile = RS4Strdup( arg );
+	ERR_CHK( RS4Strdup( & OutputFile, arg ))
 
-	if ( OutputFile == NULL )
+	if ( ! OutputFile )
 	{
 		printf( "%s:%04d: Error copying string\n", __FILE__, __LINE__ );
 		goto bailout;
@@ -327,8 +354,8 @@ bailout:
 
 struct myArgs
 {
-	CSTR 		Name1;
-	CSTR 		Name2;
+	CSTR				Name1;
+	CSTR				Name2;
 	S32					Type;		// 0 = verbose, 1 = config, 2 = Normal
 	S32					Options;
 	enum RS4FuncStat	(*Function)( STR arg );
@@ -347,6 +374,9 @@ struct myArgs myOptions[] =
 { NULL, "--labtabs",		2, 1, ArgFunc_LabTabs },
 { NULL, "--opcodetabs",		2, 1, ArgFunc_OpcodeTabs },
 { NULL, "--argtabs",		2, 1, ArgFunc_ArgTabs },
+{ NULL, "--secsplit",		2, 0, ArgFunc_Sec_Split },
+{ NULL, "--secxdef",		2, 0, ArgFunc_Sec_xDef },
+//{ NULL, "--secxref",		2, 0, ArgFunc_SecxRef },
 
 // Config Options
 { "-c", "--config",			1, 1, ArgFunc_Config },
@@ -464,6 +494,7 @@ enum RS4FuncStat RS4ParseArgs( enum RS4ErrorCode *errcode, S32 argc, STR argv[] 
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
+STR name;
 S32 cnt;
 
 	ec = RS4ErrStat_Error;
@@ -496,6 +527,19 @@ S32 cnt;
 		ec = RS4ErrStat_SameInOutFile;
 		printf( "Input and output filename must not be the same\n" );
 		goto bailout;
+	}
+
+	if ( Sec_Split )
+	{
+		// Remove file type
+		if (( name = strrchr( OutputFile, '.' )))
+		{
+			if (( ! strcmp( name, ".s" )) 
+			||	( ! strcmp( name, ".asm" )))
+			{
+				name[0] = 0;
+			}
+		}
 	}
 
 	fs = RS4FuncStat_Okay;

@@ -50,12 +50,33 @@ S32 i;
 
 	while( rl )
 	{
-		if (( rl->rl_Offset >= 0 ) 
-		&&	( rl->rl_Offset < size )
-		&&	( rl->rl_Type1 == RS4LabelType_Unset )
-		&&	( buf[  rl->rl_Offset ] != 0 )
-		&&	( type[ rl->rl_Offset ] == RS4MT_Unset ))
+		while( TRUE )
 		{
+			if ( rl->rl_Offset < 0 )
+			{
+				break;
+			}
+
+			if ( rl->rl_Offset >= size )
+			{
+				break;
+			}
+
+			if ( rl->rl_Type1 != RS4LabelType_Unset )
+			{
+				break;
+			}
+
+			if ( buf[ rl->rl_Offset ] == 0 )
+			{
+				break;
+			}
+
+			if ( type[ rl->rl_Offset ] != RS4MT_Unset )
+			{
+				break;
+			}
+
 			len = rl->rl_Offset;
 
 			max = size - len;
@@ -74,7 +95,6 @@ S32 i;
 				if ((( c < 127 ) && ( 31 < c )) 
 				||	( c == 9 )
 				||	( c == 10 ))
-//				||	( c == 13 ))
 				{
 					len++;
 				} 
@@ -105,10 +125,11 @@ S32 i;
 				rl->rl_Type1 = RS4LabelType_String;
 				rl->rl_Type2 = 0;
 				rl->rl_Type3 = 0;
-				rl->rl_Size = len;
+				rl->rl_Size	= len;
 
 				memset( & type[ rl->rl_Offset ], RS4MT_Data, len );
 			}
+			break;
 		}
 
 		rl = RS4GetNext( rl );
@@ -153,18 +174,7 @@ S32 cnt;
 
 		if ( sec->rfs_SecType != RS4ST_BSS )
 		{
-			fs = RS4Text_ScanSection( & ec, sec );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4Text_ScanSection( & ec, sec ))
 		}
 	}
 
@@ -202,8 +212,8 @@ S64 adr;
 
 	DDEBUG( { printf( "%s:%04d: RS4ScanSecJumps\n", __FILE__, __LINE__ ); } )
 
-	ec		= RS4ErrStat_Error;
-	fs		= RS4FuncStat_Error;
+	fs		= RS4FuncStat_Okay;
+	ec		= RS4ErrStat_Okay;
 	sec		= rt->rt_Section;
 	adr		= sec->rfs_MemoryAdr;
 	mem		= sec->rfs_MemoryBuf;
@@ -211,13 +221,13 @@ S64 adr;
 	size	= sec->rfs_MemorySize;
 	pos		= 0;
 
-	if ( size < 2 )
+	if ( size < 4 )
 	{
 		// not an error
 		goto bailout;
 	}
 
-	size -= 2; // Avoid buffer overrun
+	size -= 4;		// Avoid buffer overrun
 
 	rt->rt_Section = sec;
 
@@ -230,27 +240,11 @@ S64 adr;
 			rt->rt_CurMemBuf	= & mem[pos];
 			rt->rt_CurMemType	= & type[ pos ];
 
-			fs = RS4Trace_JumpTable( & ec, rt );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4Trace_JumpTable( & ec, rt ))
 		}
 
 		pos++;
 	}
-
-	// --
-
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
 
 	// --
 
@@ -277,8 +271,7 @@ S32 cnt;
 
 	DDEBUG( { printf( "%s:%04d: RS4ScanForJumps\n", __FILE__, __LINE__ ); } )
 
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
+	// --
 
 	for( cnt=0 ; cnt<fh->rfh_SecArraySize ; cnt++ )
 	{
@@ -288,22 +281,9 @@ S32 cnt;
 		{
 			rt->rt_Section = sec;
 
-			fs = RS4ScanSecJumps( & ec, rt );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4ScanSecJumps( & ec, rt ))
 		}
 	}
-
-	// --
 
 	fs = RS4FuncStat_Okay;
 	ec = RS4ErrStat_Okay;
@@ -378,7 +358,7 @@ S64 adr;
 
 	if ( type[ pos ] == RS4MT_Unset )
 	{
-		rl = RS4FindLabel_File( rt->rt_File, adr + pos, __FILE__ );
+		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr + pos, __FILE__ ))
 
 		if ( rl )
 		{
@@ -400,20 +380,6 @@ S64 adr;
 			break;
 		}
 
-#if 0
-{
-RS4Label *qqrl;
-
-	qqrl = RS4GetHead( & sec->rfs_SecLabels );
-
-	while( qqrl )
-	{
-
-		qqrl = RS4GetNext( qqrl );
-	}
-}
-#endif
-
 //printf( "---tbrance 5 : %lx %lx %p %p\n", pos, sec->rfs_MemoryAdr, sec->rfs_MemoryBuf, sec->rfs_MemoryType ); fflush(stdout);
 
 		rt->rt_CurMemAdr	=   sec->rfs_MemoryAdr + pos  ;
@@ -426,6 +392,7 @@ RS4Label *qqrl;
 
 		/**/ if ( ds == RS4DecodeStat_Error )
 		{
+
 			// ec allready set
 
 			#ifdef DEBUG
@@ -494,7 +461,7 @@ RS4Label *qqrl;
 
 					jmpadr = rt->rt_CPU.M68k.mt_JmpRegister.mr_Label->rl_Address;
 
-					rb = RS4AddBrance_File( & ec, rt->rt_File, jmpadr );
+					ERR_CHK( RS4AddBrance_File( & ec, & rb, rt->rt_File, jmpadr ))
 
 					if ( ! rb )
 					{
@@ -508,19 +475,7 @@ RS4Label *qqrl;
 						goto bailout;
 					}
 
-					rl = RS4FindLabel_File( rt->rt_File, jmpadr, __FILE__ );
-
-					if ( ! rl )
-					{
-						ec = RS4ErrStat_Error;
-						fs = RS4FuncStat_Error;
-
-						#ifdef DEBUG
-						printf( "%s:%04d: Error adding brance adr $%08" PRIx64 "\n", __FILE__, __LINE__, jmpadr );
-						#endif
-
-						goto bailout;
-					}
+					ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, jmpadr, __FILE__ ))
 
 					memcpy( & rb->rb_Registers, & rt->rt_CPU.M68k.mt_Registers, 16 * sizeof( struct M68kRegister ));
 					memcpy( & rl->rl_Registers, & rt->rt_CPU.M68k.mt_Registers, 16 * sizeof( struct M68kRegister ));
@@ -531,7 +486,7 @@ RS4Label *qqrl;
 				{
 					jmpadr = rt->rt_CPU.M68k.mt_JmpRegister.mr_Address;
 
-					rb = RS4AddBrance_File( & ec, rt->rt_File, jmpadr );
+					ERR_CHK( RS4AddBrance_File( & ec, & rb, rt->rt_File, jmpadr ))
 
 					if ( ! rb )
 					{
@@ -545,19 +500,7 @@ RS4Label *qqrl;
 						goto bailout;
 					}
 
-					rl = RS4FindLabel_File( rt->rt_File, jmpadr, __FILE__ );
-
-					if ( ! rl )
-					{
-						ec = RS4ErrStat_Error;
-						fs = RS4FuncStat_Error;
-
-						#ifdef DEBUG
-						printf( "%s:%04d: Error adding brance adr $%08" PRIx64 "\n", __FILE__, __LINE__, jmpadr );
-						#endif
-
-						goto bailout;
-					}
+					ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, jmpadr, __FILE__ ))
 
 					memcpy( & rb->rb_Registers, & rt->rt_CPU.M68k.mt_Registers, 16 * sizeof( struct M68kRegister ));
 					memcpy( & rl->rl_Registers, & rt->rt_CPU.M68k.mt_Registers, 16 * sizeof( struct M68kRegister ));
@@ -645,25 +588,14 @@ CHR argbuf[256];
 
 	// --
 
-	fs = RS4InitTrace( & ec, & rt, fh, RS4TracePass_Trace );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4InitTrace( & ec, & rt, fh, RS4TracePass_Trace ))
 
 	rt.rt_Container.Hunk.ms_Buf_Argument = argbuf;
 
 	// --
 	// Set our start Trace Addresse
 
-	rb = RS4AddBrance_File( & ec, fh, fh->rfh_StartAdr );
+	ERR_CHK( RS4AddBrance_File( & ec, & rb, fh, fh->rfh_StartAdr ))
 
 	if ( ! rb )
 	{
@@ -678,18 +610,7 @@ CHR argbuf[256];
 
 	// --
 
-	fs = RS4ScanForJumps( & ec, & rt, fh );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error \n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4ScanForJumps( & ec, & rt, fh ))
 
 	// --
 
@@ -720,18 +641,9 @@ CHR argbuf[256];
 
 	// --
 
-	fs = RS4Text_Scan( & ec, fh );
+//printf( "%s:%04d: RS4Trace_File 15\n", __FILE__, __LINE__ ); fflush( stdout );
 
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error scanning for text\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4Text_Scan( & ec, fh ))
 
 	// --
 

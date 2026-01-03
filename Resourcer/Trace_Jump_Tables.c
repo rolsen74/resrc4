@@ -195,15 +195,15 @@ enum EntryType
 
 struct JTable
 {
-	S32			TabelPos;
+	S32		TabelPos;
 
-	S32			RelativePos;
+	S32		RelativePos;
 
-	S32			EntryPos;
-	S32			EntryType;
+	S32		EntryPos;
+	S32		EntryType;
 
-	S32			DataPos;
-	S32			DataSize;
+	S32		DataPos;
+	S32		DataSize;
 
 	U8		Data[32];
 	U8		Mask[32];
@@ -214,6 +214,7 @@ struct JTable
 enum RS4JumpStat RS4JumpTable_Rel16( enum RS4ErrorCode *errcode, RS4FileHeader *fh, S64 tabel_adr, S64 relative_adr, S32 entries )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 enum RS4JumpStat js;
 RS4FileSection *sec;
 RS4Brance *rb;
@@ -231,7 +232,7 @@ S32 cnt;
 
 	// --
 
-	sec = RS4FindSection_File( fh, tabel_adr );
+	ERR_CHK( RS4FindSection_File( & ec, & sec, fh, tabel_adr ))
 
 	if ( ! sec )
 	{
@@ -243,7 +244,7 @@ S32 cnt;
 
 	// --
 
-	rl = RS4AddLabel_Sec( & ec, sec, tabel_adr, RS4LabelType_RelativeWord );
+	ERR_CHK( RS4AddLabel_Sec( & ec, & rl, sec, tabel_adr, RS4LabelType_RelativeWord ))
 
 	if ( ! rl )
 	{
@@ -260,7 +261,7 @@ S32 cnt;
 
 	// --
 
-	rel = RS4AddLabel_Sec( & ec, sec, relative_adr, RS4LabelType_Unset );
+	ERR_CHK( RS4AddLabel_Sec( & ec, & rel, sec, relative_adr, RS4LabelType_Unset ))
 
 	if ( ! rel )
 	{
@@ -299,7 +300,7 @@ S32 cnt;
 		r16 = SWAP16( offsets[cnt] );
 		adr = relative_adr + r16;
 
-		rl = RS4AddLabel_Sec( & ec, sec, adr, RS4LabelType_Code );
+		ERR_CHK( RS4AddLabel_Sec( & ec, & rl, sec, adr, RS4LabelType_Code ))
 
 		if ( ! rl )
 		{
@@ -314,7 +315,7 @@ S32 cnt;
 			goto bailout;
 		}
 
-		rb = RS4AddBrance_File( & ec, fh, adr );
+		ERR_CHK( RS4AddBrance_File( & ec, & rb, fh, adr ))
 
 		if ( ! rb )
 		{
@@ -1100,6 +1101,8 @@ S32 cnt;
 	mem		= /* */ sec->rfs_MemoryBuf;
 	off		= adr - sec->rfs_MemoryAdr;
 	pos		= off + jt->DataPos;
+
+// hmm todo check for memory overflow
 
 #if 0
 {

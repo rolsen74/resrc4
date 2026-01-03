@@ -86,19 +86,19 @@ void md5Update(MD5Context *ctx, MEM input_buffer, U64 input_len){
     U32 offset = ctx->size % 64;
     ctx->size += (U64)input_len;
 
-    // Copy each byte in input_buffer into the next space in our context input
+	// Copy each byte in input_buffer into the next space in our context input
     for(U32 i = 0; i < input_len; ++i){
         ctx->input[offset++] = (U8)*(input_buffer + i);
 
-        // If we've filled our context input, copy it into our local array input
-        // then reset the offset to 0 and fill in a new buffer.
-        // Every time we fill out a chunk, we run it through the algorithm
-        // to enable some back and forth between cpu and i/o
+    	// If we've filled our context input, copy it into our local array input
+    	// then reset the offset to 0 and fill in a new buffer.
+    	// Every time we fill out a chunk, we run it through the algorithm
+    	// to enable some back and forth between cpu and i/o
         if(offset % 64 == 0){
             for(U32 j = 0; j < 16; ++j){
-                // Convert to little-endian
-                // The local variable `input` our 512-bit chunk separated into 32-bit words
-                // we can use in calculations
+            	// Convert to little-endian
+            	// The local variable `input` our 512-bit chunk separated into 32-bit words
+            	// we can use in calculations
                 input[j] = (U32)(ctx->input[(j * 4) + 3]) << 24 |
                            (U32)(ctx->input[(j * 4) + 2]) << 16 |
                            (U32)(ctx->input[(j * 4) + 1]) <<  8 |
@@ -119,12 +119,12 @@ void md5Finalize(MD5Context *ctx){
     U32 offset = ctx->size % 64;
     U32 padding_length = offset < 56 ? 56 - offset : (56 + 64) - offset;
 
-    // Fill in the padding and undo the changes to size that resulted from the update
+	// Fill in the padding and undo the changes to size that resulted from the update
     md5Update(ctx, PADDING, padding_length);
     ctx->size -= (U64)padding_length;
 
-    // Do a final update (internal to this function)
-    // Last two 32-bit words are the two halves of the size (converted from bytes to bits)
+	// Do a final update (internal to this function)
+	// Last two 32-bit words are the two halves of the size (converted from bytes to bits)
     for(U32 j = 0; j < 14; ++j){
         input[j] = (U32)(ctx->input[(j * 4) + 3]) << 24 |
                    (U32)(ctx->input[(j * 4) + 2]) << 16 |
@@ -136,7 +136,7 @@ void md5Finalize(MD5Context *ctx){
 
     md5Step(ctx->buffer, input);
 
-    // Move the result into digest (convert from little-endian)
+	// Move the result into digest (convert from little-endian)
     for(U32 i = 0; i < 4; ++i){
         ctx->digest[(i * 4) + 0] = (U8)((ctx->buffer[i] & 0x000000FF));
         ctx->digest[(i * 4) + 1] = (U8)((ctx->buffer[i] & 0x0000FF00) >>  8);

@@ -42,42 +42,18 @@ S32 pos;
 	pos = rt->rt_CPU.M68k.mt_ArgSize;
 	val = (( mem[pos] << 24 ) | ( mem[pos+1] << 16 ) | ( mem[pos+2] << 8 ) | ( mem[pos+3] << 0 ));
 
-	isRef = RS4FindRef_Sec( rt->rt_Section, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize );
+	ERR_CHK( RS4FindRef_Sec( & ec, & isRef, rt->rt_Section, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize ))
 
 	if ( isRef )
 	{
 		isRef->rr_Handled = TRUE;
 
 		// if there is a Ref then the a label have been added
-		rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
-
-		if ( ! rl )
-		{
-			ec = RS4ErrStat_Error;
-			ds = RS4DecodeStat_Error;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error finding label at $%08" PRIx64 " ($%08x)\n", __FILE__, __LINE__, rt->rt_CurMemAdr, val );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, val, __FILE__ ))
 
 		if ( rt->rt_Pass != RS4TracePass_Trace )
 		{
-			fs = RS4BuildLabelString( & ec, rl, outstr );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-				ds = RS4DecodeStat_Error;
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4BuildLabelString( & ec, rl, outstr ))
 		}
 		else
 		{
@@ -94,9 +70,7 @@ S32 pos;
 	{
 		if ( rt->rt_CPU.M68k.mt_DoExternal )
 		{
-			rl = RS4AddExtLabel( NULL, rt->rt_File, val );
-
-			// rwo: why no check?
+			ERR_CHK( RS4AddExtLabel( & ec, & rl, rt->rt_File, val ))
 
 			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{

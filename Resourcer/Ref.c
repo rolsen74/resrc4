@@ -68,18 +68,18 @@ bailout:
 
 // --
 
-RS4Ref *RS4AddRef_Sec( enum RS4ErrorCode *errcode, RS4FileSection *sec, S64 offset )
+enum RS4FuncStat RS4AddRef_Sec( enum RS4ErrorCode *errcode, RS4Ref **ref_ptr, RS4FileSection *sec, S64 offset )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Ref *new;
 RS4Ref *rr;
 U32 hash;
 
 	ec	= RS4ErrStat_Error;
+	fs	= RS4FuncStat_Error;
 	rr	= NULL;
 	new	= NULL;
-
-//	if ( offset < 0x0000daf8 && offset > 0x0000daf0 )	{ printf( "add ref : Offset $%08" PRIx64 "\n", offset ); }
 
 	// --
 
@@ -116,8 +116,6 @@ U32 hash;
 		printf( "New Ref   : Hunk #%d : Address $%08" PRIx64 "\n", sec->rfs_SecNr, new->rr_Address );
 	}
 
-//	#ifdef DEBUG
-
 	if ( 0 > offset )
 	{
 		printf( "## Warning ## : New Ref 1 : Offset : %" PRId64 "\n", offset );
@@ -127,8 +125,6 @@ U32 hash;
 	{
 		printf( "## Warning ## : New Ref 2 : Offset : %" PRId64 "\n", offset );
 	}
-
-//	#endif
 
 	// --
 
@@ -167,6 +163,7 @@ U32 hash;
 	// --
 
 	ec = RS4ErrStat_Okay;
+	fs	= RS4FuncStat_Okay;
 
 bailout:
 
@@ -175,19 +172,30 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( new );
+	if ( ref_ptr )
+	{
+		*ref_ptr = new;
+	}
+
+	return( fs );
 }
 
 // --
 
-RS4Ref *RS4FindRef_Sec( RS4FileSection *sec, S64 addr )
+enum RS4FuncStat RS4FindRef_Sec( enum RS4ErrorCode *errcode, RS4Ref **rr_ptr, RS4FileSection *sec, S64 addr )
 {
+enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Ref *rr;
 U32 hash;
 
+	rr = NULL;
+	fs = RS4FuncStat_Okay;
+	ec = RS4ErrStat_Okay;
+
 	if ( ! addr )
 	{
-		return( NULL );
+		goto bailout;
 	}
 
 	hash = ( (U64) addr ) % MAX_REF_HASH;
@@ -214,27 +222,47 @@ U32 hash;
 	}
 	#endif
 
-	return( rr );
+bailout:
+
+	if ( rr_ptr )
+	{
+		*rr_ptr = rr;
+	}
+
+	if ( errcode )
+	{
+		*errcode = ec;
+	}
+
+	return( fs );
 }
 
 // --
 
-RS4Ref *RS4FirstReloc_Sec( RS4FileSection *sec, S64 adr1, S64 adr2 )
+enum RS4FuncStat RS4FirstReloc_Sec( enum RS4ErrorCode *errcode, RS4Ref **rr_ptr, RS4FileSection *sec, S64 adr1, S64 adr2 )
 {
+enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Ref *rr;
+
+	rr = NULL;
+	fs = RS4FuncStat_Okay;
+	ec = RS4ErrStat_Okay;
 
 	#ifdef DEBUG
 
 	if ( ! sec )
 	{
+		fs = RS4FuncStat_Error;
 		printf( "%s:%04d: Error NULL Pointer\n", __FILE__, __LINE__ );
-		return( NULL );
+		goto bailout;
 	}
 
 	if ( adr1 > adr2 )
 	{
+		fs = RS4FuncStat_Error;
 		printf( "%s:%04d: Error Invalid Addresses $%08" PRIx64 "-$%08" PRIx64 "\n", __FILE__, __LINE__, adr1, adr2 );
-		return( NULL );
+		goto bailout;
 	}
 
 	#endif
@@ -253,7 +281,21 @@ RS4Ref *rr;
 		}
 	}
 
-	return( rr );
+	#ifdef DEBUG
+	bailout:
+	#endif
+
+	if ( rr_ptr )
+	{
+		*rr_ptr = rr;
+	}
+
+	if ( errcode )
+	{
+		*errcode = ec;
+	}
+
+	return( fs );
 }
 
 // --

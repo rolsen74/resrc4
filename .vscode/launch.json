@@ -1,0 +1,73 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug ReSrc4",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/home/vm/bin/ReSrc4",
+			"args": [
+				"-i", "tttt/LW.exe",
+				"-o", "tttt/LW_dis.s",
+				"--no",
+				"--Sec_Split",
+				"-v1",
+				"--debuginfo",
+				"--Sec_xDef"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "Debug ReSrc4 LW",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/bin/ReSrc4",
+			"args": [
+				"-i", "~/source/LightWave/disassemble/_LightWaveAW.exe",
+				"-o", "lw.asm",
+				"--labtabs", "2",
+				"--debuginfo",
+				"--short",
+				"--no",
+				"-v2"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}",
+			"environment": [],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{
+					"description": "Set Disassembly Flavor to Intel",
+					"text": "-gdb-set disassembly-flavor intel",
+					"ignoreFailures": true
+				}
+			]
+		}
+
+	]
+}

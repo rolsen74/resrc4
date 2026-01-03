@@ -28,6 +28,7 @@ enum RS4ErrorCode Misc_Set__Src_is_Unknown(
 	MEM mem )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4Label *dst_rl;
 
 ec = RS4ErrStat_Error;
@@ -39,7 +40,7 @@ ec = RS4ErrStat_Error;
 
 		U32 val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
 
-		dst_rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
+		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & dst_rl, val, __FILE__ ))
 
 		if (( dst_rl ) && ( ! dst_rl->rl_UserLocked ))
 		{
@@ -79,7 +80,7 @@ ec = RS4ErrStat_Error;
 
 	ec = RS4ErrStat_Okay;
 
-//bailout:
+bailout:
 
 	return( ec );
 }

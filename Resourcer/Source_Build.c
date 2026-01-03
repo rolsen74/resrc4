@@ -40,7 +40,6 @@ static enum RS4FuncStat RS4AddSourceLine( enum RS4ErrorCode *errcode, RS4Trace *
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 struct _SrcCode *sc;
-RS4FileHeader *fh;
 RS4Source *rs;
 STR str;
 S32 comlen;
@@ -65,7 +64,6 @@ S32 len;
 	}
 	#endif
 
-	fh	= rt->rt_File;
  	len = strlen( rt->rt_Container.Hunk.ms_Buf_Argument ) + 1;
 
  	if ( rt->rt_Container.Hunk.ms_Buf_Comment )
@@ -114,7 +112,7 @@ S32 len;
 	// --
 
 	rs->rs_Type = RS4SourceType_Code;
- 	RS4AddTail( & fh->rfh_SourceList, rs );
+ 	RS4AddTail( & rt->rt_Section->rfs_SourceList, rs );
 
 	// --
 
@@ -154,18 +152,18 @@ S32 len;
 
 	// --
 
- 	rs = calloc( 1, sizeof( RS4Source ) + len + 1 );
+	rs = calloc( 1, sizeof( RS4Source ) + len + 1 );
 
- 	if ( ! rs )
- 	{
+	if ( ! rs )
+	{
 		ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
- 		printf( "%s:%04d: Error allocating memory (%d)\n", __FILE__, __LINE__, (S32) sizeof( RS4Source ) + len );
+		printf( "%s:%04d: Error allocating memory (%d)\n", __FILE__, __LINE__, (S32) sizeof( RS4Source ) + len );
 		#endif
 
- 		goto bailout;
- 	}
+		goto bailout;
+	}
 
 	// -- Init Struct
 
@@ -184,7 +182,7 @@ S32 len;
 	// -- Add Node to Header
 
 	rs->rs_Type = RS4SourceType_String;
- 	RS4AddTail( & rt->rt_File->rfh_SourceList, rs );
+	RS4AddTail( & rt->rt_Section->rfs_SourceList, rs );
 
 	// --
 
@@ -230,36 +228,7 @@ enum RS4FuncStat fs;
 	rt->rt_Container.Hunk.ms_Str_Opcode = "";
 	rt->rt_Container.Hunk.ms_Buf_Argument[0] = 0;
 
-	fs = RS4AddSourceLine( & ec, rt );
-
-	#ifdef DEBUG
-bailout:
-	#endif
-
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
-}
-
-// --
-
-#if 0
-static enum RS4FuncStat __Struct_Data( enum RS4ErrorCode *errcode, struct DataStructNode *dsn, RS4Trace *rt )
-{
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-
-	ec	= RS4ErrStat_Error;
-	fs	= RS4FuncStat_Error;
-
-
-
-
-	fs	= RS4FuncStat_Okay;
-	ec	= RS4ErrStat_Okay;
+	ERR_CHK( RS4AddSourceLine( & ec, rt ))
 
 bailout:
 
@@ -270,7 +239,6 @@ bailout:
 
 	return( fs );
 }
-#endif
 
 // --
 
@@ -296,7 +264,7 @@ S32 len;
 
 	sec = rt->rt_Section;
 
-	rl = RS4FindLabel_File( rt->rt_File, val, __FILE__ );
+	ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, val, __FILE__ ))
 
 	if ( sec->rfs_SecType == RS4ST_BSS )
 	{
@@ -318,17 +286,7 @@ S32 len;
 	{
 		if ( rl )
 		{
-			fs = RS4BuildLabelString( & ec, rl, buf );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				if ( DoVerbose > 2 )
-				{
-					printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				}
-
-				goto bailout;
-			}
+			ERR_CHK( RS4BuildLabelString( & ec, rl, buf ))
 		}
 		else
 		{
@@ -366,7 +324,7 @@ S32 len;
 
 	rt->rt_Container.Hunk.ms_StartAddr = rt->rt_CurMemAdr;
 
-	fs = RS4AddSourceLine( & ec, rt );
+	ERR_CHK( RS4AddSourceLine( & ec, rt ))
 
 bailout:
 
@@ -430,7 +388,9 @@ S32 len;
 
 	rt->rt_Container.Hunk.ms_StartAddr = rt->rt_CurMemAdr;
 
-	fs = RS4AddSourceLine( & ec, rt );
+	ERR_CHK( RS4AddSourceLine( & ec, rt ))
+
+bailout:
 
 	if ( errcode )
 	{
@@ -493,7 +453,9 @@ S32 len;
 
 	rt->rt_Container.Hunk.ms_StartAddr = rt->rt_CurMemAdr;
 
-	fs = RS4AddSourceLine( & ec, rt );
+	ERR_CHK( RS4AddSourceLine( & ec, rt ))
+
+bailout:
 
 	if ( errcode )
 	{
@@ -558,7 +520,9 @@ S32 len;
 
 	rt->rt_Container.Hunk.ms_StartAddr = rt->rt_CurMemAdr;
 
-	fs = RS4AddSourceLine( & ec, rt );
+	ERR_CHK( RS4AddSourceLine( & ec, rt ))
+
+bailout:
 
 	if ( errcode )
 	{
@@ -623,15 +587,7 @@ S32 id;
 
 	// --
 
-	fs = RS4AddSourceString( & ec, rt, "\n; %s\n", dsh->dsh_Title );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-		goto bailout;
-	}
+	ERR_CHK( RS4AddSourceString( & ec, rt, "\n; %s\n", dsh->dsh_Title ) )
 
 	// --
 
@@ -666,43 +622,19 @@ S32 id;
 
 			case DST_Byte:
 			{
-				fs = __Struct_Byte( & ec, dsn, rt );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-					#endif
-					goto bailout;
-				}
+				ERR_CHK( __Struct_Byte( & ec, dsn, rt ))
 				break;
 			}
 
 			case DST_Word:
 			{
-				fs = __Struct_Word( & ec, dsn, rt );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-					#endif
-					goto bailout;
-				}
+				ERR_CHK( __Struct_Word( & ec, dsn, rt ))
 				break;
 			}
 
 			case DST_Long:
 			{
-				fs = __Struct_Long( & ec, dsn, rt );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-					#endif
-					goto bailout;
-				}
+				ERR_CHK( __Struct_Long( & ec, dsn, rt ))
 				break;
 			}
 
@@ -710,15 +642,7 @@ S32 id;
 			case DST_Struct:
 			case DST_Pointer:
 			{
-				fs = __Struct_Ptr( & ec, dsn, rt );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					#ifdef DEBUG
-					printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-					#endif
-					goto bailout;
-				}
+				ERR_CHK( __Struct_Ptr( & ec, dsn, rt ))
 				break;
 			}
 
@@ -837,19 +761,7 @@ S32 p;
 		adr = rel->rl_Address;
 		adr += off;
 
-		brance = RS4FindLabel_File( fh, adr, __FILE__ );
-
-		if ( ! brance )
-		{
-			ec	= RS4ErrStat_Error;
-			fs	= RS4FuncStat_Error;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Decode_RelativeWord Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4FindLabel_File( & ec, fh, & brance, adr, __FILE__ ))
 
 		rt->rt_Container.Hunk.ms_StartAddr = sec->rfs_MemoryAdr + pos;
 		rt->rt_Container.Hunk.ms_Str_Opcode = "dc.w";
@@ -918,18 +830,7 @@ S32 p;
 			rt->rt_Container.Hunk.ms_Ptr_Label = NULL;
 		}
 
-		fs = RS4AddSourceLine( & ec, rt );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4AddSourceLine( & ec, rt ))
 
 		len += 2;
 		pos += 2;
@@ -1073,18 +974,7 @@ MEM mem;
 
 		// --
 
-		fs = RS4AddSourceLine( & ec, rt );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4AddSourceLine( & ec, rt ))
 
 		// --
 
@@ -1106,18 +996,7 @@ MEM mem;
 			if ((( rt->rt_CPU.M68k.mt_Opcode & 0xffff0000 ) != ( 0x4ef90000 ))	// Last Opcode == Jmp
 			|| ( mem[pos+0] != 0x4e ) || ( mem[pos+1] != 0xf9 ))	// Next Opcode == Jmp
 			{
-				fs = RS4AddEmptyLine( & ec, rt );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4AddEmptyLine( & ec, rt ))
 			}
 			break;
 		}
@@ -1247,24 +1126,13 @@ U8 c;
 
 		rt->rt_Container.Hunk.ms_Buf_Argument[0] = 0;
 
-		newrl = RS4FindLabel_File( fh, val, __FILE__ );
+		ERR_CHK( RS4FindLabel_File( & ec, fh, & newrl, val, __FILE__ ))
 //		newrl = RS4AddLabel_File( rt->rt_Container.Hunk.ms_HunkStruct, val, RS4LabelType_Unset );
 //		newrl = RS4AddLabel_Sec( rt->rt_Container.Hunk.ms_HunkStruct, sec->rt_Section, val, RS4LabelType_Unset );
 
 		if ( newrl )
 		{
-			fs = RS4BuildLabelString( & ec, newrl, rt->rt_Container.Hunk.ms_Buf_Argument );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4BuildLabelString( & ec, newrl, rt->rt_Container.Hunk.ms_Buf_Argument ))
 		}
 
 		rt->rt_Container.Hunk.ms_Buf_Comment = buf;
@@ -1347,18 +1215,7 @@ U8 c;
 		snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "$%02" PRIx64 "", val );
 	}
 
-	fs = RS4AddSourceLine( & ec, rt );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4AddSourceLine( & ec, rt ))
 
 	*len_ptr = size;
 
@@ -1579,18 +1436,7 @@ MEM mem;
 
 		// --
 
-		fs = RS4AddSourceLine( & ec, rt );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4AddSourceLine( & ec, rt ))
 
 		rt->rt_Container.Hunk.ms_Ptr_Label = NULL;
 		adr += bytes;
@@ -1672,18 +1518,7 @@ S64 size;
 	rt->rt_Container.Hunk.ms_Str_Opcode = "ds.b";
 	snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "%" PRId64 "", size );
 
-	fs = RS4AddSourceLine( & ec, rt );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4AddSourceLine( & ec, rt ))
 
 	*len_ptr = size;
 
@@ -1710,6 +1545,7 @@ static enum RS4FuncStat Handle_Init( enum RS4ErrorCode *errcode, RS4Trace *rt UN
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
 RS4FileSection *sec;
+RS4Label *rl;
 STR sectype;
 STR memtype;
 
@@ -1749,53 +1585,96 @@ STR memtype;
 		memtype = "";
 	}
 
-	fs = RS4AddEmptyLine( & ec, rt );
+	ERR_CHK( RS4AddEmptyLine( & ec, rt ))
 
-	if ( fs != RS4FuncStat_Okay )
+	if ( Sec_Split )
 	{
-		// ec allready set
+		STR name;
+		S32 stat;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-		#endif
+		stat = asprintf( & name, "%s.i", OutputFile );
 
-		goto bailout;
+		if (( stat < 0 ) || ( ! name ))
+		{
+			ec = RS4ErrStat_OutOfMemory;
+
+			#ifdef DEBUG
+			printf( "%s:%04d: Error allocating memory\n", __FILE__, __LINE__ );
+			#endif
+
+			goto bailout;
+		}
+
+		rt->rt_Container.Hunk.ms_StartAddr = 0;
+		rt->rt_Container.Hunk.ms_Str_Opcode = "INCLUDE";
+		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "\"%s\"", name );
+
+		fs = RS4AddSourceLine( & ec, rt );
+
+		free( name );
+		name = NULL;
+
+		if ( fs != RS4FuncStat_Okay )
+		{
+			// ec allready set
+
+			#ifdef DEBUG
+			printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
+			#endif
+
+			goto bailout;
+		}
+
+		ERR_CHK( RS4AddEmptyLine( & ec, rt ))
 	}
 
 	rt->rt_Container.Hunk.ms_StartAddr = 0;
 	rt->rt_Container.Hunk.ms_Str_Opcode = "SECTION";
 	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "SEC%d,%s%s", sec->rfs_SecNr, sectype, memtype );
 
-	fs = RS4AddSourceLine( & ec, rt );
+	ERR_CHK( RS4AddSourceLine( & ec, rt ))
 
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	fs = RS4AddEmptyLine( & ec, rt );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4AddEmptyLine( & ec, rt ))
 
 	fs	= RS4FuncStat_Okay;
 	ec	= RS4ErrStat_Okay;
 
-    // --
+	// --
+
+	if ( Sec_xDef )
+	{
+		rl = RS4GetHead( & sec->rfs_SecLabels );
+
+		if ( rl )
+		{
+			S32 add_nl = FALSE;
+
+			while( rl )
+			{
+				if (( rl->rl_xDef ) && ( ! rl->rl_Parent ))
+				{
+					add_nl = TRUE;
+
+					rt->rt_Container.Hunk.ms_StartAddr = 0;
+					rt->rt_Container.Hunk.ms_Str_Opcode = "XDEF";
+					sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", rl->rl_Name );
+
+					ERR_CHK( RS4AddSourceLine( & ec, rt ))
+				}
+
+				rl = RS4GetNext( rl );
+			}
+
+			// --
+
+			if ( add_nl )
+			{
+				ERR_CHK( RS4AddEmptyLine( & ec, rt ))
+			}
+		}
+	}
+
+	// --
 
 bailout:
 
@@ -1843,7 +1722,7 @@ RS4Label *rl;
 		rt->rt_Container.Hunk.ms_Ptr_Label	= rl;
 		rt->rt_Container.Hunk.ms_Buf_Argument[0] = 0;
 
-		fs = RS4AddSourceLine( & ec, rt );
+		ERR_CHK( RS4AddSourceLine( & ec, rt ))
 	}
 	else
 	{
@@ -1852,6 +1731,8 @@ RS4Label *rl;
 	}
 
 	// --
+
+bailout:
 
 	if ( errcode )
 	{
@@ -1893,22 +1774,11 @@ S64 l;
 	if (( sec->rfs_SecType == RS4ST_BSS )
 	||	( sec->rfs_DataSize <= pos ))
 	{
-		fs = RS4Decode_BSS( & ec, rt, max, & len );
+		ERR_CHK( RS4Decode_BSS( & ec, rt, max, & len ))
 	}
 	else
 	{
-		fs = RS4Decode_Data( & ec, rt, rl, rr, max, & len );
-	}
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
+		ERR_CHK( RS4Decode_Data( & ec, rt, rl, rr, max, & len ))
 	}
 
 	// --
@@ -1954,18 +1824,7 @@ S64 l;
 
 	// --
 
-	fs = RS4Decode_Code( & ec, rt, rl, size, pos, type, & len );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4Decode_Code( & ec, rt, rl, size, pos, type, & len ) )
 
 	// --
 
@@ -2018,67 +1877,26 @@ S64 l;
 	{
 		case RS4LabelType_RelativeWord:
 		{
-			fs = RS4Decode_RelativeWord( & ec, rt, rl, pos, & len );
-
-			#ifdef DEBUG
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				goto bailout;
-			}
-			#endif
+			ERR_CHK( RS4Decode_RelativeWord( & ec, rt, rl, pos, & len ))
 			break;
 		}
 
 		case RS4LabelType_String:
 		{
-			fs = RS4Decode_String( & ec, rt, rl, max, & len );
-
-			#ifdef DEBUG
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				goto bailout;
-			}
-			#endif
+			ERR_CHK( RS4Decode_String( & ec, rt, rl, max, & len ))
 			break;
 		}
 
 		case RS4LabelType_Struct:
 		{
-//				fs = RS4Decode_Struct( & ec, rt, rl, size, pos, type, & len );
-			fs = RS4Decode_Struct( & ec, rt, rl, pos, & len );
-
-			#ifdef DEBUG
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				goto bailout;
-			}
-			#endif
+			ERR_CHK( RS4Decode_Struct( & ec, rt, rl, pos, & len ))
 			break;
 		}
 
 //		case RS4LabelType_Unset:
 		case RS4LabelType_Unknown:
 		{
-			fs = RS4Decode_Data( & ec, rt, rl, rr, max, & len );
-
-			#ifdef DEBUG
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				goto bailout;
-			}
-			#endif
+			ERR_CHK( RS4Decode_Data( & ec, rt, rl, rr, max, & len ))
 			break;
 		}
 
@@ -2149,18 +1967,7 @@ U8 mtyp;
 
 	// --
 
-	fs = Handle_Init( & ec, rt );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( Handle_Init( & ec, rt ))
 
 	// --
 
@@ -2299,19 +2106,7 @@ U8 mtyp;
 				break;
 			}
 
-			fs = RS4AddEmptyLine( & ec, rt );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error adding source node\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
-
+			ERR_CHK( RS4AddEmptyLine( & ec, rt ))
 			break;
 		}
 
@@ -2397,18 +2192,7 @@ U8 mtyp;
 
 	// --
 
-	fs = Handle_Exit( & ec, rt, & rl, & rr, type, size, max, pos );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( Handle_Exit( & ec, rt, & rl, & rr, type, size, max, pos ))
 
 	// --
 
@@ -2451,22 +2235,12 @@ S32 cnt;
 
 	// --
 
-	fs = RS4InitTrace( & ec, & rt, fh, RS4TracePass_Build );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4InitTrace( & ec, & rt, fh, RS4TracePass_Build ))
 
 	rt.rt_Container.Hunk.ms_Buf_Argument = & argbuf[0];
 
 	// --
+	#if 0
 
 	if (( fh->rfh_SecFirst >= 0 ) && ( fh->rfh_SecArraySize > 0 ))
 	{
@@ -2486,29 +2260,19 @@ S32 cnt;
 		}
 	}
 
+	#endif
 	// --
 
 	for( cnt=0 ; cnt < fh->rfh_SecArraySize ; cnt++ )
 	{
-		if ( cnt == fh->rfh_SecFirst )
-		{
-			continue;
-		}
+//		if ( cnt == fh->rfh_SecFirst )
+//		{
+//			continue;
+//		}
 
 		rt.rt_Section = fh->rfh_SecArray[ cnt ].rsi_Section;
 
-		fs = RS4Parser( & ec, & rt );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error generating source\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4Parser( & ec, & rt ))
 	}
 
 	// --

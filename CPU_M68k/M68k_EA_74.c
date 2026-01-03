@@ -108,14 +108,14 @@ S32 pos;
 
 			adr = (( mem[pos] << 24 ) | ( mem[pos+1] << 16 ) | ( mem[pos+2] << 8 ) | ( mem[pos+3] << 0 ));
 
-			isRef = RS4FindRef_Sec( rt->rt_Section, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize );
+			ERR_CHK( RS4FindRef_Sec( & ec, & isRef, rt->rt_Section, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize ))
 
 			if ( isRef )
 			{
 				isRef->rr_Handled = TRUE;
 
 				// if there is a Ref then the a label have been added
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -133,19 +133,7 @@ S32 pos;
 				{
 					if ( rl->rl_Name[0] )
 					{
-						fs = RS4BuildLabelString( & ec, rl, labname );
-
-						if ( fs != RS4FuncStat_Okay )
-						{
-							// ec allready set
-							ds = RS4DecodeStat_Error;
-
-							#ifdef DEBUG
-							printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-							#endif
-
-							goto bailout;
-						}
+						ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 						sprintf( outstr, "#%s", labname );
 					}

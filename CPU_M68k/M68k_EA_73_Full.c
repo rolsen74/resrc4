@@ -173,11 +173,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -189,19 +189,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "(%s.l,PC,%s%s%s)",
 					labname,
@@ -234,11 +222,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -250,19 +238,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "(%s.l,PC,%s%s%s)",
 					labname,
@@ -307,11 +283,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -323,19 +299,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC,%s%s%s])",
 					labname,
@@ -368,11 +332,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -384,19 +348,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC,%s%s%s])",
 					labname,
@@ -445,11 +397,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -461,19 +413,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC,%s%s%s],%d.w)",
 					labname,
@@ -509,11 +449,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -525,19 +465,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC,%s%s%s],%d.w)",
 					labname,
@@ -588,11 +516,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -604,19 +532,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC,%s%s%s],%d.l)",
 					labname,
@@ -652,11 +568,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -668,19 +584,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC,%s%s%s],%d.l)",
 					labname,
@@ -727,11 +631,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -743,19 +647,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC],%s%s%s)",
 					labname,
@@ -788,11 +680,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -804,19 +696,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC],%s%s%s)",
 					labname,
@@ -865,11 +745,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -881,19 +761,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC],%s%s%s,%d.w)",
 					labname,
@@ -929,11 +797,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -945,19 +813,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC],%s%s%s,%d.w)",
 					labname,
@@ -1008,11 +864,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1024,19 +880,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC],%s%s%s,%d.l)",
 					labname,
@@ -1072,11 +916,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1088,19 +932,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC],%s%s%s,%d.l)",
 					labname,
@@ -1135,11 +967,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1151,19 +983,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "(%s.l,PC)",
 					labname
@@ -1198,11 +1018,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1214,19 +1034,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC])",
 					labname
@@ -1253,11 +1061,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1269,19 +1077,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC])",
 					labname
@@ -1309,11 +1105,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1325,19 +1121,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC],%d.w)",
 					labname,
@@ -1379,11 +1163,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1395,19 +1179,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC],%d.w)",
 					labname,
@@ -1449,11 +1221,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1465,19 +1237,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.w,PC],%d.l)",
 					labname,
@@ -1507,11 +1267,11 @@ S32 BD;
 			{
 				// We can get away with AddLabel2, as this is a PC function, 
 				// so we can handle Labels out side Hunk Memory area
-				rl = RS4AddLabel_Sec( & ec, rt->rt_Section, adr, RS4LabelType_Unset );
+				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
 			}
 			else
 			{
-				rl = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
 
 				if ( ! rl )
 				{
@@ -1523,19 +1283,7 @@ S32 BD;
 
 			if (( rl ) && ( rl->rl_Name[0] ))
 			{
-				fs = RS4BuildLabelString( & ec, rl, labname );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-					ds = RS4DecodeStat_Error;
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-					#endif
-
-					goto bailout;
-				}
+				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
 
 				sprintf( outstr, "([%s.l,PC],%d.l)",
 					labname,

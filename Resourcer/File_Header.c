@@ -18,10 +18,12 @@
 
 // --
 
-void RS4FreeFile( enum RS4ErrorCode *errcode, RS4FileHeader *fh )
+enum RS4FuncStat RS4FreeFile( enum RS4ErrorCode *errcode, RS4FileHeader *fh )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 
+	fs = RS4FuncStat_Okay;
 	ec = RS4ErrStat_Error;
 
 	if ( ! fh )
@@ -31,6 +33,7 @@ enum RS4ErrorCode ec;
 
 	if ( fh->rfh_ID != RS4ID_FileHeader )
 	{
+		fs = RS4FuncStat_Error;
 		ec = RS4ErrStat_InvalidStructID;
 
 		#ifdef DEBUG
@@ -59,13 +62,16 @@ bailout:
 	{
 		*errcode = ec;
 	}
+
+	return( fs );
 }
 
 // --
 
-RS4FileHeader *RS4LoadFile( enum RS4ErrorCode *errcode, STR filename )
+enum RS4FuncStat RS4LoadFile( enum RS4ErrorCode *errcode, RS4FileHeader **fh_ptr, STR filename )
 {
 enum RS4ErrorCode ec;
+enum RS4FuncStat fs;
 RS4FileHeader *fh;
 MD5Context ctx;
 FILE *file;
@@ -78,6 +84,7 @@ S32 cnt;
 	err = TRUE;
 
 	ec = RS4ErrStat_Error;
+	fs = RS4FuncStat_Okay;
 
 	fh = calloc( 1, sizeof( RS4FileHeader ));
 
@@ -112,11 +119,6 @@ S32 cnt;
 		{
 			ec = RS4ErrStat_OpeningFile;
 		}
-
-		#ifdef DEBUG
-		printf( "Debug: Error opening file '%s'\n", FindFileName( filename ));
-		#endif
-
 		goto bailout;
 	}
 
@@ -195,7 +197,7 @@ S32 cnt;
 
 	// -- Copy file name+path
 
-	fh->rfh_FileName = RS4Strdup( filename );
+	ERR_CHK( RS4Strdup( & fh->rfh_FileName, filename ))
 
 	if ( ! fh->rfh_FileName )
 	{
@@ -244,7 +246,12 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fh );
+	if ( fh_ptr )
+	{
+		*fh_ptr = fh;
+	}
+
+	return( fs );
 }
 
 // --
@@ -320,7 +327,7 @@ bailout:
 
 // --
 
-RS4FileHeader *RS4LoadExe( enum RS4ErrorCode *errcode, STR filename )
+enum RS4FuncStat RS4LoadExe( enum RS4ErrorCode *errcode, RS4FileHeader **fh_ptr, STR filename )
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -329,10 +336,11 @@ S32 type;
 S32 err;
 
 	ec = RS4ErrStat_Error;
+	fs = RS4FuncStat_Okay;
 
 	err = TRUE;
 
-	file = RS4LoadFile( & ec, filename );
+	ERR_CHK( RS4LoadFile( & ec, & file, filename ))
 
 	if ( ! file )
 	{
@@ -385,7 +393,7 @@ S32 err;
 		#ifdef SUPPORT_FHR
 		case RS4FileType_FHR:
 		{
-			fs = FHR_ParseFile( & ec, file );
+			ERR_CHK( FHR_ParseFile( & ec, file ))
 			break;
 		}
 		#endif
@@ -393,7 +401,7 @@ S32 err;
 		#ifdef SUPPORT_HUNK
 		case RS4FileType_Hunk:
 		{
-			fs = Hunk_ParseFile( & ec, file );
+			ERR_CHK( Hunk_ParseFile( & ec, file ))
 			break;
 		}
 		#endif
@@ -433,7 +441,12 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( file );
+	if ( fh_ptr )
+	{
+		*fh_ptr = file;
+	}
+
+	return( fs );
 }
 
 // --

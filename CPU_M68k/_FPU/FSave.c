@@ -28,18 +28,7 @@ enum RS4ErrorCode ec;
 	rt->rt_CPU.M68k.mt_ArgEReg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	rt->rt_CPU.M68k.mt_CurRegister	= & rt->rt_CPU.M68k.mt_SrcRegister;
 
-	ds = M68k_EffectiveAddress( & ec, rt );
-
-	if ( ds != RS4DecodeStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 

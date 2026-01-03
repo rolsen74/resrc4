@@ -17,240 +17,21 @@
 
 // --
 
-#define SaveBufferSize		4096
-#define LineBufferSize		1024
+#define SaveBufferSize		1024 * 16
+#define LineBufferSize		1024 * 1
 
-static FILE *				SaveHandle		= NULL;
-static U64				SaveUsed		= 0;
-static MEM 					SaveBuffer		= NULL;
-STR 						SaveLineBuffer	= NULL;
-static U64				SavedBytes		= 0;
-
-// --
-
-static enum RS4FuncStat RS4SaveFlush( enum RS4ErrorCode *errcode )
+struct Intern
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-U64 written;
-
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
-
-	if (( ! SaveHandle ) || ( ! SaveBuffer ))
-	{
-		ec = RS4ErrStat_Internal;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	if ( ! SaveUsed )
-	{
-		ec = RS4ErrStat_Internal;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Not Used\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	written = fwrite( SaveBuffer, 1, SaveUsed, SaveHandle );
-
-	if ( written != SaveUsed )
-	{
-		ec = RS4ErrStat_FileIO;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error writting data\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	SavedBytes += SaveUsed;
-
-	SaveUsed = 0;
-
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
-
-bailout:
-
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
-}
-
-// --
-
-enum RS4FuncStat RS4SaveWriteString( enum RS4ErrorCode *errcode, STR buffer, U64 length )
-{
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-U64 len;
-
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
-
-	if (( ! SaveHandle ) || ( ! SaveBuffer ))
-	{
-		ec = RS4ErrStat_Internal;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	while( length )
-	{
-		len = MIN( length, SaveBufferSize - SaveUsed );
-
-		if ( len <= 0 )
-		{
-			break;
-		}
-
-		memcpy( & SaveBuffer[ SaveUsed ], buffer, len );
-
-		SaveUsed += len;
-		buffer += len;
-		length -= len;
-
-		if ( SaveBufferSize <= SaveUsed )
-		{
-			fs = RS4SaveFlush( & ec );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Save Flush Failed\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
-		}
-	}
-
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
-
-bailout:
-
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
-}
-
-// --
-
-enum RS4FuncStat RS4ExternalLabel( enum RS4ErrorCode *errcode, RS4FileHeader *fh )
-{
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-S32 len;
-
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
-	rl = RS4GetHead( & fh->rfh_ExtLabelList );
-
-	if ( ! rl )
-	{
-		// Not an error
-		ec = RS4ErrStat_Okay;
-		fs = RS4FuncStat_Okay;
-		goto bailout;
-	}
-
-	// --
-
-	sprintf( SaveLineBuffer, "\n; External\n" );
-
-	fs = RS4SaveWriteString( & ec, SaveLineBuffer, strlen( SaveLineBuffer ));
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error Writting External Data\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	// --
-
-	while( rl )
-	{
-		len = strlen( rl->rl_Name );
-
-		if ( len < 8 )
-		{
-			sprintf( SaveLineBuffer, "%s:\t\t\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
-		}
-		else if ( len < 16 )
-		{
-			sprintf( SaveLineBuffer, "%s:\t\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
-		}
-		else if ( len < 24 )
-		{
-			sprintf( SaveLineBuffer, "%s:\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
-		}
-		else
-		{
-			sprintf( SaveLineBuffer, "%s: EQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
-		}
-
-		fs = RS4SaveWriteString( & ec, SaveLineBuffer, strlen( SaveLineBuffer ));
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error Writting External data\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
-
-		rl = RS4GetNext( rl );
-	}
-
-	// --
-
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
-
-	// --
-
-bailout:
-
-	// --
-
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
-}
+	enum RS4ErrorCode		ec;
+	enum RS4FuncStat		fs;
+	RS4FileHeader *			fh;
+	STR						FileName;
+	U64						SaveUsed;
+	U64						SavedBytes;
+	MEM 					SaveBuffer;
+	FILE *					SaveHandle;
+	STR 					SaveLineBuffer;
+};
 
 // --
 
@@ -303,44 +84,126 @@ S32 chr;
 
 // --
 
-static enum RS4FuncStat RS4SaveWrite_Code( enum RS4ErrorCode *errcode, RS4Source *rs )
+static S32 __Buf_Flush( struct Intern *in )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
+U64 written;
+S32 error;
+
+	error = TRUE;
+
+	if (( ! in->SaveHandle ) || ( ! in->SaveBuffer ))
+	{
+		in->ec = RS4ErrStat_Internal;
+
+		#ifdef DEBUG
+		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
+		#endif
+
+		goto bailout;
+	}
+
+	if ( ! in->SaveUsed )
+	{
+		in->ec = RS4ErrStat_Internal;
+
+		#ifdef DEBUG
+		printf( "%s:%04d: Not Used\n", __FILE__, __LINE__ );
+		#endif
+
+		goto bailout;
+	}
+
+	written = fwrite( in->SaveBuffer, 1, in->SaveUsed, in->SaveHandle );
+
+	if ( written != in->SaveUsed )
+	{
+		in->ec = RS4ErrStat_FileIO;
+
+		#ifdef DEBUG
+		printf( "%s:%04d: Error writting data\n", __FILE__, __LINE__ );
+		#endif
+
+		goto bailout;
+	}
+
+	in->SavedBytes += in->SaveUsed;
+	in->SaveUsed = 0;
+
+	error = FALSE;
+
+bailout:
+
+	return( error );
+}
+
+// --
+
+S32 __Buf_WriteString( struct Intern *in, STR buffer, U64 length )
+{
+S32 error;
+U64 len;
+
+	error = TRUE;
+
+	if (( ! in->SaveHandle ) || ( ! in->SaveBuffer ))
+	{
+		in->ec = RS4ErrStat_Internal;
+
+		#ifdef DEBUG
+		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
+		#endif
+
+		goto bailout;
+	}
+
+	while( length > 0 )
+	{
+		len = MIN( length, SaveBufferSize - in->SaveUsed );
+
+		if ( len <= 0 )
+		{
+			break;
+		}
+
+		memcpy( & in->SaveBuffer[ in->SaveUsed ], buffer, len );
+
+		in->SaveUsed += len;
+		buffer += len;
+		length -= len;
+
+		if ( SaveBufferSize <= in->SaveUsed )
+		{
+			if ( __Buf_Flush( in ))
+			{
+				#ifdef DEBUG
+				printf( "%s:%04d: Save Flush Failed\n", __FILE__, __LINE__ );
+				#endif
+
+				goto bailout;
+			}
+		}
+	}
+
+	error = FALSE;
+
+bailout:
+
+	return( error );
+}
+
+// --
+
+static S32 __Line_Code( struct Intern *in, RS4Source *rs )
+{
 struct _SrcCode *sc;
-CHR labname[ MAX_LabelName + 2 ];
-CHR adrname[256];
 RS4Label *rl;
+char labname[64];
+char adrname[64];
+S32 error;
 S32 len;
 S32 oo;
 
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
-
-	if (( ! SaveHandle ) || ( ! SaveBuffer ))
-	{
-		ec = RS4ErrStat_Internal;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	#ifdef DEBUG
-	if ( rs->rs_Type != RS4SourceType_Code )
-	{
-		fs = RS4FuncStat_Error;
-		ec = RS4ErrStat_Internal;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-	#endif
+	error = TRUE;
 
 	sc = & rs->rs_Data.rs_Code;
 
@@ -357,7 +220,7 @@ S32 oo;
 		labname[0] = 0;
 	}
 
-	sprintf( SaveLineBuffer, "%s", labname );
+	sprintf( in->SaveLineBuffer, "%s", labname );
 
 	// --
 
@@ -365,43 +228,43 @@ S32 oo;
 	{
 		_GetStringInfo( labname, NULL, & len );
 
-		oo = LabTabs * 8;
+		oo = Tabs_Label * 8;
 
 		if ( len >= oo )
 		{
-			strcat( SaveLineBuffer, "\n" );
+			strcat( in->SaveLineBuffer, "\n" );
 			len = 0;
 		}
 
 		while( len < oo )
 		{
-			strcat( SaveLineBuffer, "\t" );
+			strcat( in->SaveLineBuffer, "\t" );
 			oo -= 8;
 		}
 	}
 
 	// --
 
-	strcat( SaveLineBuffer, sc->rs_Opcode );
+	strcat( in->SaveLineBuffer, sc->rs_Opcode );
 
 	if (( *sc->rs_Argument ) || (( DebugInfo ) && ( sc->rs_Address )))
 	{
 		_GetStringInfo( sc->rs_Opcode, NULL, & len );
 
-		oo = OpcodeTabs * 8;
+		oo = Tabs_Opcode * 8;
 
 		if ( len >= oo )
 		{
-			strcat( SaveLineBuffer, " " );
+			strcat( in->SaveLineBuffer, " " );
 		}
 
 		while( len < oo )
 		{
-			strcat( SaveLineBuffer, "\t" );
+			strcat( in->SaveLineBuffer, "\t" );
 			oo -= 8;
 		}
 
-		strcat( SaveLineBuffer, sc->rs_Argument );
+		strcat( in->SaveLineBuffer, sc->rs_Argument );
 	}
 
 	// --
@@ -410,16 +273,16 @@ S32 oo;
 	{
 		_GetStringInfo( sc->rs_Argument, NULL, & len );
 
-		oo = ArgTabs * 8;
+		oo = Tabs_Arg * 8;
 
 		if ( len >= oo )
 		{
-			strcat( SaveLineBuffer, " " );
+			strcat( in->SaveLineBuffer, " " );
 		}
 
 		while( len < oo )
 		{
-			strcat( SaveLineBuffer, "\t" );
+			strcat( in->SaveLineBuffer, "\t" );
 			oo -= 8;
 		}
 
@@ -432,164 +295,668 @@ S32 oo;
 			sprintf( adrname, "; $%08" PRIx64 "", sc->rs_Address );
 		}
 
-		strcat( SaveLineBuffer, adrname );
+		strcat( in->SaveLineBuffer, adrname );
 	}
 
 	// --
 
-	strcat( SaveLineBuffer, "\n" );
+	strcat( in->SaveLineBuffer, "\n" );
 
-	fs = RS4SaveWriteString( & ec, SaveLineBuffer, strlen( SaveLineBuffer ));
-
-	if ( fs != RS4FuncStat_Okay )
+	if ( __Buf_WriteString( in, in->SaveLineBuffer, strlen( in->SaveLineBuffer )))
 	{
-		// ec allready set
-
 		#ifdef DEBUG
-		printf( "%s:%04d: Error writting string\n", __FILE__, __LINE__ );
+		printf( "%s:%04d: Error : __Line : String :\n", __FILE__, __LINE__ );
 		#endif
-
+ 
 		goto bailout;
 	}
 
 	// --
 
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
+	error = FALSE;
 
 bailout:
 
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
+	return( error );
 }
 
 // --
 
-static enum RS4FuncStat RS4SaveWrite_String( enum RS4ErrorCode *errcode, RS4Source *rs )
+static S32 __Line_String( struct Intern *in, RS4Source *rs )
 {
 struct _SrcString *ss;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
+S32 error;
 
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
-
-	if (( ! SaveHandle ) || ( ! SaveBuffer ))
-	{
-		ec = RS4ErrStat_Internal;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	#ifdef DEBUG
-	if ( rs->rs_Type != RS4SourceType_String )
-	{
-		fs = RS4FuncStat_Error;
-		ec = RS4ErrStat_Internal;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: NULL Pointer\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-	#endif
+	error = TRUE;
 
 	// --
 
 	ss = & rs->rs_Data.rs_String;
 
-	fs = RS4SaveWriteString( & ec, ss->rs_String, strlen( ss->rs_String ));
-
-	if ( fs != RS4FuncStat_Okay )
+	if ( __Buf_WriteString( in, ss->rs_String, strlen( ss->rs_String )))
 	{
-		// ec allready set
-
 		#ifdef DEBUG
-		printf( "%s:%04d: Error writting string\n", __FILE__, __LINE__ );
+		printf( "%s:%04d: Error : __Line : String :\n", __FILE__, __LINE__ );
 		#endif
-
+ 
 		goto bailout;
 	}
 
 	// --
 
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
+	error = FALSE;
 
 bailout:
 
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
+	return( error );
 }
 
 // --
 
-S32 SaveWriteString( STR buffer UNUSED, U64 length UNUSED )
+static S32 __Line( struct Intern *in, RS4Source *rs )
 {
-	return( 0 );
+S32 error;
+
+	error = TRUE;
+
+	switch( rs->rs_Type )
+	{
+		case RS4SourceType_Code:
+		{
+			if ( __Line_Code( in, rs ))
+			{
+				#ifdef DEBUG
+				printf( "%s:%04d: Error : __Line : Code :\n", __FILE__, __LINE__ );
+				#endif
+
+				goto bailout;
+			}
+			break;
+		}
+
+		case RS4SourceType_String:
+		{
+			if ( __Line_String( in, rs ))
+			{
+				#ifdef DEBUG
+				printf( "%s:%04d: Error : __Line : String :\n", __FILE__, __LINE__ );
+				#endif
+
+				goto bailout;
+			}
+			break;
+		}
+
+		default:
+		{
+			#ifdef DEBUG
+			printf( "%s:%04d: Error unknown type (%d)\n", __FILE__, __LINE__, rs->rs_Type );
+			#endif
+
+			goto bailout;
+		}
+	}
+
+	error = FALSE;
+
+bailout:
+
+	return( error );
 }
 
-enum RS4FuncStat RS4SaveSource_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, STR filename )
+// --
+
+static S32 __Header( struct Intern *in )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Source *rs;
+RS4FileHeader *fh;
+S32 error;
 STR ftype;
 
-	ec = RS4ErrStat_Error;
-	fs = RS4FuncStat_Error;
+	error = TRUE;
+
+	fh = in->fh;
 
 	// --
 
-	#ifdef DEBUG
-
-	if (( ! fh ) || ( ! filename ))
+	while( TRUE )
 	{
-		ec = RS4ErrStat_Internal;
+		#ifdef SUPPORT_FHR
+
+		if ( fh->rfh_FileType == RS4FileType_FHR )
+		{
+			ftype = "FHR";
+			break;
+		}
+
+		#endif
+
+		#ifdef SUPPORT_HUNK
+
+		if ( fh->rfh_FileType == RS4FileType_Hunk )
+		{
+			ftype = "Hunk";
+			break;
+		}
+
+		#endif
+
+		ftype = "???";
+		break;
+	}
+
+	sprintf( in->SaveLineBuffer,
+		"\n"
+		";\n"
+		"; Disassembled with ReSrc4 v%d.%d (%s)\n"
+		";\n"
+		"; Size .. : %" PRId64 " bytes\n"
+		"; Type .. : %s\n"
+		"; Name .. : '%s'\n"
+		"; MD5 ... : $%s\n"
+		";\n", 
+		VERSION,
+		REVISION,
+		DATE,
+		fh->rfh_FileSize,
+		ftype,
+		fh->rfh_FileName,
+		fh->rfh_FileMD5
+	);
+
+	if ( __Buf_WriteString( in, in->SaveLineBuffer, strlen( in->SaveLineBuffer )))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Header : 1 :\n", __FILE__, __LINE__ );
+		#endif
+		goto bailout;
+	}
+
+	// --
+
+	error = FALSE;
+
+bailout:
+
+	return( error );
+}
+
+// --
+// One huge file
+
+static S32 __Single( struct Intern *in )
+{
+RS4FileSection *fs;
+RS4FileHeader *fh;
+RS4Source *rs;
+RS4Label *rl;
+S32 error;
+S32 secnr;
+S32 len;
+
+	error = TRUE;
+
+	fh = in->fh;
+
+	// --
+
+	in->SavedBytes = 0;
+	in->SaveHandle = fopen( in->FileName, "wb" );
+
+	if ( ! in->SaveHandle )
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 1 :\n", __FILE__, __LINE__ );
+		#endif
+		in->ec = RS4ErrStat_FileIO;
+		printf( "Can't create '%s' save file\n", in->FileName );
+		goto bailout;
+	}
+
+	if ( __Header( in ))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 2 :\n", __FILE__, __LINE__ );
+		#endif
+		goto bailout;
+	}
+
+	// --
+
+	rl = RS4GetHead( & fh->rfh_ExtLabelList );
+
+	if ( rl )
+	{
+		sprintf( in->SaveLineBuffer, "\n; External\n" );
+
+		if ( __Buf_WriteString( in, in->SaveLineBuffer, strlen( in->SaveLineBuffer )))
+		{
+			#ifdef DEBUG
+			printf( "%s:%04d: Error : __Single : 3 :\n", __FILE__, __LINE__ );
+			#endif
+			goto bailout;
+		}
+
+		// --
+
+		rl = RS4GetHead( & fh->rfh_ExtLabelList );
+
+		while( rl )
+		{
+			len = strlen( rl->rl_Name );
+
+			if ( len < 8 )
+			{
+				sprintf( in->SaveLineBuffer, "%s:\t\t\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
+			}
+			else if ( len < 16 )
+			{
+				sprintf( in->SaveLineBuffer, "%s:\t\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
+			}
+			else if ( len < 24 )
+			{
+				sprintf( in->SaveLineBuffer, "%s:\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
+			}
+			else
+			{
+				sprintf( in->SaveLineBuffer, "%s: EQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
+			}
+
+			if ( __Buf_WriteString( in, in->SaveLineBuffer, strlen( in->SaveLineBuffer )))
+			{
+				#ifdef DEBUG
+				printf( "%s:%04d: Error : __Single : 3 :\n", __FILE__, __LINE__ );
+				#endif
+				goto bailout;
+			}
+
+			rl = RS4GetNext( rl );
+		}
+	}
+
+	// --
+
+	#ifdef SUPPORT_AMIGAOS3
+	if ( AmigaOS3_SaveLibFunc( in, in->SaveLineBuffer ))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 4 :\n", __FILE__, __LINE__ );
+		#endif
+		goto bailout;
+	}
+	#endif
+
+	// --
+
+	for( secnr=0 ; secnr < fh->rfh_SecArraySize ; secnr++ )
+	{
+		fs = fh->rfh_SecArray[secnr].rsi_Section;
+
+		rs = RS4GetHead( & fs->rfs_SourceList );
+
+		while( rs )
+		{
+			if ( __Line( in, rs ))
+			{
+				#ifdef DEBUG
+				printf( "%s:%04d: Error : __Single : 3 :\n", __FILE__, __LINE__ );
+				#endif
+
+				goto bailout;
+			}
+
+			// Next Source (Line)
+			rs = RS4GetNext( rs );
+		}
+	}
+
+	// --
+
+	if ( __Buf_Flush( in ))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 4 :\n", __FILE__, __LINE__ );
+		#endif
+		goto bailout;
+	}
+
+	if ( DoVerbose > 0 )
+	{
+		printf( "Saved '%s' (%" PRIu64 " bytes)\n", in->FileName, in->SavedBytes );
+	}
+
+	// Let parent close file
+
+	error = FALSE;
+
+bailout:
+
+	return( error );
+}
+
+// --
+// Split Section
+
+static S32 __Split_Sec( struct Intern *in, RS4FileSection *fs, S32 secnr )
+{
+RS4Source *rs;
+STR secname;
+S32 error;
+STR name;
+int stat;
+
+	error = TRUE;
+
+	/**/ if ( fs->rfs_SecType == RS4ST_Code )
+	{
+		secname = "_Code";
+	}
+	else if ( fs->rfs_SecType == RS4ST_Data )
+	{
+		secname = "_Data";
+	}
+	else if ( fs->rfs_SecType == RS4ST_BSS )
+	{
+		secname = "_BSS";
+	}
+	else
+	{
+		secname = "";
+	}
+
+	stat = asprintf( & name, "%s_SEC_%02d%s.s", in->FileName, secnr, secname );
+
+	if (( stat < 0 ) || ( ! ConfigFile ))
+	{
+		in->ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
-		printf( "%s:%04d: Error NULL Pointer\n", __FILE__, __LINE__ );
+		printf( "%s:%04d: Error allocating memory\n", __FILE__, __LINE__ );
 		#endif
 
 		goto bailout;
 	}
 
-	#endif
+	in->SavedBytes = 0;
+	in->SaveHandle = fopen( name, "wb" );
 
-	// --
-
-	SaveUsed		= 0;
-	SaveHandle		= fopen( filename, "wb" );
-	SaveBuffer		= NULL;
-	SaveLineBuffer	= NULL;
-
-	// --
-
-	if ( ! SaveHandle )
+	if ( ! in->SaveHandle )
 	{
-		ec = RS4ErrStat_FileIO;
-		printf( "Can't create '%s' save file\n", filename );
+		in->ec = RS4ErrStat_FileIO;
+
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 1 :\n", __FILE__, __LINE__ );
+		#endif
+
 		goto bailout;
 	}
 
-	SaveBuffer = malloc( SaveBufferSize );
-
-	if ( ! SaveBuffer )
+	if ( ! in->SaveHandle )
 	{
-		ec = RS4ErrStat_OutOfMemory;
+		in->ec = RS4ErrStat_FileIO;
+
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 1 :\n", __FILE__, __LINE__ );
+		#endif
+
+		printf( "Can't create '%s' save file\n", name );
+		goto bailout;
+	}
+
+	if ( __Header( in ))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 2 :\n", __FILE__, __LINE__ );
+		#endif
+
+		goto bailout;
+	}
+
+	// --
+
+	rs = RS4GetHead( & fs->rfs_SourceList );
+
+	while( rs )
+	{
+		if ( __Line( in, rs ))
+		{
+			#ifdef DEBUG
+			printf( "%s:%04d: Error : __Single : 3 :\n", __FILE__, __LINE__ );
+			#endif
+
+			goto bailout;
+		}
+
+		// Next Source (Line)
+		rs = RS4GetNext( rs );
+	}
+
+	// --
+
+	if ( __Buf_Flush( in ))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 4 :\n", __FILE__, __LINE__ );
+		#endif
+		goto bailout;
+	}
+
+	fclose( in->SaveHandle );
+	in->SaveHandle = NULL;
+
+	if ( DoVerbose > 0 )
+	{
+		printf( "Saved '%s' (%" PRIu64 " bytes)\n", name, in->SavedBytes );
+	}
+
+	// --
+
+	// Free mem
+	free( name );
+	name = NULL;
+
+	error = FALSE;
+
+bailout:
+
+	return( error );
+}
+
+// --
+// Split files
+
+static S32 __Split( struct Intern *in )
+{
+RS4FileSection *fs;
+RS4FileHeader *fh;
+RS4Label *rl;
+S32 secnr;
+S32 error;
+STR name;
+S32 stat;
+S32 len;
+
+	error = TRUE;
+
+	name = NULL;
+
+	fh = in->fh;
+
+	// --
+	// Handle Includes
+
+	stat = asprintf( & name, "%s.i", in->FileName );
+
+	if (( stat < 0 ) || ( ! name ))
+	{
+		in->ec = RS4ErrStat_OutOfMemory;
+
+		#ifdef DEBUG
+		printf( "%s:%04d: Error allocating memory\n", __FILE__, __LINE__ );
+		#endif
+
+		goto bailout;
+	}
+
+	in->SavedBytes = 0;
+	in->SaveHandle = fopen( name, "wb" );
+
+	if ( ! in->SaveHandle )
+	{
+		in->ec = RS4ErrStat_FileIO;
+
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 1 :\n", __FILE__, __LINE__ );
+		#endif
+
+		printf( "Can't create '%s' save file\n", name );
+		goto bailout;
+	}
+
+	if ( __Header( in ))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 2 :\n", __FILE__, __LINE__ );
+		#endif
+
+		goto bailout;
+	}
+
+	// --
+
+	rl = RS4GetHead( & fh->rfh_ExtLabelList );
+
+	if ( rl )
+	{
+		sprintf( in->SaveLineBuffer, "\n; External\n" );
+
+		if ( __Buf_WriteString( in, in->SaveLineBuffer, strlen( in->SaveLineBuffer )))
+		{
+			#ifdef DEBUG
+			printf( "%s:%04d: Error : __Single : 3 :\n", __FILE__, __LINE__ );
+			#endif
+			goto bailout;
+		}
+
+		// --
+
+		rl = RS4GetHead( & fh->rfh_ExtLabelList );
+
+		while( rl )
+		{
+			len = strlen( rl->rl_Name );
+
+			if ( len < 8 )
+			{
+				sprintf( in->SaveLineBuffer, "%s:\t\t\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
+			}
+			else if ( len < 16 )
+			{
+				sprintf( in->SaveLineBuffer, "%s:\t\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
+			}
+			else if ( len < 24 )
+			{
+				sprintf( in->SaveLineBuffer, "%s:\tEQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
+			}
+			else
+			{
+				sprintf( in->SaveLineBuffer, "%s: EQU\t$%08" PRIX64 "\n", rl->rl_Name, rl->rl_Offset );
+			}
+
+			if ( __Buf_WriteString( in, in->SaveLineBuffer, strlen( in->SaveLineBuffer )))
+			{
+				#ifdef DEBUG
+				printf( "%s:%04d: Error : __Single : 3 :\n", __FILE__, __LINE__ );
+				#endif
+				goto bailout;
+			}
+
+			rl = RS4GetNext( rl );
+		}
+	}
+
+	// --
+
+	#ifdef SUPPORT_AMIGAOS3
+	if ( AmigaOS3_SaveLibFunc( in, in->SaveLineBuffer ))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 4 :\n", __FILE__, __LINE__ );
+		#endif
+		goto bailout;
+	}
+	#endif
+
+	// --
+	// Close Include file
+
+	if ( __Buf_Flush( in ))
+	{
+		#ifdef DEBUG
+		printf( "%s:%04d: Error : __Single : 5 :\n", __FILE__, __LINE__ );
+		#endif
+		goto bailout;
+	}
+
+	fclose( in->SaveHandle );
+	in->SaveHandle = NULL;
+
+	if ( DoVerbose > 0 )
+	{
+		printf( "Saved '%s' (%" PRIu64 " bytes)\n", name, in->SavedBytes );
+	}
+
+	free( name );
+	name = NULL;
+
+	// --
+	// Handle Sections
+
+	for( secnr=0 ; secnr < fh->rfh_SecArraySize ; secnr++ )
+	{
+		fs = fh->rfh_SecArray[secnr].rsi_Section;
+
+		if ( __Split_Sec( in, fs, secnr ))
+		{
+			#ifdef DEBUG
+			printf( "%s:%04d: Error : __Single : 2 :\n", __FILE__, __LINE__ );
+			#endif
+
+			goto bailout;
+		}
+	}
+
+	error = FALSE;
+
+bailout:
+
+	if ( name )
+	{
+		free( name );
+	}
+
+	return( error );
+}
+
+// --
+
+enum RS4FuncStat RS4SaveSource_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, STR filename )
+{
+struct Intern in;
+
+	memset( & in, 0, sizeof( in ));
+
+	in.FileName = filename;
+	in.ec = RS4ErrStat_Okay;
+	in.fs = RS4FuncStat_Okay;
+	in.fh = fh;
+
+	// --
+
+	in.SaveBuffer = malloc( SaveBufferSize );
+
+	if ( ! in.SaveBuffer )
+	{
+		in.ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
 		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, SaveBufferSize );
@@ -598,11 +965,11 @@ STR ftype;
 		goto bailout;
 	}
 
-	SaveLineBuffer = malloc( LineBufferSize );
+	in.SaveLineBuffer = malloc( LineBufferSize );
 
-	if ( ! SaveLineBuffer )
+	if ( ! in.SaveLineBuffer )
 	{
-		ec = RS4ErrStat_OutOfMemory;
+		in.ec = RS4ErrStat_OutOfMemory;
 
 		#ifdef DEBUG
 		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, LineBufferSize );
@@ -613,205 +980,50 @@ STR ftype;
 
 	// --
 
-	if ( 0 )
+	if ( Sec_Split )
 	{
-
+		if ( __Split( & in ))
+		{
+			#ifdef DEBUG
+			printf( "%s:%04d: Error : __Split :\n", __FILE__, __LINE__ );
+			#endif
+		}
 	}
-	#ifdef SUPPORT_FHR
-	else if ( fh->rfh_FileType == RS4FileType_FHR )
-	{
-		ftype = "FHR";
-	}
-	#endif
-	#ifdef SUPPORT_HUNK
-	else if ( fh->rfh_FileType == RS4FileType_Hunk )
-	{
-		ftype = "Hunk";
-	}
-	#endif
 	else
 	{
-		ftype = "???";
-	}
-
-	sprintf( SaveLineBuffer,
-		"\n"
-		";\n"
-		"; Disassembled with ReSrc4 v%d.%d (%s)\n"
-//		"; Written by Rene W. Olsen (c) 2014-%d\n"
-		";\n"
-		"; Size .. : %" PRId64 " bytes\n"
-		"; Type .. : %s\n"
-		"; Name .. : '%s'\n"
-		"; MD5 ... : $%s\n"
-		";\n", 
-		VERSION,
-		REVISION,
-		DATE,
-//		YEAR,
-		fh->rfh_FileSize,
-		ftype,
-		fh->rfh_FileName,
-		fh->rfh_FileMD5
-	);
-
-	fs = RS4SaveWriteString( & ec, SaveLineBuffer, strlen( SaveLineBuffer ));
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUF
-		printf( "%s:%04d: Error writting string\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	// --
-
-	fs = RS4ExternalLabel( & ec, fh );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUF
-		printf( "%s:%04d: Error Writting External Data\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	// --
-
-	fs = AmigaOS3_SaveLibFunc( & ec );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error Writting lvo's\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	// --
-
-	rs = RS4GetHead( & fh->rfh_SourceList );
-
-	while( rs )
-	{
-		switch( rs->rs_Type )
+		if ( __Single( & in ))
 		{
-			case RS4SourceType_Code:
-			{
-				fs = RS4SaveWrite_Code( & ec, rs );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Save Node Failed\n", __FILE__, __LINE__ );
-					#endif
-
-					goto bailout;
-				}
-				break;
-			}
-
-			case RS4SourceType_String:
-			{
-				fs = RS4SaveWrite_String( & ec, rs );
-
-				if ( fs != RS4FuncStat_Okay )
-				{
-					// ec allready set
-
-					#ifdef DEBUG
-					printf( "%s:%04d: Save Node Failed\n", __FILE__, __LINE__ );
-					#endif
-
-					goto bailout;
-				}
-				break;
-			}
-
-			default:
-			{
-				#ifdef DEBUG
-				printf( "%s:%04d: Error unknown type (%d)\n", __FILE__, __LINE__, rs->rs_Type );
-				#endif
-				goto bailout;
-			}
+			#ifdef DEBUG
+			printf( "%s:%04d: Error : __Single :\n", __FILE__, __LINE__ );
+			#endif
 		}
-
-		rs = RS4GetNext( rs );
 	}
 
 	// --
-
-	fs = RS4SaveFlush( & ec );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUF
-		printf( "%s:%04d: Save Flush Failed\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
-
-	// --
-
-	fs = RS4FuncStat_Okay;
-	ec = RS4ErrStat_Okay;
 
 bailout:
 
-	if ( SaveLineBuffer )
+	if ( in.SaveHandle )
 	{
-		free( SaveLineBuffer );
-		SaveLineBuffer = NULL;
+		fclose( in.SaveHandle );
 	}
 
-	if ( SaveBuffer )
+	if ( in.SaveLineBuffer )
 	{
-		free( SaveBuffer );
-		SaveBuffer = NULL;
+		free( in.SaveLineBuffer );
 	}
 
-	if ( SaveHandle )
+	if ( in.SaveBuffer )
 	{
-		if ( fs != RS4FuncStat_Okay )
-		{
-			fclose( SaveHandle );
-			remove( filename );
-		}
-		else
-		{
-			fclose( SaveHandle );
-
-			if ( DoVerbose > 0 )
-			{
-				printf( "Saved %s (%d bytes)\n", filename, (S32) SavedBytes );
-			}
-		}
-
-		SaveHandle = NULL;
+		free( in.SaveBuffer );
 	}
 
 	if ( errcode )
 	{
-		*errcode = ec;
+		*errcode = in.ec;
 	}
 
-	return( fs );
+	return( in.fs );
 }
 
 // --

@@ -10,8 +10,8 @@ CFLAGS		+= -I.
 CFLAGS		+= -IResourcer
 CFLAGS		+= -O2
 CFLAGS		+= -Wextra
-CXXFLAGS	+= -MMD
-CXXFLAGS	+= -MP
+CFLAGS		+= -MMD
+CFLAGS		+= -MP
 CFLAGS		+= -W
 CFLAGS		+= -Wall
 #CFLAGS		+= -g
@@ -89,6 +89,7 @@ SRCDIRS		+= System_AmigaOS3/Lib_Mathieeesingbas
 SRCDIRS		+= System_AmigaOS3/Lib_Mathieeesingtrans
 SRCDIRS		+= System_AmigaOS3/Lib_Mathtrans
 SRCDIRS		+= System_AmigaOS3/Lib_Nonvolatile
+SRCDIRS		+= System_AmigaOS3/Lib_Rexxapp
 SRCDIRS		+= System_AmigaOS3/Lib_Rexxsyslib
 SRCDIRS		+= System_AmigaOS3/Lib_Translator
 SRCDIRS		+= System_AmigaOS3/Lib_Utility
@@ -200,13 +201,15 @@ endif
 
 ###############################################################################
 
-all: $(BINDIR)/$(TARGET)
-
-###########################################################################
-
 SRCS		+= $(wildcard $(addsuffix /*.c, $(SRCDIRS)))
 OBJS		:= $(patsubst %.c,$(OBJDIR)/%.o,$(SRCS))
 DEPS		:= $(patsubst %.c,$(OBJDIR)/%.d,$(SRCS))
+
+###########################################################################
+
+all: $(BINDIR)/$(TARGET)
+
+-include $(DEPS)
 
 ###########################################################################
 
@@ -215,10 +218,6 @@ $(BINDIR)/$(TARGET): $(OBJS) | $(BINDIR)
 
 $(BINDIR):
 	$(MKDIR) $(BINDIR)
-
-###########################################################################
-
--include $(DEPS)
 
 ###########################################################################
 

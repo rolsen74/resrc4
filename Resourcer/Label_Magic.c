@@ -49,6 +49,7 @@ RS4Label *CurLabel;
 STR lab2;
 S64 size;
 S64 adr;
+STR fmt;
 
 	// --
 
@@ -59,7 +60,7 @@ S64 adr;
 
 	// -- We allways add a Start Label for Sections
 
-	SecLabel = RS4AddLabel_Sec( & ec, sec, sec->rfs_MemoryAdr, RS4LabelType_Unset );
+	ERR_CHK( RS4AddLabel_Sec( & ec, & SecLabel, sec, sec->rfs_MemoryAdr, RS4LabelType_Unset ))
 
 	if ( ! SecLabel )
 	{
@@ -111,39 +112,45 @@ S64 adr;
 			{
 				if ( CurLabel->rl_Type1 == RS4LabelType_String )
 				{
-					snprintf( CurLabel->rl_Name, MAX_LabelName - 1, "Str_%04X", ++LabelCount );
-					CurLabel->rl_Name[ MAX_LabelName - 1 ] = 0;
+					lab2 = "Str_";
+				}
+				else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer8 )
+				{
+					lab2 = "i08_L";
+				}
+				else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer16 )
+				{
+					lab2 = "i16_L";
+				}
+				else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer32 )
+				{
+					lab2 = "i32_L";
+				}
+				else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Float32 )
+				{
+					lab2 = "f32_L";
+				}
+				else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Float64 )
+				{
+					lab2 = "f64_L";
 				}
 				else
 				{
-					/**/ if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer8 )
-					{
-						lab2 = "i08_L";
-					}
-					else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer16 )
-					{
-						lab2 = "i16_L";
-					}
-					else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Integer32 )
-					{
-						lab2 = "i32_L";
-					}
-					else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Float32 )
-					{
-						lab2 = "f32_L";
-					}
-					else if ( CurLabel->rl_Label_RW_Size == RS4LABSIZE_Float64 )
-					{
-						lab2 = "f64_L";
-					}
-					else
-					{
-						lab2 = LabNames;
-					}
-
-					snprintf( CurLabel->rl_Name, MAX_LabelName - 1, "%s%04X", lab2, ++LabelCount );
-					CurLabel->rl_Name[ MAX_LabelName - 1 ] = 0;
+					lab2 = LabNames;
 				}
+
+				if (( Sec_xDef ) && ( CurLabel->rl_xDef ))
+				{
+					fmt = "_%s%04X";
+				}
+				else
+				{
+					fmt = "%s%04X";
+				}
+
+				LabelCount++;
+				snprintf( CurLabel->rl_Name, MAX_LabelName - 1, fmt, lab2, LabelCount );
+				CurLabel->rl_Name[ MAX_LabelName - 1 ] = 0;
 			}
 		}
 
@@ -153,7 +160,7 @@ S64 adr;
 	// Process Label AFTER Hunk Memory
 	if (( CurLabel ) && ( CurLabel->rl_Offset > size ))
 	{
-		EndLabel = RS4AddLabel_Sec( & ec, sec, adr+size, RS4LabelType_Unset );
+		ERR_CHK( RS4AddLabel_Sec( & ec, & EndLabel, sec, adr+size, RS4LabelType_Unset ))
 
 		if ( ! EndLabel )
 		{ 
@@ -206,6 +213,50 @@ bailout:
 
 // --
 
+static enum RS4FuncStat RS4AdjustRefDef( 
+	enum RS4ErrorCode *errcode UNUSED,
+	RS4FileSection *sec )
+{
+RS4Label *parent;
+RS4Label *last;
+RS4Label *rl;
+
+	// --
+	// Walk throu all section labels and make 
+	// sure parent have correct xDef / xRef
+	//
+
+	rl = RS4GetHead( & sec->rfs_SecLabels );
+
+	while( rl )
+	{
+		last = rl;
+		parent = rl->rl_Parent;
+
+		while( parent )
+		{
+			if ( last->rl_xDef )
+			{
+				parent->rl_xDef = TRUE;
+			}
+
+			if ( last->rl_xRef )
+			{
+				parent->rl_xRef = TRUE;
+			}
+
+			last = parent;
+			parent = RS4GetNext( parent );
+		}
+
+		rl = RS4GetNext( rl );
+	}
+
+	return( RS4FuncStat_Okay );
+}
+
+// --
+
 static enum RS4FuncStat RS4LabAdjust( 
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt UNUSED, 
@@ -250,7 +301,7 @@ RS4Label *parent;
 	else if ( rl->rl_Address < adr + size )
 	{
 		// Do we need a NEW Parent Label
-		parent = RS4AddLabel_Sec( & ec, rl->rl_Section, adr, type );
+		ERR_CHK( RS4AddLabel_Sec( & ec, & parent, rl->rl_Section, adr, type ))
 
 		DDEBUG( printf( "RS4LabAdjust : 4 : Parent %p : Adr $%08" PRIx64 "\n", parent, adr ); )
 
@@ -298,82 +349,6 @@ bailout:
 
 // --
 
-static enum RS4FuncStat RS4CreateLabelNames( enum RS4ErrorCode *errcode, RS4FileHeader *fh )
-{
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4FileSection *sec;
-S32 cnt;
-
-	// --
-
-	ec	= RS4ErrStat_Error;
-	fs	= RS4FuncStat_Error;
-
-	// --
-
-	if (( fh->rfh_SecFirst >= 0 ) && ( fh->rfh_SecFirst < fh->rfh_SecArraySize ))
-	{
-		sec = fh->rfh_SecArray[ fh->rfh_SecFirst ].rsi_Section;
-
-		fs = RS4AdjustLabels( & ec, sec );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
-	}
-
-	// --
-
-	for( cnt=0 ; cnt < fh->rfh_SecArraySize ; cnt++ )
-	{
-		if ( cnt == fh->rfh_SecFirst )
-		{
-			continue;
-		}
-
-		sec = fh->rfh_SecArray[ cnt ].rsi_Section;
-
-		fs = RS4AdjustLabels( & ec, sec );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
-	}
-
-	// --
-
-	fs	= RS4FuncStat_Okay;
-	ec	= RS4ErrStat_Okay;
-
-	// --
-
-bailout:
-
-	if ( errcode )
-	{
-		*errcode = ec;
-	}
-
-	return( fs );
-}
-
-// --
-
 static enum RS4FuncStat RS4Decode_Struct( 
 	enum RS4ErrorCode *errcode, 
 	RS4Trace *rt UNUSED,
@@ -400,33 +375,7 @@ enum RS4FuncStat fs;
 		goto bailout;
 	}
 
-	fs = RS4LabAdjust( & ec, rt, rl, rt->rt_CurMemAdr, rl->rl_Size, RS4LabelType_Unset );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-		fs = RS4FuncStat_Error;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error adjusting label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
-		#endif
-
-		goto bailout;
-	}
-
-	#if 0
-	if ( rl->rl_Size > max )
-	{
-		ec = RS4ErrStat_Internal;
-		fs = RS4FuncStat_Error;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error : Addr $%08" PRIx64 " (Size %" PRId64 ", Max: %" PRId64 ")\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Size, max );
-		#endif
-
-		goto bailout;
-	}
-	#endif
+	ERR_CHK( RS4LabAdjust( & ec, rt, rl, rt->rt_CurMemAdr, rl->rl_Size, RS4LabelType_Unset ))
 
 	// --
 
@@ -510,10 +459,10 @@ bailout:
 // --
 
 static enum RS4FuncStat RS4Decode_RelativeWord( 
-	enum RS4ErrorCode *errcode, 
-	RS4Trace *rt, 
-	RS4Label *rl, 
-	S64 pos, 
+	enum RS4ErrorCode *errcode,
+	RS4Trace *rt,
+	RS4Label *rl,
+	S64 pos,
 	S64 *l )
 {
 enum RS4ErrorCode ec;
@@ -567,7 +516,7 @@ S32 cnt;
 
 		// --
 
-		brance = RS4FindLabel_File( rt->rt_File, adr, __FILE__ );
+		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & brance, adr, __FILE__ ))
 
 		if ( ! brance )
 		{
@@ -583,19 +532,7 @@ S32 cnt;
 
 		// --
 
-		fs = RS4LabAdjust( & ec, rt, rl, tableadr, 2, RS4LabelType_Unset );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-			fs = RS4FuncStat_Error;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error adjusting label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4LabAdjust( & ec, rt, rl, tableadr, 2, RS4LabelType_Unset ))
 
 		// --
 	
@@ -699,19 +636,7 @@ S32 cnt;
 
 		// --
 
-		fs = RS4LabAdjust( & ec, rt, rl, rt->rt_CurMemAdr, rt->rt_CPU.M68k.mt_OpcodeSize, RS4LabelType_Code );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-			fs = RS4FuncStat_Error;
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error adjusting label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4LabAdjust( & ec, rt, rl, rt->rt_CurMemAdr, rt->rt_CPU.M68k.mt_OpcodeSize, RS4LabelType_Code ))
 
 		// --
 
@@ -797,19 +722,7 @@ S32 m;
 		{
 			size = 4;
 
-			fs = RS4LabAdjust( & ec, rt, rl, rt->rt_CurMemAdr, size, RS4LabelType_Unset );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-				fs = RS4FuncStat_Error;
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error adjusting label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4LabAdjust( & ec, rt, rl, rt->rt_CurMemAdr, size, RS4LabelType_Unset ))
 		}
 		else
 		{
@@ -870,10 +783,10 @@ static enum RS4FuncStat Handle_Exit(
 UNUSED	RS4Trace *rt,		// Trace info
 UNUSED	RS4Label **rlptr,	// Current Label
 UNUSED	RS4Ref **rrptr,		// Current Ref
-UNUSED	MEM type,		// MemType
-UNUSED	S64 size,		// MemSize
-UNUSED	S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
-UNUSED	S64 pos )		// mem/type pos
+UNUSED	MEM type,			// MemType
+UNUSED	S64 size,			// MemSize
+UNUSED	S64 max,			// max bytes ( too .. next label, next ref, sec end, type change )
+UNUSED	S64 pos )			// mem/type pos
 {
 	*errcode = RS4ErrStat_Okay;
 
@@ -888,10 +801,10 @@ static S64 Handle_Unset(
 		RS4Trace *rt,		// Trace info	
 		RS4Label **rlptr,	// Current Label
 		RS4Ref **rrptr,		// Current Ref
-UNUSED	MEM type,		// MemType
-UNUSED	S64 size,		// MemSize
-		S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
-		S64 pos )		// mem/type pos
+UNUSED	MEM type,			// MemType
+UNUSED	S64 size,			// MemSize
+		S64 max,			// max bytes ( too .. next label, next ref, sec end, type change )
+		S64 pos )			// mem/type pos
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
@@ -915,18 +828,7 @@ S64 l;
 	}
 	else
 	{
-		fs = RS4Decode_Data( & ec, rt, rl, rrptr, max, & len );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4Decode_Data( & ec, rt, rl, rrptr, max, & len ))
 	}
 
 	// --
@@ -975,18 +877,7 @@ S64 l;
 
 	// --
 
-	fs = RS4Decode_Code( & ec, rt, rl, size, pos, type, & len );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4Decode_Code( & ec, rt, rl, size, pos, type, & len ))
 
 	// --
 
@@ -1014,10 +905,8 @@ static S64 Handle_Data(
 	RS4Trace *rt,		// Trace info
 	RS4Label **rlptr,	// Current Label
 	RS4Ref **rrptr,		// Current Ref
-//	MEM type,		// MemType
-//	S64 size,		// MemSize
-	S64 max,		// max bytes ( too .. next label, next ref, sec end, type change )
-	S64 pos )		// mem/type pos
+	S64 max,			// max bytes ( too .. next label, next ref, sec end, type change )
+	S64 pos )			// mem/type pos
 {
 enum RS4LabelType t;
 enum RS4ErrorCode ec;
@@ -1039,69 +928,25 @@ S64 l;
 	{
 		case RS4LabelType_RelativeWord:
 		{
-			fs = RS4Decode_RelativeWord( & ec, rt, rl, pos, & len );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4Decode_RelativeWord( & ec, rt, rl, pos, & len ))
 			break;
 		}
 
 		case RS4LabelType_String:
 		{
-			fs = RS4Decode_String( & ec, rt, rl, max, & len );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4Decode_String( & ec, rt, rl, max, & len ))
 			break;
 		}
 
 		case RS4LabelType_Struct:
 		{
-			fs = RS4Decode_Struct( & ec, rt, rl, & len );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4Decode_Struct( & ec, rt, rl, & len ))
 			break;
 		}
 
 		case RS4LabelType_Unknown:
 		{
-			fs = RS4Decode_Data( & ec, rt, rl, rrptr, max, & len );
-
-			if ( fs != RS4FuncStat_Okay )
-			{
-				// ec allready set
-
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
-
-				goto bailout;
-			}
+			ERR_CHK( RS4Decode_Data( & ec, rt, rl, rrptr, max, & len ))
 			break;
 		}
 	
@@ -1162,18 +1007,7 @@ U8 mtyp;
 
 	DDEBUG( printf( "RS4Parser\n" ); )
 
-	fs = Handle_Init( & ec, rt );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( Handle_Init( & ec, rt ))
 
 	// --
 
@@ -1327,7 +1161,6 @@ U8 mtyp;
 
 			case RS4MT_Data:
 			{
-//				len = Handle_Data( & ec, rt, & rl, & rr, type, size, max, pos );
 				len = Handle_Data( & ec, rt, & rl, & rr, max, pos );
 
 				#ifdef DEBUG
@@ -1370,18 +1203,7 @@ U8 mtyp;
 
 	// --
 
-	fs = Handle_Exit( & ec, rt, & rl, & rr, type, size, max, pos );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( Handle_Exit( & ec, rt, & rl, & rr, type, size, max, pos ))
 
 	// --
 
@@ -1403,6 +1225,7 @@ enum RS4FuncStat RS4LabelMagic_File( enum RS4ErrorCode *errcode, RS4FileHeader *
 {
 enum RS4ErrorCode ec;
 enum RS4FuncStat fs;
+RS4FileSection *sec;
 RS4Label *rl;
 RS4Trace rt;
 CHR argbuf[256];
@@ -1417,66 +1240,21 @@ S32 cnt;
 
 	DDEBUG( printf( "RS4LabelMagic_File\n" ); )
 
-	fs = RS4InitTrace( & ec, & rt, fh, RS4TracePass_Label );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4InitTrace( & ec, & rt, fh, RS4TracePass_Label ))
 
 	rt.rt_Container.Hunk.ms_Buf_Argument = & argbuf[0];
 
 	// --
-	// -- Parse First Section (if we have one)
-
-	if (( fh->rfh_SecFirst >= 0 ) && ( fh->rfh_SecArraySize > 0 ))
-	{
-		rt.rt_Section = fh->rfh_SecArray[ fh->rfh_SecFirst ].rsi_Section;
-
-		fs = RS4Parser( & ec, & rt );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
-	}
-
-	// --
-	// -- Now pass all the other Sections
+	// -- Pass all the other Sections
 
 	for( cnt=0 ; cnt < fh->rfh_SecArraySize ; cnt++ )
 	{
-		if ( cnt == fh->rfh_SecFirst )
-		{
-			continue;
-		}
+		sec = fh->rfh_SecArray[ cnt ].rsi_Section;
 
-		rt.rt_Section = fh->rfh_SecArray[ cnt ].rsi_Section;
+		rt.rt_Section = sec;
 
-		fs = RS4Parser( & ec, & rt );
-
-		if ( fs != RS4FuncStat_Okay )
-		{
-			// ec allready set
-
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
-
-			goto bailout;
-		}
+		ERR_CHK( RS4Parser( & ec, & rt ))
+		ERR_CHK( RS4AdjustRefDef( & ec, sec ))
 	}
 
 	// --
@@ -1505,17 +1283,11 @@ S32 cnt;
 	// --
 	// -- Create Hunk Label Names
 
-	fs = RS4CreateLabelNames( & ec, fh );
-
-	if ( fs != RS4FuncStat_Okay )
+	for( cnt=0 ; cnt < fh->rfh_SecArraySize ; cnt++ )
 	{
-		// ec allready set
+		sec = fh->rfh_SecArray[ cnt ].rsi_Section;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error creating label names\n", __FILE__, __LINE__ );
-		#endif
-
-		goto bailout;	
+		ERR_CHK( RS4AdjustLabels( & ec, sec ))
 	}
 
 	// --

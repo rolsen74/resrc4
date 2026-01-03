@@ -35,19 +35,7 @@ S32 ay;
 	ay		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	val		= (( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ));
 
-	fs = RS4BuildLabelString2( & ec, rt, labname, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize, val );
-
-	if ( fs != RS4FuncStat_Okay )
-	{
-		// ec allready set
-		ds = RS4DecodeStat_Error;
-
-		#ifdef DEBUG
-		printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, labname );
-		#endif
-
-		goto bailout;
-	}
+	ERR_CHK( RS4BuildLabelString2( & ec, rt, labname, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize, val ))
 
 	switch( mode )
 	{
