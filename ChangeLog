@@ -282,7 +282,7 @@ ReSrc4 v2.18 ( 03-Jan-2026 )
 ReSrc4 v2.19 ( 26-May-2026 )
 
 - When building the source code, I did not check if structures was inside
-  the bss area of a Data/Code section.
+  the bss or a Data/Code section.
 
 - There was an error in the internal StackSwapStructure, that resulted in
   generating wrong source files.
