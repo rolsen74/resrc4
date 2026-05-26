@@ -156,7 +156,7 @@ AR			:= ar
 RM			:= delete
 CC			:= gcc
 STRIP		:= strip
-MKDIR		:= makedir FORCE
+MKDIR		:= mkdir -p
 COPY		:= copy CLONE
 SDK			:= sdk:
 CRT			:= newlib
@@ -248,7 +248,7 @@ install:
 ###########################################################################
 
 $(OBJDIR)/%.o: %.c
-	@$(MKDIR) $(dir $@)
+	$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 ###########################################################################
