@@ -79,11 +79,6 @@ M68kCmd_BFCHG ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 
 	// --
 
-	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + reg );
-	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
-
-	// --
-
 	ds = RS4DecodeStat_Okay;
 	ec = RS4ErrStat_Okay;
 
