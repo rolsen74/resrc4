@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -19,16 +19,17 @@
 // -- Mode 71 - move.l $00000004
 // extern S32 leatst;
 
-enum RS4DecodeStat MODE_71( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat
+MODE_71 ( enum RS4ErrorCode * errcode, RS4Trace * rt, STR outstr )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-RS4Ref *isRef;
-U32 val;
-MEM mem;
-S32 pos;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+	RS4Label *		   rl;
+	RS4Ref *		   isRef;
+	U32				   val;
+	MEM				   mem;
+	S32				   pos;
 
 	// --
 
@@ -40,20 +41,20 @@ S32 pos;
 
 	mem = rt->rt_CurMemBuf;
 	pos = rt->rt_CPU.M68k.mt_ArgSize;
-	val = (( mem[pos] << 24 ) | ( mem[pos+1] << 16 ) | ( mem[pos+2] << 8 ) | ( mem[pos+3] << 0 ));
+	val = ( ( mem[pos] << 24 ) | ( mem[pos + 1] << 16 ) | ( mem[pos + 2] << 8 ) | ( mem[pos + 3] << 0 ) );
 
-	ERR_CHK( RS4FindRef_Sec( & ec, & isRef, rt->rt_Section, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize ))
+	ERR_CHK ( RS4FindRef_Sec ( &ec, &isRef, rt->rt_Section, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize ) )
 
 	if ( isRef )
 	{
 		isRef->rr_Handled = TRUE;
 
 		// if there is a Ref then the a label have been added
-		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, val, __FILE__ ))
+		ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, val, __FILE__ ) )
 
 		if ( rt->rt_Pass != RS4TracePass_Trace )
 		{
-			ERR_CHK( RS4BuildLabelString( & ec, rl, outstr ))
+			ERR_CHK ( RS4BuildLabelString ( &ec, rl, outstr ) )
 		}
 		else
 		{
@@ -70,17 +71,17 @@ S32 pos;
 	{
 		if ( rt->rt_CPU.M68k.mt_DoExternal )
 		{
-			ERR_CHK( RS4AddExtLabel( & ec, & rl, rt->rt_File, val ))
+			ERR_CHK ( RS4AddExtLabel ( &ec, &rl, rt->rt_File, val ) )
 
 			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				if (( rl ) && ( rl->rl_Name[0] ))
+				if ( ( rl ) && ( rl->rl_Name[0] ) )
 				{
-					sprintf( outstr, "%s", rl->rl_Name );
+					sprintf ( outstr, "%s", rl->rl_Name );
 				}
 				else
 				{
-					sprintf( outstr, "($%08x).l", val );
+					sprintf ( outstr, "($%08x).l", val );
 				}
 			}
 			else
@@ -92,7 +93,7 @@ S32 pos;
 		{
 			if ( rt->rt_Pass != RS4TracePass_Trace )
 			{
-				sprintf( outstr, "($%08x).l", val );
+				sprintf ( outstr, "($%08x).l", val );
 			}
 			else
 			{
@@ -102,23 +103,29 @@ S32 pos;
 
 		if ( rt->rt_CPU.M68k.mt_CurRegister )
 		{
-			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Address;
+			rt->rt_CPU.M68k.mt_CurRegister->mr_Type1   = RRT_Address;
 			rt->rt_CPU.M68k.mt_CurRegister->mr_Address = val;
 		}
 	}
 
 	// --
 
-	if (( rl ) && ( rt->rt_CPU.M68k.mt_DoLabelSize ))
+	if ( ( rl ) && ( rt->rt_CPU.M68k.mt_DoLabelSize ) )
 	{
 		enum RS4LabelSize rls;
 
-		/**/ if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Byte )		rls = RS4LABSIZE_Integer8;
-		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Word )		rls = RS4LABSIZE_Integer16;
-		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Long )		rls = RS4LABSIZE_Integer32;
-		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Single )	rls = RS4LABSIZE_Float32;
-		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Double )	rls = RS4LABSIZE_Float64;
-		else rls = RS4LABSIZE_Unknown;
+		/**/ if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Byte )
+			rls = RS4LABSIZE_Integer8;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Word )
+			rls = RS4LABSIZE_Integer16;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Long )
+			rls = RS4LABSIZE_Integer32;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Single )
+			rls = RS4LABSIZE_Float32;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Double )
+			rls = RS4LABSIZE_Float64;
+		else
+			rls = RS4LABSIZE_Unknown;
 
 		if ( rl->rl_Label_RW_Size == RS4LABSIZE_Unset )
 		{
@@ -128,12 +135,12 @@ S32 pos;
 		{
 			if ( rl->rl_Label_RW_Size != rls )
 			{
-				/**/ if (( rl->rl_Label_RW_Size == RS4LABSIZE_Integer32 ) && ( rls == RS4LABSIZE_Float32 ))
+				/**/ if ( ( rl->rl_Label_RW_Size == RS4LABSIZE_Integer32 ) && ( rls == RS4LABSIZE_Float32 ) )
 				{
 					// Convert Long to Float
 					rl->rl_Label_RW_Size = rls;
 				}
-				else if (( rl->rl_Label_RW_Size == RS4LABSIZE_Float32 ) && ( rls == RS4LABSIZE_Integer32 ))
+				else if ( ( rl->rl_Label_RW_Size == RS4LABSIZE_Float32 ) && ( rls == RS4LABSIZE_Integer32 ) )
 				{
 					// Do not convert Float to Long
 					// so do nothing, not an error
@@ -168,7 +175,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

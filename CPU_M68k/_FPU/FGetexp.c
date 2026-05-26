@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,26 +17,27 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_FGETEXP( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_FGETEXP ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 src;
-S32 dst;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   src;
+	S32				   dst;
 
-	src  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00001c00 ) >> 10;
-	dst  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
+	src = ( rt->rt_CPU.M68k.mt_Opcode & 0x00001c00 ) >> 10;
+	dst = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "FGetexp.x";
-	rt->rt_CPU.M68k.mt_OpcodeSize = 4;
+	rt->rt_CPU.M68k.mt_OpcodeSize		= 4;
 
 	if ( src == dst )
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", FPx_RegNames[src] );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", FPx_RegNames[src] );
 	}
 	else
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,%s", FPx_RegNames[src], FPx_RegNames[dst] );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,%s", FPx_RegNames[src], FPx_RegNames[dst] );
 	}
 
 	// --
@@ -46,7 +47,7 @@ S32 dst;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -55,80 +56,81 @@ S32 dst;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_FGETEXP2( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_FGETEXP2 ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 emode;
-S32 ereg;
-S32 src;
-S32 dst;
-S32 len;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   emode;
+	S32				   ereg;
+	S32				   src;
+	S32				   dst;
+	S32				   len;
 
-	emode= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	ereg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
-	src  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00001c00 ) >> 10;
-	dst  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
+	emode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	ereg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	src	  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00001c00 ) >> 10;
+	dst	  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
 
-	switch( src )
+	switch ( src )
 	{
 		case 0:
 		{
-			rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Long;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Long;
 			rt->rt_Container.Hunk.ms_Str_Opcode = "FGetexp.l";
 			break;
 		}
 
 		case 1:
 		{
-			rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Single;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Single;
 			rt->rt_Container.Hunk.ms_Str_Opcode = "FGetexp.s";
 			break;
 		}
 
 		case 2:
 		{
-			rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Extended;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Extended;
 			rt->rt_Container.Hunk.ms_Str_Opcode = "FGetexp.x";
 			break;
 		}
 
 		case 3:
 		{
-			rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Packed;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Packed;
 			rt->rt_Container.Hunk.ms_Str_Opcode = "FGetexp.p";
 			break;
 		}
 
 		case 4:
 		{
-			rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Word;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Word;
 			rt->rt_Container.Hunk.ms_Str_Opcode = "FGetexp.w";
 			break;
 		}
 
 		case 5:
 		{
-			rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Double;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Double;
 			rt->rt_Container.Hunk.ms_Str_Opcode = "FGetexp.d";
 			break;
 		}
 
 		case 6:
 		{
-			rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Byte;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Byte;
 			rt->rt_Container.Hunk.ms_Str_Opcode = "FGetexp.b";
 			break;
 		}
 
 		default:
 		{
-			printf( "Unsupported 'FGetexp2' Opcode (Size %d) at $%08" PRIx64 "\n", src, rt->rt_CurMemAdr );
+			printf ( "Unsupported 'FGetexp2' Opcode (Size %d) at $%08" PRIx64 "\n", src, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
@@ -137,18 +139,18 @@ S32 len;
 	// --
 
 	rt->rt_CPU.M68k.mt_ArgEMode = emode;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ereg;
+	rt->rt_CPU.M68k.mt_ArgEReg	= ereg;
 	rt->rt_CPU.M68k.mt_ArgSize	= 4;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	// --
 
-	len = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
+	len = strlen ( rt->rt_Container.Hunk.ms_Buf_Argument );
 
-	sprintf( & rt->rt_Container.Hunk.ms_Buf_Argument[len], ",%s", FPx_RegNames[dst] );
+	sprintf ( &rt->rt_Container.Hunk.ms_Buf_Argument[len], ",%s", FPx_RegNames[dst] );
 
 	// --
 
@@ -166,5 +168,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

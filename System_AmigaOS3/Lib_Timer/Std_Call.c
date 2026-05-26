@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,18 +17,12 @@
 
 // --
 
-//enum RS4DecodeStat AOS3_Timer_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
+// enum RS4DecodeStat AOS3_Timer_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 // --
 
-AOS3_LVOStruct AOS3_TimerBase[] =
-{
-	AOS3_LVO_Name( -42, AddTime ),
-	AOS3_LVO_Name( -48, SubTime ),
-	AOS3_LVO_Name( -54, CmpTime ),
-	AOS3_LVO_Name( -60, ReadEClock ),
-	AOS3_LVO_Name( -66, GetSysTime ),
-	AOS3_LVO_EndMarker()
-};
+AOS3_LVOStruct AOS3_TimerBase[]
+	= { AOS3_LVO_Name ( -42, AddTime ),	   AOS3_LVO_Name ( -48, SubTime ),	  AOS3_LVO_Name ( -54, CmpTime ),
+		AOS3_LVO_Name ( -60, ReadEClock ), AOS3_LVO_Name ( -66, GetSysTime ), AOS3_LVO_EndMarker () };
 
 // --

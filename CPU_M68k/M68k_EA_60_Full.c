@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -16,624 +16,356 @@
 #include "Resourcer/ReSrc4.h"
 
 // --
-// -- Mode 60 - Full Extension Word Format
 
-enum RS4DecodeStat MODE_60_Full_0( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+struct EAMode
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-MEM mem;
-S32 SCALE;
-S32 mode;
-S32 REG;
-S32 pos;
-S32 IIS;
-S32 AD;
-S32 WL;
-S32 BS;
-S32 IS;
-S32 BD;
+	U16 Mode;
+	STR Format;
+};
+
+// %a = Ax Reg
+// %d = Dx Reg
+// %x = Xn (Ax/Dx) Reg
+// %2 = 2 Bytes / 16Bit
+// %4 = 4 Bytes / 32Bit
+static struct EAMode Modes[] = {
+	{ 0x0111, "( [ %a     , %x.w   ]            )" }, //	Pea		([A0,D0.w])					; 4870 0111
+	{ 0x0112, "( [ %a     , %x.w   ] , %2.w     )" }, //	Pea		([A0,D0.w],4.w)				; 4870 0112 0004
+	{ 0x0113, "( [ %a     , %x.w   ] , %4.l     )" }, //	Pea		([A0,D0.w],8.l)				; 4870 0113 0000 0008
+	{ 0x0115, "( [ %a   ] , %x.w                )" }, //	Pea		([A0],D0.w)					; 4870 0115
+	{ 0x0116, "( [ %a   ] , %x.w     , %2.w     )" }, //	Pea		([A0],D0.w,4.w)				; 4870 0116 0004
+	{ 0x0117, "( [ %a   ] , %x.w     , %4.l     )" }, //	Pea		([A0],D0.w,8.l)				; 4870 0117 0000 0008
+	{ 0x0120, "(   %2.w   , %a       , %x.w     )" }, //	Pea		(4.w,A0,D0.w)				; 4870 0120 0004
+	{ 0x0121, "( [ %2.w   , %a       , %x.w   ] )" }, //	Pea		([4.w,A0,D0.w])				; 4870 0121 0004
+	{ 0x0125, "( [ %2.w   , %a     ] , %x.w     )" }, //	Pea		([4.w,A0],D0.w)				; 4870 0125 0004
+	{ 0x0130, "(   %4.l   , %a       , %x.w     )" }, //	Pea		(8.l,A0,D0.w)				; 4870 0130 0000 0008
+	{ 0x0131, "( [ %4.l   , %a       , %x.w   ] )" }, //	Pea		([8.l,A0,D0.w])				; 4870 0131 0000 0008
+	{ 0x0135, "( [ %4.l   , %a     ] , %x.w     )" }, //	Pea		([8.l,A0],D0.w)				; 4870 0135 0000 0008
+	{ 0x0151, "( [ %a   ]                       )" }, //	Pea		([A0])						; 4870 0151
+	{ 0x0152, "( [ %a   ] , %2.w                )" }, //	Pea		([A0],4.w)					; 4870 0152 0004
+	{ 0x0153, "( [ %a   ] , %4.l                )" }, //	Pea		([A0],8.l)					; 4870 0153 0000 0008
+	{ 0x0161, "( [ %2.w   , %a     ]            )" }, //	Pea		([4.w,A0])					; 4870 0161 0004
+	{ 0x0170, "(   %4.l   , %a                  )" }, //	Pea		(8.l,A0)					; 4870 0170 0000 0008
+	{ 0x0171, "( [ %4.l   , %a     ]            )" }, //	Pea		([8.l,A0])					; 4870 0171 0000 0008
+	{ 0x01a0, "(   %2.w   , %d.w                )" }, //	Pea		(4.w,D0.w)					; 4870 01a0 0004
+	{ 0x01a2, "( [ %2.w   , %d.w   ] , %2.w     )" }, //	Pea		([4.w,D0.w],4.w)			; 4870 01a2 0004 0004
+	{ 0x01a3, "( [ %2.w   , %d.w   ] , %4.l     )" }, //	Pea		([4.w,D0.w],8.l)			; 4870 01a3 0004 0000 0008
+	{ 0x01b0, "(   %4.l   , %d.w                )" }, //	Pea		(8.l,D0.w)					; 4870 01b0 0000 0008
+	{ 0x01b2, "( [ %4.l   , %d.w   ] , %2.w     )" }, //	Pea		([8.l,D0.w],4.w)			; 4870 01b2 0000 0008 0004
+	{ 0x01b3, "( [ %4.l   , %d.w   ] , %4.l     )" }, //	Pea		([8.l,D0.w],8.l)			; 4870 01b3 0000 0008 0000 0008
+	{ 0x01e1, "( [ %2.w ]                       )" }, //	Pea		([4.w])						; 4870 01e1 0004
+	{ 0x01e2, "( [ %2.w ] , %2.w                )" }, //	Pea		([4.w],4.w)					; 4870 01e2 0004 0004
+	{ 0x01e3, "( [ %2.w ] , %4.l                )" }, //	Pea		([4.w],8.l)					; 4870 01e3 0004 0000 0008
+	{ 0x01f1, "( [ %4.l ]                       )" }, //	Pea		([8.l])						; 4870 01f1 0000 0008
+	{ 0x01f2, "( [ %4.l ] , %2.w                )" }, //	Pea		([8.l],4.w)					; 4870 01f2 0000 0008 0004
+	{ 0x01f3, "( [ %4.l ] , %4.l                )" }, //	Pea		([8.l],8.l)					; 4870 01f3 0000 0008 0000 0008
+	{ 0x0311, "( [ %a     , %x.w*2 ]            )" }, //	Pea		([A0,D0.w*2])				; 4870 0311
+	{ 0x0312, "( [ %a     , %x.w*2 ] , %2.w     )" }, //	Pea		([A0,D0.w*2],4.w)			; 4870 0312 0004
+	{ 0x0313, "( [ %a     , %x.w*2 ] , %4.l     )" }, //	Pea		([A0,D0.w*2],8.l)			; 4870 0313 0000 0008
+	{ 0x0315, "( [ %a   ] , %x.w*2              )" }, //	Pea		([A0],D0.w*2)				; 4870 0315
+	{ 0x0316, "( [ %a   ] , %x.w*2   , %2.w     )" }, //	Pea		([A0],D0.w*2,4.w)			; 4870 0316 0004
+	{ 0x0317, "( [ %a   ] , %x.w*2   , %4.l     )" }, //	Pea		([A0],D0.w*2,8.l)			; 4870 0317 0000 0008
+	{ 0x0320, "(   %2.w   , %a       , %x.w*2   )" }, //	Pea		(4.w,A0,D0.w*2)				; 4870 0320 0004
+	{ 0x0321, "( [ %2.w   , %a       , %x.w*2 ] )" }, //	Pea		([4.w,A0,D0.w*2])			; 4870 0321 0004
+	{ 0x0325, "( [ %2.w   , %a     ] , %x.w*2   )" }, //	Pea		([4.w,A0],D0.w*2)			; 4870 0325 0004
+	{ 0x0330, "(   %4.l   , %a       , %x.w*2   )" }, //	Pea		(8.l,A0,D0.w*2)				; 4870 0330 0000 0008
+	{ 0x0331, "( [ %4.l   , %a       , %x.w*2 ] )" }, //	Pea		([8.l,A0,D0.w*2])			; 4870 0331 0000 0008
+	{ 0x0335, "( [ %4.l   , %a     ] , %x.w*2   )" }, //	Pea		([8.l,A0],D0.w*2)			; 4870 0335 0000 0008
+	{ 0x03a0, "(   %2.w   , %x.w*2              )" }, //	Pea		(4.w,D0.w*2)				; 4870 03a0 0004
+	{ 0x03a2, "( [ %2.w   , %x.w*2 ] , %2.w     )" }, //	Pea		([4.w,D0.w*2],4.w)			; 4870 03a2 0004 0004
+	{ 0x03a3, "( [ %2.w   , %x.w*2 ] , %4.l     )" }, //	Pea		([4.w,D0.w*2],8.l)			; 4870 03a3 0004 0000 0008
+	{ 0x03b0, "(   %4.l   , %x.w*2              )" }, //	Pea		(8.l,D0.w*2)				; 4870 03b0 0000 0008
+	{ 0x03b2, "( [ %4.l   , %x.w*2 ] , %2.w     )" }, //	Pea		([8.l,D0.w*2],4.w)			; 4870 03b2 0000 0008 0004
+	{ 0x03b3, "( [ %4.l   , %x.w*2 ] , %4.l     )" }, //	Pea		([8.l,D0.w*2],8.l)			; 4870 03b3 0000 0008 0000 0008
+	{ 0x0511, "( [ %a     , %x.w*4 ]            )" }, //	Pea		([A0,D0.w*4])				; 4870 0511
+	{ 0x0512, "( [ %a     , %x.w*4 ] , %2.w     )" }, //	Pea		([A0,D0.w*4],4.w)			; 4870 0512 0004
+	{ 0x0513, "( [ %a     , %x.w*4 ] , %4.l     )" }, //	Pea		([A0,D0.w*4],8.l)			; 4870 0513 0000 0008
+	{ 0x0515, "( [ %a   ] , %x.w*4              )" }, //	Pea		([A0],D0.w*4)				; 4870 0515
+	{ 0x0516, "( [ %a   ] , %x.w*4   , %2.w     )" }, //	Pea		([A0],D0.w*4,4.w)			; 4870 0516 0004
+	{ 0x0517, "( [ %a   ] , %x.w*4   , %4.l     )" }, //	Pea		([A0],D0.w*4,8.l)			; 4870 0517 0000 0008
+	{ 0x0520, "(   %2.w   , %a       , %x.w*4   )" }, //	Pea		(4.w,A0,D0.w*4)				; 4870 0520 0004
+	{ 0x0521, "( [ %2.w   , %a       , %x.w*4 ] )" }, //	Pea		([4.w,A0,D0.w*4])			; 4870 0521 0004
+	{ 0x0525, "( [ %2.w   , %a     ] , %x.w*4   )" }, //	Pea		([4.w,A0],D0.w*4)			; 4870 0525 0004
+	{ 0x0530, "(   %4.l   , %a       , %x.w*4   )" }, //	Pea		(8.l,A0,D0.w*4)				; 4870 0530 0000 0008
+	{ 0x0531, "( [ %4.l   , %a       , %x.w*4 ] )" }, //	Pea		([8.l,A0,D0.w*4])			; 4870 0531 0000 0008
+	{ 0x0535, "( [ %4.l   , %a     ] , %x.w*4   )" }, //	Pea		([8.l,A0],D0.w*4)			; 4870 0535 0000 0008
+	{ 0x05a0, "(   %2.w   , %x.w*4              )" }, //	Pea		(4.w,D0.w*4)				; 4870 05a0 0004
+	{ 0x05a2, "( [ %2.w   , %x.w*4 ] , %2.w     )" }, //	Pea		([4.w,D0.w*4],4.w)			; 4870 05a2 0004 0004
+	{ 0x05a3, "( [ %2.w   , %x.w*4 ] , %4.l     )" }, //	Pea		([4.w,D0.w*4],8.l)			; 4870 05a3 0004 0000 0008
+	{ 0x05b0, "(   %4.l   , %x.w*4              )" }, //	Pea		(8.l,D0.w*4)				; 4870 05b0 0000 0008
+	{ 0x05b2, "( [ %4.l   , %x.w*4 ] , %2.w     )" }, //	Pea		([8.l,D0.w*4],4.w)			; 4870 05b2 0000 0008 0004
+	{ 0x05b3, "( [ %4.l   , %x.w*4 ] , %4.l     )" }, //	Pea		([8.l,D0.w*4],8.l)			; 4870 05b3 0000 0008 0000 0008
+	{ 0x0711, "( [ %a     , %x.w*8 ]            )" }, //	Pea		([A0,D0.w*8])				; 4870 0711
+	{ 0x0712, "( [ %a     , %x.w*8 ] , %2.w     )" }, //	Pea		([A0,D0.w*8],4.w)			; 4870 0712 0004
+	{ 0x0713, "( [ %a     , %x.w*8 ] , %4.l     )" }, //	Pea		([A0,D0.w*8],8.l)			; 4870 0713 0000 0008
+	{ 0x0715, "( [ %a   ] , %x.w*8              )" }, //	Pea		([A0],D0.w*8)				; 4870 0715
+	{ 0x0716, "( [ %a   ] , %x.w*8   , %2.w     )" }, //	Pea		([A0],D0.w*8,4.w)			; 4870 0716 0004
+	{ 0x0717, "( [ %a   ] , %x.w*8   , %4.l     )" }, //	Pea		([A0],D0.w*8,8.l)			; 4870 0717 0000 0008
+	{ 0x0720, "(   %2.w   , %a       , %x.w*8   )" }, //	Pea		(4.w,A0,D0.w*8)				; 4870 0720 0004
+	{ 0x0721, "( [ %2.w   , %a       , %x.w*8 ] )" }, //	Pea		([4.w,A0,D0.w*8])			; 4870 0721 0004
+	{ 0x0725, "( [ %2.w   , %a     ] , %x.w*8   )" }, //	Pea		([4.w,A0],D0.w*8)			; 4870 0725 0004
+	{ 0x0730, "(   %4.l   , %a       , %x.w*8   )" }, //	Pea		(8.l,A0,D0.w*8)				; 4870 0730 0000 0008
+	{ 0x0731, "( [ %4.l   , %a       , %x.w*8 ] )" }, //	Pea		([8.l,A0,D0.w*8])			; 4870 0731 0000 0008
+	{ 0x0735, "( [ %4.l   , %a     ] , %x.w*8   )" }, //	Pea		([8.l,A0],D0.w*8)			; 4870 0735 0000 0008
+	{ 0x07a0, "(   %2.w   , %x.w*8              )" }, //	Pea		(4.w,D0.w*8)				; 4870 07a0 0004
+	{ 0x07a2, "( [ %2.w   , %x.w*8 ] , %2.w     )" }, //	Pea		([4.w,D0.w*8],4.w)			; 4870 07a2 0004 0004
+	{ 0x07a3, "( [ %2.w   , %x.w*8 ] , %4.l     )" }, //	Pea		([4.w,D0.w*8],8.l)			; 4870 07a3 0004 0000 0008
+	{ 0x07b0, "(   %4.l   , %x.w*8              )" }, //	Pea		(8.l,D0.w*8)				; 4870 07b0 0000 0008
+	{ 0x07b2, "( [ %4.l   , %x.w*8 ] , %2.w     )" }, //	Pea		([8.l,D0.w*8],4.w)			; 4870 07b2 0000 0008 0004
+	{ 0x07b3, "( [ %4.l   , %x.w*8 ] , %4.l     )" }, //	Pea		([8.l,D0.w*8],8.l)			; 4870 07b3 0000 0008 0000 0008
+	{ 0x0911, "( [ %a     , %d.l   ]            )" }, //	Pea		([A0,D0.l])					; 4870 0911
+	{ 0x0912, "( [ %a     , %d.l   ] , %2.w     )" }, //	Pea		([A0,D0.l],4.w)				; 4870 0912 0004
+	{ 0x0913, "( [ %a     , %d.l   ] , %4.l     )" }, //	Pea		([A0,D0.l],8.l)				; 4870 0913 0000 0008
+	{ 0x0915, "( [ %a   ] , %d.l                )" }, //	Pea		([A0],D0.l)					; 4870 0915
+	{ 0x0916, "( [ %a   ] , %d.l     , %2.w     )" }, //	Pea		([A0],D0.l,4.w)				; 4870 0916 0004
+	{ 0x0917, "( [ %a   ] , %d.l     , %4.l     )" }, //	Pea		([A0],D0.l,8.l)				; 4870 0917 0000 0008
+	{ 0x0920, "(   %2.w   , %a       , %x.l     )" }, //	Pea		(4.w,A0,D0.l)				; 4870 0920 0004
+	{ 0x0921, "( [ %2.w   , %a       , %x.l   ] )" }, //	Pea		([4.w,A0,D0.l])				; 4870 0921 0004
+	{ 0x0925, "( [ %2.w   , %a     ] , %x.l     )" }, //	Pea		([4.w,A0],D0.l)				; 4870 0925 0004
+	{ 0x0930, "(   %4.l   , %a       , %x.l     )" }, //	Pea		(8.l,A0,D0.l)				; 4870 0930 0000 0008
+	{ 0x0931, "( [ %4.l   , %a       , %x.l   ] )" }, //	Pea		([8.l,A0,D0.l])				; 4870 0931 0000 0008
+	{ 0x0935, "( [ %4.l   , %a     ] , %x.l     )" }, //	Pea		([8.l,A0],D0.l)				; 4870 0935 0000 0008
+	{ 0x09a0, "(   %2.w   , %d.l                )" }, //	Pea		(4.w,D0.l)					; 4870 09a0 0004
+	{ 0x09a2, "( [ %2.w   , %d.l   ] , %2.w     )" }, //	Pea		([4.w,D0.l],4.w)			; 4870 09a2 0004 0004
+	{ 0x09a3, "( [ %2.w   , %d.l   ] , %4.l     )" }, //	Pea		([4.w,D0.l],8.l)			; 4870 09a3 0004 0000 0008
+	{ 0x09b0, "(   %4.l   , %d.l                )" }, //	Pea		(8.l,D0.l)					; 4870 09b0 0000 0008
+	{ 0x09b2, "( [ %4.l   , %d.l   ] , %2.w     )" }, //	Pea		([8.l,D0.l],4.w)			; 4870 09b2 0000 0008 0004
+	{ 0x09b3, "( [ %4.l   , %d.l   ] , %4.l     )" }, //	Pea		([8.l,D0.l],8.l)			; 4870 09b3 0000 0008 0000 0008
+	{ 0x0b11, "( [ %a     , %x.l*2 ]            )" }, //	Pea		([A0,D0.l*2])				; 4870 0b11
+	{ 0x0b12, "( [ %a     , %x.l*2 ] , %2.w     )" }, //	Pea		([A0,D0.l*2],4.w)			; 4870 0b12 0004
+	{ 0x0b13, "( [ %a     , %x.l*2 ] , %4.l     )" }, //	Pea		([A0,D0.l*2],8.l)			; 4870 0b13 0000 0008
+	{ 0x0b15, "( [ %a   ] , %x.l*2              )" }, //	Pea		([A0],D0.l*2)				; 4870 0b15
+	{ 0x0b16, "( [ %a   ] , %x.l*2   , %2.w     )" }, //	Pea		([A0],D0.l*2,4.w)			; 4870 0b16 0004
+	{ 0x0b17, "( [ %a   ] , %x.l*2   , %4.l     )" }, //	Pea		([A0],D0.l*2,8.l)			; 4870 0b17 0000 0008
+	{ 0x0b20, "(   %2.w   , %a       , %x.l*2   )" }, //	Pea		(4.w,A0,D0.l*2)				; 4870 0b20 0004
+	{ 0x0b21, "( [ %2.w   , %a       , %x.l*2 ] )" }, //	Pea		([4.w,A0,D0.l*2])			; 4870 0b21 0004
+	{ 0x0b25, "( [ %2.w   , %a     ] , %x.l*2   )" }, //	Pea		([4.w,A0],D0.l*2)			; 4870 0b25 0004
+	{ 0x0b30, "(   %4.l   , %a       , %x.l*2   )" }, //	Pea		(8.l,A0,D0.l*2)				; 4870 0b30 0000 0008
+	{ 0x0b31, "( [ %4.l   , %a       , %x.l*2 ] )" }, //	Pea		([8.l,A0,D0.l*2])			; 4870 0b31 0000 0008
+	{ 0x0b35, "( [ %4.l   , %a     ] , %x.l*2   )" }, //	Pea		([8.l,A0],D0.l*2)			; 4870 0b35 0000 0008
+	{ 0x0ba0, "(   %2.w   , %x.l*2              )" }, //	Pea		(4.w,D0.l*2)				; 4870 0ba0 0004
+	{ 0x0ba2, "( [ %2.w   , %x.l*2 ] , %2.w     )" }, //	Pea		([4.w,D0.l*2],4.w)			; 4870 0ba2 0004 0004
+	{ 0x0ba3, "( [ %2.w   , %x.l*2 ] , %4.l     )" }, //	Pea		([4.w,D0.l*2],8.l)			; 4870 0ba3 0004 0000 0008
+	{ 0x0bb0, "(   %4.l   , %x.l*2              )" }, //	Pea		(8.l,D0.l*2)				; 4870 0bb0 0000 0008
+	{ 0x0bb2, "( [ %4.l   , %x.l*2 ] , %2.w     )" }, //	Pea		([8.l,D0.l*2],4.w)			; 4870 0bb2 0000 0008 0004
+	{ 0x0bb3, "( [ %4.l   , %x.l*2 ] , %4.l     )" }, //	Pea		([8.l,D0.l*2],8.l)			; 4870 0bb3 0000 0008 0000 0008
+	{ 0x0d11, "( [ %a     , %x.l*4 ]            )" }, //	Pea		([A0,D0.l*4])				; 4870 0d11
+	{ 0x0d12, "( [ %a     , %x.l*4 ] , %2.w     )" }, //	Pea		([A0,D0.l*4],4.w)			; 4870 0d12 0004
+	{ 0x0d13, "( [ %a     , %x.l*4 ] , %4.l     )" }, //	Pea		([A0,D0.l*4],8.l)			; 4870 0d13 0000 0008
+	{ 0x0d15, "( [ %a   ] , %x.l*4              )" }, //	Pea		([A0],D0.l*4)				; 4870 0d15
+	{ 0x0d16, "( [ %a   ] , %x.l*4   , %2.w     )" }, //	Pea		([A0],D0.l*4,4.w)			; 4870 0d16 0004
+	{ 0x0d17, "( [ %a   ] , %x.l*4   , %4.l     )" }, //	Pea		([A0],D0.l*4,8.l)			; 4870 0d17 0000 0008
+	{ 0x0d20, "(   %2.w   , %a       , %x.l*4   )" }, //	Pea		(4.w,A0,D0.l*4)				; 4870 0d20 0004
+	{ 0x0d21, "( [ %2.w   , %a       , %x.l*4 ] )" }, //	Pea		([4.w,A0,D0.l*4])			; 4870 0d21 0004
+	{ 0x0d25, "( [ %2.w   , %a     ] , %x.l*4   )" }, //	Pea		([4.w,A0],D0.l*4)			; 4870 0d25 0004
+	{ 0x0d30, "(   %4.l   , %a       , %x.l*4   )" }, //	Pea		(8.l,A0,D0.l*4)				; 4870 0d30 0000 0008
+	{ 0x0d31, "( [ %4.l   , %a       , %x.l*4 ] )" }, //	Pea		([8.l,A0,D0.l*4])			; 4870 0d31 0000 0008
+	{ 0x0d35, "( [ %4.l   , %a     ] , %x.l*4   )" }, //	Pea		([8.l,A0],D0.l*4)			; 4870 0d35 0000 0008
+	{ 0x0da0, "(   %2.w   , %x.l*4              )" }, //	Pea		(4.w,D0.l*4)				; 4870 0da0 0004
+	{ 0x0da2, "( [ %2.w   , %x.l*4 ] , %2.w     )" }, //	Pea		([4.w,D0.l*4],4.w)			; 4870 0da2 0004 0004
+	{ 0x0da3, "( [ %2.w   , %x.l*4 ] , %4.l     )" }, //	Pea		([4.w,D0.l*4],8.l)			; 4870 0da3 0004 0000 0008
+	{ 0x0db0, "(   %4.l   , %x.l*4              )" }, //	Pea		(8.l,D0.l*4)				; 4870 0db0 0000 0008
+	{ 0x0db2, "( [ %4.l   , %x.l*4 ] , %2.w     )" }, //	Pea		([8.l,D0.l*4],4.w)			; 4870 0db2 0000 0008 0004
+	{ 0x0db3, "( [ %4.l   , %x.l*4 ] , %4.l     )" }, //	Pea		([8.l,D0.l*4],8.l)			; 4870 0db3 0000 0008 0000 0008
+	{ 0x0f11, "( [ %a     , %x.l*8 ]            )" }, //	Pea		([A0,D0.l*8])				; 4870 0f11
+	{ 0x0f12, "( [ %a     , %x.l*8 ] , %2.w     )" }, //	Pea		([A0,D0.l*8],4.w)			; 4870 0f12 0004
+	{ 0x0f13, "( [ %a     , %x.l*8 ] , %4.l     )" }, //	Pea		([A0,D0.l*8],8.l)			; 4870 0f13 0000 0008
+	{ 0x0f15, "( [ %a   ] , %x.l*8              )" }, //	Pea		([A0],D0.l*8)				; 4870 0f15
+	{ 0x0f16, "( [ %a   ] , %x.l*8   , %2.w     )" }, //	Pea		([A0],D0.l*8,4.w)			; 4870 0f16 0004
+	{ 0x0f17, "( [ %a   ] , %x.l*8   , %4.l     )" }, //	Pea		([A0],D0.l*8,8.l)			; 4870 0f17 0000 0008
+	{ 0x0f20, "(   %2.w   , %a       , %x.l*8   )" }, //	Pea		(4.w,A0,D0.l*8)				; 4870 0f20 0004
+	{ 0x0f21, "( [ %2.w   , %a       , %x.l*8 ] )" }, //	Pea		([4.w,A0,D0.l*8])			; 4870 0f21 0004
+	{ 0x0f25, "( [ %2.w   , %a     ] , %x.l*8   )" }, //	Pea		([4.w,A0],D0.l*8)			; 4870 0f25 0004
+	{ 0x0f30, "(   %4.l   , %a       , %x.l*8   )" }, //	Pea		(8.l,A0,D0.l*8)				; 4870 0f30 0000 0008
+	{ 0x0f31, "( [ %4.l   , %a       , %x.l*8 ] )" }, //	Pea		([8.l,A0,D0.l*8])			; 4870 0f31 0000 0008
+	{ 0x0f35, "( [ %4.l   , %a     ] , %x.l*8   )" }, //	Pea		([8.l,A0],D0.l*8)			; 4870 0f35 0000 0008
+	{ 0x0fa0, "(   %2.w   , %x.l*8              )" }, //	Pea		(4.w,D0.l*8)				; 4870 0fa0 0004
+	{ 0x0fa2, "( [ %2.w   , %x.l*8 ] , %2.w     )" }, //	Pea		([4.w,D0.l*8],4.w)			; 4870 0fa2 0004 0004
+	{ 0x0fa3, "( [ %2.w   , %x.l*8 ] , %4.l     )" }, //	Pea		([4.w,D0.l*8],8.l)			; 4870 0fa3 0004 0000 0008
+	{ 0x0fb0, "(   %4.l   , %x.l*8              )" }, //	Pea		(8.l,D0.l*8)				; 4870 0fb0 0000 0008
+	{ 0x0fb2, "( [ %4.l   , %x.l*8 ] , %2.w     )" }, //	Pea		([8.l,D0.l*8],4.w)			; 4870 0fb2 0000 0008 0004
+	{ 0x0fb3, "( [ %4.l   , %x.l*8 ] , %4.l     )" }, //	Pea		([8.l,D0.l*8],8.l)			; 4870 0fb3 0000 0008 0000 0008
+	{ 0x0000, NULL }
+};
+
+static U8 HexData[] = "0123456789ABCDEF";
+
+// --
+// -- Mode 60 - Full Extension Word Format00
+
+enum RS4DecodeStat
+MODE_60_Full_0 ( enum RS4ErrorCode * errcode, RS4Trace * rt, STR outstr )
+{
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+
+	RS4Label * rl;
+	RS4Ref *   isRef;
+
+	CHR labname[MAX_LabelName + 8];
+	S32 handled;
+	U16 val16;
+	U32 val32;
+	U16 mode;
+	MEM mem;
+	S32 cnt;
+	S32 REG;
+	S32 pos;
+	STR fmt;
+	S32 AD;
+	S32 c;
 
 	// --
-
-	ec = RS4ErrStat_Error;
-	ds = RS4DecodeStat_Error;
-
-	// --
-
 	// Full Extension Word Format
 
 	// [A/D] [REG] [W/L] [Scale] [1]  [BS] [IS] [BD SIZE]  [0] [I/IS]
 	//   1     3     1      2     1    1    1       2       1    3
 	// [  4 bit  ] [     4 bit     ]  [      4 bit      ]  [  4bit  ]
+	// --
 
-	mem = rt->rt_CurMemBuf;
-	pos = rt->rt_CPU.M68k.mt_ArgSize;
+	cnt	 = 0;
+	ec	 = RS4ErrStat_Error;
+	ds	 = RS4DecodeStat_Error;
+	mem	 = rt->rt_CurMemBuf;
+	pos	 = rt->rt_CPU.M68k.mt_ArgSize;
+	AD	 = ( mem[pos] & 0x80 ) >> 7;
+	REG	 = ( mem[pos] & 0x70 ) >> 4;
+	mode = ( ( mem[pos] << 8 ) | ( mem[pos + 1] ) ) & 0x0fff;
 
-	AD		= ( mem[ pos + 0 ] & 0x80 ) >> 7;
-	REG		= ( mem[ pos + 0 ] & 0x70 ) >> 4;
-	WL		= ( mem[ pos + 0 ] & 0x08 ) >> 3;
-	SCALE	= ( mem[ pos + 0 ] & 0x06 ) >> 1;
-	BS		= ( mem[ pos + 1 ] & 0x80 ) >> 7;
-	IS		= ( mem[ pos + 1 ] & 0x40 ) >> 6;
-	BD		= ( mem[ pos + 1 ] & 0x30 ) >> 4;
-	IIS		= ( mem[ pos + 1 ] & 0x07 ) >> 0;
-
-	mode	 = BD;
-	mode	|= ( IIS ) << 4;
-	mode	|= ( IS ) ? 0x0100 : 0x0000 ;
-	mode	|= ( BS ) ? 0x1000 : 0x0000 ;
-
-	switch( mode )
+	while ( Modes[cnt].Mode )
 	{
-		#if 0
-
-		// Todo: the .l can be Pointers, check IsRef()
-	
-		// From EA_60
-		case 0x0002: // BS 0, IS 0, IIS 0, BD 2 - ($0086.w,a5,d0.w*4), AsmPro wants (a5,d0.w*4,$0086.w)
-		case 0x0003: // BS 0, IS 0, IIS 0, BD 3 - ($0086.l,a5,d0.w*4), AsmPro wants (a5,d0.w*4,$0086.l)
-
-		case 0x0011: // BS 0, IS 0, IIS 1, BD 2 - ([a5,d0.w*4])
-		case 0x0012: // BS 0, IS 0, IIS 1, BD 2 - ([$0086.w,a5,d0.w*4])
-		case 0x0013: // BS 0, IS 0, IIS 1, BD 3 - ([$0086.l,a5,d0.w*4])
-
-		case 0x0021: // BS 0, IS 0, IIS 3, BD 1 - ([a5,d0.w*4],$11.w)
-		case 0x0022: // BS 0, IS 0, IIS 2, BD 2 - ([$0086.w,a5,d0.w*4],$11.w)
-		case 0x0023: // BS 0, IS 0, IIS 2, BD 3 - ([$0086.l,a5,d0.w*4],$11.w)
-
-		case 0x0031: // BS 0, IS 0, IIS 3, BD 1 - ([a5,d0.w*4],$11.l)
-		case 0x0032: // BS 0, IS 0, IIS 3, BD 2 - ([$0086.w,a5,d0.w*4],$11.l)
-		case 0x0033: // BS 0, IS 0, IIS 3, BD 3 - ([$0086.l,a5,d0.w*4],$11.l)
-
-		case 0x0051: // BS 0, IS 0, IIS 7, BD 1 - ([a5],d0.w*4)
-		case 0x0052: // BS 0, IS 0, IIS 7, BD 2 - ([$0086.w,a5],d0.w*4)
-		case 0x0053: // BS 0, IS 0, IIS 7, BD 3 - ([$0086.l,a5],d0.w*4)
-
-		case 0x0061: // BS 0, IS 0, IIS 6, BD 1 - ([a5],d0.w*4,$11.w)
-		case 0x0062: // BS 0, IS 0, IIS 6, BD 2 - ([$0086.w,a5],d0.w*4,$11.w)
-		case 0x0063: // BS 0, IS 0, IIS 6, BD 3 - ([$0086.l,a5],d0.w*4,$11.w)
-
-		case 0x0071: // BS 0, IS 0, IIS 7, BD 1 - ([a5],d0.w*4,$11.l)
-		case 0x0072: // BS 0, IS 0, IIS 7, BD 2 - ([$0086.w,a5],d0.w*4,$11.l)
-		case 0x0073: // BS 0, IS 0, IIS 7, BD 3 - ([$0086.l,a5],d0.w*4,$11.l)
-
-		case 0x0111: // BS 0, IS 1, IIS 1, BD 1 - ([A7])
-		case 0x0112: // BS 0, IS 1, IIS 1, BD 2 - ([$0004.w,A7])
-		case 0x0113: // BS 0, IS 1, IIS 1, BD 3 - ([$0004.l,A7])
-
-		case 0x0121: // BS 0, IS 1, IIS 2, BD 1 - ([A7],$0044.w)
-		case 0x0122: // BS 0, IS 1, IIS 2, BD 2 - ([$0004.w,A7],$0044.w)
-		case 0x0123: // BS 0, IS 1, IIS 2, BD 3 - ([$0004.l,A7],$0044.w)
-
-		case 0x0131: // BS 0, IS 1, IIS 3, BD 1 - ([A7],$0044.l)
-		case 0x0132: // BS 0, IS 1, IIS 3, BD 2 - ([$0004.w,A7],$0044.l)
-		case 0x0133: // BS 0, IS 1, IIS 3, BD 3 - ([$0004.l,A7],$0044.l)
-
-		// From EA_73
-
-		case 0x0002: // BS 0, IS 0, IIS 0, BD 2 - (label.w,PC,d0.w*4)
-		case 0x0003: // BS 0, IS 0, IIS 0, BD 3 - (label.l,PC,d0.w*4)
-
-		case 0x0011: // BS 0, IS 0, IIS 1, BD 1 - ([PC,d0.w*4])
-		case 0x0012: // BS 0, IS 0, IIS 1, BD 2 - ([label.w,PC,d0.w*4])
-		case 0x0013: // BS 0, IS 0, IIS 1, BD 3 - ([label.l,PC,d0.w*4])
-
-		case 0x0021: // BS 0, IS 0, IIS 2, BD 1 - ([PC,d0.w*4],$11.w)
-		case 0x0022: // BS 0, IS 0, IIS 2, BD 2 - ([label.w,PC,d0.w*4],$11.w)
-		case 0x0023: // BS 0, IS 0, IIS 2, BD 3 - ([label.l,PC,d0.w*4],$11.w)
-
-		case 0x0031: // BS 0, IS 0, IIS 3, BD 1 - ([PC,d0.w*4],$11.l)
-		case 0x0032: // BS 0, IS 0, IIS 3, BD 2 - ([label.w,PC,d0.w*4],$11.l)
-		case 0x0033: // BS 0, IS 0, IIS 3, BD 3 - ([label.l,PC,d0.w*4],$11.l)
-
-		case 0x0051: // BS 0, IS 0, IIS 5, BD 1 - ([PC],d0.w*4)
-		case 0x0052: // BS 0, IS 0, IIS 5, BD 2 - ([label.w,PC],d0.w*4)
-		case 0x0053: // BS 0, IS 0, IIS 5, BD 3 - ([label.l,PC],d0.w*4)
-
-		case 0x0061: // BS 0, IS 0, IIS 6, BD 1 - ([PC],d0.w*4,$11.w)
-		case 0x0062: // BS 0, IS 0, IIS 6, BD 2 - ([label.w,PC],d0.w*4,$11.w)
-		case 0x0063: // BS 0, IS 0, IIS 6, BD 3 - ([label.l,PC],d0.w*4,$11.w)
-
-		case 0x0071: // BS 0, IS 0, IIS 7, BD 1 - ([PC],d0.w*4,$11.l)
-		case 0x0072: // BS 0, IS 0, IIS 7, BD 2 - ([label.w,PC],d0.w*4,$11.l)
-		case 0x0073: // BS 0, IS 0, IIS 7, BD 3 - ([label.l,PC],d0.w*4,$11.l)
-
-		case 0x0103: // BS 0, IS 1, IIS 0, BD 3 - (label.l,PC)
-
-		case 0x0111: // BS 0, IS 1, IIS 1, BD 1 - ([PC])
-		case 0x0112: // BS 0, IS 1, IIS 1, BD 2 - ([label.w,PC])
-		case 0x0113: // BS 0, IS 1, IIS 1, BD 3 - ([label.l,PC])
-
-		case 0x0121: // BS 0, IS 1, IIS 2, BD 1 - ([PC],$22.w)
-		case 0x0122: // BS 0, IS 1, IIS 2, BD 2 - ([label.w,PC],$22.w)
-		case 0x0123: // BS 0, IS 1, IIS 2, BD 3 - ([label.l,PC],$22.w)
-
-		case 0x0131: // BS 0, IS 1, IIS 3, BD 1 - ([PC],$44.l)
-		case 0x0132: // BS 0, IS 1, IIS 3, BD 2 - ([label.w,PC],$44.l)
-		case 0x0133: // BS 0, IS 1, IIS 3, BD 3 - ([label.l,PC],$44.l)
-
-		// -- fast vasm test of mode 73
-		// 1 ( d8 , PC , Xn.SIZE * SCALE )
-		// 2 ( bd , PC , Xn.SIZE * SCALE )
-		// 3 ( [ bd , PC ] , Xn.SIZE * SCALE , od )
-		// 4 ( [ bd , PC , Xn.SIZE * SCALE ] , od )
-		#endif
-
-		case 0x0002: // BS 0, IS 0, IIS 0, BD 2 - ($0086.w,a5,d0.w*4), AsmPro wants (a5,d0.w*4,$0086.w)
+		if ( Modes[cnt].Mode == mode )
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			break;
+		}
+		else
+		{
+			cnt++;
+		}
+	}
 
-			sprintf( outstr, "(%d.w,%s,%s%s%s)", 
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
+	if ( Modes[cnt].Mode == 0x0000 )
+	{
+		ec = RS4ErrStat_Okay;
+		ds = RS4DecodeStat_UnknownCmd;
+		printf ( "Invalid EA 60 Mode ($%04" PRIx16 ")\n", mode );
+		goto bailout;
+	}
 
-			rt->rt_CPU.M68k.mt_ArgSize += 4;
+	rt->rt_CPU.M68k.mt_ArgSize += 2;
+
+	fmt = Modes[cnt].Format;
+
+	while ( true )
+	{
+		c = *fmt++;
+
+		if ( ! c )
+		{
 			break;
 		}
 
-		case 0x0003: // BS 0, IS 0, IIS 0, BD 3 - ($0086.l,a5,d0.w*4), AsmPro wants (a5,d0.w*4,$0086.l)
+		if ( c != '%' )
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "(%d.l,%s,%s%s%s)", 
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
+			if ( ( c != 9 ) && ( c != 32 ) )
+			{
+				*outstr++ = c;
+			}
+			continue;
 		}
 
-		case 0x0011: // BS 0, IS 0, IIS 1, BD 2 - ([a5,d0.w*4])
-		{
-			sprintf( outstr, "([%s,%s%s%s])",
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
+		c = *fmt++;
 
-			rt->rt_CPU.M68k.mt_ArgSize += 2;
-			break;
+		/**/ if ( c == 'a' ) // Ax Reg
+		{
+			*outstr++ = 'A';
+			*outstr++ = '0' + rt->rt_CPU.M68k.mt_ArgEReg;
+			continue;
 		}
-
-		case 0x0012: // BS 0, IS 0, IIS 1, BD 2 - ([$0086.w,a5,d0.w*4])
+		else if ( c == 'd' ) // Dx Reg
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-
-			sprintf( outstr, "([%d.w,%s,%s%s%s])", 
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 4;
-			break;
+			*outstr++ = 'D';
+			*outstr++ = '0' + rt->rt_CPU.M68k.mt_ArgEReg;
+			continue;
 		}
-
-		case 0x0013: // BS 0, IS 0, IIS 1, BD 3 - ([$0086.l,a5,d0.w*4])
+		else if ( c == 'x' ) // Xn Reg
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%d.l,%s,%s%s%s])", 
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
+			*outstr++ = ( AD ) ? 'A' : 'D';
+			*outstr++ = '0' + REG;
+			continue;
 		}
-
-		case 0x0021: // BS 0, IS 0, IIS 2, BD 1 - ([a5,d0.w*4],$11.w)
+		else if ( c == '2' ) // 16bit
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			val16 = 0;
+			val16 |= mem[rt->rt_CPU.M68k.mt_ArgSize++] << 8;
+			val16 |= mem[rt->rt_CPU.M68k.mt_ArgSize++] << 0;
 
-			sprintf( outstr, "([%s,%s%s%s],%d.w)",
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v1
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 4;
-			break;
+			*outstr++ = '$';
+			*outstr++ = HexData[( ( val16 >> 12 ) & 0x0f )];
+			*outstr++ = HexData[( ( val16 >> 8 ) & 0x0f )];
+			*outstr++ = HexData[( ( val16 >> 4 ) & 0x0f )];
+			*outstr++ = HexData[( ( val16 >> 0 ) & 0x0f )];
+			continue;
 		}
-
-		case 0x0022: // BS 0, IS 0, IIS 2, BD 2 - ([$0086.w,a5,d0.w*4],$11.w)
+		else if ( c == '4' ) // 32bit
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-			S16 v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			val32 = 0;
+			val32 |= mem[rt->rt_CPU.M68k.mt_ArgSize++] << 24;
+			val32 |= mem[rt->rt_CPU.M68k.mt_ArgSize++] << 16;
+			val32 |= mem[rt->rt_CPU.M68k.mt_ArgSize++] << 8;
+			val32 |= mem[rt->rt_CPU.M68k.mt_ArgSize++] << 0;
+			handled = false;
 
-			sprintf( outstr, "([%d.w,%s,%s%s%s],%d.w)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v2
-			);
+			ERR_CHK ( RS4FindRef_Sec ( &ec, &isRef, rt->rt_Section, rt->rt_CurMemAdr + rt->rt_CPU.M68k.mt_ArgSize - 4 ) )
 
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
+			if ( isRef )
+			{
+				isRef->rr_Handled = TRUE;
+
+				// if there is a Ref then the a label have been added
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, val32, __FILE__ ) )
+
+				if ( ! rl )
+				{
+					ec = RS4ErrStat_Internal;
+					ds = RS4DecodeStat_Error;
+					goto bailout;
+				}
+
+				if ( rt->rt_Pass != RS4TracePass_Trace )
+				{
+					if ( rl->rl_Name[0] )
+					{
+						ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
+						sprintf ( outstr, "%s", labname );
+						outstr += strlen ( labname );
+						handled = true;
+					}
+				}
+			}
+
+			if ( ! handled )
+			{
+				*outstr++ = '$';
+				*outstr++ = HexData[( ( val32 >> 28 ) & 0x0f )];
+				*outstr++ = HexData[( ( val32 >> 24 ) & 0x0f )];
+				*outstr++ = HexData[( ( val32 >> 20 ) & 0x0f )];
+				*outstr++ = HexData[( ( val32 >> 16 ) & 0x0f )];
+				*outstr++ = HexData[( ( val32 >> 12 ) & 0x0f )];
+				*outstr++ = HexData[( ( val32 >> 8 ) & 0x0f )];
+				*outstr++ = HexData[( ( val32 >> 4 ) & 0x0f )];
+				*outstr++ = HexData[( ( val32 >> 0 ) & 0x0f )];
+			}
+			continue;
 		}
-
-		case 0x0023: // BS 0, IS 0, IIS 2, BD 3 - ([$0086.l,a5,d0.w*4],$11.w)
+		else
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S16 v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
-
-			sprintf( outstr, "([%d.l,%s,%s%s%s],%d.w)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v2
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 8;
-			break;
-		}
-
-		case 0x0031: // BS 0, IS 0, IIS 3, BD 1 - ([a5,d0.w*4],$11.l)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%s,%s%s%s],%d.l)",
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v1
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
-		}
-
-		case 0x0032: // BS 0, IS 0, IIS 3, BD 2 - ([$0086.w,a5,d0.w*4],$11.l)
-		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
-
-			sprintf( outstr, "([%d.w,%s,%s%s%s],%d.l)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v2
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 8;
-			break;
-		}
-
-		case 0x0033: // BS 0, IS 0, IIS 3, BD 3 - ([$0086.l,a5,d0.w*4],$11.l)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
-
-			sprintf( outstr, "([%d.l,%s,%s%s%s],%d.l)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v2
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 10;
-			break;
-		}
-
-		case 0x0051: // BS 0, IS 0, IIS 5, BD 1 - ([a5],d0.w*4)
-		{
-			sprintf( outstr, "([%s],%s%s%s)",
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 2;
-			break;
-		}
-
-		case 0x0052: // BS 0, IS 0, IIS 5, BD 2 - ([$0086.w,a5],d0.w*4)
-		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-
-			sprintf( outstr, "([%d.w,%s],%s%s%s)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 4;
-			break;
-		}
-
-		case 0x0053: // BS 0, IS 0, IIS 5, BD 3 - ([$0086.l,a5],d0.w*4)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%d.l,%s],%s%s%s)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
-		}
-
-		case 0x0061: // BS 0, IS 0, IIS 6, BD 1 - ([a5],d0.w*4,$11.w)
-		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-
-			sprintf( outstr, "([%s],%s%s%s,%d.w)",
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v1
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 4;
-			break;
-		}
-
-		case 0x0062: // BS 0, IS 0, IIS 6, BD 2 - ([$0086.w,a5],d0.w*4,$11.w)
-		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			S16 v2 = ( mem[ pos + 4 ] <<  8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%d.w,%s],%s%s%s,%d.w)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v2
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
-		}
-
-		case 0x0063: // BS 0, IS 0, IIS 6, BD 3 - ([$0086.l,a5],d0.w*4,$11.w)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S16 v2 = ( mem[ pos + 4 ] <<  8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%d.l,%s],%s%s%s,%d.w)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v2
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 8;
-			break;
-		}
-
-		case 0x0071: // BS 0, IS 0, IIS 7, BD 1 - ([a5],d0.w*4,$11.l)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%s],%s%s%s,%d.l)",
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v1
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
-		}
-
-		case 0x0072: // BS 0, IS 0, IIS 7, BD 2 - ([$0086.w,a5],d0.w*4,$11.l)
-		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
-
-			sprintf( outstr, "([%d.w,%s],%s%s%s,%d.l)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v2
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 8;
-			break;
-		}
-
-		case 0x0073: // BS 0, IS 0, IIS 7, BD 3 - ([$0086.l,a5],d0.w*4,$11.l)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
-
-			sprintf( outstr, "([%d.l,%s],%s%s%s,%d.l)",
-				v1,
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v2
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 10;
-			break;
-		}
-
-		case 0x0111: // BS 0, IS 1, IIS 1, BD 1 - ([A7])
-		{
-			sprintf( outstr, "([%s])", 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 2;
-			break;
-		}
-
-		case 0x0112: // BS 0, IS 1, IIS 1, BD 2 - ([$0004.w,A7])
-		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-
-			sprintf( outstr, "([%d.w,%s])", 
-				v1, 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 4;
-			break;
-		}
-
-		case 0x0113: // BS 0, IS 1, IIS 1, BD 3 - ([$0004.l,A7])
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%d.l,%s])", 
-				v1, 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ]
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
-		}
-
-		case 0x0121: // BS 0, IS 1, IIS 2, BD 1 - ([A7],$0044.w)
-		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-
-			sprintf( outstr, "([%s],%d.w)", 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				v1
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 4;
-			break;
-		}
-
-		case 0x0122: // BS 0, IS 1, IIS 2, BD 2 - ([$0004.w,A7],$0044.w)
-		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-			S16 v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%d.w,%s],%d.w)", 
-				v1, 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				v2 
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
-		}
-
-		case 0x0123: // BS 0, IS 1, IIS 2, BD 3 - ([$0004.l,A7],$0044.w)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S16 v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
-
-			sprintf( outstr, "([%d.l,%s],%d.w)", 
-				v1, 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				v2 
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 8;
-			break;
-		}
-
-		case 0x0131: // BS 0, IS 1, IIS 3, BD 1 - ([A7],$0044.l)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-
-			sprintf( outstr, "([%s],%d.l)", 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				v1
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 6;
-			break;
-		}
-
-		case 0x0132: // BS 0, IS 1, IIS 3, BD 2 - ([$0004.w,A7],$0044.l)
-		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
-
-			sprintf( outstr, "([%d.w,%s],%d.l)", 
-				v1, 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				v2 
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 8;
-			break;
-		}
-
-		case 0x0133: // BS 0, IS 1, IIS 3, BD 3 - ([$0004.l,A7],$0044.l)
-		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
-
-			sprintf( outstr, "([%d.l,%s],%d.l)", 
-				v1, 
-				Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-				v2 
-			);
-
-			rt->rt_CPU.M68k.mt_ArgSize += 10;
-			break;
-		}
-
-		default:
-		{
-			#if 0
-			printf( "\n" );
-			printf( "%s:%04d: EA ........ : 60\n", __FILE__, __LINE__ );
-			printf( "%s:%04d: MemoryAdr . : %08x\n", __FILE__, __LINE__,  rt->rt_CurMemAdr );
-			printf( "%s:%04d: AD ........ : %s\n", __FILE__, __LINE__, (AD)?"Ax":"Dx" );
-			printf( "%s:%04d: REG ....... : %d : %s\n", __FILE__, __LINE__, REG,( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ] );
-			printf( "%s:%04d: WL ........ : %s\n", __FILE__, __LINE__, (WL)?".l":".w" );
-			printf( "%s:%04d: SCALE ..... : %d : %s\n", __FILE__, __LINE__, SCALE, scale_Names[SCALE] );
-			printf( "%s:%04d: BS ........ : %s\n", __FILE__, __LINE__, (BS)?"Yes":"No" );
-			printf( "%s:%04d: IS ........ : %s\n", __FILE__, __LINE__, (IS)?"Yes":"No" );
-			printf( "%s:%04d: BD ........ : %d\n", __FILE__, __LINE__, BD );
-			printf( "%s:%04d: IIS ....... : %d\n", __FILE__, __LINE__, IIS );
-			printf( "%s:%04d: Mode ...... : 0x%04x\n", __FILE__, __LINE__, mode );
-			#endif
-
-			ec = RS4ErrStat_Okay;
-			ds = RS4DecodeStat_UnknownCmd;
 			goto bailout;
 		}
 	}
+
+	*outstr = 0;
 
 	// --
 
@@ -651,7 +383,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

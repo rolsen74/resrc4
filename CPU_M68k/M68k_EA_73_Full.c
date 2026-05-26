@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -18,25 +18,26 @@
 // --
 // -- Mode 73 - Full Extension Word Format
 
-enum RS4DecodeStat MODE_73_Full_0( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat
+MODE_73_Full_0 ( enum RS4ErrorCode * errcode, RS4Trace * rt, STR outstr )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-MEM mem;
-S32 adr;
-CHR labname[ MAX_LabelName + 8 ];
-S32 SCALE;
-S32 mode;
-S32 REG;
-S32 pos;
-S32 IIS;
-S32 AD;
-S32 WL;
-S32 BS;
-S32 IS;
-S32 BD;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+	RS4Label *		   rl;
+	MEM				   mem;
+	S32				   adr;
+	CHR				   labname[MAX_LabelName + 8];
+	S32				   SCALE;
+	S32				   mode;
+	S32				   REG;
+	S32				   pos;
+	S32				   IIS;
+	S32				   AD;
+	S32				   WL;
+	S32				   BS;
+	S32				   IS;
+	S32				   BD;
 
 	ec = RS4ErrStat_Okay;
 	ds = RS4DecodeStat_Okay;
@@ -52,23 +53,23 @@ S32 BD;
 	mem = rt->rt_CurMemBuf;
 	pos = rt->rt_CPU.M68k.mt_ArgSize;
 
-	AD		= ( mem[ pos + 0 ] & 0x80 ) >> 7;
-	REG		= ( mem[ pos + 0 ] & 0x70 ) >> 4;
-	WL		= ( mem[ pos + 0 ] & 0x08 ) >> 3;
-	SCALE	= ( mem[ pos + 0 ] & 0x06 ) >> 1;
-	BS		= ( mem[ pos + 1 ] & 0x80 ) >> 7;
-	IS		= ( mem[ pos + 1 ] & 0x40 ) >> 6;
-	BD		= ( mem[ pos + 1 ] & 0x30 ) >> 4;
-	IIS		= ( mem[ pos + 1 ] & 0x07 ) >> 0;
+	AD	  = ( mem[pos + 0] & 0x80 ) >> 7;
+	REG	  = ( mem[pos + 0] & 0x70 ) >> 4;
+	WL	  = ( mem[pos + 0] & 0x08 ) >> 3;
+	SCALE = ( mem[pos + 0] & 0x06 ) >> 1;
+	BS	  = ( mem[pos + 1] & 0x80 ) >> 7;
+	IS	  = ( mem[pos + 1] & 0x40 ) >> 6;
+	BD	  = ( mem[pos + 1] & 0x30 ) >> 4;
+	IIS	  = ( mem[pos + 1] & 0x07 ) >> 0;
 
-	mode	 = BD;
-	mode	|= ( IIS ) << 4;
-	mode	|= ( IS ) ? 0x0100 : 0x0000 ;
-	mode	|= ( BS ) ? 0x1000 : 0x0000 ;
+	mode = BD;
+	mode |= ( IIS ) << 4;
+	mode |= ( IS ) ? 0x0100 : 0x0000;
+	mode |= ( BS ) ? 0x1000 : 0x0000;
 
-	switch( mode )
+	switch ( mode )
 	{
-		#if 0
+#if 0
 
 		// Todo: the .l can be Pointers, check IsRef()
 
@@ -161,51 +162,43 @@ S32 BD;
 		// 2 ( bd , PC , Xn.SIZE * SCALE )
 		// 3 ( [ bd , PC ] , Xn.SIZE * SCALE , od )
 		// 4 ( [ bd , PC , Xn.SIZE * SCALE ] , od )
-		#endif
-	
+#endif
+
 		case 0x0002: // BS 0, IS 0, IIS 0, BD 2 - (label.w,PC,d0.w*4)
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "(%s.l,PC,%s%s%s)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "(%s.l,PC,%s%s%s)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE] );
 			}
 			else
 			{
-				sprintf( outstr, "(%d.l,PC,%s%s%s)", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "(%d.l,PC,%s%s%s)", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+						  scale_Names[SCALE] );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 4;
@@ -214,47 +207,39 @@ S32 BD;
 
 		case 0x0003: // BS 0, IS 0, IIS 0, BD 3 - (label.l,PC,d0.w*4)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "(%s.l,PC,%s%s%s)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "(%s.l,PC,%s%s%s)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE] );
 			}
 			else
 			{
-				sprintf( outstr, "(%d.l,PC,%s%s%s)", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "(%d.l,PC,%s%s%s)", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+						  scale_Names[SCALE] );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
@@ -263,11 +248,8 @@ S32 BD;
 
 		case 0x0011: // BS 0, IS 0, IIS 1, BD 1 - ([PC,d0.w*4])
 		{
-			sprintf( outstr, "([PC,%s%s%s])", 
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
+			sprintf ( outstr, "([PC,%s%s%s])", ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+					  scale_Names[SCALE] );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 2;
 			break;
@@ -275,47 +257,39 @@ S32 BD;
 
 		case 0x0012: // BS 0, IS 0, IIS 1, BD 2 - ([label.w,PC,d0.w*4])
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC,%s%s%s])",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "([%s.w,PC,%s%s%s])", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE] );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC,%s%s%s])", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "([%d.w,PC,%s%s%s])", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+						  scale_Names[SCALE] );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 4;
@@ -324,47 +298,39 @@ S32 BD;
 
 		case 0x0013: // BS 0, IS 0, IIS 1, BD 3 - ([label.l,PC,d0.w*4])
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC,%s%s%s])",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "([%s.l,PC,%s%s%s])", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE] );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC,%s%s%s])", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "([%d.l,PC,%s%s%s])", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+						  scale_Names[SCALE] );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
@@ -373,14 +339,10 @@ S32 BD;
 
 		case 0x0021: // BS 0, IS 0, IIS 2, BD 1 - ([PC,d0.w*4],$11.w)
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
 
-			sprintf( outstr, "([PC,%s%s%s]),%d.w", 
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v1
-			);
+			sprintf ( outstr, "([PC,%s%s%s]),%d.w", ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+					  scale_Names[SCALE], v1 );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 4;
 			break;
@@ -388,50 +350,40 @@ S32 BD;
 
 		case 0x0022: // BS 0, IS 0, IIS 2, BD 2 - ([label.w,PC,d0.w*4],$11.w)
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-			S16 v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
+			S16 v2 = ( mem[pos + 4] << 8 | mem[pos + 5] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC,%s%s%s],%d.w)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%s.w,PC,%s%s%s],%d.w)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC,%s%s%s]),%d.w", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%d.w,PC,%s%s%s]),%d.w", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
@@ -440,50 +392,40 @@ S32 BD;
 
 		case 0x0023: // BS 0, IS 0, IIS 2, BD 3 - ([label.l,PC,d0.w*4],$11.w)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S16 v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
+			S16 v2 = ( mem[pos + 6] << 8 | mem[pos + 7] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC,%s%s%s],%d.w)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%s.l,PC,%s%s%s],%d.w)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC,%s%s%s]),%d.w", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%d.l,PC,%s%s%s]),%d.w", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 8;
@@ -492,14 +434,10 @@ S32 BD;
 
 		case 0x0031: // BS 0, IS 0, IIS 3, BD 1 - ([PC,d0.w*4],$11.l)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
 
-			sprintf( outstr, "([PC,%s%s%s]),%d.l", 
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v1
-			);
+			sprintf ( outstr, "([PC,%s%s%s]),%d.l", ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+					  scale_Names[SCALE], v1 );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
 			break;
@@ -507,50 +445,40 @@ S32 BD;
 
 		case 0x0032: // BS 0, IS 0, IIS 3, BD 2 - ([label.w,PC,d0.w*4],$11.l)
 		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
+			S32 v2 = ( mem[pos + 4] << 24 | mem[pos + 5] << 16 | mem[pos + 6] << 8 | mem[pos + 7] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC,%s%s%s],%d.l)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%s.w,PC,%s%s%s],%d.l)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC,%s%s%s]),%d.l", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%d.w,PC,%s%s%s]),%d.l", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 8;
@@ -559,50 +487,40 @@ S32 BD;
 
 		case 0x0033: // BS 0, IS 0, IIS 3, BD 3 - ([label.l,PC,d0.w*4],$11.l)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
+			S32 v2 = ( mem[pos + 6] << 24 | mem[pos + 7] << 16 | mem[pos + 8] << 8 | mem[pos + 9] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC,%s%s%s],%d.l)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%s.l,PC,%s%s%s],%d.l)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC,%s%s%s]),%d.l", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%d.l,PC,%s%s%s]),%d.l", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 10;
@@ -611,11 +529,8 @@ S32 BD;
 
 		case 0x0051: // BS 0, IS 0, IIS 5, BD 1 - ([PC],d0.w*4)
 		{
-			sprintf( outstr, "([PC],%s%s%s)", 
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ]
-			);
+			sprintf ( outstr, "([PC],%s%s%s)", ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+					  scale_Names[SCALE] );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 2;
 			break;
@@ -623,47 +538,39 @@ S32 BD;
 
 		case 0x0052: // BS 0, IS 0, IIS 5, BD 2 - ([label.w,PC],d0.w*4)
 		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC],%s%s%s)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "([%s.w,PC],%s%s%s)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE] );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC],%s%s%s)", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "([%d.w,PC],%s%s%s)", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+						  scale_Names[SCALE] );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 4;
@@ -672,47 +579,39 @@ S32 BD;
 
 		case 0x0053: // BS 0, IS 0, IIS 5, BD 3 - ([label.l,PC],d0.w*4)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC],%s%s%s)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "([%s.l,PC],%s%s%s)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE] );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC],%s%s%s)", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ]
-				);
+				sprintf ( outstr, "([%d.l,PC],%s%s%s)", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+						  scale_Names[SCALE] );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
@@ -721,14 +620,10 @@ S32 BD;
 
 		case 0x0061: // BS 0, IS 0, IIS 6, BD 1 - ([PC],d0.w*4,$11.w)
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
 
-			sprintf( outstr, "([PC],%s%s%s),%d.w", 
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v1
-			);
+			sprintf ( outstr, "([PC],%s%s%s),%d.w", ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+					  scale_Names[SCALE], v1 );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 4;
 			break;
@@ -736,50 +631,40 @@ S32 BD;
 
 		case 0x0062: // BS 0, IS 0, IIS 6, BD 2 - ([label.w,PC],d0.w*4,$11.w)
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-			S16 v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
+			S16 v2 = ( mem[pos + 4] << 8 | mem[pos + 5] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC],%s%s%s,%d.w)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%s.w,PC],%s%s%s,%d.w)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC],%s%s%s),%d.w", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%d.w,PC],%s%s%s),%d.w", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
@@ -788,50 +673,40 @@ S32 BD;
 
 		case 0x0063: // BS 0, IS 0, IIS 6, BD 3 - ([label.l,PC],d0.w*4,$11.w)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S16 v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
+			S16 v2 = ( mem[pos + 6] << 8 | mem[pos + 7] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC],%s%s%s,%d.w)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%s.l,PC],%s%s%s,%d.w)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC],%s%s%s),%d.w", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%d.l,PC],%s%s%s),%d.w", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 8;
@@ -840,14 +715,10 @@ S32 BD;
 
 		case 0x0071: // BS 0, IS 0, IIS 7, BD 1 - ([PC],d0.w*4,$11.l)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
 
-			sprintf( outstr, "([PC],%s%s%s),%d.l", 
-				( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-				( WL ) ? ".l" : ".w",
-				scale_Names[ SCALE ],
-				v1
-			);
+			sprintf ( outstr, "([PC],%s%s%s),%d.l", ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w",
+					  scale_Names[SCALE], v1 );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
 			break;
@@ -855,50 +726,40 @@ S32 BD;
 
 		case 0x0072: // BS 0, IS 0, IIS 7, BD 2 - ([label.w,PC],d0.w*4,$11.l)
 		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
+			S32 v2 = ( mem[pos + 4] << 24 | mem[pos + 5] << 16 | mem[pos + 6] << 8 | mem[pos + 7] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC],%s%s%s,%d.l)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%s.w,PC],%s%s%s,%d.l)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC],%s%s%s),%d.l", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%d.w,PC],%s%s%s),%d.l", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 8;
@@ -907,50 +768,40 @@ S32 BD;
 
 		case 0x0073: // BS 0, IS 0, IIS 7, BD 3 - ([label.l,PC],d0.w*4,$11.l)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
+			S32 v2 = ( mem[pos + 6] << 24 | mem[pos + 7] << 16 | mem[pos + 8] << 8 | mem[pos + 9] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC],%s%s%s,%d.l)",
-					labname,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%s.l,PC],%s%s%s,%d.l)", labname, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC],%s%s%s),%d.l", 
-					v1,
-					( AD ) ? Ax_RegNames[ REG ] : Dx_RegNames[ REG ],
-					( WL ) ? ".l" : ".w",
-					scale_Names[ SCALE ],
-					v2
-				);
+				sprintf ( outstr, "([%d.l,PC],%s%s%s),%d.l", v1, ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
+						  ( WL ) ? ".l" : ".w", scale_Names[SCALE], v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 10;
@@ -959,41 +810,37 @@ S32 BD;
 
 		case 0x0103: // BS 0, IS 1, IIS 0, BD 3 - (label.l,PC)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "(%s.l,PC)",
-					labname
-				);
+				sprintf ( outstr, "(%s.l,PC)", labname );
 			}
 			else
 			{
-				sprintf( outstr, "(%d.l,PC)",
-					v1
-				);
+				sprintf ( outstr, "(%d.l,PC)", v1 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
@@ -1002,7 +849,7 @@ S32 BD;
 
 		case 0x0111: // BS 0, IS 1, IIS 1, BD 1 - ([PC])
 		{
-			sprintf( outstr, "([PC])" );
+			sprintf ( outstr, "([PC])" );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 2;
 			break;
@@ -1010,41 +857,37 @@ S32 BD;
 
 		case 0x0112: // BS 0, IS 1, IIS 1, BD 2 - ([label.w,PC])
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC])",
-					labname
-				);
+				sprintf ( outstr, "([%s.w,PC])", labname );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC])", 
-					v1
-				);
+				sprintf ( outstr, "([%d.w,PC])", v1 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 4;
@@ -1053,41 +896,37 @@ S32 BD;
 
 		case 0x0113: // BS 0, IS 1, IIS 1, BD 3 - ([label.l,PC])
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC])",
-					labname
-				);
+				sprintf ( outstr, "([%s.l,PC])", labname );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC])", 
-					v1
-				);
+				sprintf ( outstr, "([%d.l,PC])", v1 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
@@ -1096,44 +935,38 @@ S32 BD;
 
 		case 0x0122: // BS 0, IS 1, IIS 2, BD 2 - ([label.w,PC],$22.w)
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
-			S16 v2 = ( mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
+			S16 v2 = ( mem[pos + 4] << 8 | mem[pos + 5] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC],%d.w)",
-					labname,
-					v2
-				);
+				sprintf ( outstr, "([%s.w,PC],%d.w)", labname, v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC],%d.w)", 
-					v1,
-					v2
-				);
+				sprintf ( outstr, "([%d.w,PC],%d.w)", v1, v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
@@ -1142,11 +975,9 @@ S32 BD;
 
 		case 0x0121: // BS 0, IS 1, IIS 2, BD 1 - ([PC],$22.w)
 		{
-			S16 v1 = ( mem[ pos + 2 ] << 8 | mem[ pos + 3 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
 
-			sprintf( outstr, "([PC],%d.w)", 
-				v1
-			);
+			sprintf ( outstr, "([PC],%d.w)", v1 );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 4;
 			break;
@@ -1154,44 +985,38 @@ S32 BD;
 
 		case 0x0123: // BS 0, IS 1, IIS 2, BD 3 - ([label.l,PC],$22.w)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S16 v2 = ( mem[ pos + 6 ] <<  8 | mem[ pos + 7 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
+			S16 v2 = ( mem[pos + 6] << 8 | mem[pos + 7] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC],%d.w)",
-					labname,
-					v2
-				);
+				sprintf ( outstr, "([%s.l,PC],%d.w)", labname, v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC],%d.w)", 
-					v1,
-					v2
-				);
+				sprintf ( outstr, "([%d.l,PC],%d.w)", v1, v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 8;
@@ -1200,11 +1025,9 @@ S32 BD;
 
 		case 0x0131: // BS 0, IS 1, IIS 3, BD 1 - ([PC],$0044.l)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
 
-			sprintf( outstr, "([PC],%d.l)", 
-				v1
-			);
+			sprintf ( outstr, "([PC],%d.l)", v1 );
 
 			rt->rt_CPU.M68k.mt_ArgSize += 6;
 			break;
@@ -1212,44 +1035,38 @@ S32 BD;
 
 		case 0x0132: // BS 0, IS 1, IIS 3, BD 2 - ([label.w,PC],$0044.l)
 		{
-			S16 v1 = ( mem[ pos + 2 ] <<  8 | mem[ pos + 3 ] );
-			S32 v2 = ( mem[ pos + 4 ] << 24 | mem[ pos + 5 ] << 16 | mem[ pos + 6 ] << 8 | mem[ pos + 7 ] );
+			S16 v1 = ( mem[pos + 2] << 8 | mem[pos + 3] );
+			S32 v2 = ( mem[pos + 4] << 24 | mem[pos + 5] << 16 | mem[pos + 6] << 8 | mem[pos + 7] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.w,PC],%d.l)",
-					labname,
-					v2
-				);
+				sprintf ( outstr, "([%s.w,PC],%d.l)", labname, v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.w,PC],%d.l)", 
-					v1,
-					v2
-				);
+				sprintf ( outstr, "([%d.w,PC],%d.l)", v1, v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 8;
@@ -1258,44 +1075,38 @@ S32 BD;
 
 		case 0x0133: // BS 0, IS 1, IIS 3, BD 3 - ([label.l,PC],$0044.l)
 		{
-			S32 v1 = ( mem[ pos + 2 ] << 24 | mem[ pos + 3 ] << 16 | mem[ pos + 4 ] << 8 | mem[ pos + 5 ] );
-			S32 v2 = ( mem[ pos + 6 ] << 24 | mem[ pos + 7 ] << 16 | mem[ pos + 8 ] << 8 | mem[ pos + 9 ] );
+			S32 v1 = ( mem[pos + 2] << 24 | mem[pos + 3] << 16 | mem[pos + 4] << 8 | mem[pos + 5] );
+			S32 v2 = ( mem[pos + 6] << 24 | mem[pos + 7] << 16 | mem[pos + 8] << 8 | mem[pos + 9] );
 
 			adr = rt->rt_CurMemAdr + 2 + v1;
 
 			if ( rt->rt_Pass == RS4TracePass_Trace )
 			{
-				// We can get away with AddLabel2, as this is a PC function, 
+				// We can get away with AddLabel2, as this is a PC function,
 				// so we can handle Labels out side Hunk Memory area
-				ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
-				ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+				ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 				if ( ! rl )
 				{
-					printf( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: Error finding label at $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_Error;
 					goto bailout;
 				}
 			}
 
-			if (( rl ) && ( rl->rl_Name[0] ))
+			if ( ( rl ) && ( rl->rl_Name[0] ) )
 			{
-				ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+				ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-				sprintf( outstr, "([%s.l,PC],%d.l)",
-					labname,
-					v2
-				);
+				sprintf ( outstr, "([%s.l,PC],%d.l)", labname, v2 );
 			}
 			else
 			{
-				sprintf( outstr, "([%d.l,PC],%d.l)", 
-					v1,
-					v2
-				);
+				sprintf ( outstr, "([%d.l,PC],%d.l)", v1, v2 );
 			}
 
 			rt->rt_CPU.M68k.mt_ArgSize += 10;
@@ -1304,7 +1115,7 @@ S32 BD;
 
 		default:
 		{
-			#if 0
+#if 0
 			printf( "\n" );
 			printf( "%s:%04d: EA ........ : 73\n", __FILE__, __LINE__ );
 			printf( "%s:%04d: MemoryAdr . : %08x\n", __FILE__, __LINE__,  rt->rt_CurMemAdr );
@@ -1317,9 +1128,9 @@ S32 BD;
 			printf( "%s:%04d: BD ........ : %d\n", __FILE__, __LINE__, BD );
 			printf( "%s:%04d: IIS ....... : %d\n", __FILE__, __LINE__, IIS );
 			printf( "%s:%04d: Mode ...... : 0x%04x\n", __FILE__, __LINE__, mode );
-			#endif
+#endif
 			ds = RS4DecodeStat_Error;
-//			ds = RS4DecodeStat_UnknownCmd;
+			//			ds = RS4DecodeStat_UnknownCmd;
 			break;
 		}
 	}
@@ -1333,7 +1144,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

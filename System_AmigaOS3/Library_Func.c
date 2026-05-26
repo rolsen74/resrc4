@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,13 +17,15 @@
 
 // --
 
-enum RS4FuncStat AmigaOS3_FindLibFunc_Func( enum RS4ErrorCode *errcode, RS4Trace *rt, enum RS4DecodeStat (*Func)( enum RS4ErrorCode *errcode, RS4Trace *rt ))
+enum RS4FuncStat
+AmigaOS3_FindLibFunc_Func ( enum RS4ErrorCode * errcode, RS4Trace * rt,
+							enum RS4DecodeStat ( *Func ) ( enum RS4ErrorCode * errcode, RS4Trace * rt ) )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
 
-//	printf( "AmigaOS3_FindLibFunc_Func : \n" );
+	//	printf( "AmigaOS3_FindLibFunc_Func : \n" );
 
 	fs = RS4FuncStat_Error;
 	ec = RS4ErrStat_Okay;
@@ -33,16 +35,16 @@ enum RS4FuncStat fs;
 	if ( ! Func )
 	{
 		ec = RS4ErrStat_Internal;
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+		printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
 		goto bailout;
 	}
 
-	ds = Func( & ec, rt );
+	ds = Func ( &ec, rt );
 
 	if ( ds != RS4DecodeStat_Okay )
 	{
 		// ec allready set
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+		printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
 		goto bailout;
 	}
 
@@ -58,7 +60,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --

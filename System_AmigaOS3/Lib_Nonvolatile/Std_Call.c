@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,20 +17,13 @@
 
 // --
 
-//enum RS4DecodeStat AOS3_Nonvolatile_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
+// enum RS4DecodeStat AOS3_Nonvolatile_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 // --
 
-AOS3_LVOStruct AOS3_NonvolatileBase[] =
-{
-	AOS3_LVO_Name( -30, GetCopyNV ),
-	AOS3_LVO_Name( -36, FreeNVData ),
-	AOS3_LVO_Name( -42, StoreNV ),
-	AOS3_LVO_Name( -48, DeleteNV ),
-	AOS3_LVO_Name( -54, GetNVInfo ),
-	AOS3_LVO_Name( -60, GetNVList ),
-	AOS3_LVO_Name( -66, SetNVProtection ),
-	AOS3_LVO_EndMarker()
-};
+AOS3_LVOStruct AOS3_NonvolatileBase[] = { AOS3_LVO_Name ( -30, GetCopyNV ),		  AOS3_LVO_Name ( -36, FreeNVData ),
+										  AOS3_LVO_Name ( -42, StoreNV ),		  AOS3_LVO_Name ( -48, DeleteNV ),
+										  AOS3_LVO_Name ( -54, GetNVInfo ),		  AOS3_LVO_Name ( -60, GetNVList ),
+										  AOS3_LVO_Name ( -66, SetNVProtection ), AOS3_LVO_EndMarker () };
 
 // --

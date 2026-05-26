@@ -1,6 +1,6 @@
- 
+
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,33 +17,34 @@
 
 // --
 
-inline static enum RS4DecodeStat Args6( enum RS4ErrorCode *errcode, RS4Trace *rt )
+inline static enum RS4DecodeStat
+Args6 ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 size;
-S32 reg;
-S32 ir;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   size;
+	S32				   reg;
+	S32				   ir;
 
-	size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
-	reg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
-	ir		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00200000 ) >> 20;
+	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
+	reg	 = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	ir	 = ( rt->rt_CPU.M68k.mt_Opcode & 0x00200000 ) >> 20;
 
-	if (( size == 0 ) && ( ir == 0 ))
+	if ( ( size == 0 ) && ( ir == 0 ) )
 	{
 		size = 8;
 	}
 
 	if ( ir )
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,%s", Dx_RegNames[size], Dx_RegNames[reg] );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,%s", Dx_RegNames[size], Dx_RegNames[reg] );
 	}
 	else
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "#%d,%s", size, Dx_RegNames[reg] );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "#%d,%s", size, Dx_RegNames[reg] );
 	}
 
-	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + reg ); 
+	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + reg );
 
 	// --
 
@@ -52,7 +53,7 @@ S32 ir;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -61,20 +62,21 @@ S32 ir;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_ROR( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_ROR ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 size;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   size;
 
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
 
-	switch( size )
+	switch ( size )
 	{
 		case 0:
 		{
@@ -89,20 +91,20 @@ S32 size;
 		}
 
 		case 2:
-    	{
+		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Ror.l";
 			break;
 		}
 
 		default:
 		{
-			printf( "Unsupported 'Ror' Opcode (Mode: %d)\n", size );
+			printf ( "Unsupported 'Ror' Opcode (Mode: %d)\n", size );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
 	}
 
-	ds = Args6( & ec, rt );
+	ds = Args6 ( &ec, rt );
 
 	// --
 
@@ -116,27 +118,28 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_ROR2( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_ROR2 ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
 
-	rt->rt_Container.Hunk.ms_Str_Opcode = "Ror.w" ;
+	rt->rt_Container.Hunk.ms_Str_Opcode = "Ror.w";
 
-	rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Word;
+	rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Word;
 	rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-	M68k_Set_Cur_to_Unknown( rt );
+	M68k_Set_Cur_to_Unknown ( rt );
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
 	// --
@@ -151,5 +154,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

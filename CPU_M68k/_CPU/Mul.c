@@ -1,6 +1,6 @@
- 
+
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,45 +17,46 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_MUL( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_MUL ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 opmode;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   opmode;
 
 	opmode = ( rt->rt_CPU.M68k.mt_Opcode & 0x01c00000 ) >> 22;
 
-	switch( opmode )
+	switch ( opmode )
 	{
-		// 0 : And.b
+			// 0 : And.b
 
-		// 1 : And.w
+			// 1 : And.w
 
-		// 2 : And.l
+			// 2 : And.l
 
 		case 3:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Mulu.w";
-			rt->rt_CPU.M68k.mt_DecMode	= M68kDecMode_Unsigned;
+			rt->rt_CPU.M68k.mt_DecMode			= M68kDecMode_Unsigned;
 			break;
 		}
 
-		// 4 : And.b
+			// 4 : And.b
 
-		// 5 : And.w
+			// 5 : And.w
 
-		// 6 : And.l
+			// 6 : And.l
 
 		case 7:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Muls.w";
-			rt->rt_CPU.M68k.mt_DecMode	= M68kDecMode_Signed;
+			rt->rt_CPU.M68k.mt_DecMode			= M68kDecMode_Signed;
 			break;
 		}
 
 		default:
 		{
-			printf( "Unsupported 'Mul' Opcode (Mode: %d)\n", opmode );
+			printf ( "Unsupported 'Mul' Opcode (Mode: %d)\n", opmode );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
@@ -63,24 +64,24 @@ S32 opmode;
 
 	// --
 
-	rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Word;
+	rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Word;
 	rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	// --
 
 	rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
-	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
+	rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_DstRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-	M68k_Set_Cur_to_Unknown( rt );
+	M68k_Set_Cur_to_Unknown ( rt );
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
 	// --
@@ -95,63 +96,64 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_MULS_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_MULS_L ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U32 pos;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U32				   pos;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Muls.l";
 
 	rt->rt_CPU.M68k.mt_DecMode	= M68kDecMode_Signed;
 	rt->rt_CPU.M68k.mt_ArgSize	= 4;
 	rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Long;
-	rt->rt_CPU.M68k.mt_ArgEMode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	if ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 )
 	{
 		// Divs.l Dx,Dh:Di
 
-		rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+		rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 		rt->rt_CPU.M68k.mt_ArgEReg	= rt->rt_CPU.M68k.mt_Opcode & 0x00000007;
 
-		EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+		EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-		M68k_Set_Cur_to_Unknown( rt );
-//		rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
+		M68k_Set_Cur_to_Unknown ( rt );
+		//		rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
 
-		pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
+		pos = strlen ( rt->rt_Container.Hunk.ms_Buf_Argument );
 
-		rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+		rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 		rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 12;
 
-		EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+		EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-		M68k_Set_Cur_to_Unknown( rt );
-//		rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
-		rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
+		M68k_Set_Cur_to_Unknown ( rt );
+		//		rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
+		rt->rt_Container.Hunk.ms_Buf_Argument[pos] = ':';
 	}
 	else
 	{
 		// Divs.l Dx,Di
 
-		rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+		rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 		rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
 
-		EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+		EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-		M68k_Set_Cur_to_Unknown( rt );
-//		rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
+		M68k_Set_Cur_to_Unknown ( rt );
+		//		rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Unknown;
 	}
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
@@ -168,55 +170,56 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_MULU_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_MULU_L ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U32 pos;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U32				   pos;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Mulu.l";
 
 	rt->rt_CPU.M68k.mt_DecMode	= M68kDecMode_Unsigned;
 	rt->rt_CPU.M68k.mt_ArgSize	= 4;
 	rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Long;
-	rt->rt_CPU.M68k.mt_ArgEMode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
 	rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	if ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 )
 	{
 		// Divs.l Dx,Dh:Di
 
-		rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+		rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 		rt->rt_CPU.M68k.mt_ArgEReg	= rt->rt_CPU.M68k.mt_Opcode & 0x00000007;
 
-		EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+		EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-		pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
+		pos = strlen ( rt->rt_Container.Hunk.ms_Buf_Argument );
 
-		rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+		rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 		rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 12;
 
-		EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+		EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-		rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
+		rt->rt_Container.Hunk.ms_Buf_Argument[pos] = ':';
 	}
 	else
 	{
 		// Divs.l Dx,Di
 
-		rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+		rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 		rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
 
-		EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+		EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 	}
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
@@ -233,5 +236,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

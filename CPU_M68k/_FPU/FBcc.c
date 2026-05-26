@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -50,27 +50,28 @@
 // 1E 011110 SNE
 // 1F 011111 ST
 
-enum RS4DecodeStat M68kCmd_FBcc( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_FBcc ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-S64 adr;
-MEM mem;
-CHR labname[ MAX_LabelName + 8 ];
-S32 size;
-S32 cond;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+	RS4Label *		   rl;
+	S64				   adr;
+	MEM				   mem;
+	CHR				   labname[MAX_LabelName + 8];
+	S32				   size;
+	S32				   cond;
 
 	ds = RS4DecodeStat_Error;
 
-	mem  = rt->rt_CurMemBuf;
+	mem	 = rt->rt_CurMemBuf;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00400000 );
 	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x003f0000 ) >> 16;
 
 	if ( cond > 0x1f )
 	{
-		printf( "Unsupported 'FBcc' Opcode at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
+		printf ( "Unsupported 'FBcc' Opcode at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 		ds = RS4DecodeStat_Error;
 		goto bailout;
 	}
@@ -79,55 +80,47 @@ S32 cond;
 	{
 		S16 off;
 
-		static CSTR fbcc_RegNames[] = 
-		{
-			"FBf.w",	"FBeq.w",	"FBogt.w",	"FBoge.w",	// 0x00
-			"FBolt.w",	"FBole.w",	"FBogl.w",	"FBor.w",	// 0x04
-			"FBun.w",	"FBueq.w",	"FBugt.w",	"FBuge.w",	// 0x08
-			"FBult.w",	"FBule.w",	"FBne.w",	"FBt.w",	// 0x0c
-			"FBf.w",	"FBseq.w",	"FBgt.w",	"FBge.w",	// 0x10
-			"FBlt.w",	"FBle.w",	"FBgl.w",	"FBgle.w",	// 0x14
-			"FBngle.w",	"FBngl.w",	"FBnle.w",	"FBnlt.w",	// 0x18
-			"FBnge.w",	"FBngt.w",	"FBsne.w",	"FBst.w"	// 0x1c
+		static CSTR fbcc_RegNames[] = {
+			"FBf.w",	"FBeq.w",  "FBogt.w", "FBoge.w", // 0x00
+			"FBolt.w",	"FBole.w", "FBogl.w", "FBor.w",	 // 0x04
+			"FBun.w",	"FBueq.w", "FBugt.w", "FBuge.w", // 0x08
+			"FBult.w",	"FBule.w", "FBne.w",  "FBt.w",	 // 0x0c
+			"FBf.w",	"FBseq.w", "FBgt.w",  "FBge.w",	 // 0x10
+			"FBlt.w",	"FBle.w",  "FBgl.w",  "FBgle.w", // 0x14
+			"FBngle.w", "FBngl.w", "FBnle.w", "FBnlt.w", // 0x18
+			"FBnge.w",	"FBngt.w", "FBsne.w", "FBst.w"	 // 0x1c
 		};
 
 		rt->rt_Container.Hunk.ms_Str_Opcode = fbcc_RegNames[cond];
 
-		off = (( mem[2] << 8 ) | ( mem[3] << 0 ));
+		off = ( ( mem[2] << 8 ) | ( mem[3] << 0 ) );
 
 		adr = rt->rt_CurMemAdr + 2 + off;
 
 		rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 		rt->rt_CPU.M68k.mt_OpcodeSize = 4;
 
-		ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Code ))
+		ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Code ) )
 	}
 	else
 	{
 		S32 off;
 
-		static CSTR fbcc_RegNames[] = 
-		{
-			"FBf.l",	"FBeq.l",	"FBogt.l",	"FBoge.l",
-			"FBolt.l",	"FBole.l",	"FBogl.l",	"FBor.l",
-			"FBun.l",	"FBueq.l",	"FBugt.l",	"FBuge.l",
-			"FBult.l",	"FBule.l",	"FBne.l",	"FBt.l",
-			"FBf.l",	"FBseq.l",	"FBgt.l",	"FBge.l",
-			"FBlt.l",	"FBle.l",	"FBgl.l",	"FBgle.l",
-			"FBngle.l",	"FBngl.l",	"FBnle.l",	"FBnlt.l",
-			"FBnge.l",	"FBngt.l",	"FBsne.l",	"FBst.l"
-		};
+		static CSTR fbcc_RegNames[] = { "FBf.l",	"FBeq.l",  "FBogt.l", "FBoge.l", "FBolt.l", "FBole.l", "FBogl.l", "FBor.l",
+										"FBun.l",	"FBueq.l", "FBugt.l", "FBuge.l", "FBult.l", "FBule.l", "FBne.l",  "FBt.l",
+										"FBf.l",	"FBseq.l", "FBgt.l",  "FBge.l",	 "FBlt.l",	"FBle.l",  "FBgl.l",  "FBgle.l",
+										"FBngle.l", "FBngl.l", "FBnle.l", "FBnlt.l", "FBnge.l", "FBngt.l", "FBsne.l", "FBst.l" };
 
 		rt->rt_Container.Hunk.ms_Str_Opcode = fbcc_RegNames[cond];
 
-		off = (( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ));
+		off = ( ( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ) );
 
 		adr = rt->rt_CurMemAdr + 2 + off;
 
 		rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 		rt->rt_CPU.M68k.mt_OpcodeSize = 6;
 
-		ERR_CHK( RS4AddLabel_File( & ec, & rl, rt->rt_File, adr, RS4LabelType_Code, __FILE__ ))
+		ERR_CHK ( RS4AddLabel_File ( &ec, &rl, rt->rt_File, adr, RS4LabelType_Code, __FILE__ ) )
 	}
 
 	// --
@@ -139,20 +132,20 @@ S32 cond;
 	}
 	else
 	{
-		rt->rt_CPU.M68k.mt_JmpRegister.mr_Type1 = RRT_Address;
+		rt->rt_CPU.M68k.mt_JmpRegister.mr_Type1	  = RRT_Address;
 		rt->rt_CPU.M68k.mt_JmpRegister.mr_Address = adr;
 	}
 
-//	if (( rl ) && ( rl->rl_Name[0] ))
+	//	if (( rl ) && ( rl->rl_Name[0] ))
 	if ( rl )
 	{
-		ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+		ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", labname );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", labname );
 	}
 	else
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "$%08" PRIx64, adr );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "$%08" PRIx64, adr );
 	}
 
 	// --
@@ -171,5 +164,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,15 +17,10 @@
 
 // --
 
-//enum RS4DecodeStat AOS3_Ramdrive_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
+// enum RS4DecodeStat AOS3_Ramdrive_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 // --
 
-AOS3_LVOStruct AOS3_RamdriveBase[] =
-{
-	AOS3_LVO_Name( -42, KillRAD0 ),
-	AOS3_LVO_Name( -48, KillRAD ),
-	AOS3_LVO_EndMarker()
-};
+AOS3_LVOStruct AOS3_RamdriveBase[] = { AOS3_LVO_Name ( -42, KillRAD0 ), AOS3_LVO_Name ( -48, KillRAD ), AOS3_LVO_EndMarker () };
 
 // --

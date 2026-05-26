@@ -1,6 +1,6 @@
- 
+
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,18 +17,19 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_UNLK( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_UNLK ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 reg;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   reg;
 
 	reg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Unlk";
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", Ax_RegNames[reg] );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", Ax_RegNames[reg] );
 
-	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_A0 + reg ); 
+	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_A0 + reg );
 	rt->rt_CPU.M68k.mt_OpcodeSize = 2;
 
 	// --
@@ -38,7 +39,7 @@ S32 reg;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -47,5 +48,5 @@ S32 reg;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

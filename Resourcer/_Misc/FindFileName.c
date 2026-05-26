@@ -1,0 +1,47 @@
+
+/*
+** Copyright (c) 2014-2026 Rene W. Olsen
+**
+** SPDX-License-Identifier: GPL-3.0-or-later
+**
+** This software is released under the GNU General Public License, version 3.
+** For the full text of the license, please visit:
+** https://www.gnu.org/licenses/gpl-3.0.html
+**
+** You can also find a copy of the license in the LICENSE file included with this software.
+*/
+
+// --
+
+#include "ReSrc4.h"
+
+// --
+
+STR
+FindFileName ( STR name )
+{
+	STR str;
+	S32 pos;
+
+	pos = 0;
+	str = name;
+
+	while ( name[pos] )
+	{
+		if ( name[pos + 1] == 0 )
+		{
+			break;
+		}
+
+		if ( ( name[pos] == '/' ) || ( name[pos] == ':' ) || ( name[pos] == '\\' ) )
+		{
+			str = &name[pos + 1];
+		}
+
+		pos++;
+	}
+
+	return ( str );
+}
+
+// --

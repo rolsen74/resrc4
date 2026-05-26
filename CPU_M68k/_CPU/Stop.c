@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,18 +17,19 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_STOP( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_STOP ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U16 val;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U16				   val;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Stop";
-	rt->rt_CPU.M68k.mt_OpcodeSize = 4;
+	rt->rt_CPU.M68k.mt_OpcodeSize		= 4;
 
 	val = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000ffff );
 
-	snprintf( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "#$%04x", val );
+	snprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, 64, "#$%04x", val );
 
 	// --
 
@@ -37,7 +38,7 @@ U16 val;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -46,5 +47,5 @@ U16 val;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

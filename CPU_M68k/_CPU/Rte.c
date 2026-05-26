@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,15 +17,16 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_RTE( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_RTE ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
 
 	// --
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Rte";
-	rt->rt_CPU.M68k.mt_LastOpcode = TRUE;
+	rt->rt_CPU.M68k.mt_LastOpcode		= TRUE;
 
 	// --
 
@@ -34,7 +35,7 @@ enum RS4ErrorCode ec;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -43,5 +44,5 @@ enum RS4ErrorCode ec;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

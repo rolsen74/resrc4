@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,49 +17,13 @@
 
 // --
 
-enum RS4FuncStat RS4Strdup( STR *strptr, STR string ) 
-{
-enum RS4FuncStat fs;
-STR str;
-S32 len;
-
-	fs = RS4FuncStat_Error;
-	str = NULL;
-
-	if ( ! string ) 
-	{
-		goto bailout;
-	}
-
-	len = strlen( string );
-
-	str = malloc( len + 1 );
-
-	if ( ! str ) 
-	{
-		goto bailout;
-	}
-
-	strcpy( str, string );
-
-	fs = RS4FuncStat_Okay;
-
-bailout:
-
-	if ( strptr )
-	{
-		*strptr = str;
-	}
-
-	return( fs );
-}
-
 // -- Init Trace
 
-enum RS4FuncStat RS4InitTrace( enum RS4ErrorCode *errcode, RS4Trace *rt, RS4FileHeader *fh, enum RS4TracePass type )
+enum RS4FuncStat
+RS4InitTrace ( enum RS4ErrorCode * errcode, RS4Trace * rt, RS4FileHeader * fh, enum RS4TracePass type )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
 
 	// --
 
@@ -68,47 +32,44 @@ enum RS4FuncStat fs;
 
 	// --
 
-	if (( ! rt )
-	||	( ! fh ))
+	if ( ( ! rt ) || ( ! fh ) )
 	{
 		ec = RS4ErrStat_Internal;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
+#endif
 
 		goto bailout;
 	}
 
 	// --
 
-	memset( rt, 0, sizeof( RS4Trace ));
+	memset ( rt, 0, sizeof ( RS4Trace ) );
 
-	rt->rt_ID		= RS4ID_Trace;
-	rt->rt_File		= fh;
-	rt->rt_Pass		= type;
+	rt->rt_ID	= RS4ID_Trace;
+	rt->rt_File = fh;
+	rt->rt_Pass = type;
 
-	#ifdef DEBUG
-	#ifdef SUPPORT_M68K
+#ifdef DEBUG
+#ifdef SUPPORT_M68K
 
-	for( S32 cnt=0 ; cnt<8 ; cnt++ )
+	for ( S32 cnt = 0; cnt < 8; cnt++ )
 	{
-		rt->rt_CPU.M68k.mt_Registers[cnt+0].mr_Number = 0xd0 + cnt;
-		rt->rt_CPU.M68k.mt_Registers[cnt+8].mr_Number = 0xa0 + cnt;
+		rt->rt_CPU.M68k.mt_Registers[cnt + 0].mr_Number = 0xd0 + cnt;
+		rt->rt_CPU.M68k.mt_Registers[cnt + 8].mr_Number = 0xa0 + cnt;
 	}
 
-	#endif
-	#endif
-
-
+#endif
+#endif
 
 	// --
 	// -- Figure out what Decoder to use
 	// we should proberly check cpu type instead
 
-	switch( fh->rfh_FileType )
+	switch ( fh->rfh_FileType )
 	{
-		#ifdef SUPPORT_HUNK
+#ifdef SUPPORT_HUNK
 
 		case RS4FileType_Hunk:
 		{
@@ -116,9 +77,9 @@ enum RS4FuncStat fs;
 			break;
 		}
 
-		#endif
+#endif
 
-		#ifdef SUPPORT_FHR
+#ifdef SUPPORT_FHR
 
 		case RS4FileType_FHR:
 		{
@@ -126,15 +87,15 @@ enum RS4FuncStat fs;
 			break;
 		}
 
-		#endif
+#endif
 
 		default:
 		{
 			ec = RS4ErrStat_UnsupportedFileType;
 
-			#ifdef DEBUG
-			printf( "%s:%04d: Error unsupported File Type (%d)\n", __FILE__, __LINE__, fh->rfh_FileType );
-			#endif
+#ifdef DEBUG
+			printf ( "%s:%04d: Error unsupported File Type (%d)\n", __FILE__, __LINE__, fh->rfh_FileType );
+#endif
 
 			goto bailout;
 		}
@@ -156,46 +117,17 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --
 
-STR FindFileName( STR name )
+enum RS4FuncStat
+Mark_Code ( enum RS4ErrorCode * errcode, RS4Label * rl )
 {
-STR str;
-S32 pos;
-
-	pos = 0;
-	str = name;
-
-	while( name[pos] )
-	{
-		if ( name[pos+1] == 0 )
-		{
-			break;
-		}
-
-		if (( name[pos] == '/' )
-		||	( name[pos] == ':' )
-		||	( name[pos] == '\\' ))
-		{
-			str = & name[pos+1];
-		}
-
-		pos++;
-	}
-
-	return( str );
-}
-
-// --
-
-enum RS4FuncStat Mark_Code( enum RS4ErrorCode *errcode, RS4Label *rl )
-{
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4FileSection *sec;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4FileSection *  sec;
 
 	ec = RS4ErrStat_Okay;
 	fs = RS4FuncStat_Okay;
@@ -203,12 +135,11 @@ RS4FileSection *sec;
 	// Check we have not been set before
 	if ( rl->rl_Type1 != RS4LabelType_Unset )
 	{
-		if (( rl->rl_Type1 != RS4LabelType_Code )	
-		&&	( rl->rl_Type1 != RS4LabelType_Unknown ))
+		if ( ( rl->rl_Type1 != RS4LabelType_Code ) && ( rl->rl_Type1 != RS4LabelType_Unknown ) )
 		{
 			// Change rl type, and continue?
-			printf( "Label Allready set with diffrent type\n" );
-			printf( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
+			printf ( "Label Allready set with diffrent type\n" );
+			printf ( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
 			goto bailout;
 		}
 		else
@@ -230,7 +161,7 @@ RS4FileSection *sec;
 	rl->rl_Type2 = 0;
 	rl->rl_Type3 = 0;
 
-	ERR_CHK( RS4AddBrance_File( & ec, NULL, sec->rfs_File, rl->rl_Address ))
+	ERR_CHK ( RS4AddBrance_File ( &ec, NULL, sec->rfs_File, rl->rl_Address ) )
 
 bailout:
 
@@ -239,21 +170,22 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --
 
-enum RS4FuncStat Mark_NulString( enum RS4ErrorCode *errcode, RS4Label *rl )
+enum RS4FuncStat
+Mark_NulString ( enum RS4ErrorCode * errcode, RS4Label * rl )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4FileSection *sec;
-MEM type;
-MEM mem;
-S64 off;
-S32 chr;
-S32 len;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4FileSection *  sec;
+	MEM				  type;
+	MEM				  mem;
+	S64				  off;
+	S32				  chr;
+	S32				  len;
 
 	ec = RS4ErrStat_Okay;
 	fs = RS4FuncStat_Okay;
@@ -267,12 +199,11 @@ S32 len;
 	// Check we have not been set before
 	if ( rl->rl_Type1 != RS4LabelType_Unset )
 	{
-		if (( rl->rl_Type1 != RS4LabelType_String )	
-		&&	( rl->rl_Type1 != RS4LabelType_Unknown ))
+		if ( ( rl->rl_Type1 != RS4LabelType_String ) && ( rl->rl_Type1 != RS4LabelType_Unknown ) )
 		{
 			// Change rl type, and continue?
-//			printf( "String Allready set\n" );
-			printf( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
+			//			printf( "String Allready set\n" );
+			printf ( "%s:%04d: Error Adr: $%08" PRIx64 " (%d)\n", __FILE__, __LINE__, rl->rl_Address, rl->rl_Type1 );
 			goto bailout;
 		}
 		else
@@ -293,13 +224,13 @@ S32 len;
 	}
 
 	// --
-	off	= rl->rl_Offset;
-	mem = sec->rfs_MemoryBuf;
-	type= sec->rfs_MemoryType;
+	off	 = rl->rl_Offset;
+	mem	 = sec->rfs_MemoryBuf;
+	type = sec->rfs_MemoryType;
 
-// printf( "Offset: %d\n", off );
+	// printf( "Offset: %d\n", off );
 
-	while( TRUE )
+	while ( TRUE )
 	{
 		chr = mem[off];
 
@@ -313,13 +244,13 @@ S32 len;
 
 	len = off - rl->rl_Offset;
 
-//printf( "String Length: %d\n", len );
+	// printf( "String Length: %d\n", len );
 
-//	rl->rl_UserLocked = TRUE;
+	//	rl->rl_UserLocked = TRUE;
 	rl->rl_Type1 = RS4LabelType_String;
 	rl->rl_Type2 = 0;
 	rl->rl_Type3 = 0;
-	rl->rl_Size = len;
+	rl->rl_Size	 = len;
 
 bailout:
 
@@ -328,28 +259,29 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --
 
-enum RS4FuncStat Mark_Struct( enum RS4ErrorCode *errcode, RS4Label *rl, enum RS4StructID id, STR file )
+enum RS4FuncStat
+Mark_Struct ( enum RS4ErrorCode * errcode, RS4Label * rl, enum RS4StructID id, STR file )
 {
-struct DataStructHeader *dsh;
-struct DataStructNode *dsn;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4FileSection *sec;
-RS4FileHeader *fh;
-RS4Label *rl2;
-MEM type;
-S32 size;
-MEM mem;
-S64 off;
-S64 val;
-S32 cnt;
+	struct DataStructHeader * dsh;
+	struct DataStructNode *	  dsn;
+	enum RS4ErrorCode		  ec;
+	enum RS4FuncStat		  fs;
+	RS4FileSection *		  sec;
+	RS4FileHeader *			  fh;
+	RS4Label *				  rl2;
+	MEM						  type;
+	S32						  size;
+	MEM						  mem;
+	S64						  off;
+	S64						  val;
+	S32						  cnt;
 
-//	printf( "Mark_Struct : StructID %2d : Label Adr $%08lx\n", id, rl->rl_Address );
+	//	printf( "Mark_Struct : StructID %2d : Label Adr $%08lx\n", id, rl->rl_Address );
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -364,23 +296,23 @@ S32 cnt;
 
 	// --
 	// Validate ID
-	if (( id <= RS4StructID_Unknown ) || ( id >= RS4StructID_Last ))
+	if ( ( id <= RS4StructID_Unknown ) || ( id >= RS4StructID_Last ) )
 	{
 		ec = RS4ErrStat_InvalidStructID;
 
 		if ( DoVerbose > 1 )
 		{
-			printf( "%s:%04d: Error : Invalid StructID %d : File '%s'\n", __FILE__, __LINE__, id, file );
+			printf ( "%s:%04d: Error : Invalid StructID %d : File '%s'\n", __FILE__, __LINE__, id, file );
 		}
 		goto bailout;
 	}
 
-	dsh	= DataStructTable[id];
+	dsh = DataStructTable[id];
 
 	if ( ! dsh )
 	{
 		// missing DataStructTable[] entry
-		printf( "%s:%04d: Error : NULL Pointer : StructID %d\n", __FILE__, __LINE__, id );
+		printf ( "%s:%04d: Error : NULL Pointer : StructID %d\n", __FILE__, __LINE__, id );
 		goto bailout;
 	}
 
@@ -388,7 +320,7 @@ S32 cnt;
 
 	if ( size <= 0 )
 	{
-		printf( "%s:%04d: Error : Zero Size : StructID %d\n", __FILE__, __LINE__, id );
+		printf ( "%s:%04d: Error : Zero Size : StructID %d\n", __FILE__, __LINE__, id );
 		goto bailout;
 	}
 
@@ -396,16 +328,17 @@ S32 cnt;
 	// Check we have not been set before
 	if ( rl->rl_Type1 != RS4LabelType_Unset )
 	{
-		if (( rl->rl_Type1 != RS4LabelType_Struct )		
-		||	( rl->rl_Type2 != (S32) id ))
+		if ( ( rl->rl_Type1 != RS4LabelType_Struct ) || ( rl->rl_Type2 != (S32)id ) )
 		{
 			ec = RS4ErrStat_Error;
 			fs = RS4FuncStat_Error;
+#ifdef DEBUG
 			// Change rl type, and continue?
-			printf( "Error  : Struct Diffrent Type : File %s\n", file );
-			printf( "Struct : rl_Type1 : %2d != %2d\n", rl->rl_Type1, RS4LabelType_Struct );
-			printf( "Struct : rl_Type2 : %2d != %2d\n", rl->rl_Type2, id );
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+			printf ( "Error  : Struct Diffrent Type : File %s\n", file );
+			printf ( "Struct : rl_Type1 : %2d != %2d\n", rl->rl_Type1, RS4LabelType_Struct );
+			printf ( "Struct : rl_Type2 : %2d != %2d\n", rl->rl_Type2, id );
+			printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
+#endif
 			goto bailout;
 		}
 		else
@@ -419,45 +352,46 @@ S32 cnt;
 
 	// --
 
-	sec 	= rl->rl_Section;
-	off		= rl->rl_Offset;
-	fh		= sec->rfs_File;
-//	adr		= sec->rfs_MemoryAdr;
-	mem		= sec->rfs_MemoryBuf;
-	type	= sec->rfs_MemoryType;
+	sec = rl->rl_Section;
+	off = rl->rl_Offset;
+	fh	= sec->rfs_File;
+	//	adr		= sec->rfs_MemoryAdr;
+	mem	 = sec->rfs_MemoryBuf;
+	type = sec->rfs_MemoryType;
 
 	// --
 
 	if ( sec->rfs_SecType != RS4ST_BSS )
 	{
-		for( cnt=0 ; cnt < dsh->dsh_Entries ; cnt++ )
+		for ( cnt = 0; cnt < dsh->dsh_Entries; cnt++ )
 		{
-			dsn = & dsh->dsh_Data[cnt];
+			dsn = &dsh->dsh_Data[cnt];
 
-			switch( dsn->dsn_Type )
+			switch ( dsn->dsn_Type )
 			{
 				case DST_Pointer:
 				{
-					val	= ( (U64) mem[ off + 0 ] << 24 | 
-							(U64) mem[ off + 1 ] << 16 | 
-							(U64) mem[ off + 2 ] <<  8 | 
-							(U64) mem[ off + 3 ] <<  0 );
+					val = ( (U64)mem[off + 0] << 24 | (U64)mem[off + 1] << 16 | (U64)mem[off + 2] << 8
+							| (U64)mem[off + 3] << 0 );
 
-//					printf( "Pointer $%08lx\n", val );
+					//					printf( "Pointer $%08lx\n", val );
 
 					if ( val )
 					{
-						ERR_CHK( RS4AddLabel_File( NULL, & rl2, fh, val, RS4LabelType_Unset, __FILE__ ))
+						ERR_CHK ( RS4AddLabel_File ( NULL, &rl2, fh, val, RS4LabelType_Unset, __FILE__ ) )
 
 						if ( ! rl2 )
 						{
 							/**/ if ( DoVerbose > 1 )
 							{
-								printf( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : StructID %d : Entry Nr %d : %s\n", __FILE__, __LINE__, val, id, cnt, file );
+								printf ( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64
+										 " ?? : StructID %d : Entry Nr %d : %s\n",
+										 __FILE__, __LINE__, val, id, cnt, file );
 							}
 							else
 							{
-								printf( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : StructID %d :\n", val, id );
+								printf ( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : StructID %d :\n", val,
+										 id );
 							}
 						}
 					}
@@ -466,31 +400,30 @@ S32 cnt;
 
 				case DST_String:
 				{
-					val	= ( (U64) mem[ off + 0 ] << 24 | 
-							(U64) mem[ off + 1 ] << 16 | 
-							(U64) mem[ off + 2 ] <<  8 | 
-							(U64) mem[ off + 3 ] <<  0 );
+					val = ( (U64)mem[off + 0] << 24 | (U64)mem[off + 1] << 16 | (U64)mem[off + 2] << 8
+							| (U64)mem[off + 3] << 0 );
 
-//					printf( "String $%08lx\n", val );
+					//					printf( "String $%08lx\n", val );
 
 					if ( val )
 					{
-						ERR_CHK( RS4AddLabel_File( NULL, & rl2, fh, val, RS4LabelType_Unset, __FILE__ ))
+						ERR_CHK ( RS4AddLabel_File ( NULL, &rl2, fh, val, RS4LabelType_Unset, __FILE__ ) )
 
 						if ( ! rl2 )
 						{
 							/**/ if ( DoVerbose > 1 )
 							{
-								printf( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : %s\n", __FILE__, __LINE__, val, file );
+								printf ( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : %s\n",
+										 __FILE__, __LINE__, val, file );
 							}
 							else
 							{
-								printf( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ??\n", val );
+								printf ( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ??\n", val );
 							}
 						}
 						else
 						{
-							ERR_CHK( Mark_NulString( & ec, rl2 ))
+							ERR_CHK ( Mark_NulString ( &ec, rl2 ) )
 						}
 					}
 					break;
@@ -498,31 +431,30 @@ S32 cnt;
 
 				case DST_Struct:
 				{
-					val	= ( (U64) mem[ off + 0 ] << 24 | 
-							(U64) mem[ off + 1 ] << 16 | 
-							(U64) mem[ off + 2 ] <<  8 | 
-							(U64) mem[ off + 3 ] <<  0 );
+					val = ( (U64)mem[off + 0] << 24 | (U64)mem[off + 1] << 16 | (U64)mem[off + 2] << 8
+							| (U64)mem[off + 3] << 0 );
 
-//					printf( "Struct $%08lx\n", val );
+					//					printf( "Struct $%08lx\n", val );
 
 					if ( val )
 					{
-						ERR_CHK( RS4AddLabel_File( NULL, & rl2, fh, val, RS4LabelType_Unset, __FILE__ ))
+						ERR_CHK ( RS4AddLabel_File ( NULL, &rl2, fh, val, RS4LabelType_Unset, __FILE__ ) )
 
 						if ( ! rl2 )
 						{
 							/**/ if ( DoVerbose > 1 )
 							{
-								printf( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : %s\n", __FILE__, __LINE__, val, file );
+								printf ( "%s:%04d: Mark_Struct: Error adding Label at Address $%08" PRIx64 " ?? : %s\n",
+										 __FILE__, __LINE__, val, file );
 							}
 							else
 							{
-								printf( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ??\n", val );
+								printf ( "Mark_Struct: Error adding Label at Address $%08" PRIx64 " ??\n", val );
 							}
 						}
 						else
 						{
-							ERR_CHK( Mark_Struct( & ec, rl2, dsn->dsn_ID, __FILE__ ))
+							ERR_CHK ( Mark_Struct ( &ec, rl2, dsn->dsn_ID, __FILE__ ) )
 						}
 					}
 					break;
@@ -540,16 +472,16 @@ S32 cnt;
 
 	// --
 
-	off		= rl->rl_Offset;
-	memset( & type[off], RS4MT_Data, size );
+	off = rl->rl_Offset;
+	memset ( &type[off], RS4MT_Data, size );
 
 	// --
 
-//	rl->rl_UserLocked = TRUE;
+	//	rl->rl_UserLocked = TRUE;
 	rl->rl_Type1 = RS4LabelType_Struct;
 	rl->rl_Type2 = id;
 	rl->rl_Type3 = 0;
-	rl->rl_Size = size;
+	rl->rl_Size	 = size;
 
 	fs = RS4FuncStat_Okay;
 	ec = RS4ErrStat_Okay;
@@ -565,20 +497,21 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --
 
 #ifdef SUPPORT_M68K
-void M68k_ClearRegs( RS4Trace *rt, S32 mask )
+void
+M68k_ClearRegs ( RS4Trace * rt, S32 mask )
 {
-S32 cnt;
-S32 reg;
+	S32 cnt;
+	S32 reg;
 
 	reg = 1;
 
-	#if 0
+#if 0
 
 	printf( "Clear Regs [$%08" PRIx64 "] : ", rt->rt_CurMemAdr );
 
@@ -597,9 +530,9 @@ S32 reg;
 
 	printf( "\n" );
 
-	#else
+#else
 
-	for( cnt=0 ; cnt<16 ; cnt++ )
+	for ( cnt = 0; cnt < 16; cnt++ )
 	{
 		if ( mask & reg )
 		{
@@ -609,7 +542,7 @@ S32 reg;
 		reg = reg << 1;
 	}
 
-	#endif
+#endif
 }
 #endif
 

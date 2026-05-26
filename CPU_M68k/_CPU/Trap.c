@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,16 +17,17 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_TRAP( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_TRAP ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 vec;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   vec;
 
 	vec = ( rt->rt_CPU.M68k.mt_Opcode & 0x000f0000 ) >> 16;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Trap";
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "#%d", vec );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "#%d", vec );
 
 	// --
 
@@ -35,7 +36,7 @@ S32 vec;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -44,5 +45,5 @@ S32 vec;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

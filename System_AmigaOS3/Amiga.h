@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -20,17 +20,17 @@
 
 // --
 
-typedef struct _AOS3_RegStruct	AOS3_RegStruct;
-typedef struct _AOS3_LVOStruct	AOS3_LVOStruct;
+typedef struct _AOS3_RegStruct AOS3_RegStruct;
+typedef struct _AOS3_LVOStruct AOS3_LVOStruct;
 
-#define AOS3_LVO_Name(x,y)		{ 0, x, "_LVO" #y,	AOS3_LVOType_Name,	NULL,				NULL }
-#define AOS3_LVO_Func(x,y)		{ 0, x, "_LVO" #y,	AOS3_LVOType_Func,	AOS3_##y##_Func,	NULL }
-#define AOS3_LVO_Regs(x,y)		{ 0, x, "_LVO" #y,	AOS3_LVOType_Regs,	NULL,				AOS3_##y##_Regs }
-#define AOS3_LVO_EndMarker()	{ 0, 0, NULL,		AOS3_LVOType_End,	NULL,				NULL }
+#define AOS3_LVO_Name( x, y )	{ 0, x, "_LVO" #y, AOS3_LVOType_Name, NULL, NULL }
+#define AOS3_LVO_Func( x, y )	{ 0, x, "_LVO" #y, AOS3_LVOType_Func, AOS3_##y##_Func, NULL }
+#define AOS3_LVO_Regs( x, y )	{ 0, x, "_LVO" #y, AOS3_LVOType_Regs, NULL, AOS3_##y##_Regs }
+#define AOS3_LVO_EndMarker()	{ 0, 0, NULL, AOS3_LVOType_End, NULL, NULL }
 
-#define AOS3_REG_Code(x)		{ x, AOS3_RegType_Code, 0 }
-#define AOS3_REG_String(x)		{ x, AOS3_RegType_String, 0 }
-#define AOS3_REG_Struct(x,y)	{ x, AOS3_RegType_Struct, y }
+#define AOS3_REG_Code( x )		{ x, AOS3_RegType_Code, 0 }
+#define AOS3_REG_String( x )	{ x, AOS3_RegType_String, 0 }
+#define AOS3_REG_Struct( x, y ) { x, AOS3_RegType_Struct, y }
 #define AOS3_REG_EndMarker()	{ -1, 0, 0 }
 
 enum AOS3_RegType
@@ -42,10 +42,10 @@ enum AOS3_RegType
 
 enum AOS3_LVOType
 {
-	AOS3_LVOType_End = 0,
-	AOS3_LVOType_Name = 0x20,	// Only define Name and Offset
-	AOS3_LVOType_Regs,			// Name+Offset and Reg struct
-	AOS3_LVOType_Func,			// Name+Offset and Custom Function
+	AOS3_LVOType_End  = 0,
+	AOS3_LVOType_Name = 0x20, // Only define Name and Offset
+	AOS3_LVOType_Regs,		  // Name+Offset and Reg struct
+	AOS3_LVOType_Func,		  // Name+Offset and Custom Function
 };
 
 // Used by LabelType and RegType
@@ -61,7 +61,7 @@ enum AOS3_LibType
 	AOS3_LibType_CiaBase,
 	AOS3_LibType_ColorwheelBase,
 	AOS3_LibType_CommoditiesBase,
-//	AOS3_LibType_ConsoleBase,
+	//	AOS3_LibType_ConsoleBase,
 	AOS3_LibType_DatatypesBase,
 	AOS3_LibType_DiskBase,
 	AOS3_LibType_DiskfontBase,
@@ -73,7 +73,7 @@ enum AOS3_LibType
 	AOS3_LibType_GraphicsBase,
 	AOS3_LibType_IconBase,
 	AOS3_LibType_IFFParseBase,
-//	AOS3_LibType_InputBase,
+	//	AOS3_LibType_InputBase,
 	AOS3_LibType_IntuitionBase,
 	AOS3_LibType_KeymapBase,
 	AOS3_LibType_LayersBase,
@@ -88,10 +88,10 @@ enum AOS3_LibType
 	AOS3_LibType_MiscBase,
 	AOS3_LibType_NonvolatileBase,
 	AOS3_LibType_PotgoBase,
-//	AOS3_LibType_RamdriveBase,
+	//	AOS3_LibType_RamdriveBase,
 	AOS3_LibType_RexxappBase,
 	AOS3_LibType_RexxsyslibBase,
-//	AOS3_LibType_TimerBase,
+	//	AOS3_LibType_TimerBase,
 	AOS3_LibType_TranslatorBase,
 	AOS3_LibType_UtilityBase,
 	AOS3_LibType_WorkbenchBase,
@@ -101,36 +101,36 @@ enum AOS3_LibType
 
 struct _AOS3_RegStruct
 {
-	enum M68kRegisterType	Reg3;
-	enum AOS3_RegType		Type3;
-	S32						Val3;
+	enum M68kRegisterType Reg3;
+	enum AOS3_RegType	  Type3;
+	S32					  Val3;
 };
 
 struct _AOS3_LVOStruct
 {
-	S16						Used2;
-	S16						Offset2;
-	STR 					Name2;
-	enum AOS3_LVOType		Type2;
-	enum RS4DecodeStat		(*Func2)( enum RS4ErrorCode *errcode, RS4Trace *rt );
-	AOS3_RegStruct *		Regs2;
+	S16				  Used2;
+	S16				  Offset2;
+	STR				  Name2;
+	enum AOS3_LVOType Type2;
+	enum RS4DecodeStat ( *Func2 ) ( enum RS4ErrorCode * errcode, RS4Trace * rt );
+	AOS3_RegStruct * Regs2;
 };
 
 // --
 
 struct AOS3LVOStruct
 {
-	S16		Used;
-	S16		Offset;
-	STR 	Name;
-	enum RS4DecodeStat (*Func)( enum RS4ErrorCode *errcode, RS4Trace *rt );
+	S16 Used;
+	S16 Offset;
+	STR Name;
+	enum RS4DecodeStat ( *Func ) ( enum RS4ErrorCode * errcode, RS4Trace * rt );
 };
 
 // --
 
 // -- Protos
 
-S32 AmigaOS3_SaveLibFunc( PTR in, STR buffer );
+S32 AmigaOS3_SaveLibFunc ( PTR in, STR buffer );
 
 extern AOS3_LVOStruct AOS3_AmigaguideBase[];
 extern AOS3_LVOStruct AOS3_AslBase[];
@@ -175,10 +175,13 @@ extern AOS3_LVOStruct AOS3_WorkbenchBase[];
 
 // --
 
-enum RS4FuncStat	AmigaOS3_Misc_Move_Get(			enum RS4ErrorCode *errcode, RS4Trace *rt, struct M68kRegister *cur, MEM mem, struct AmigaOS3_Misc_Move_GetSetStruct *gss );
-enum RS4FuncStat	AmigaOS3_Misc_Move_Set(			enum RS4ErrorCode *errcode, RS4Trace *rt, struct M68kRegister *cur, MEM mem, struct AmigaOS3_Misc_Move_GetSetStruct *gss );
-enum RS4FuncStat	AmigaOS3_FindLibFunc_Func(		enum RS4ErrorCode *errcode, RS4Trace *rt, enum RS4DecodeStat (*Func)( enum RS4ErrorCode *errcode, RS4Trace *rt ));
-enum RS4FuncStat	AmigaOS3_FindLibFunc_Regs(		enum RS4ErrorCode *errcode, RS4Trace *rt, struct _AOS3_RegStruct *rs );
+enum RS4FuncStat AmigaOS3_Misc_Move_Get ( enum RS4ErrorCode * errcode, RS4Trace * rt, struct M68kRegister * cur, MEM mem,
+										  struct AmigaOS3_Misc_Move_GetSetStruct * gss );
+enum RS4FuncStat AmigaOS3_Misc_Move_Set ( enum RS4ErrorCode * errcode, RS4Trace * rt, struct M68kRegister * cur, MEM mem,
+										  struct AmigaOS3_Misc_Move_GetSetStruct * gss );
+enum RS4FuncStat AmigaOS3_FindLibFunc_Func ( enum RS4ErrorCode * errcode, RS4Trace * rt,
+											 enum RS4DecodeStat ( *Func ) ( enum RS4ErrorCode * errcode, RS4Trace * rt ) );
+enum RS4FuncStat AmigaOS3_FindLibFunc_Regs ( enum RS4ErrorCode * errcode, RS4Trace * rt, struct _AOS3_RegStruct * rs );
 
 // --
 

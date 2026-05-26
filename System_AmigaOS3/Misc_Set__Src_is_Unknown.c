@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,32 +17,30 @@
 
 // --
 
-#define DDEBUG(x)
+#define DDEBUG( x )
 
 // --
 
-enum RS4ErrorCode Misc_Set__Src_is_Unknown( 
-	struct AmigaOS3_Misc_Move_GetSetStruct *gss UNUSED,
-	struct M68kRegister *dst_reg, 
-	RS4Trace *rt,
-	MEM mem )
+enum RS4ErrorCode
+Misc_Set__Src_is_Unknown ( struct AmigaOS3_Misc_Move_GetSetStruct * gss UNUSED, struct M68kRegister * dst_reg, RS4Trace * rt,
+						   MEM mem )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *dst_rl;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4Label *		  dst_rl;
 
-ec = RS4ErrStat_Error;
+	ec = RS4ErrStat_Error;
 
 	// Dst is Addr : $00000004.l
-	/**/ if (( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 1 ))	
+	/**/ if ( ( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 1 ) )
 	{
-		DDEBUG( printf( "write : 41 :\n" ); )
+		DDEBUG ( printf ( "write : 41 :\n" ); )
 
-		U32 val = (( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ));
+		U32 val = ( ( mem[0] << 24 ) | ( mem[1] << 16 ) | ( mem[2] << 8 ) | ( mem[3] << 0 ) );
 
-		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & dst_rl, val, __FILE__ ))
+		ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &dst_rl, val, __FILE__ ) )
 
-		if (( dst_rl ) && ( ! dst_rl->rl_UserLocked ))
+		if ( ( dst_rl ) && ( ! dst_rl->rl_UserLocked ) )
 		{
 			dst_rl->rl_Type1 = RS4LabelType_Unknown;
 			dst_rl->rl_Type2 = 0;
@@ -56,8 +54,7 @@ ec = RS4ErrStat_Error;
 		// Reg -> Reg
 		dst_reg->mr_Type1 = RRT_Unknown;
 
-		DDEBUG( printf( "write : 42 : destroy Reg\n" ); )
-
+		DDEBUG ( printf ( "write : 42 : destroy Reg\n" ); )
 	}
 
 	// Dst is Reg : Ax
@@ -66,14 +63,13 @@ ec = RS4ErrStat_Error;
 		// Reg -> Reg
 		dst_reg->mr_Type1 = RRT_Unknown;
 
-		DDEBUG( printf( "write : 43 : destroy Reg\n" ); )
-
+		DDEBUG ( printf ( "write : 43 : destroy Reg\n" ); )
 	}
 
 	// Dst is Unknown : Unsupported
 	else
 	{
-		DDEBUG( printf( "write : 44 : \n" ); )
+		DDEBUG ( printf ( "write : 44 : \n" ); )
 
 		// Do Nothing
 	}
@@ -82,7 +78,7 @@ ec = RS4ErrStat_Error;
 
 bailout:
 
-	return( ec );
+	return ( ec );
 }
 
 // --

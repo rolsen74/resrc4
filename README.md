@@ -2,7 +2,7 @@
 
 Portable Amiga 68k Hunk File Disassembler.
 
-This disassembler was tested against the Amiga game Civilization (ECS) and Lightwave for FPU support.
+This disassembler was tested against the Amiga game Civilization (ECS) and Lightwave for FPU support plus lha.exe v2.15 for 020 Opcodes.
 
 ## Features
 
@@ -70,6 +70,13 @@ You will likely need to create a config file and use the Relative16 option.
 - Bcc
 - BChg
 - BClr
+- BFChg
+- BFClr
+- BFExts
+- BFExtu
+- BFFFO
+- BFIns
+- BFTst
 - Bcs
 - Beq
 - Bge

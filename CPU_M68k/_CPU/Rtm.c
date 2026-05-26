@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,28 +17,29 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_RTM( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_RTM ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 reg;
-S32 da;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   reg;
+	S32				   da;
 
 	// --
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Rtm";
-	rt->rt_CPU.M68k.mt_LastOpcode = TRUE;
+	rt->rt_CPU.M68k.mt_LastOpcode		= TRUE;
 
 	reg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
-	da  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00080000 );
+	da	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00080000 );
 
 	if ( da )
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", Ax_RegNames[ reg ] );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", Ax_RegNames[reg] );
 	}
 	else
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", Dx_RegNames[ reg ] );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", Dx_RegNames[reg] );
 	}
 
 	// --
@@ -48,7 +49,7 @@ S32 da;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -57,5 +58,5 @@ S32 da;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

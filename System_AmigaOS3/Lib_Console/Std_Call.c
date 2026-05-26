@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,19 +17,16 @@
 
 // --
 
-//enum RS4DecodeStat AOS3_Console_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
+// enum RS4DecodeStat AOS3_Console_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 // --
 
-AOS3_LVOStruct AOS3_ConsoleBase[] =
-{
-	AOS3_LVO_Name( -42, CDInputHandler ),
-	AOS3_LVO_Name( -48, RawKeyConvert ),
-	AOS3_LVO_Name( -54, GetConSnip ),
-	AOS3_LVO_Name( -60, SetConSnip ),
-	AOS3_LVO_Name( -66, AddConSnipHook ),
-	AOS3_LVO_Name( -72, RemConSnipHook ),
-	AOS3_LVO_EndMarker()
-};
+AOS3_LVOStruct AOS3_ConsoleBase[] = { AOS3_LVO_Name ( -42, CDInputHandler ),
+									  AOS3_LVO_Name ( -48, RawKeyConvert ),
+									  AOS3_LVO_Name ( -54, GetConSnip ),
+									  AOS3_LVO_Name ( -60, SetConSnip ),
+									  AOS3_LVO_Name ( -66, AddConSnipHook ),
+									  AOS3_LVO_Name ( -72, RemConSnipHook ),
+									  AOS3_LVO_EndMarker () };
 
 // --

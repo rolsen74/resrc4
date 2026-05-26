@@ -1,6 +1,6 @@
- 
+
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,21 +17,22 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_LINK( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_LINK ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S16 link;
-S32 reg;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S16				   link;
+	S32				   reg;
 
-	reg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	reg	 = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 	link = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000ffff );
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Link.w";
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,#%d", Ax_RegNames[reg], link );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,#%d", Ax_RegNames[reg], link );
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = 4;
-	rt->rt_CPU.M68k.mt_ClearRegMask |= ( 1 << M68KREGT_A7 ); 
+	rt->rt_CPU.M68k.mt_ClearRegMask |= ( 1 << M68KREGT_A7 );
 
 	// --
 
@@ -40,7 +41,7 @@ S32 reg;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -49,30 +50,29 @@ S32 reg;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_LINK_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_LINK_L ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U32 link;
-S32 reg;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U32				   link;
+	S32				   reg;
 
-	reg  =  ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	reg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	link =	(( rt->rt_CurMemBuf[2] << 24 ) |
-			 ( rt->rt_CurMemBuf[3] << 16 ) |
-			 ( rt->rt_CurMemBuf[4] <<  8 ) |
-			 ( rt->rt_CurMemBuf[5] <<  0 ));
+	link = ( ( rt->rt_CurMemBuf[2] << 24 ) | ( rt->rt_CurMemBuf[3] << 16 ) | ( rt->rt_CurMemBuf[4] << 8 )
+			 | ( rt->rt_CurMemBuf[5] << 0 ) );
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Link.l";
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,#%d", Ax_RegNames[reg], link );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,#%d", Ax_RegNames[reg], link );
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = 6;
-	rt->rt_CPU.M68k.mt_ClearRegMask |= ( 1 << M68KREGT_A7 ); 
+	rt->rt_CPU.M68k.mt_ClearRegMask |= ( 1 << M68KREGT_A7 );
 
 	// --
 
@@ -81,7 +81,7 @@ S32 reg;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -90,7 +90,7 @@ S32 reg;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

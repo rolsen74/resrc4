@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -18,10 +18,11 @@
 // --
 // -- Mode 40 - Clr -(Ax)
 
-enum RS4DecodeStat MODE_40( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat
+MODE_40 ( enum RS4ErrorCode * errcode, RS4Trace * rt, STR outstr )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
 
 	// --
 
@@ -32,7 +33,7 @@ enum RS4ErrorCode ec;
 
 	if ( rt->rt_Pass != RS4TracePass_Trace )
 	{
-		sprintf( outstr, "-(%s)", Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+		sprintf ( outstr, "-(%s)", Ax_RegNames[rt->rt_CPU.M68k.mt_ArgEReg] );
 	}
 	else
 	{
@@ -46,7 +47,7 @@ enum RS4ErrorCode ec;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

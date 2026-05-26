@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -19,50 +19,57 @@
 // -- Mode 72 - Clr (xxxx.w,pc)
 // xxxx is Signed
 
-enum RS4DecodeStat MODE_72( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat
+MODE_72 ( enum RS4ErrorCode * errcode, RS4Trace * rt, STR outstr )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-U32 adr;
-S16 val;
-MEM mem;
-CHR labname[ MAX_LabelName + 8 ];
-S32 pos;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+	RS4Label *		   rl;
+	U32				   adr;
+	S16				   val;
+	MEM				   mem;
+	CHR				   labname[MAX_LabelName + 8];
+	S32				   pos;
 
 	// --
 
 	ec	= RS4ErrStat_Error;
 	ds	= RS4DecodeStat_Error;
-	mem	= rt->rt_CurMemBuf;
-	pos	= rt->rt_CPU.M68k.mt_ArgSize;
-	val	= (( mem[pos] << 8 ) | ( mem[pos+1] << 0 ));
-	adr	= rt->rt_CurMemAdr + 2 + val;
+	mem = rt->rt_CurMemBuf;
+	pos = rt->rt_CPU.M68k.mt_ArgSize;
+	val = ( ( mem[pos] << 8 ) | ( mem[pos + 1] << 0 ) );
+	adr = rt->rt_CurMemAdr + 2 + val;
 
 	if ( rt->rt_Pass == RS4TracePass_Trace )
 	{
-		// We can get away with AddLabel2, as this is a PC function, 
+		// We can get away with AddLabel2, as this is a PC function,
 		// so we can handle Labels out side Hunk Memory area
-		ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Unset ))
+		ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Unset ) )
 	}
 	else
 	{
-		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+		ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 	}
 
 	// --
 
-	if (( rl ) && ( rt->rt_CPU.M68k.mt_DoLabelSize ))
+	if ( ( rl ) && ( rt->rt_CPU.M68k.mt_DoLabelSize ) )
 	{
 		enum RS4LabelSize rls;
 
-		/**/ if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Byte )		rls = RS4LABSIZE_Integer8;
-		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Word )		rls = RS4LABSIZE_Integer16;
-		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Long )		rls = RS4LABSIZE_Integer32;
-		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Single )	rls = RS4LABSIZE_Float32;
-		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Double )	rls = RS4LABSIZE_Float64;
-		else rls = RS4LABSIZE_Unknown;
+		/**/ if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Byte )
+			rls = RS4LABSIZE_Integer8;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Word )
+			rls = RS4LABSIZE_Integer16;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Long )
+			rls = RS4LABSIZE_Integer32;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Single )
+			rls = RS4LABSIZE_Float32;
+		else if ( rt->rt_CPU.M68k.mt_ArgType == M68KSIZE_Double )
+			rls = RS4LABSIZE_Float64;
+		else
+			rls = RS4LABSIZE_Unknown;
 
 		if ( rl->rl_Label_RW_Size == RS4LABSIZE_Unset )
 		{
@@ -72,12 +79,12 @@ S32 pos;
 		{
 			if ( rl->rl_Label_RW_Size != rls )
 			{
-				/**/ if (( rl->rl_Label_RW_Size == RS4LABSIZE_Integer32 ) && ( rls == RS4LABSIZE_Float32 ))
+				/**/ if ( ( rl->rl_Label_RW_Size == RS4LABSIZE_Integer32 ) && ( rls == RS4LABSIZE_Float32 ) )
 				{
 					// Convert Long to Float
 					rl->rl_Label_RW_Size = rls;
 				}
-				else if (( rl->rl_Label_RW_Size == RS4LABSIZE_Float32 ) && ( rls == RS4LABSIZE_Integer32 ))
+				else if ( ( rl->rl_Label_RW_Size == RS4LABSIZE_Float32 ) && ( rls == RS4LABSIZE_Integer32 ) )
 				{
 					// Do not convert Float to Long
 					// so do nothing, not an error
@@ -94,7 +101,7 @@ S32 pos;
 		}
 	}
 
-	#if 0
+#if 0
 	enum M68KOpcodeSize
 	{
 		M68KSIZE_Unsized,
@@ -118,21 +125,21 @@ S32 pos;
 		RS4LABSIZE_Float,		// move.s
 		RS4LABSIZE_Double,		// move.d
 	};
-	#endif
+#endif
 
 	// --
 
 	if ( rt->rt_Pass != RS4TracePass_Trace )
 	{
-		if (( rl ) && ( rl->rl_Name[0] ))
+		if ( ( rl ) && ( rl->rl_Name[0] ) )
 		{
-			ERR_CHK( RS4BuildLabelString( & ec, rl, labname ))
+			ERR_CHK ( RS4BuildLabelString ( &ec, rl, labname ) )
 
-			sprintf( outstr, "(%s,PC)", labname );
+			sprintf ( outstr, "(%s,PC)", labname );
 		}
 		else
 		{
-			sprintf( outstr, "($%08x,PC)", adr );
+			sprintf ( outstr, "($%08x,PC)", adr );
 		}
 	}
 	else
@@ -140,7 +147,7 @@ S32 pos;
 		outstr[0] = 0;
 	}
 
-	if (( rl ) && ( rt->rt_CPU.M68k.mt_CurRegister ))
+	if ( ( rl ) && ( rt->rt_CPU.M68k.mt_CurRegister ) )
 	{
 		rt->rt_CPU.M68k.mt_CurRegister->mr_Type1 = RRT_Label;
 		rt->rt_CPU.M68k.mt_CurRegister->mr_Label = rl;
@@ -164,7 +171,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

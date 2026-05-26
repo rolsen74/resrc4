@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -18,18 +18,19 @@
 // --
 // -- Mode 50 - jsr (d16,Ax)
 
-enum RS4DecodeStat MODE_50( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat
+MODE_50 ( enum RS4ErrorCode * errcode, RS4Trace * rt, STR outstr )
 {
-struct M68kRegister *mr;
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-STR lvostr;
-S64 adr;
-S32 pos;
-MEM mem;
-S16 val;
+	struct M68kRegister * mr;
+	enum RS4DecodeStat	  ds;
+	enum RS4ErrorCode	  ec;
+	enum RS4FuncStat	  fs;
+	RS4Label *			  rl;
+	STR					  lvostr;
+	S64					  adr;
+	S32					  pos;
+	MEM					  mem;
+	S16					  val;
 
 	// --
 
@@ -41,14 +42,14 @@ S16 val;
 	mem = rt->rt_CurMemBuf;
 	pos = rt->rt_CPU.M68k.mt_ArgSize;
 
-	val = (( mem[pos] << 8 ) | ( mem[pos+1] << 0 ));
+	val = ( ( mem[pos] << 8 ) | ( mem[pos + 1] << 0 ) );
 
 	lvostr = NULL;
 
 	// --
 	// Check Reg Type
 
-	mr = & rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg ];
+	mr = &rt->rt_CPU.M68k.mt_Registers[M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg];
 
 	/**/ if ( mr->mr_Type1 == RRT_Label )
 	{
@@ -58,13 +59,13 @@ S16 val;
 		{
 			adr = rl->rl_Address + val;
 
-			RS4FileSection *sec;
-			
-			ERR_CHK( RS4FindSection_File( & ec, & sec, rt->rt_File, adr ))
+			RS4FileSection * sec;
+
+			ERR_CHK ( RS4FindSection_File ( &ec, &sec, rt->rt_File, adr ) )
 
 			if ( sec )
 			{
-				ERR_CHK( RS4AddLabel_Sec( NULL, & rl, sec, adr, RS4LabelType_Unset ))
+				ERR_CHK ( RS4AddLabel_Sec ( NULL, &rl, sec, adr, RS4LabelType_Unset ) )
 			}
 			else
 			{
@@ -78,7 +79,7 @@ S16 val;
 			}
 			else
 			{
-				rt->rt_CPU.M68k.mt_SrcRegister.mr_Type1 = RRT_Address;
+				rt->rt_CPU.M68k.mt_SrcRegister.mr_Type1	  = RRT_Address;
 				rt->rt_CPU.M68k.mt_SrcRegister.mr_Address = adr;
 			}
 		}
@@ -90,16 +91,16 @@ S16 val;
 	{
 		if ( rt->rt_CPU.M68k.mt_LibCall )
 		{
-			lvostr = AmigaOS3_FindLibFunc( & ec, rt, val, __FILE__ );
+			lvostr = AmigaOS3_FindLibFunc ( &ec, rt, val, __FILE__ );
 
-			if (( ! lvostr ) && ( ec != RS4ErrStat_Okay ))
+			if ( ( ! lvostr ) && ( ec != RS4ErrStat_Okay ) )
 			{
 				// ec allready set
 				ds = RS4DecodeStat_Error;
 
-				#ifdef DEBUG
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-				#endif
+#ifdef DEBUG
+				printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
+#endif
 
 				goto bailout;
 			}
@@ -112,12 +113,12 @@ S16 val;
 	{
 		if ( lvostr )
 		{
-			sprintf( outstr, "(%s,%s)", lvostr, Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+			sprintf ( outstr, "(%s,%s)", lvostr, Ax_RegNames[rt->rt_CPU.M68k.mt_ArgEReg] );
 		}
 		else
 		{
 			// Most proberly a Library call, so we use Decimal
-			sprintf( outstr, "(%d,%s)", val, Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+			sprintf ( outstr, "(%d,%s)", val, Ax_RegNames[rt->rt_CPU.M68k.mt_ArgEReg] );
 		}
 	}
 	else
@@ -143,7 +144,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -18,17 +18,18 @@
 // --
 // -- Mode 60 - Brief Extension Word Format
 
-enum RS4DecodeStat MODE_60_Brief( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat
+MODE_60_Brief ( enum RS4ErrorCode * errcode, RS4Trace * rt, STR outstr )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-MEM mem;
-S8 Offset;
-S32 SCALE;
-S32 REG;
-S32 pos;
-S32 AD;
-S32 WL;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	MEM				   mem;
+	S8				   Offset;
+	S32				   SCALE;
+	S32				   REG;
+	S32				   pos;
+	S32				   AD;
+	S32				   WL;
 
 	// --
 
@@ -51,19 +52,14 @@ S32 WL;
 	mem = rt->rt_CurMemBuf;
 	pos = rt->rt_CPU.M68k.mt_ArgSize;
 
-	AD		= ( mem[ pos + 0 ] & 0x80 );
-	REG		= ( mem[ pos + 0 ] & 0x70 ) >> 4;
-	WL		= ( mem[ pos + 0 ] & 0x08 );
-	SCALE	= ( mem[ pos + 0 ] & 0x06 ) >> 1;
-	Offset	= ( mem[ pos + 1 ] );
+	AD	   = ( mem[pos + 0] & 0x80 );
+	REG	   = ( mem[pos + 0] & 0x70 ) >> 4;
+	WL	   = ( mem[pos + 0] & 0x08 );
+	SCALE  = ( mem[pos + 0] & 0x06 ) >> 1;
+	Offset = ( mem[pos + 1] );
 
-	sprintf( outstr, "(%d,%s,%s%s%s)",
-		Offset,
-		Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ],
-		( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG],
-		( WL ) ? ".l" : ".w",
-		scale_Names[SCALE]
-	);
+	sprintf ( outstr, "(%d,%s,%s%s%s)", Offset, Ax_RegNames[rt->rt_CPU.M68k.mt_ArgEReg],
+			  ( AD ) ? Ax_RegNames[REG] : Dx_RegNames[REG], ( WL ) ? ".l" : ".w", scale_Names[SCALE] );
 
 	rt->rt_CPU.M68k.mt_ArgSize += 2;
 
@@ -74,7 +70,7 @@ S32 WL;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

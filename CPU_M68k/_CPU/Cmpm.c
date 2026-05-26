@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,44 +17,45 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_CMPM( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_CMPM ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 size;
-S32 yreg;
-S32 xreg;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   size;
+	S32				   yreg;
+	S32				   xreg;
 
 	xreg = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
 	yreg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	switch( size )
+	switch ( size )
 	{
 		case 0:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Cmpm.b";
-			sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "(%s)+,(%s)+", Ax_RegNames[yreg], Ax_RegNames[xreg] );
+			sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "(%s)+,(%s)+", Ax_RegNames[yreg], Ax_RegNames[xreg] );
 			break;
 		}
 
 		case 1:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Cmpm.w";
-			sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "(%s)+,(%s)+", Ax_RegNames[yreg], Ax_RegNames[xreg] );
+			sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "(%s)+,(%s)+", Ax_RegNames[yreg], Ax_RegNames[xreg] );
 			break;
 		}
 
 		case 2:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Cmpm.l";
-			sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "(%s)+,(%s)+", Ax_RegNames[yreg], Ax_RegNames[xreg] );
+			sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "(%s)+,(%s)+", Ax_RegNames[yreg], Ax_RegNames[xreg] );
 			break;
 		}
 
-		default:	
+		default:
 		{
-			printf( "Unsupported 'Cmpm' Opcode (Mode: %d)\n", size );
+			printf ( "Unsupported 'Cmpm' Opcode (Mode: %d)\n", size );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
@@ -72,5 +73,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

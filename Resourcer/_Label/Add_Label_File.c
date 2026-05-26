@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -18,14 +18,16 @@
 // --
 // The _File version need the Address to be inside Section
 
-enum RS4FuncStat RS4AddLabel_File( enum RS4ErrorCode *errcode, RS4Label **rl_ptr, RS4FileHeader *fh, S64 addr, enum RS4LabelType type, STR file )
+enum RS4FuncStat
+RS4AddLabel_File ( enum RS4ErrorCode * errcode, RS4Label ** rl_ptr, RS4FileHeader * fh, S64 addr, enum RS4LabelType type,
+				   STR file )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4FileSection *sec;
-RS4Label *new;
-S64 memadr;
-S32 cnt;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4FileSection *  sec;
+	RS4Label * new;
+	S64 memadr;
+	S32 cnt;
 
 	fs = RS4FuncStat_Okay;
 
@@ -37,12 +39,12 @@ S32 cnt;
 	// --
 
 	ec	= RS4ErrStat_Error;
-	new	= NULL;
+	new = NULL;
 
 	// --
 	// First find the Hunk where the label should be
 
-	for( cnt=0 ; cnt<fh->rfh_SecArraySize ; cnt++ )
+	for ( cnt = 0; cnt < fh->rfh_SecArraySize; cnt++ )
 	{
 		memadr = fh->rfh_SecArray[cnt].rsi_MemoryAdr;
 
@@ -69,11 +71,11 @@ S32 cnt;
 
 		/**/ if ( DoVerbose > 1 )
 		{
-			printf( "%s:%04d: AddLabel: External? Addr $%08" PRIx64 " ?? : %s\n", __FILE__, __LINE__, addr, file );
+			printf ( "%s:%04d: AddLabel: External? Addr $%08" PRIx64 " ?? : %s\n", __FILE__, __LINE__, addr, file );
 		}
 		else if ( DoVerbose > 0 )
 		{
-			printf( "AddLabel: External? Addr $%08" PRIx64 " ??\n", addr );
+			printf ( "AddLabel: External? Addr $%08" PRIx64 " ??\n", addr );
 		}
 		goto bailout;
 	}
@@ -81,7 +83,7 @@ S32 cnt;
 	// --
 
 	sec = fh->rfh_SecArray[cnt].rsi_Section;
-	ERR_CHK( RS4AddLabel_Sec( & ec, & new, sec, addr, type ))
+	ERR_CHK ( RS4AddLabel_Sec ( &ec, &new, sec, addr, type ) )
 
 bailout:
 
@@ -97,7 +99,7 @@ bailout:
 		*rl_ptr = new;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --

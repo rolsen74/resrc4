@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,24 +17,15 @@
 
 // --
 
-//enum RS4DecodeStat AOS3_Rexxsyslib_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
+// enum RS4DecodeStat AOS3_Rexxsyslib_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 // --
 
-AOS3_LVOStruct AOS3_RexxsyslibBase[] =
-{
-	AOS3_LVO_Name( -126, CreateArgstring ),
-	AOS3_LVO_Name( -132, DeleteArgstring ),
-	AOS3_LVO_Name( -138, LengthArgstring ),
-	AOS3_LVO_Name( -144, CreateRexxMsg ),
-	AOS3_LVO_Name( -150, DeleteRexxMsg ),
-	AOS3_LVO_Name( -156, ClearRexxMsg ),
-	AOS3_LVO_Name( -162, FillRexxMsg ),
-	AOS3_LVO_Name( -168, IsRexxMsg ),
-	// --
-	AOS3_LVO_Name( -450, LockRexxBase ),
-	AOS3_LVO_Name( -456, UnlockRexxBase ),
-	AOS3_LVO_EndMarker()
-};
+AOS3_LVOStruct AOS3_RexxsyslibBase[]
+	= { AOS3_LVO_Name ( -126, CreateArgstring ), AOS3_LVO_Name ( -132, DeleteArgstring ),
+		AOS3_LVO_Name ( -138, LengthArgstring ), AOS3_LVO_Name ( -144, CreateRexxMsg ), AOS3_LVO_Name ( -150, DeleteRexxMsg ),
+		AOS3_LVO_Name ( -156, ClearRexxMsg ), AOS3_LVO_Name ( -162, FillRexxMsg ), AOS3_LVO_Name ( -168, IsRexxMsg ),
+		// --
+		AOS3_LVO_Name ( -450, LockRexxBase ), AOS3_LVO_Name ( -456, UnlockRexxBase ), AOS3_LVO_EndMarker () };
 
 // --

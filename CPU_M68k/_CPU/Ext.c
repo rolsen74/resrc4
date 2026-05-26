@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,17 +17,18 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_EXT( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_EXT ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U32 opmode;
-U32 reg;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U32				   opmode;
+	U32				   reg;
 
-	opmode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x01c00000 ) >> 22;
-	reg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	opmode = ( rt->rt_CPU.M68k.mt_Opcode & 0x01c00000 ) >> 22;
+	reg	   = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	switch( opmode )
+	switch ( opmode )
 	{
 		case 2:
 		{
@@ -49,15 +50,15 @@ U32 reg;
 
 		default:
 		{
-			printf( "Unsupported 'Ext' Opcode (Mode: %d)\n", opmode );
+			printf ( "Unsupported 'Ext' Opcode (Mode: %d)\n", opmode );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
 	}
 
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", Dx_RegNames[ reg ] );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s", Dx_RegNames[reg] );
 
-	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + reg ); 
+	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + reg );
 	rt->rt_CPU.M68k.mt_OpcodeSize = 2;
 
 	// --
@@ -72,5 +73,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

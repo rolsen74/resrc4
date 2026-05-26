@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,20 +17,21 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_MOVEQ( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_MOVEQ ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U32 reg;
-S8 value;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U32				   reg;
+	S8				   value;
 
-	reg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
-	value	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00ff0000 ) >> 16;
+	reg	  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
+	value = ( rt->rt_CPU.M68k.mt_Opcode & 0x00ff0000 ) >> 16;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Moveq" : "Moveq.l";
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "#%d,%s", value, Dx_RegNames[reg] );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "#%d,%s", value, Dx_RegNames[reg] );
 
-	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + reg ); 
+	rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + reg );
 
 	// --
 
@@ -39,7 +40,7 @@ S8 value;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -48,5 +49,5 @@ S8 value;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

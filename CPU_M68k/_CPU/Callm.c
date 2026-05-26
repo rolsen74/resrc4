@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,24 +17,25 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_CALLM( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_CALLM ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U8 val;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U8				   val;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Callm";
-	rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Byte; // Unsized
-	rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
-	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
+	rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Byte; // Unsized
+	rt->rt_CPU.M68k.mt_ArgEMode			= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	rt->rt_CPU.M68k.mt_ArgEReg			= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	rt->rt_CPU.M68k.mt_OpcodeSize		= rt->rt_CPU.M68k.mt_ArgSize;
 
 	val = ( rt->rt_CPU.M68k.mt_Opcode & 0x000000ff );
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "#%d", val );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "#%d", val );
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_DstRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
@@ -50,5 +51,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,21 +17,22 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_NBCD( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_NBCD ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Nbcd.b";
-	rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Byte;
-	rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Byte;
+	rt->rt_CPU.M68k.mt_ArgEMode			= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	rt->rt_CPU.M68k.mt_ArgEReg			= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-	M68k_Set_Cur_to_Unknown( rt );
+	M68k_Set_Cur_to_Unknown ( rt );
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
 	// --
@@ -46,5 +47,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

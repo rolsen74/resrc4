@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,140 +17,125 @@
 
 // --
 
-#define DDEBUG(x)
+#define DDEBUG( x )
 
 // --
 
-enum RS4ErrorCode Misc_Set__Src_is_Exec( 
-	struct M68kRegister *dst_reg, 
-	RS4Trace *rt,
-	MEM mem );
+enum RS4ErrorCode Misc_Set__Src_is_Exec ( struct M68kRegister * dst_reg, RS4Trace * rt, MEM mem );
 
-enum RS4ErrorCode Misc_Set__Src_is_Label( 
-	struct AmigaOS3_Misc_Move_GetSetStruct *gss,
-	struct M68kRegister *dst_reg, 
-	RS4Trace *rt,
-	MEM mem );
+enum RS4ErrorCode Misc_Set__Src_is_Label ( struct AmigaOS3_Misc_Move_GetSetStruct * gss, struct M68kRegister * dst_reg,
+										   RS4Trace * rt, MEM mem );
 
-enum RS4ErrorCode Misc_Set__Src_is_Reg( 
-	struct AmigaOS3_Misc_Move_GetSetStruct *gss,
-	struct M68kRegister *dst_reg, 
-	RS4Trace *rt,
-	MEM mem );
+enum RS4ErrorCode Misc_Set__Src_is_Reg ( struct AmigaOS3_Misc_Move_GetSetStruct * gss, struct M68kRegister * dst_reg,
+										 RS4Trace * rt, MEM mem );
 
-enum RS4ErrorCode Misc_Set__Src_is_Unknown( 
-	struct AmigaOS3_Misc_Move_GetSetStruct *gss,
-	struct M68kRegister *dst_reg, 
-	RS4Trace *rt,
-	MEM mem );
+enum RS4ErrorCode Misc_Set__Src_is_Unknown ( struct AmigaOS3_Misc_Move_GetSetStruct * gss, struct M68kRegister * dst_reg,
+											 RS4Trace * rt, MEM mem );
 
 // --
 
-enum RS4FuncStat AmigaOS3_Misc_Move_Set( 
-	enum RS4ErrorCode *errcode, 
-	RS4Trace *rt, 
-	struct M68kRegister *cur, 
-	MEM mem, 
-	struct AmigaOS3_Misc_Move_GetSetStruct *gss )
+enum RS4FuncStat
+AmigaOS3_Misc_Move_Set ( enum RS4ErrorCode * errcode, RS4Trace * rt, struct M68kRegister * cur, MEM mem,
+						 struct AmigaOS3_Misc_Move_GetSetStruct * gss )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
 
 	// --
 
-	DDEBUG( printf( "AmigaOS3_Misc_Move_Set : Addr $%08lx\n", rt->rt_CurMemAdr ); )
+	DDEBUG ( printf ( "AmigaOS3_Misc_Move_Set : Addr $%08lx\n", rt->rt_CurMemAdr ); )
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
 
-	switch( gss->SrcType )
+	switch ( gss->SrcType )
 	{
 		case GSSType_Unset:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Unset :\n" ); )
+			DDEBUG ( printf ( "AmigaOS3_Misc_Move_Set : GSSType_Unset :\n" ); )
 
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
+#ifdef DEBUG
+			printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
+#endif
 
 			goto bailout;
 		}
 
 		default:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : Default :\n" ); )
+			DDEBUG ( printf ( "AmigaOS3_Misc_Move_Set : Default :\n" ); )
 
-			#ifdef DEBUG
-			printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
-			#endif
+#ifdef DEBUG
+			printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
+#endif
 
 			goto bailout;
 		}
 
 		case GSSType_Unknown:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Unknown :\n" ); )
+			DDEBUG ( printf ( "AmigaOS3_Misc_Move_Set : GSSType_Unknown :\n" ); )
 
-			ec = Misc_Set__Src_is_Unknown( gss, cur, rt, mem );
+			ec = Misc_Set__Src_is_Unknown ( gss, cur, rt, mem );
 
-			#ifdef DEBUG
+#ifdef DEBUG
 			if ( ec != RS4ErrStat_Okay )
 			{
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+				printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
 				goto bailout;
 			}
-			#endif
+#endif
 
 			break;
 		}
 
 		case GSSType_Reg:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Reg :\n" ); )
+			DDEBUG ( printf ( "AmigaOS3_Misc_Move_Set : GSSType_Reg :\n" ); )
 
-			ec = Misc_Set__Src_is_Reg( gss, cur, rt, mem );
+			ec = Misc_Set__Src_is_Reg ( gss, cur, rt, mem );
 
-			#ifdef DEBUG
+#ifdef DEBUG
 			if ( ec != RS4ErrStat_Okay )
 			{
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+				printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
 				goto bailout;
 			}
-			#endif
+#endif
 
 			break;
 		}
 
 		case GSSType_Exec:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Exec :\n" ); )
+			DDEBUG ( printf ( "AmigaOS3_Misc_Move_Set : GSSType_Exec :\n" ); )
 
-			ec = Misc_Set__Src_is_Exec( cur, rt, mem );
+			ec = Misc_Set__Src_is_Exec ( cur, rt, mem );
 
-			#ifdef DEBUG
+#ifdef DEBUG
 			if ( ec != RS4ErrStat_Okay )
 			{
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+				printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
 				goto bailout;
 			}
-			#endif
+#endif
 
 			break;
 		}
 
 		case GSSType_Label:
 		{
-			DDEBUG( printf( "AmigaOS3_Misc_Move_Set : GSSType_Label :\n" ); )
+			DDEBUG ( printf ( "AmigaOS3_Misc_Move_Set : GSSType_Label :\n" ); )
 
-			ec = Misc_Set__Src_is_Label( gss, cur, rt, mem );
+			ec = Misc_Set__Src_is_Label ( gss, cur, rt, mem );
 
-			#ifdef DEBUG
+#ifdef DEBUG
 			if ( ec != RS4ErrStat_Okay )
 			{
-				printf( "%s:%04d: Error\n", __FILE__, __LINE__ );
+				printf ( "%s:%04d: Error\n", __FILE__, __LINE__ );
 				goto bailout;
 			}
-			#endif
+#endif
 
 			break;
 		}
@@ -174,7 +159,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --

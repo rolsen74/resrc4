@@ -6,32 +6,44 @@
 ###########################################################################
 
 # Flags used for compiling
-CFLAGS		+= -I.
-CFLAGS		+= -IResourcer
-CFLAGS		+= -O2
-CFLAGS		+= -Wextra
-CFLAGS		+= -MMD
-CFLAGS		+= -MP
-CFLAGS		+= -W
-CFLAGS		+= -Wall
-#CFLAGS		+= -g
-#CFLAGS		+= -DDEBUG
+CFLAGS			+= -I.
+CFLAGS			+= -IResourcer
+CFLAGS			+= -Wextra
+CFLAGS			+= -Wall
+CFLAGS			+= -MMD
+CFLAGS			+= -MP
+CFLAGS			+= -O2
+CFLAGS			+= -W
+#CFLAGS			+= -g
+#CFLAGS			+= -DDEBUG
 
 # Flags passed to gcc during linking
-LDFLAGS		:= 
+LDFLAGS			:= 
 
 # Additional linker libraries
-LIBS		:=
+LIBS			:=
 
 # Source Dirs
-SRCDIRS		:= Resourcer
-SRCDIRS		+= Resourcer/Label
+SRCDIRS			:= Resourcer
+SRCDIRS			+= Resourcer/33_Trace
+SRCDIRS			+= Resourcer/44_Label
+SRCDIRS			+= Resourcer/55_Build
+SRCDIRS			+= Resourcer/66_Save
+SRCDIRS			+= Resourcer/_Brance
+SRCDIRS			+= Resourcer/_Config
+SRCDIRS			+= Resourcer/_Label
+SRCDIRS			+= Resourcer/_Misc
+SRCDIRS			+= Resourcer/_Node
+SRCDIRS			+= Resourcer/_Ref
+SRCDIRS			+= Resourcer/_Section
+SRCDIRS			+= Resourcer/_Source
+
 
 # Object Dir
-OBJDIR		:= obj
+OBJDIR			:= obj
 
 # Binary Dir
-BINDIR		:= bin
+BINDIR			:= bin
 
 ###########################################################################
 

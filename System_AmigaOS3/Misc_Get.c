@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,29 +17,26 @@
 
 // --
 
-#define DDEBUG(x)
+#define DDEBUG( x )
 
 // --
 
-enum RS4FuncStat AmigaOS3_Misc_Move_Get( 
-	enum RS4ErrorCode *errcode, 
-	RS4Trace *rt, 
-	struct M68kRegister *cur, 
-	MEM cur_mem,
-	struct AmigaOS3_Misc_Move_GetSetStruct *gss )
+enum RS4FuncStat
+AmigaOS3_Misc_Move_Get ( enum RS4ErrorCode * errcode, RS4Trace * rt, struct M68kRegister * cur, MEM cur_mem,
+						 struct AmigaOS3_Misc_Move_GetSetStruct * gss )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4Label *		  rl;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
 
-	DDEBUG( printf( "\nAmigaOS3_Misc_Move_Get : Addr $%08lx\n", rt->rt_CurMemAdr ); fflush( stdout ); )
+	DDEBUG ( printf ( "\nAmigaOS3_Misc_Move_Get : Addr $%08lx\n", rt->rt_CurMemAdr ); fflush ( stdout ); )
 
-	#ifdef DEBUG
-	memset( gss, 0x55, sizeof( struct AmigaOS3_Misc_Move_GetSetStruct ));
-	#endif
+#ifdef DEBUG
+	memset ( gss, 0x55, sizeof ( struct AmigaOS3_Misc_Move_GetSetStruct ) );
+#endif
 
 	gss->SrcType = GSSType_Unset;
 
@@ -50,18 +47,18 @@ RS4Label *rl;
 	*/
 
 	// Src : $0004.w
-	/**/ if (( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 0 ))
+	/**/ if ( ( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 0 ) )
 	{
-		U16 val = (( cur_mem[0] << 8 ) | ( cur_mem[1] << 0 ));
+		U16 val = ( ( cur_mem[0] << 8 ) | ( cur_mem[1] << 0 ) );
 
 		if ( val == 4 )
 		{
-			DDEBUG( printf( "read  : 90.1.1 : $0004.w : Exec : 4.w\n" ); fflush( stdout ); )
+			DDEBUG ( printf ( "read  : 90.1.1 : $0004.w : Exec : 4.w\n" ); fflush ( stdout ); )
 			gss->SrcType = GSSType_Exec;
 		}
 		else
 		{
-			DDEBUG( printf( "read  : 90.1.2 : $0004.w : ???? : ?.w\n" ); fflush( stdout ); )
+			DDEBUG ( printf ( "read  : 90.1.2 : $0004.w : ???? : ?.w\n" ); fflush ( stdout ); )
 			gss->SrcType = GSSType_Unknown;
 		}
 	}
@@ -73,48 +70,50 @@ RS4Label *rl;
 	*/
 
 	// Src : $0004.l
-	else if (( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 1 ))
+	else if ( ( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 1 ) )
 	{
-		U32 val = (( cur_mem[0] << 24 ) | ( cur_mem[1] << 16 ) | ( cur_mem[2] << 8 ) | ( cur_mem[3] << 0 ));
+		U32 val = ( ( cur_mem[0] << 24 ) | ( cur_mem[1] << 16 ) | ( cur_mem[2] << 8 ) | ( cur_mem[3] << 0 ) );
 
 		if ( val == 4 )
 		{
-			DDEBUG( printf( "read  : 90.2.1 : $0004.l : exec : 4.l\n" ); fflush( stdout ); )
+			DDEBUG ( printf ( "read  : 90.2.1 : $0004.l : exec : 4.l\n" ); fflush ( stdout ); )
 			gss->SrcType = GSSType_Exec;
 		}
 		else
 		{
-			ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, val, __FILE__ ))
+			ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, val, __FILE__ ) )
 
 			if ( rl )
 			{
-				DDEBUG( printf( "read  : 90.2.2 : $0004.l : Label : $%08x.l\n", val ); fflush( stdout ); )
+				DDEBUG ( printf ( "read  : 90.2.2 : $0004.l : Label : $%08x.l\n", val ); fflush ( stdout ); )
 
-				RS4FileSection *lab_Sec = rl->rl_Section;
+				RS4FileSection * lab_Sec = rl->rl_Section;
 
-				if (( rl->rl_Type1 == RS4LabelType_Pointer ) && ( rl->rl_Type2 == RS4LabelPtrType_Library ))
+				if ( ( rl->rl_Type1 == RS4LabelType_Pointer ) && ( rl->rl_Type2 == RS4LabelPtrType_Library ) )
 				{
 					gss->SrcType = GSSType_Label;
-					gss->Label = rl;
+					gss->Label	 = rl;
 				}
-				else if (( rl->rl_Offset >= 0 ) && ( rl->rl_Offset < lab_Sec->rfs_MemorySize ))
+				else if ( ( rl->rl_Offset >= 0 ) && ( rl->rl_Offset < lab_Sec->rfs_MemorySize ) )
 				{
-					DDEBUG( printf( "read  : 90.2.2 : $0004.l : Label : 1 : %08" PRId64 ", %08" PRId64 "\n", rl->rl_Offset, lab_Sec->rfs_MemorySize ); fflush( stdout ); )
+					DDEBUG ( printf ( "read  : 90.2.2 : $0004.l : Label : 1 : %08" PRId64 ", %08" PRId64 "\n", rl->rl_Offset,
+									  lab_Sec->rfs_MemorySize );
+							 fflush ( stdout ); )
 
-					RS4Label *rl2;
-					MEM mem2 = rl->rl_Memory;
-					U32 val2 = (( mem2[0] << 24 ) | ( mem2[1] << 16 ) | ( mem2[2] << 8 ) | ( mem2[3] << 0 ));
+					RS4Label * rl2;
+					MEM		   mem2 = rl->rl_Memory;
+					U32		   val2 = ( ( mem2[0] << 24 ) | ( mem2[1] << 16 ) | ( mem2[2] << 8 ) | ( mem2[3] << 0 ) );
 
-//					DDEBUG( printf( "read  : 90.2.2 : $0004.l : Label : 2\n" ); fflush( stdout ); )
+					//					DDEBUG( printf( "read  : 90.2.2 : $0004.l : Label : 2\n" ); fflush( stdout ); )
 
-					ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl2, val2, __FILE__ ))
+					ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl2, val2, __FILE__ ) )
 
-//					DDEBUG( printf( "read  : 90.2.2 : $0004.l : Label : 3\n" ); fflush( stdout ); )
+					//					DDEBUG( printf( "read  : 90.2.2 : $0004.l : Label : 3\n" ); fflush( stdout ); )
 
 					if ( rl2 )
 					{
 						gss->SrcType = GSSType_Label;
-						gss->Label = rl2;
+						gss->Label	 = rl2;
 					}
 					else
 					{
@@ -128,7 +127,7 @@ RS4Label *rl;
 			}
 			else
 			{
-				DDEBUG( printf( "read  : 90.2.3 : $0004.l : Addr : ??\n" ); fflush( stdout ); )
+				DDEBUG ( printf ( "read  : 90.2.3 : $0004.l : Addr : ??\n" ); fflush ( stdout ); )
 				gss->SrcType = GSSType_Unknown;
 			}
 		}
@@ -143,10 +142,10 @@ RS4Label *rl;
 	// Dn Reg
 	else if ( rt->rt_CPU.M68k.mt_ArgEMode == 0 )
 	{
-		DDEBUG( printf( "read  : 90.3.1 : Dx Reg : \n" ); fflush( stdout ); )
+		DDEBUG ( printf ( "read  : 90.3.1 : Dx Reg : \n" ); fflush ( stdout ); )
 
 		gss->SrcType = GSSType_Reg;
-		gss->Reg = *cur;
+		gss->Reg	 = *cur;
 	}
 
 	/*
@@ -158,10 +157,10 @@ RS4Label *rl;
 	// An Reg
 	else if ( rt->rt_CPU.M68k.mt_ArgEMode == 1 )
 	{
-		DDEBUG( printf( "read  : 90.4.1 : Ax Reg : \n" ); fflush( stdout ); )
+		DDEBUG ( printf ( "read  : 90.4.1 : Ax Reg : \n" ); fflush ( stdout ); )
 
 		gss->SrcType = GSSType_Reg;
-		gss->Reg = *cur;
+		gss->Reg	 = *cur;
 	}
 
 	/*
@@ -173,34 +172,34 @@ RS4Label *rl;
 	// (xxx,Ax)
 	else if ( rt->rt_CPU.M68k.mt_ArgEMode == 5 )
 	{
-		DDEBUG( printf( "read  : 90.5.1 : (xxx,Ax) : \n" ); fflush( stdout ); )
+		DDEBUG ( printf ( "read  : 90.5.1 : (xxx,Ax) : \n" ); fflush ( stdout ); )
 
-		struct M68kRegister *mr;
+		struct M68kRegister * mr;
 
-		mr = & rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg ];
+		mr = &rt->rt_CPU.M68k.mt_Registers[M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg];
 
-		if (( mr->mr_Type1 == RRT_Label ) && ( mr->mr_Label ))
+		if ( ( mr->mr_Type1 == RRT_Label ) && ( mr->mr_Label ) )
 		{
-			S16 off = (( cur_mem[0] << 8 ) | ( cur_mem[1] << 0 ));
+			S16 off = ( ( cur_mem[0] << 8 ) | ( cur_mem[1] << 0 ) );
 			S64 adr = mr->mr_Label->rl_Address + off;
 
-			ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+			ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 			if ( rl )
 			{
-				DDEBUG( printf( "read  : 90.5.2 : (xxx,Ax) : Label :\n" ); fflush( stdout ); )
+				DDEBUG ( printf ( "read  : 90.5.2 : (xxx,Ax) : Label :\n" ); fflush ( stdout ); )
 				gss->SrcType = GSSType_Label;
-				gss->Label = rl;
+				gss->Label	 = rl;
 			}
 			else
 			{
-				DDEBUG( printf( "read  : 90.5.3 : (xxx,Ax) : Addr : ??\n" ); fflush( stdout ); )
+				DDEBUG ( printf ( "read  : 90.5.3 : (xxx,Ax) : Addr : ??\n" ); fflush ( stdout ); )
 				gss->SrcType = GSSType_Unknown;
 			}
 		}
 		else
 		{
-			DDEBUG( printf( "read  : 90.5.4 : (xxx,Ax) : Unknown\n" ); fflush( stdout ); )
+			DDEBUG ( printf ( "read  : 90.5.4 : (xxx,Ax) : Unknown\n" ); fflush ( stdout ); )
 			gss->SrcType = GSSType_Unknown;
 		}
 	}
@@ -212,23 +211,23 @@ RS4Label *rl;
 	*/
 
 	// Src : # $0004.l
-	else if (( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 4 ))
+	else if ( ( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 4 ) )
 	{
-		DDEBUG( printf( "read  : 90.6.1 : #$xxxxxxxx.l \n" ); fflush( stdout ); )
+		DDEBUG ( printf ( "read  : 90.6.1 : #$xxxxxxxx.l \n" ); fflush ( stdout ); )
 
-		U32 val = (( cur_mem[0] << 24 ) | ( cur_mem[1] << 16 ) | ( cur_mem[2] << 8 ) | ( cur_mem[3] << 0 ));
+		U32 val = ( ( cur_mem[0] << 24 ) | ( cur_mem[1] << 16 ) | ( cur_mem[2] << 8 ) | ( cur_mem[3] << 0 ) );
 
-		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, val, __FILE__ ))
+		ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, val, __FILE__ ) )
 
 		if ( rl )
 		{
-			DDEBUG( printf( "read  : 90.6.3 : $0004.l : Label : #$xxxxxxxx.l : Addr $%08x\n", val ); fflush( stdout ); )
+			DDEBUG ( printf ( "read  : 90.6.3 : $0004.l : Label : #$xxxxxxxx.l : Addr $%08x\n", val ); fflush ( stdout ); )
 			gss->SrcType = GSSType_Label;
-			gss->Label = rl;
+			gss->Label	 = rl;
 		}
 		else
 		{
-			DDEBUG( printf( "read  : 90.6.7 : #$xxxxxxxx.l : Addr  $%08x: ??\n", val ); fflush( stdout ); )
+			DDEBUG ( printf ( "read  : 90.6.7 : #$xxxxxxxx.l : Addr  $%08x: ??\n", val ); fflush ( stdout ); )
 			gss->SrcType = GSSType_Unknown;
 		}
 	}
@@ -240,24 +239,24 @@ RS4Label *rl;
 	*/
 
 	// Src : (xxxx.w,pc)
-	else if (( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 2 ))
+	else if ( ( rt->rt_CPU.M68k.mt_ArgEMode == 7 ) && ( rt->rt_CPU.M68k.mt_ArgEReg == 2 ) )
 	{
-		DDEBUG( printf( "read  : 90.7.1 : (xxxx,PC) : implement me\n" ); fflush( stdout ); )
+		DDEBUG ( printf ( "read  : 90.7.1 : (xxxx,PC) : implement me\n" ); fflush ( stdout ); )
 
-		S16 val = (( cur_mem[0] << 8 ) | ( cur_mem[1] << 0 ));
+		S16 val = ( ( cur_mem[0] << 8 ) | ( cur_mem[1] << 0 ) );
 		S64 adr = rt->rt_CurMemAdr + 2 + val;
 
-		ERR_CHK( RS4FindLabel_File( & ec, rt->rt_File, & rl, adr, __FILE__ ))
+		ERR_CHK ( RS4_Find_LabelAdr ( &ec, rt->rt_File, &rl, adr, __FILE__ ) )
 
 		if ( rl )
 		{
-			DDEBUG( printf( "read  : 90.7.3 : $0004.l : Label : #$xxxxxxxx.l : Addr $%08x\n", val ); fflush( stdout ); )
+			DDEBUG ( printf ( "read  : 90.7.3 : $0004.l : Label : #$xxxxxxxx.l : Addr $%08x\n", val ); fflush ( stdout ); )
 			gss->SrcType = GSSType_Label;
-			gss->Label = rl;
+			gss->Label	 = rl;
 		}
 		else
 		{
-			DDEBUG( printf( "read  : 90.7.7 : #$xxxxxxxx.l : Addr  $%08x: ??\n", val ); fflush( stdout ); )
+			DDEBUG ( printf ( "read  : 90.7.7 : #$xxxxxxxx.l : Addr  $%08x: ??\n", val ); fflush ( stdout ); )
 			gss->SrcType = GSSType_Unknown;
 		}
 	}
@@ -271,7 +270,7 @@ RS4Label *rl;
 	// Unknown
 	else
 	{
-		DDEBUG( printf( "read  : 90.8.1 : Unknown\n" ); fflush( stdout ); )
+		DDEBUG ( printf ( "read  : 90.8.1 : Unknown\n" ); fflush ( stdout ); )
 		gss->SrcType = GSSType_Unknown;
 	}
 
@@ -295,7 +294,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --

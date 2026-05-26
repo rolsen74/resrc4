@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,47 +17,48 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_DIV( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_DIV ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U32 opmode;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U32				   opmode;
 
 	opmode = ( rt->rt_CPU.M68k.mt_Opcode & 0x01c00000 ) >> 22;
 
-	switch( opmode )
+	switch ( opmode )
 	{
-		// 0 : Or.b
+			// 0 : Or.b
 
-		// 1 : Or.w
+			// 1 : Or.w
 
-		// 2 : Or.l
+			// 2 : Or.l
 
 		case 3:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Divu.w";
-			rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Word;
-			rt->rt_CPU.M68k.mt_DecMode	= M68kDecMode_Unsigned;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Word;
+			rt->rt_CPU.M68k.mt_DecMode			= M68kDecMode_Unsigned;
 			break;
 		}
 
-		// 4 : Or.b
+			// 4 : Or.b
 
-		// 5 : Or.w
+			// 5 : Or.w
 
-		// 6 : Or.l
+			// 6 : Or.l
 
 		case 7:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Divs.w";
-			rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Word;
-			rt->rt_CPU.M68k.mt_DecMode	= M68kDecMode_Signed;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Word;
+			rt->rt_CPU.M68k.mt_DecMode			= M68kDecMode_Signed;
 			break;
 		}
 
 		default:
 		{
-			printf( "Unsupported 'Div' Opcode (Mode: %d)\n", opmode );
+			printf ( "Unsupported 'Div' Opcode (Mode: %d)\n", opmode );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
@@ -66,20 +67,20 @@ U32 opmode;
 	// --
 
 	rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
-	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
+	rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x0e000000 ) >> 25;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_DstRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-	M68k_Set_Cur_to_Unknown( rt );
+	M68k_Set_Cur_to_Unknown ( rt );
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
 	// --
@@ -94,39 +95,40 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_DIVS_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_DIVS_L ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U32 pos;
-S32 EMode;
-S32 EReg;
-S32 Size;
-S32 Dq;
-S32 Dr;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U32				   pos;
+	S32				   EMode;
+	S32				   EReg;
+	S32				   Size;
+	S32				   Dq;
+	S32				   Dr;
 
-	EMode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	EReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
-	Dq		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
-	Size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 ) >> 10;
-	Dr		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 ) >> 0;
+	EMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	EReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	Dq	  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
+	Size  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 ) >> 10;
+	Dr	  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 ) >> 0;
 
 	// --
 
 	rt->rt_CPU.M68k.mt_DecMode	= M68kDecMode_Signed;
 	rt->rt_CPU.M68k.mt_ArgSize	= 4;
 	rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Long;
-	rt->rt_CPU.M68k.mt_ArgEMode	= EMode;
+	rt->rt_CPU.M68k.mt_ArgEMode = EMode;
 	rt->rt_CPU.M68k.mt_ArgEReg	= EReg;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
@@ -140,26 +142,26 @@ S32 Dr;
 		{
 			// Not seen
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 		}
 		else
 		{
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dr;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-			pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
+			pos = strlen ( rt->rt_Container.Hunk.ms_Buf_Argument );
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-			rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
+			rt->rt_Container.Hunk.ms_Buf_Argument[pos] = ':';
 		}
 	}
 	else
@@ -168,28 +170,28 @@ S32 Dr;
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Divs.l";
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 		}
 		else
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Divsl.l";
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dr;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-			pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
+			pos = strlen ( rt->rt_Container.Hunk.ms_Buf_Argument );
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-			rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
+			rt->rt_Container.Hunk.ms_Buf_Argument[pos] = ':';
 		}
 	}
 
@@ -205,39 +207,40 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_DIVU_L( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_DIVU_L ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U32 pos;
-S32 EMode;
-S32 EReg;
-S32 Size;
-S32 Dq;
-S32 Dr;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U32				   pos;
+	S32				   EMode;
+	S32				   EReg;
+	S32				   Size;
+	S32				   Dq;
+	S32				   Dr;
 
-	EMode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	EReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
-	Dq		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
-	Size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 ) >> 10;
-	Dr		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 ) >> 0;
+	EMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	EReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	Dq	  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00007000 ) >> 12;
+	Size  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000400 ) >> 10;
+	Dr	  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000007 ) >> 0;
 
 	// --
 
 	rt->rt_CPU.M68k.mt_DecMode	= M68kDecMode_Unsigned;
 	rt->rt_CPU.M68k.mt_ArgSize	= 4;
 	rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Long;
-	rt->rt_CPU.M68k.mt_ArgEMode	= EMode;
+	rt->rt_CPU.M68k.mt_ArgEMode = EMode;
 	rt->rt_CPU.M68k.mt_ArgEReg	= EReg;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
@@ -251,26 +254,26 @@ S32 Dr;
 		{
 			// Not seen
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 		}
 		else
 		{
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dr;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-			pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
+			pos = strlen ( rt->rt_Container.Hunk.ms_Buf_Argument );
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-			rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
+			rt->rt_Container.Hunk.ms_Buf_Argument[pos] = ':';
 		}
 	}
 	else
@@ -279,28 +282,28 @@ S32 Dr;
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Divu.l";
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 		}
 		else
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Divul.l";
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dr;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-			pos = strlen( rt->rt_Container.Hunk.ms_Buf_Argument );
+			pos = strlen ( rt->rt_Container.Hunk.ms_Buf_Argument );
 
-			rt->rt_CPU.M68k.mt_ArgEMode	= 0x00; // Dx Reg
+			rt->rt_CPU.M68k.mt_ArgEMode = 0x00; // Dx Reg
 			rt->rt_CPU.M68k.mt_ArgEReg	= Dq;
 
-			EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+			EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-			rt->rt_Container.Hunk.ms_Buf_Argument[ pos ] = ':';
+			rt->rt_Container.Hunk.ms_Buf_Argument[pos] = ':';
 		}
 	}
 
@@ -316,5 +319,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

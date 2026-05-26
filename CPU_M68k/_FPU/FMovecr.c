@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,20 +17,21 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_FMOVECR( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_FMOVECR ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 reg;
-S32 rom;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   reg;
+	S32				   rom;
 
-	reg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
-	rom  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000007f );
+	reg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00000380 ) >> 7;
+	rom = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000007f );
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "FMovecr.x";
-	rt->rt_CPU.M68k.mt_OpcodeSize = 4;
+	rt->rt_CPU.M68k.mt_OpcodeSize		= 4;
 
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "#$%02x,%s", rom, FPx_RegNames[reg] );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "#$%02x,%s", rom, FPx_RegNames[reg] );
 
 	// --
 
@@ -39,7 +40,7 @@ S32 rom;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -48,5 +49,5 @@ S32 rom;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

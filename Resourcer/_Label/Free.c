@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,10 +17,11 @@
 
 // --
 
-enum RS4FuncStat RS4FreeLabel( enum RS4ErrorCode *errcode, RS4Label *rl )
+enum RS4FuncStat
+RS4FreeLabel ( enum RS4ErrorCode * errcode, RS4Label * rl )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Error;
@@ -36,20 +37,22 @@ enum RS4FuncStat fs;
 	{
 		ec = RS4ErrStat_InvalidStructID;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error Invalid Struct ID\n", __FILE__, __LINE__ );
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error Invalid Struct ID : ID $%08x : Label %p\n", __FILE__, __LINE__, rl->rl_ID, rl );
+#endif
 
 		goto bailout;
 	}
 
 	rl->rl_ID = 0;
 
+#ifdef DEBUG
+	memset ( rl, 4, sizeof ( RS4Label ) );
+#endif
+
 	// --
 
-
-
-	free( rl );
+	free ( rl );
 
 	// --
 
@@ -63,7 +66,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --

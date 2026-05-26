@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,15 +17,15 @@
 
 // --
 
-enum RS4FuncStat RS4FindLabel_File( enum RS4ErrorCode *errcode, RS4FileHeader *fh, RS4Label **rl_ptr, S64 addr, STR file )
+enum RS4FuncStat
+RS4_Find_LabelAdr ( enum RS4ErrorCode * errcode, RS4FileHeader * fh, RS4Label ** rl_ptr, S64 addr, STR file )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-U32 hash;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4Label *		  rl;
+	U32				  hash;
 
 	rl = NULL;
-
 	ec = RS4ErrStat_Okay;
 	fs = RS4FuncStat_Okay;
 
@@ -34,11 +34,11 @@ U32 hash;
 		goto bailout;
 	}
 
-	hash = ( (U64) addr ) % MAX_LAB_HASH;
+	hash = ( (U64)addr ) % MAX_LABADR_HASH;
 
-	rl = fh->rfh_LabelHash[ hash ];
+	rl = fh->rfh_Label_Adr_Hash[hash];
 
-	while( rl )
+	while ( rl )
 	{
 		if ( rl->rl_Address == addr )
 		{
@@ -46,7 +46,7 @@ U32 hash;
 		}
 		else
 		{
-			rl = rl->rl_HashPtr;
+			rl = rl->rl_Hash_Adr_Ptr;
 		}
 	}
 
@@ -54,17 +54,17 @@ U32 hash;
 	{
 		if ( ! rl )
 		{
-			printf( "Label NOT Found : Address $%08" PRIx64 ": File '%s'\n", addr, file );
+			printf ( "Label NOT Found : Address $%08" PRIx64 ": File '%s'\n", addr, file );
 		}
 	}
 
-	#ifdef DEBUG
-	if (( rl ) && ( rl->rl_ID != RS4ID_Label ))
+#ifdef DEBUG
+	if ( ( rl ) && ( rl->rl_ID != RS4ID_Label ) )
 	{
-		printf( "Invalid Label ID : %08x\n", rl->rl_ID );
+		printf ( "Invalid Label ID : %08x\n", rl->rl_ID );
 		rl = NULL;
 	}
-	#endif
+#endif
 
 bailout:
 
@@ -78,7 +78,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return(	fs );
+	return ( fs );
 }
 
 // --

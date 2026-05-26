@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,22 +17,23 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_Bcc( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_Bcc ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-U32 cond;
-U32 size;
-MEM mem;
-S64 adr;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+	RS4Label *		   rl;
+	U32				   cond;
+	U32				   size;
+	MEM				   mem;
+	S64				   adr;
 
 	ds = RS4DecodeStat_Error;
 
 	mem = rt->rt_CurMemBuf;
 
-	rt->rt_CPU.M68k.mt_DoLabelSize	= FALSE;
+	rt->rt_CPU.M68k.mt_DoLabelSize = FALSE;
 
 	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x0f000000 ) >> 24;
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00ff0000 ) >> 16;
@@ -42,30 +43,25 @@ S64 adr;
 		rt->rt_CPU.M68k.mt_ClearRegMask = -1;
 	}
 
-	switch( size )
+	switch ( size )
 	{
 		case 0:
 		{
 			S16 offset;
 
-			static CSTR bcc_RegNames[16] = 
-			{
-				"Bra.w", "Bsr.w", "Bhi.w", "Bls.w",
-				"Bcc.w", "Bcs.w", "Bne.w", "Beq.w",
-				"Bvc.w", "Bvs.w", "Bpl.w", "Bmi.w",
-				"Bge.w", "Blt.w", "Bgt.w", "Ble.w"
-			};
+			static CSTR bcc_RegNames[16] = { "Bra.w", "Bsr.w", "Bhi.w", "Bls.w", "Bcc.w", "Bcs.w", "Bne.w", "Beq.w",
+											 "Bvc.w", "Bvs.w", "Bpl.w", "Bmi.w", "Bge.w", "Blt.w", "Bgt.w", "Ble.w" };
 
 			rt->rt_Container.Hunk.ms_Str_Opcode = bcc_RegNames[cond];
 
-			offset = (( mem[2] << 8 ) | ( mem[3] << 0 ));
+			offset = ( ( mem[2] << 8 ) | ( mem[3] << 0 ) );
 
 			adr = rt->rt_CurMemAdr + 2 + offset;
 
 			rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 			rt->rt_CPU.M68k.mt_OpcodeSize = 4;
 
-			ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Code ))
+			ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Code ) )
 			break;
 		}
 
@@ -73,24 +69,19 @@ S64 adr;
 		{
 			S32 offset;
 
-			static CSTR bcc_RegNames[] = 
-			{
-				"Bra.l", "Bsr.l", "Bhi.l", "Bls.l",
-				"Bcc.l", "Bcs.l", "Bne.l", "Beq.l",
-				"Bvc.l", "Bvs.l", "Bpl.l", "Bmi.l",
-				"Bge.l", "Blt.l", "Bgt.l", "Ble.l"
-			};
+			static CSTR bcc_RegNames[] = { "Bra.l", "Bsr.l", "Bhi.l", "Bls.l", "Bcc.l", "Bcs.l", "Bne.l", "Beq.l",
+										   "Bvc.l", "Bvs.l", "Bpl.l", "Bmi.l", "Bge.l", "Blt.l", "Bgt.l", "Ble.l" };
 
 			rt->rt_Container.Hunk.ms_Str_Opcode = bcc_RegNames[cond];
 
-			offset = (( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ));
+			offset = ( ( mem[2] << 24 ) | ( mem[3] << 16 ) | ( mem[4] << 8 ) | ( mem[5] << 0 ) );
 
 			adr = rt->rt_CurMemAdr + 2 + offset;
 
 			rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 			rt->rt_CPU.M68k.mt_OpcodeSize = 6;
 
-			ERR_CHK( RS4AddLabel_File( & ec, & rl, rt->rt_File, adr, RS4LabelType_Code, __FILE__ ))
+			ERR_CHK ( RS4AddLabel_File ( &ec, &rl, rt->rt_File, adr, RS4LabelType_Code, __FILE__ ) )
 			break;
 		}
 
@@ -98,13 +89,8 @@ S64 adr;
 		{
 			S8 offset;
 
-			static CSTR bcc_RegNames[] = 
-			{
-				"Bra.b", "Bsr.b", "Bhi.b", "Bls.b",
-				"Bcc.b", "Bcs.b", "Bne.b", "Beq.b",
-				"Bvc.b", "Bvs.b", "Bpl.b", "Bmi.b",
-				"Bge.b", "Blt.b", "Bgt.b", "Ble.b"
-			};
+			static CSTR bcc_RegNames[] = { "Bra.b", "Bsr.b", "Bhi.b", "Bls.b", "Bcc.b", "Bcs.b", "Bne.b", "Beq.b",
+										   "Bvc.b", "Bvs.b", "Bpl.b", "Bmi.b", "Bge.b", "Blt.b", "Bgt.b", "Ble.b" };
 
 			rt->rt_Container.Hunk.ms_Str_Opcode = bcc_RegNames[cond];
 
@@ -115,7 +101,7 @@ S64 adr;
 			rt->rt_CPU.M68k.mt_LastOpcode = ( cond == 0 ) ? TRUE : FALSE;
 			rt->rt_CPU.M68k.mt_OpcodeSize = 2;
 
-			ERR_CHK( RS4AddLabel_Sec( & ec, & rl, rt->rt_Section, adr, RS4LabelType_Code ))
+			ERR_CHK ( RS4AddLabel_Sec ( &ec, &rl, rt->rt_Section, adr, RS4LabelType_Code ) )
 			break;
 		}
 	}
@@ -129,17 +115,17 @@ S64 adr;
 	}
 	else
 	{
-		rt->rt_CPU.M68k.mt_JmpRegister.mr_Type1 = RRT_Address;
+		rt->rt_CPU.M68k.mt_JmpRegister.mr_Type1	  = RRT_Address;
 		rt->rt_CPU.M68k.mt_JmpRegister.mr_Address = adr;
 	}
 
 	if ( rl )
 	{
-		ERR_CHK( RS4BuildLabelString( & ec, rl, rt->rt_Container.Hunk.ms_Buf_Argument ))
+		ERR_CHK ( RS4BuildLabelString ( &ec, rl, rt->rt_Container.Hunk.ms_Buf_Argument ) )
 	}
 	else
 	{
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "$%08" PRIx64, adr );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "$%08" PRIx64, adr );
 	}
 
 	// --
@@ -158,5 +144,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

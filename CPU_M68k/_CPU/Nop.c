@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,10 +17,11 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_NOP( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_NOP ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
 
 	// --
 
@@ -33,7 +34,7 @@ enum RS4ErrorCode ec;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -42,5 +43,5 @@ enum RS4ErrorCode ec;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

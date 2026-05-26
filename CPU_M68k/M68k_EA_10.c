@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -18,10 +18,11 @@
 // --
 // -- Mode 10 - Clr Ax
 
-enum RS4DecodeStat MODE_10( enum RS4ErrorCode *errcode, RS4Trace *rt, STR outstr )
+enum RS4DecodeStat
+MODE_10 ( enum RS4ErrorCode * errcode, RS4Trace * rt, STR outstr )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
 
 	// --
 
@@ -32,16 +33,16 @@ enum RS4ErrorCode ec;
 
 	if ( rt->rt_Pass != RS4TracePass_Trace )
 	{
-		sprintf( outstr, "%s", Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+		sprintf ( outstr, "%s", Ax_RegNames[rt->rt_CPU.M68k.mt_ArgEReg] );
 	}
 	else
 	{
 		outstr[0] = 0;
 	}
 
-	sprintf( outstr, "%s", Ax_RegNames[ rt->rt_CPU.M68k.mt_ArgEReg ] );
+	sprintf ( outstr, "%s", Ax_RegNames[rt->rt_CPU.M68k.mt_ArgEReg] );
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_Registers[ M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg ];
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_Registers[M68KREGT_Ax + rt->rt_CPU.M68k.mt_ArgEReg];
 
 	// --
 
@@ -50,7 +51,7 @@ enum RS4ErrorCode ec;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

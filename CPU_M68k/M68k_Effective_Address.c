@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,33 +17,34 @@
 
 // --
 
-#define DDEBUG(x)
+#define DDEBUG( x )
 
 // --
 
-enum RS4DecodeStat M68k_EffectiveAddress( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68k_EffectiveAddress ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-STR outstr;
-STR buf;
-S32 mode;
-S32 pos;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	STR				   outstr;
+	STR				   buf;
+	S32				   mode;
+	S32				   pos;
 
 	buf = rt->rt_Container.Hunk.ms_Buf_Argument;
-	pos = strlen( buf );
+	pos = strlen ( buf );
 
 	if ( pos )
 	{
 		buf[pos++] = ',';
-		buf[pos] = 0;
+		buf[pos]   = 0;
 	}
 
-	outstr = & buf[pos];
+	outstr = &buf[pos];
 
-	mode = (( rt->rt_CPU.M68k.mt_ArgEMode << 4 ) | ( rt->rt_CPU.M68k.mt_ArgEReg ));
+	mode = ( ( rt->rt_CPU.M68k.mt_ArgEMode << 4 ) | ( rt->rt_CPU.M68k.mt_ArgEReg ) );
 
-	switch( mode )
+	switch ( mode )
 	{
 		case 0x00: // 000 REG
 		case 0x01: // Clr Dn
@@ -54,9 +55,12 @@ S32 pos;
 		case 0x06:
 		case 0x07:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x00 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x00 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
-			ds = MODE_00( & ec, rt, outstr );
+			ds = MODE_00 ( &ec, rt, outstr );
 			break;
 		}
 
@@ -69,9 +73,12 @@ S32 pos;
 		case 0x16:
 		case 0x17:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x10 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x10 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
-			ds = MODE_10( & ec, rt, outstr );
+			ds = MODE_10 ( &ec, rt, outstr );
 			break;
 		}
 
@@ -84,9 +91,12 @@ S32 pos;
 		case 0x26:
 		case 0x27:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x20 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x20 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
-			ds = MODE_20( & ec, rt, outstr );
+			ds = MODE_20 ( &ec, rt, outstr );
 			break;
 		}
 
@@ -99,9 +109,12 @@ S32 pos;
 		case 0x36:
 		case 0x37:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x30 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x30 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
-			ds = MODE_30( & ec, rt, outstr );
+			ds = MODE_30 ( &ec, rt, outstr );
 			break;
 		}
 
@@ -114,9 +127,12 @@ S32 pos;
 		case 0x46:
 		case 0x47:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x40 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x40 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
-			ds = MODE_40( & ec, rt, outstr );
+			ds = MODE_40 ( &ec, rt, outstr );
 			break;
 		}
 
@@ -129,9 +145,12 @@ S32 pos;
 		case 0x56:
 		case 0x57:
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x50 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x50 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
-			ds = MODE_50( & ec, rt, outstr );
+			ds = MODE_50 ( &ec, rt, outstr );
 			break;
 		}
 
@@ -144,58 +163,74 @@ S32 pos;
 		case 0x66:
 		case 0x67:
 		{
-			if ( rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize ] & 0x01 )
+			if ( rt->rt_CurMemBuf[rt->rt_CPU.M68k.mt_ArgSize] & 0x01 )
 			{
-				DDEBUG( { printf( "%s:%04d: EA Mode 0x60 Full - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+				DDEBUG ( {
+					printf ( "%s:%04d: EA Mode 0x60 Full - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					fflush ( stdout );
+				} )
 
 				// Full Extension Word Format
-				if ( rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize + 1 ] & 0x08 )
+				if ( rt->rt_CurMemBuf[rt->rt_CPU.M68k.mt_ArgSize + 1] & 0x08 )
 				{
-					printf( "%s:%04d: 60_1 : Unsupported EA mode %02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: 60_1 : Unsupported EA mode %02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode,
+							 rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_UnknownCmd;
 				}
 				else
 				{
-					ds = MODE_60_Full_0( & ec, rt, outstr );
+					ds = MODE_60_Full_0 ( &ec, rt, outstr );
 				}
 			}
 			else
 			{
-				DDEBUG( { printf( "%s:%04d: EA Mode 0x60 Breif - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+				DDEBUG ( {
+					printf ( "%s:%04d: EA Mode 0x60 Breif - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					fflush ( stdout );
+				} )
 
 				// Brief Extension Word Format
-				ds = MODE_60_Brief( & ec, rt, outstr );
+				ds = MODE_60_Brief ( &ec, rt, outstr );
 			}
 			break;
 		}
 
 		case 0x70: // 111 000
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x70 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x70 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
 			// move.l $0004.w
 			// ( xxx ).W
-			ds = MODE_70( & ec, rt, outstr );
+			ds = MODE_70 ( &ec, rt, outstr );
 			break;
 		}
 
 		case 0x71: // 111 001
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x71 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x71 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
 			// move.l $00000004
 			// ( xxx ).L
-			ds = MODE_71( & ec, rt, outstr );
+			ds = MODE_71 ( &ec, rt, outstr );
 			break;
 		}
 
 		case 0x72: // 111 010
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x72 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x72 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
 			// Clr (xxxx.w,pc)
 			// ( d16, PC )
-			ds = MODE_72( & ec, rt, outstr );
+			ds = MODE_72 ( &ec, rt, outstr );
 			break;
 		}
 
@@ -205,43 +240,53 @@ S32 pos;
 			// ( bd , PC , Xn.SIZE * SCALE )
 			// ( [ bd , PC ] , Xn.SIZE * SCALE , od )
 			// ( [ bd , PC , Xn.SIZE * SCALE ] , od )
-			if ( rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize ] & 0x01 )
+			if ( rt->rt_CurMemBuf[rt->rt_CPU.M68k.mt_ArgSize] & 0x01 )
 			{
-				DDEBUG( { printf( "%s:%04d: EA Mode 0x73 Full - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+				DDEBUG ( {
+					printf ( "%s:%04d: EA Mode 0x73 Full - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					fflush ( stdout );
+				} )
 
 				// Full Extension Word Format
-				if ( rt->rt_CurMemBuf[ rt->rt_CPU.M68k.mt_ArgSize + 1 ] & 0x08 )
+				if ( rt->rt_CurMemBuf[rt->rt_CPU.M68k.mt_ArgSize + 1] & 0x08 )
 				{
-					printf( "%s:%04d: 73_1 : Unsupported EA mode $%02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
+					printf ( "%s:%04d: 73_1 : Unsupported EA mode $%02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode,
+							 rt->rt_CurMemAdr );
 					ds = RS4DecodeStat_UnknownCmd;
 				}
 				else
 				{
-					ds = MODE_73_Full_0( & ec, rt, outstr );
+					ds = MODE_73_Full_0 ( &ec, rt, outstr );
 				}
 			}
 			else
 			{
-				DDEBUG( { printf( "%s:%04d: EA Mode 0x73 Breif - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+				DDEBUG ( {
+					printf ( "%s:%04d: EA Mode 0x73 Breif - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+					fflush ( stdout );
+				} )
 
 				// Brief Extension Word Format
-				ds = MODE_73_Brief( & ec, rt, outstr );
+				ds = MODE_73_Brief ( &ec, rt, outstr );
 			}
 			break;
 		}
 
 		case 0x74: // 111
 		{
-			DDEBUG( { printf( "%s:%04d: EA Mode 0x74 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr ); } )
+			DDEBUG ( {
+				printf ( "%s:%04d: EA Mode 0x74 - Adr: $%08" PRIx64 "\n", __FILE__, __LINE__, rt->rt_CurMemAdr );
+				fflush ( stdout );
+			} )
 
 			// # <xxx>
-			ds = MODE_74( & ec, rt, outstr );
+			ds = MODE_74 ( &ec, rt, outstr );
 			break;
 		}
 
 		default:
 		{
-			printf( "%s:%04d: Unsupported EA mode $%02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
+			printf ( "%s:%04d: Unsupported EA mode $%02x at $%08" PRIx64 "\n", __FILE__, __LINE__, mode, rt->rt_CurMemAdr );
 			ds = RS4DecodeStat_UnknownCmd;
 			break;
 		}
@@ -252,5 +297,5 @@ S32 pos;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

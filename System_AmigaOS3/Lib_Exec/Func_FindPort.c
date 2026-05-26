@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,35 +17,36 @@
 
 // --
 
-enum RS4DecodeStat AOS3_Exec_FindPort_Func( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+AOS3_Exec_FindPort_Func ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+	RS4Label *		   rl;
 
 	ec = RS4ErrStat_Okay;
 	ds = RS4DecodeStat_Okay;
 
 	// A1 = String
-	if ( rt->rt_CPU.M68k.mt_Registers[ M68KREGT_A1 ].mr_Type1 != RRT_Label )
+	if ( rt->rt_CPU.M68k.mt_Registers[M68KREGT_A1].mr_Type1 != RRT_Label )
 	{
 		goto bailout;
 	}
 
-	rl = rt->rt_CPU.M68k.mt_Registers[ M68KREGT_A1 ].mr_Label;
+	rl = rt->rt_CPU.M68k.mt_Registers[M68KREGT_A1].mr_Label;
 
 	if ( ! rl )
 	{
 		goto bailout;
 	}
 
-	ERR_CHK( Mark_NulString( & ec, rl ))
+	ERR_CHK ( Mark_NulString ( &ec, rl ) )
 
 	// Todo return MsgPort pointer in D0
-//	rt->rt_CPU.M68k.mt_ClearRegMask &= ~( 1 << M68KREGT_D0 ); 
-//	rt->rt_CPU.M68k.mt_Registers[ M68KREGT_D0 ].mr_Type1 = RRT_Library,
-//	rt->rt_CPU.M68k.mt_Registers[ M68KREGT_D0 ].mr_Type2 = myLibs[pos].Type;
+	//	rt->rt_CPU.M68k.mt_ClearRegMask &= ~( 1 << M68KREGT_D0 );
+	//	rt->rt_CPU.M68k.mt_Registers[ M68KREGT_D0 ].mr_Type1 = RRT_Library,
+	//	rt->rt_CPU.M68k.mt_Registers[ M68KREGT_D0 ].mr_Type2 = myLibs[pos].Type;
 
 bailout:
 
@@ -56,7 +57,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

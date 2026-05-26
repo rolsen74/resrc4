@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,18 +17,12 @@
 
 // --
 
-//enum RS4DecodeStat AOS3_Battclock_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
+// enum RS4DecodeStat AOS3_Battclock_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 // --
 
-AOS3_LVOStruct AOS3_BattclockBase[] =
-{
-	AOS3_LVO_Name( -6, ResetBattClock ),
-	AOS3_LVO_Name( -12, ReadBattClock ),
-	AOS3_LVO_Name( -18, WriteBattClock ),
-	AOS3_LVO_Name( -24, ReadBattClockMem ),
-	AOS3_LVO_Name( -30, WriteBattClockMem ),
-	AOS3_LVO_EndMarker()
-};
+AOS3_LVOStruct AOS3_BattclockBase[]
+	= { AOS3_LVO_Name ( -6, ResetBattClock ),	 AOS3_LVO_Name ( -12, ReadBattClock ),	   AOS3_LVO_Name ( -18, WriteBattClock ),
+		AOS3_LVO_Name ( -24, ReadBattClockMem ), AOS3_LVO_Name ( -30, WriteBattClockMem ), AOS3_LVO_EndMarker () };
 
 // --

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2014-2025 Rene W. Olsen < renewolsen @ gmail . com >
+ * Copyright (c) 2014-2026 Rene W. Olsen < renewolsen @ gmail . com >
  *
  * This software is released under the GNU General Public License, version 3.
  * For the full text of the license, please visit:
@@ -15,30 +15,31 @@
 
 // --
 
-enum RS4DecodeStat AOS3_Exec_Func_FindTask( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+AOS3_Exec_Func_FindTask ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+	RS4Label *		   rl;
 
 	ec = RS4ErrStat_Okay;
 	ds = RS4DecodeStat_Okay;
 
 	// A1 = String
-	if ( rt->rt_CPU.M68k.mt_Registers[ M68KREGT_A1 ].mr_Type1 != RRT_Label )
+	if ( rt->rt_CPU.M68k.mt_Registers[M68KREGT_A1].mr_Type1 != RRT_Label )
 	{
 		goto bailout;
 	}
 
-	rl = rt->rt_CPU.M68k.mt_Registers[ M68KREGT_A1 ].mr_Label;
+	rl = rt->rt_CPU.M68k.mt_Registers[M68KREGT_A1].mr_Label;
 
 	if ( ! rl )
 	{
 		goto bailout;
 	}
 
-	ERR_CHK( Mark_NulString( & ec, rl ))
+	ERR_CHK ( Mark_NulString ( &ec, rl ) )
 
 bailout:
 
@@ -49,7 +50,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

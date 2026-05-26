@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -19,64 +19,62 @@
 
 struct myLibType
 {
-	enum AOS3_LibType	Type;
-	STR 				Name;
+	enum AOS3_LibType Type;
+	STR				  Name;
 };
 
-static struct myLibType myRes[] =
-{
-{ AOS3_LibType_BattclockBase,	"battclock.resource" },
-{ AOS3_LibType_BattmemBase,		"battmem.resource" },
-{ AOS3_LibType_CardresBase,		"cardres.resource " },
-{ AOS3_LibType_CiaBase,			"ciaa.resource" },
-{ AOS3_LibType_CiaBase,			"ciab.resource" },
-{ AOS3_LibType_DiskBase,		"disk.resource " },
-{ AOS3_LibType_MiscBase,		"misc.resource" },
-{ AOS3_LibType_PotgoBase,		"potgo.resource" },
-{ 0, NULL }
-};
+static struct myLibType myRes[] = { { AOS3_LibType_BattclockBase, "battclock.resource" },
+									{ AOS3_LibType_BattmemBase, "battmem.resource" },
+									{ AOS3_LibType_CardresBase, "cardres.resource " },
+									{ AOS3_LibType_CiaBase, "ciaa.resource" },
+									{ AOS3_LibType_CiaBase, "ciab.resource" },
+									{ AOS3_LibType_DiskBase, "disk.resource " },
+									{ AOS3_LibType_MiscBase, "misc.resource" },
+									{ AOS3_LibType_PotgoBase, "potgo.resource" },
+									{ 0, NULL } };
 
 // --
 
-enum RS4DecodeStat AOS3_Exec_OpenResource_Func( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+AOS3_Exec_OpenResource_Func ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4Label *rl;
-STR buf;
-S32 pos;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	enum RS4FuncStat   fs;
+	RS4Label *		   rl;
+	STR				   buf;
+	S32				   pos;
 
 	ec = RS4ErrStat_Okay;
 	ds = RS4DecodeStat_Okay;
 
 	// A1 = Resource name
-	if ( rt->rt_CPU.M68k.mt_Registers[ M68KREGT_A1 ].mr_Type1 != RRT_Label )
+	if ( rt->rt_CPU.M68k.mt_Registers[M68KREGT_A1].mr_Type1 != RRT_Label )
 	{
 		goto bailout;
 	}
 
-	rl = rt->rt_CPU.M68k.mt_Registers[ M68KREGT_A1 ].mr_Label;
+	rl = rt->rt_CPU.M68k.mt_Registers[M68KREGT_A1].mr_Label;
 
 	if ( ! rl )
 	{
 		goto bailout;
 	}
 
-	buf = (PTR) rl->rl_Memory;
+	buf = (PTR)rl->rl_Memory;
 
 	if ( ! buf )
 	{
 		goto bailout;
 	}
 
-	ERR_CHK( Mark_NulString( & ec, rl ))
+	ERR_CHK ( Mark_NulString ( &ec, rl ) )
 
 	pos = 0;
 
-	while( myRes[pos].Name )
+	while ( myRes[pos].Name )
 	{
-		if ( ! strcmp( buf, myRes[pos].Name ))
+		if ( ! strcmp ( buf, myRes[pos].Name ) )
 		{
 			break;
 		}
@@ -89,18 +87,18 @@ S32 pos;
 	if ( myRes[pos].Name )
 	{
 		// Don't clear Reg D0
-		rt->rt_CPU.M68k.mt_ClearRegMask &= ~( 1 << M68KREGT_D0 ); 
+		rt->rt_CPU.M68k.mt_ClearRegMask &= ~( 1 << M68KREGT_D0 );
 		rt->rt_CPU.M68k.mt_Registers[M68KREGT_D0].mr_Type1 = RRT_Library;
 		rt->rt_CPU.M68k.mt_Registers[M68KREGT_D0].mr_Type2 = myRes[pos].Type;
 	}
 	else
 	{
 		// DO clear Reg D0
-		rt->rt_CPU.M68k.mt_ClearRegMask |= ( 1 << M68KREGT_D0 ); 
+		rt->rt_CPU.M68k.mt_ClearRegMask |= ( 1 << M68KREGT_D0 );
 
 		if ( rt->rt_Pass == RS4TracePass_Trace )
 		{
-			printf( "Unsupported %s Resource found at $%08" PRIx64 "\n", buf, rt->rt_CurMemAdr );
+			printf ( "Unsupported %s Resource found at $%08" PRIx64 "\n", buf, rt->rt_CurMemAdr );
 		}
 	}
 
@@ -113,7 +111,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

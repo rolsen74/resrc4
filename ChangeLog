@@ -277,3 +277,16 @@ ReSrc4 v2.18 ( 03-Jan-2026 )
   which caused reads outside the allocated memory block. This one was
   particularly hard to find — enabling gdb/DEBUG would not trigger the bug,
   and using Printf() would only trigger it about 1 out of 10 times.
+
+
+ReSrc4 v2.19 ( 26-May-2026 )
+
+- When building the source code, I did not check if structures was inside
+  the bss area of a Data/Code section.
+
+- There was an error in the internal StackSwapStructure, that resulted in
+  generating wrong source files.
+
+- Added support for BFClr/BFTst/BFChg/BFExts/BFExtu/BFFFO/BFIns opcodes.
+
+- Rewrote the EA Mode 60, now it recognise even more args modes.

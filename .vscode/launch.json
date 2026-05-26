@@ -8,15 +8,17 @@
 			"name": "Debug ReSrc4",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "/home/vm/bin/ReSrc4",
+			"program": "/home/vm/source/ReSrc4/bin/ReSrc4",
 			"args": [
-				"-i", "tttt/LW.exe",
-				"-o", "tttt/LW_dis.s",
+				"-i",
+				//"/home/vm/git/rvm_gcc/lha",
+				"tst44.exe",
+				"-o",
+				//"/home/vm/git/rvm_gcc/lha.s",
+				"tst44.dis.s",
 				"--no",
-				"--Sec_Split",
-				"-v1",
-				"--debuginfo",
-				"--Sec_xDef"
+				"-v4",
+				"--debuginfo"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
@@ -42,13 +44,16 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/bin/ReSrc4",
 			"args": [
-				"-i", "~/source/LightWave/disassemble/_LightWaveAW.exe",
-				"-o", "lw.asm",
-				"--labtabs", "2",
+				"-i",
+				"~/source/LightWave/disassemble/_LightWaveAW.exe",
+				"-o",
+				"lw.asm",
+				"--labtabs",
+				"2",
 				"--debuginfo",
 				"--short",
 				"--no",
-				"-v2"
+				"-v3"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
@@ -68,6 +73,5 @@
 				}
 			]
 		}
-
 	]
 }

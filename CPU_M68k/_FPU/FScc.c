@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -50,48 +50,48 @@
 // 1E 011110 SNE
 // 1F 011111 ST
 
-enum RS4DecodeStat M68kCmd_FScc( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_FScc ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 emode;
-S32 ereg;
-S32 cond;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   emode;
+	S32				   ereg;
+	S32				   cond;
 
-	cond = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000003f );
-	emode= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	ereg = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	cond  = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000003f );
+	emode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	ereg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
 	if ( cond > 0x1f )
 	{
-		printf( "Unsupported 'FScc' Opcode at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
+		printf ( "Unsupported 'FScc' Opcode at $%08" PRIx64 "\n", rt->rt_CurMemAdr );
 		ds = RS4DecodeStat_Error;
 		goto bailout;
 	}
 
-	static CSTR fscc_RegNames[] = 
-	{
-		"FSf.b",	"FSeq.b",	"FSogt.b",	"FSoge.b",	// 0x00
-		"FSolt.b",	"FSole.b",	"FSogl.b",	"FSor.b",	// 0x04
-		"FSun.b",	"FSueq.b",	"FSugt.b",	"FSuge.b",	// 0x08
-		"FSult.b",	"FSule.b",	"FSne.b",	"FSt.b",	// 0x0c
-		"FSf.b",	"FSseq.b",	"FSgt.b",	"FSge.b",	// 0x10
-		"FSlt.b",	"FSle.b",	"FSgl.b",	"FSgle.b",	// 0x14
-		"FSngle.b",	"FSngl.b",	"FSnle.b",	"FSnlt.b",	// 0x18
-		"FSnge.b",	"FSngt.b",	"FSsne.b",	"FSst.b"	// 0x1c
+	static CSTR fscc_RegNames[] = {
+		"FSf.b",	"FSeq.b",  "FSogt.b", "FSoge.b", // 0x00
+		"FSolt.b",	"FSole.b", "FSogl.b", "FSor.b",	 // 0x04
+		"FSun.b",	"FSueq.b", "FSugt.b", "FSuge.b", // 0x08
+		"FSult.b",	"FSule.b", "FSne.b",  "FSt.b",	 // 0x0c
+		"FSf.b",	"FSseq.b", "FSgt.b",  "FSge.b",	 // 0x10
+		"FSlt.b",	"FSle.b",  "FSgl.b",  "FSgle.b", // 0x14
+		"FSngle.b", "FSngl.b", "FSnle.b", "FSnlt.b", // 0x18
+		"FSnge.b",	"FSngt.b", "FSsne.b", "FSst.b"	 // 0x1c
 	};
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = fscc_RegNames[cond];
-	rt->rt_CPU.M68k.mt_ArgType	= M68KSIZE_Byte;
-	rt->rt_CPU.M68k.mt_ArgEMode = emode;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ereg;
-	rt->rt_CPU.M68k.mt_ArgSize	= 4;
+	rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Byte;
+	rt->rt_CPU.M68k.mt_ArgEMode			= emode;
+	rt->rt_CPU.M68k.mt_ArgEReg			= ereg;
+	rt->rt_CPU.M68k.mt_ArgSize			= 4;
 
-// printf( "FScc -> %s at $%08" PRIx64 "\n",rt->rt_Container.Hunk.ms_Str_Opcode, rt->rt_CurMemAdr );
+	// printf( "FScc -> %s at $%08" PRIx64 "\n",rt->rt_Container.Hunk.ms_Str_Opcode, rt->rt_CurMemAdr );
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
@@ -107,7 +107,7 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --

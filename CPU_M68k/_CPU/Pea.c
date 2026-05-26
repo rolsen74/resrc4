@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,24 +17,25 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_PEA( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_PEA ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
 
-	rt->rt_Container.Hunk.ms_Str_Opcode	= "Pea";
-	rt->rt_CPU.M68k.mt_DoExternal	= FALSE;
-	rt->rt_CPU.M68k.mt_DoLabelSize	= FALSE;
-	rt->rt_CPU.M68k.mt_IsPea		= TRUE;
-	rt->rt_CPU.M68k.mt_ArgType		= M68KSIZE_Long;
-	rt->rt_CPU.M68k.mt_ArgEMode		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	rt->rt_CPU.M68k.mt_ArgEReg		= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	rt->rt_Container.Hunk.ms_Str_Opcode = "Pea";
+	rt->rt_CPU.M68k.mt_DoExternal		= FALSE;
+	rt->rt_CPU.M68k.mt_DoLabelSize		= FALSE;
+	rt->rt_CPU.M68k.mt_IsPea			= TRUE;
+	rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Long;
+	rt->rt_CPU.M68k.mt_ArgEMode			= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	rt->rt_CPU.M68k.mt_ArgEReg			= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-	rt->rt_CPU.M68k.mt_ClearRegMask |= ( 1 << M68KREGT_A7 ); 
+	rt->rt_CPU.M68k.mt_ClearRegMask |= ( 1 << M68KREGT_A7 );
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
 	// --
@@ -49,5 +50,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,57 +17,58 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_NOT( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_NOT ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 emode;
-S32 ereg;
-S32 size;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   emode;
+	S32				   ereg;
+	S32				   size;
 
-	size	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
-	emode	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	ereg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	size  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
+	emode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
+	ereg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	switch( size )
+	switch ( size )
 	{
 		case 0:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Not.b";
-			rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Byte;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Byte;
 			break;
 		}
 
 		case 1:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Not.w";
-			rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Word;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Word;
 			break;
 		}
 
 		case 2:
 		{
 			rt->rt_Container.Hunk.ms_Str_Opcode = "Not.l";
-			rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Long;
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Long;
 			break;
 		}
 
 		default:
 		{
-			printf( "Unsupported 'Not' Opcode (Mode: %d)\n", size );
+			printf ( "Unsupported 'Not' Opcode (Mode: %d)\n", size );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
 	}
 
 	rt->rt_CPU.M68k.mt_ArgEMode = emode;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ereg;
+	rt->rt_CPU.M68k.mt_ArgEReg	= ereg;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_DstRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-	M68k_Set_Cur_to_Unknown( rt );
+	M68k_Set_Cur_to_Unknown ( rt );
 	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
 	// --
@@ -82,5 +83,5 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

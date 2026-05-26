@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,13 +17,14 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_SBCD( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_SBCD ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 rx;
-S32 ry;
-S32 rm;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   rx;
+	S32				   ry;
+	S32				   rm;
 
 	rt->rt_Container.Hunk.ms_Str_Opcode = "Sbcd.b";
 
@@ -33,15 +34,15 @@ S32 rm;
 
 	if ( rm )
 	{
-		rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_A0 + rx ); 
-		rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_A0 + ry ); 
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "-(%s),-(%s)", Ax_RegNames[ rx ], Ax_RegNames[ ry ] );
+		rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_A0 + rx );
+		rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_A0 + ry );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "-(%s),-(%s)", Ax_RegNames[rx], Ax_RegNames[ry] );
 	}
 	else
 	{
-		rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + rx ); 
-		rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + ry ); 
-		sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,%s", Dx_RegNames[ rx ], Dx_RegNames[ ry ] );
+		rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + rx );
+		rt->rt_CPU.M68k.mt_ClearRegMask |= 1U << ( M68KREGT_D0 + ry );
+		sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "%s,%s", Dx_RegNames[rx], Dx_RegNames[ry] );
 	}
 
 	// --
@@ -51,7 +52,7 @@ S32 rm;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -60,5 +61,5 @@ S32 rm;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }

@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -18,10 +18,15 @@
 
 // --
 
-enum RS4FuncStat RS4FreeFile( enum RS4ErrorCode *errcode, RS4FileHeader *fh )
+enum RS4FuncStat
+RS4FreeFile ( enum RS4ErrorCode * errcode, RS4FileHeader * fh )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4FileSection *  sec;
+	RS4Brance *		  rb;
+	RS4Label *		  rl;
+	S32				  cnt;
 
 	fs = RS4FuncStat_Okay;
 	ec = RS4ErrStat_Error;
@@ -36,23 +41,73 @@ enum RS4FuncStat fs;
 		fs = RS4FuncStat_Error;
 		ec = RS4ErrStat_InvalidStructID;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error Invalid Struct ID\n", __FILE__, __LINE__ );
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error Invalid Struct ID\n", __FILE__, __LINE__ );
+#endif
 
 		goto bailout;
 	}
 
 	fh->rfh_ID = 0;
 
-	if ( fh->rfh_FileBuffer )
+	if ( fh->rfh_SecArray )
 	{
-		free( fh->rfh_FileBuffer );
-		fh->rfh_FileBuffer = NULL;
-		fh->rfh_FileSize = 0;
+		for ( cnt = 0; cnt < fh->rfh_SecArraySize; cnt++ )
+		{
+			sec = fh->rfh_SecArray[cnt].rsi_Section;
+
+			if ( sec )
+			{
+				RS4FreeSection ( NULL, sec );
+				fh->rfh_SecArray[cnt].rsi_Section = NULL;
+			}
+		}
+
+		free ( fh->rfh_SecArray );
+		fh->rfh_SecArray = NULL;
 	}
 
-	free( fh );
+	while ( TRUE )
+	{
+		rl = RS4RemHead ( &fh->rfh_ExtLabelList );
+
+		if ( ! rl )
+		{
+			break;
+		}
+
+		RS4FreeLabel ( NULL, rl );
+	}
+
+	while ( TRUE )
+	{
+		rb = RS4RemHead ( &fh->rfh_BranceList );
+
+		if ( ! rb )
+		{
+			break;
+		}
+
+#ifdef DEBUG
+		if ( rb->rb_ID != RS4ID_Brance )
+		{
+			ec = RS4ErrStat_InvalidStructID;
+			printf ( "%s:%04d: Error tracing brance\n", __FILE__, __LINE__ );
+			goto bailout;
+		}
+#endif
+
+		RS4FreeBrance ( NULL, rb );
+	}
+
+	if ( fh->rfh_FileBuffer )
+	{
+		free ( fh->rfh_FileBuffer );
+		fh->rfh_FileBuffer = NULL;
+		fh->rfh_FileSize   = 0;
+	}
+
+	free ( fh );
 
 	ec = RS4ErrStat_Okay;
 
@@ -63,38 +118,39 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --
 
-enum RS4FuncStat RS4LoadFile( enum RS4ErrorCode *errcode, RS4FileHeader **fh_ptr, STR filename )
+enum RS4FuncStat
+RS4LoadFile ( enum RS4ErrorCode * errcode, RS4FileHeader ** fh_ptr, STR filename )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4FileHeader *fh;
-MD5Context ctx;
-FILE *file;
-U64 fsize;
-U64 size;
-PTR mem;
-S32 err;
-S32 cnt;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4FileHeader *	  fh;
+	MD5Context		  ctx;
+	FILE *			  file;
+	U64				  fsize;
+	U64				  size;
+	PTR				  mem;
+	S32				  err;
+	S32				  cnt;
 
 	err = TRUE;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Okay;
 
-	fh = calloc( 1, sizeof( RS4FileHeader ));
+	fh = calloc ( 1, sizeof ( RS4FileHeader ) );
 
 	if ( ! fh )
 	{
 		ec = RS4ErrStat_OutOfMemory;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32) sizeof( RS4FileHeader ));
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32)sizeof ( RS4FileHeader ) );
+#endif
 
 		goto bailout;
 	}
@@ -103,7 +159,7 @@ S32 cnt;
 
 	// -- Open File
 
-	file = fopen( filename, "rb" );
+	file = fopen ( filename, "rb" );
 
 	if ( ! file )
 	{
@@ -124,37 +180,37 @@ S32 cnt;
 
 	// -- Get File Size
 
-	if ( fseek( file, 0, SEEK_END ))
+	if ( fseek ( file, 0, SEEK_END ) )
 	{
 		ec = RS4ErrStat_FileIO;
 
-		#ifdef DEBUG
-		printf( "Error doing file Seek '%s'\n", filename );
-		#endif
+#ifdef DEBUG
+		printf ( "Error doing file Seek '%s'\n", filename );
+#endif
 
 		goto bailout;
 	}
 
-	size = ftell( file );
+	size = ftell ( file );
 
 	if ( size == -1UL )
 	{
 		ec = RS4ErrStat_FileIO;
 
-		#ifdef DEBUG
-		printf( "Error doing file Tell '%s'\n", filename );
-		#endif
+#ifdef DEBUG
+		printf ( "Error doing file Tell '%s'\n", filename );
+#endif
 
 		goto bailout;
 	}
 
-	if ( fseek( file, 0, SEEK_SET ))
+	if ( fseek ( file, 0, SEEK_SET ) )
 	{
 		ec = RS4ErrStat_FileIO;
 
-		#ifdef DEBUG
-		printf( "Error doing file Seek '%s'\n", filename );
-		#endif
+#ifdef DEBUG
+		printf ( "Error doing file Seek '%s'\n", filename );
+#endif
 
 		goto bailout;
 	}
@@ -163,15 +219,15 @@ S32 cnt;
 
 	// -- Alloc File Buffer
 
-	mem = calloc( 1, size + 1 );
+	mem = calloc ( 1, size + 1 );
 
 	if ( ! mem )
 	{
 		ec = RS4ErrStat_OutOfMemory;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32) size );
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error allocating memory (%d Bytes)\n", __FILE__, __LINE__, (S32)size );
+#endif
 
 		goto bailout;
 	}
@@ -180,15 +236,15 @@ S32 cnt;
 
 	// -- Load File
 
-	fsize = fread( mem, 1, size, file );
+	fsize = fread ( mem, 1, size, file );
 
 	if ( fsize != size )
 	{
 		ec = RS4ErrStat_FileIO;
 
-		#ifdef DEBUG
-		printf( "Error doing file Read '%s'\n", filename );
-		#endif
+#ifdef DEBUG
+		printf ( "Error doing file Read '%s'\n", filename );
+#endif
 
 		goto bailout;
 	}
@@ -197,15 +253,15 @@ S32 cnt;
 
 	// -- Copy file name+path
 
-	ERR_CHK( RS4Strdup( & fh->rfh_FileName, filename ))
+	ERR_CHK ( RS4Strdup ( &fh->rfh_FileName, filename ) )
 
 	if ( ! fh->rfh_FileName )
 	{
 		ec = RS4ErrStat_OutOfMemory;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, filename );
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error '%s'\n", __FILE__, __LINE__, filename );
+#endif
 
 		goto bailout;
 	}
@@ -213,31 +269,31 @@ S32 cnt;
 	// -- NUL terminate file, in case we have an ASCII file.
 	// It makes parsing the file so much easier/safer
 
-	((STR )mem)[size] = 0;
+	( (STR)mem )[size] = 0;
 
 	// -- Calculate MD5 hash
 
-	md5Init( & ctx );
+	md5Init ( &ctx );
 
-	md5Update( & ctx, mem, size );
+	md5Update ( &ctx, mem, size );
 
-	md5Finalize( & ctx );
+	md5Finalize ( &ctx );
 
-	for( cnt=0 ; cnt<16 ; cnt++ )
+	for ( cnt = 0; cnt < 16; cnt++ )
 	{
-		sprintf( & fh->rfh_FileMD5[ cnt*2 ], "%02x", ctx.digest[cnt] );
+		sprintf ( &fh->rfh_FileMD5[cnt * 2], "%02x", ctx.digest[cnt] );
 	}
 
 	// --
 
 	err = FALSE;
-	ec = RS4ErrStat_Okay;
+	ec	= RS4ErrStat_Okay;
 
 bailout:
 
-	if (( err ) && ( fh ))
+	if ( ( err ) && ( fh ) )
 	{
-		RS4FreeFile( NULL, fh );
+		RS4FreeFile ( NULL, fh );
 		fh = NULL;
 	}
 
@@ -251,38 +307,37 @@ bailout:
 		*fh_ptr = fh;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --
 
-enum RS4FileType RS4IdentifyFile( enum RS4ErrorCode *errcode, RS4FileHeader *file )
+enum RS4FileType
+RS4IdentifyFile ( enum RS4ErrorCode * errcode, RS4FileHeader * file )
 {
-enum RS4ErrorCode ec;
-enum RS4FileType type;
-U32 fid;
+	enum RS4ErrorCode ec;
+	enum RS4FileType  type;
+	U32				  fid;
 
 	ec = RS4ErrStat_Error;
 
 	type = RS4FileType_Unknown;
 
-	if (( ! file ) || ( file->rfh_ID != RS4ID_FileHeader ))
+	if ( ( ! file ) || ( file->rfh_ID != RS4ID_FileHeader ) )
 	{
-		ec = RS4ErrStat_InvalidStructID;
+		ec	 = RS4ErrStat_InvalidStructID;
 		type = RS4FileType_Error;
 		goto bailout;
 	}
 
 	// todo check for other file type, (in a smart way)
 
-	#ifdef SUPPORT_HUNK
+#ifdef SUPPORT_HUNK
 
 	if ( type == RS4FileType_Unknown )
 	{
-		fid =	( file->rfh_FileBuffer[0] << 24 ) +
-				( file->rfh_FileBuffer[1] << 16 ) +
-				( file->rfh_FileBuffer[2] <<  8 ) +
-				( file->rfh_FileBuffer[3] <<  0 ) ;
+		fid = ( file->rfh_FileBuffer[0] << 24 ) + ( file->rfh_FileBuffer[1] << 16 ) + ( file->rfh_FileBuffer[2] << 8 )
+			  + ( file->rfh_FileBuffer[3] << 0 );
 
 		/**/ if ( fid == HUNK_HEADER )
 		{
@@ -290,28 +345,24 @@ U32 fid;
 		}
 	}
 
-	#endif
+#endif
 
-	#ifdef SUPPORT_FHR
+#ifdef SUPPORT_FHR
 
 	if ( type == RS4FileType_Unknown )
 	{
-		struct FHR_Header *h = (PTR) file->rfh_FileBuffer;
+		struct FHR_Header * h = (PTR)file->rfh_FileBuffer;
 
-		if (( SWAP32( h->FHR_ID )			== FHR_HEADER )
-		&&	( SWAP16( h->FHR_OSType )		== FHR_OS_AmigaOS3 )
-		&&	( SWAP16( h->FHR_CPUType )		== FHR_CPU_M68k )
-		&&	( SWAP16( h->FHR_Encryption )	== FHR_ENC_None )
-		&&	( h->FHR_Size	== FHR_SIZE_32 )
-		&&	( h->FHR_Type	== FHR_TYPE_Exe )
-		&&	( h->FHR_Pack	== FHR_PACK_None )
-		&&	( h->FHR_Endian == FHR_ENDIAN_Big ))
+		if ( ( SWAP32 ( h->FHR_ID ) == FHR_HEADER ) && ( SWAP16 ( h->FHR_OSType ) == FHR_OS_AmigaOS3 )
+			 && ( SWAP16 ( h->FHR_CPUType ) == FHR_CPU_M68k ) && ( SWAP16 ( h->FHR_Encryption ) == FHR_ENC_None )
+			 && ( h->FHR_Size == FHR_SIZE_32 ) && ( h->FHR_Type == FHR_TYPE_Exe ) && ( h->FHR_Pack == FHR_PACK_None )
+			 && ( h->FHR_Endian == FHR_ENDIAN_Big ) )
 		{
 			type = RS4FileType_FHR;
 		}
 	}
 
-	#endif
+#endif
 
 	ec = RS4ErrStat_Okay;
 
@@ -322,51 +373,52 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( type );
+	return ( type );
 }
 
 // --
 
-enum RS4FuncStat RS4LoadExe( enum RS4ErrorCode *errcode, RS4FileHeader **fh_ptr, STR filename )
+enum RS4FuncStat
+RS4LoadExe ( enum RS4ErrorCode * errcode, RS4FileHeader ** fh_ptr, STR filename )
 {
-enum RS4ErrorCode ec;
-enum RS4FuncStat fs;
-RS4FileHeader *file;
-S32 type;
-S32 err;
+	enum RS4ErrorCode ec;
+	enum RS4FuncStat  fs;
+	RS4FileHeader *	  file;
+	S32				  type;
+	S32				  err;
 
 	ec = RS4ErrStat_Error;
 	fs = RS4FuncStat_Okay;
 
 	err = TRUE;
 
-	ERR_CHK( RS4LoadFile( & ec, & file, filename ))
+	ERR_CHK ( RS4LoadFile ( &ec, &file, filename ) )
 
 	if ( ! file )
 	{
 		// ec already set
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error loading file '%s'\n", __FILE__, __LINE__, filename );
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error loading file '%s'\n", __FILE__, __LINE__, filename );
+#endif
 
 		goto bailout;
 	}
 
 	if ( DoVerbose > 0 )
 	{
-		printf( "Loaded '%s' (%" PRId64 " bytes)\n", filename, file->rfh_FileSize );
+		printf ( "Loaded '%s' (%" PRId64 " bytes)\n", filename, file->rfh_FileSize );
 	}
 
-	type = RS4IdentifyFile( & ec, file );
+	type = RS4IdentifyFile ( &ec, file );
 
 	if ( type == RS4FileType_Error )
 	{
 		// ec already set
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error identifying file '%s'\n", __FILE__, __LINE__, filename );
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error identifying file '%s'\n", __FILE__, __LINE__, filename );
+#endif
 
 		goto bailout;
 	}
@@ -375,12 +427,11 @@ S32 err;
 	{
 		ec = RS4ErrStat_UnsupportedFileType;
 
-		#ifdef DEBUG
-		printf( "%s:%04d: Error unsupported file type '%s'\n", __FILE__, __LINE__, filename );
-		#endif
+#ifdef DEBUG
+		printf ( "%s:%04d: Error unsupported file type '%s'\n", __FILE__, __LINE__, filename );
+#endif
 
 		goto bailout;
-
 	}
 
 	file->rfh_FileType = type;
@@ -388,31 +439,31 @@ S32 err;
 	// Set First Virtual Address (for Sections)
 	RS4CurrentVirtAdr = 0x00010000;
 
-	switch( type )
+	switch ( type )
 	{
-		#ifdef SUPPORT_FHR
+#ifdef SUPPORT_FHR
 		case RS4FileType_FHR:
 		{
-			ERR_CHK( FHR_ParseFile( & ec, file ))
+			ERR_CHK ( FHR_ParseFile ( &ec, file ) )
 			break;
 		}
-		#endif
+#endif
 
-		#ifdef SUPPORT_HUNK
+#ifdef SUPPORT_HUNK
 		case RS4FileType_Hunk:
 		{
-			ERR_CHK( Hunk_ParseFile( & ec, file ))
+			ERR_CHK ( Hunk_ParseFile ( &ec, file ) )
 			break;
 		}
-		#endif
+#endif
 
 		default:
 		{
 			ec = RS4ErrStat_UnsupportedFileType;
 
-			#ifdef DEBUG
-			printf( "Unknown file type\n" );
-			#endif
+#ifdef DEBUG
+			printf ( "Unknown file type\n" );
+#endif
 
 			goto bailout;
 		}
@@ -420,7 +471,7 @@ S32 err;
 
 	if ( fs != RS4FuncStat_Okay )
 	{
-		printf( "Error loading file\n" );
+		printf ( "Error loading file\n" );
 		goto bailout;
 	}
 
@@ -430,9 +481,9 @@ S32 err;
 
 bailout:
 
-	if (( err ) && ( file ))
+	if ( ( err ) && ( file ) )
 	{
-		RS4FreeFile( NULL, file );
+		RS4FreeFile ( NULL, file );
 		file = NULL;
 	}
 
@@ -446,7 +497,7 @@ bailout:
 		*fh_ptr = file;
 	}
 
-	return( fs );
+	return ( fs );
 }
 
 // --

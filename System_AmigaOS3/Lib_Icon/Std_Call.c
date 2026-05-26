@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,27 +17,16 @@
 
 // --
 
-//enum RS4DecodeStat AOS3_Icon_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
+// enum RS4DecodeStat AOS3_Icon_Func_OpenLibrary( enum RS4ErrorCode *errcode, RS4Trace *rt );
 
 // --
 
-AOS3_LVOStruct AOS3_IconBase[] =
-{
-	AOS3_LVO_Name( -42, GetIcon ),
-	AOS3_LVO_Name( -48, PutIcon ),
-	AOS3_LVO_Name( -54, FreeFreeList ),
-	AOS3_LVO_Name( -72, AddFreeList ),
-	AOS3_LVO_Name( -78, GetDiskObject ),
-	AOS3_LVO_Name( -84, PutDiskObject ),
-	AOS3_LVO_Name( -90, FreeDiskObject ),
-	AOS3_LVO_Name( -96, FindToolType ),
-	AOS3_LVO_Name( -102, MatchToolValue ),
-	AOS3_LVO_Name( -108, BumpRevision ),
-	AOS3_LVO_Name( -120, GetDefDiskObject ),
-	AOS3_LVO_Name( -126, PutDefDiskObject ),
-	AOS3_LVO_Name( -132, GetDiskObjectNew ),
-	AOS3_LVO_Name( -138, DeleteDiskObject ),
-	AOS3_LVO_EndMarker()
+AOS3_LVOStruct AOS3_IconBase[] = {
+	AOS3_LVO_Name ( -42, GetIcon ),			  AOS3_LVO_Name ( -48, PutIcon ),			AOS3_LVO_Name ( -54, FreeFreeList ),
+	AOS3_LVO_Name ( -72, AddFreeList ),		  AOS3_LVO_Name ( -78, GetDiskObject ),		AOS3_LVO_Name ( -84, PutDiskObject ),
+	AOS3_LVO_Name ( -90, FreeDiskObject ),	  AOS3_LVO_Name ( -96, FindToolType ),		AOS3_LVO_Name ( -102, MatchToolValue ),
+	AOS3_LVO_Name ( -108, BumpRevision ),	  AOS3_LVO_Name ( -120, GetDefDiskObject ), AOS3_LVO_Name ( -126, PutDefDiskObject ),
+	AOS3_LVO_Name ( -132, GetDiskObjectNew ), AOS3_LVO_Name ( -138, DeleteDiskObject ), AOS3_LVO_EndMarker ()
 };
 
 // --

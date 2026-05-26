@@ -1,6 +1,6 @@
 
 /*
-** Copyright (c) 2014-2025 Rene W. Olsen
+** Copyright (c) 2014-2026 Rene W. Olsen
 **
 ** SPDX-License-Identifier: GPL-3.0-or-later
 **
@@ -17,40 +17,41 @@
 
 // --
 
-enum RS4DecodeStat M68kCmd_EORI( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_EORI ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-S32 size;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	S32				   size;
 
 	size = ( rt->rt_CPU.M68k.mt_Opcode & 0x00c00000 ) >> 22;
 
-	switch( size )
+	switch ( size )
 	{
 		case 0:
 		{
-			rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.b" : "Eori.b" ;
-			rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Byte;
+			rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.b" : "Eori.b";
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Byte;
 			break;
 		}
 
 		case 1:
 		{
-			rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.w" : "Eori.w" ;
-			rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Word;
+			rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.w" : "Eori.w";
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Word;
 			break;
 		}
 
 		case 2:
 		{
-			rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.l" : "Eori.l" ;
-			rt->rt_CPU.M68k.mt_ArgType  = M68KSIZE_Long;
+			rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.l" : "Eori.l";
+			rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Long;
 			break;
 		}
 
 		default:
 		{
-			printf( "Unsupported 'Eori' Opcode (Mode: %d)\n", size );
+			printf ( "Unsupported 'Eori' Opcode (Mode: %d)\n", size );
 			ds = RS4DecodeStat_Error;
 			goto bailout;
 		}
@@ -59,23 +60,23 @@ S32 size;
 	// --
 
 	rt->rt_CPU.M68k.mt_ArgEMode = 7;
-	rt->rt_CPU.M68k.mt_ArgEReg  = 4;
+	rt->rt_CPU.M68k.mt_ArgEReg	= 4;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_SrcRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_SrcRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
 	// --
 
 	rt->rt_CPU.M68k.mt_ArgEMode = ( rt->rt_CPU.M68k.mt_Opcode & 0x00380000 ) >> 19;
-	rt->rt_CPU.M68k.mt_ArgEReg  = ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
+	rt->rt_CPU.M68k.mt_ArgEReg	= ( rt->rt_CPU.M68k.mt_Opcode & 0x00070000 ) >> 16;
 
-	rt->rt_CPU.M68k.mt_CurRegister = & rt->rt_CPU.M68k.mt_DstRegister;
+	rt->rt_CPU.M68k.mt_CurRegister = &rt->rt_CPU.M68k.mt_DstRegister;
 
-	EA_CHK( M68k_EffectiveAddress( & ec, rt ))
+	EA_CHK ( M68k_EffectiveAddress ( &ec, rt ) )
 
-	M68k_Set_Cur_to_Unknown( rt );
-	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;		
+	M68k_Set_Cur_to_Unknown ( rt );
+	rt->rt_CPU.M68k.mt_OpcodeSize = rt->rt_CPU.M68k.mt_ArgSize;
 
 	// --
 
@@ -89,24 +90,25 @@ bailout:
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_EORI2( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_EORI2 ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U8 val;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U8				   val;
 
 	val = ( rt->rt_CPU.M68k.mt_Opcode & 0x000000ff );
 
-	rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.b" : "Eori.b" ;
-	rt->rt_CPU.M68k.mt_OpcodeSize = 4;
-	rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Byte;
+	rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.b" : "Eori.b";
+	rt->rt_CPU.M68k.mt_OpcodeSize		= 4;
+	rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Byte;
 
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "#$%02x,CCR", val );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "#$%02x,CCR", val );
 
 	// --
 
@@ -115,7 +117,7 @@ U8 val;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -124,24 +126,25 @@ U8 val;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
 
-enum RS4DecodeStat M68kCmd_EORI3( enum RS4ErrorCode *errcode, RS4Trace *rt )
+enum RS4DecodeStat
+M68kCmd_EORI3 ( enum RS4ErrorCode * errcode, RS4Trace * rt )
 {
-enum RS4DecodeStat ds;
-enum RS4ErrorCode ec;
-U16 val;
+	enum RS4DecodeStat ds;
+	enum RS4ErrorCode  ec;
+	U16				   val;
 
 	val = ( rt->rt_CPU.M68k.mt_Opcode & 0x0000ffff );
 
-	rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.w" : "Eori.w" ;
-	rt->rt_CPU.M68k.mt_OpcodeSize = 4;
-	rt->rt_CPU.M68k.mt_ArgType = M68KSIZE_Word;
+	rt->rt_Container.Hunk.ms_Str_Opcode = ( ShortOpcodes ) ? "Eor.w" : "Eori.w";
+	rt->rt_CPU.M68k.mt_OpcodeSize		= 4;
+	rt->rt_CPU.M68k.mt_ArgType			= M68KSIZE_Word;
 
-	sprintf( rt->rt_Container.Hunk.ms_Buf_Argument, "#$%04x,SR", val );
+	sprintf ( rt->rt_Container.Hunk.ms_Buf_Argument, "#$%04x,SR", val );
 
 	// --
 
@@ -150,7 +153,7 @@ U16 val;
 
 	// --
 
-//bailout:
+	// bailout:
 
 	// --
 
@@ -159,7 +162,7 @@ U16 val;
 		*errcode = ec;
 	}
 
-	return( ds );
+	return ( ds );
 }
 
 // --
